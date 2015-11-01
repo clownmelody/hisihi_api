@@ -7,6 +7,8 @@ from herovii.models import db
 app = create_app({'DEBUG': True})
 
 
+
+# test for route
 @app.route('/-ddd/<int:uid>')
 def hello_world(uid):
     return 'Hello World!'+'   '+str(uid)
