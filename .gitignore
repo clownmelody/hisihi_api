@@ -21,3 +21,4 @@ venv/
 htmlcov/
 playbooks/roles/*.*
 .idea/
+log.txt
