@@ -1,0 +1,290 @@
+IntegrityError('(sqlite3.IntegrityError) UNIQUE constraint failed: user.username',)
+Traceback (most recent call last):
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.IntegrityError: UNIQUE constraint failed: user.username
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\bliss\Desktop\herovii\herovii\models\base.py", line 16, in auto_commit
+    self.session.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\scoping.py", line 150, in do
+    return getattr(self.registry(), name)(*args, **kwargs)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 801, in commit
+    self.transaction.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 392, in commit
+    self._prepare_impl()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 372, in _prepare_impl
+    self.session.flush()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2015, in flush
+    self._flush(objects)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2133, in _flush
+    transaction.rollback(_capture_exception=True)
+  File "C:\python\lib\site-packages\sqlalchemy\util\langhelpers.py", line 60, in __exit__
+    compat.reraise(exc_type, exc_value, exc_tb)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 182, in reraise
+    raise value
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2097, in _flush
+    flush_context.execute()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 373, in execute
+    rec.execute(self)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 532, in execute
+    uow
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 174, in save_obj
+    mapper, table, insert)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 785, in _emit_insert_statements
+    execute(statement, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 914, in execute
+    return meth(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\sql\elements.py", line 323, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1010, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1146, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1341, in _handle_dbapi_exception
+    exc_info
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 188, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=exc_value)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 181, in reraise
+    raise value.with_traceback(tb)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: user.username [SQL: 'INSERT INTO user (username, email, avatar_url, password, name, description, role, reputation, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'] [parameters: ('leildadddfsdfei', '4ddd04@qq.com', None, 'pbkdf2:sha1:1000$gLpNSDjx$05009dcab4a45cb8c3769d0f89fb32c635a2f71b', None, None, 1, 0, '2015-10-25 18:44:33.878794', '2015-10-25 18:44:33.878794')]
+OperationalError('(sqlite3.OperationalError) database is locked',)
+Traceback (most recent call last):
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Whispers\Desktop\herovii\herovii\models\base.py", line 16, in auto_commit
+    self.session.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\scoping.py", line 150, in do
+    return getattr(self.registry(), name)(*args, **kwargs)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 801, in commit
+    self.transaction.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 392, in commit
+    self._prepare_impl()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 372, in _prepare_impl
+    self.session.flush()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2015, in flush
+    self._flush(objects)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2133, in _flush
+    transaction.rollback(_capture_exception=True)
+  File "C:\python\lib\site-packages\sqlalchemy\util\langhelpers.py", line 60, in __exit__
+    compat.reraise(exc_type, exc_value, exc_tb)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 182, in reraise
+    raise value
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2097, in _flush
+    flush_context.execute()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 373, in execute
+    rec.execute(self)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 532, in execute
+    uow
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 174, in save_obj
+    mapper, table, insert)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 785, in _emit_insert_statements
+    execute(statement, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 914, in execute
+    return meth(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\sql\elements.py", line 323, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1010, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1146, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1341, in _handle_dbapi_exception
+    exc_info
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 188, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=exc_value)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 181, in reraise
+    raise value.with_traceback(tb)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) database is locked [SQL: 'INSERT INTO user (username, email, avatar_url, password, name, description, role, reputation, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'] [parameters: ('laaaaddflei', '35dasdfsd@qq.com', None, 'pbkdf2:sha1:1000$db6V5lU1$e0aa39b734af9ef44bb34bd8fc75a0203cd152f3', None, None, 1, 0, '2015-10-27 04:41:25.241899', '2015-10-27 04:41:25.241899')]
+OperationalError('(sqlite3.OperationalError) database is locked',)
+Traceback (most recent call last):
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Whispers\Desktop\herovii\herovii\models\base.py", line 16, in auto_commit
+    self.session.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\scoping.py", line 150, in do
+    return getattr(self.registry(), name)(*args, **kwargs)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 801, in commit
+    self.transaction.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 392, in commit
+    self._prepare_impl()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 372, in _prepare_impl
+    self.session.flush()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2015, in flush
+    self._flush(objects)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2133, in _flush
+    transaction.rollback(_capture_exception=True)
+  File "C:\python\lib\site-packages\sqlalchemy\util\langhelpers.py", line 60, in __exit__
+    compat.reraise(exc_type, exc_value, exc_tb)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 182, in reraise
+    raise value
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2097, in _flush
+    flush_context.execute()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 373, in execute
+    rec.execute(self)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 532, in execute
+    uow
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 174, in save_obj
+    mapper, table, insert)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 785, in _emit_insert_statements
+    execute(statement, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 914, in execute
+    return meth(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\sql\elements.py", line 323, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1010, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1146, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1341, in _handle_dbapi_exception
+    exc_info
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 188, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=exc_value)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 181, in reraise
+    raise value.with_traceback(tb)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) database is locked [SQL: 'INSERT INTO user (username, email, avatar_url, password, name, description, role, reputation, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'] [parameters: (None, None, None, 'pbkdf2:sha1:1000$cW3dal61$1ac138a066c985b1f02539e7ed40ae8c88786eef', None, None, 1, 0, '2015-10-27 06:37:21.332402', '2015-10-27 06:37:21.332402')]
+OperationalError('(sqlite3.OperationalError) no such table: user',)
+Traceback (most recent call last):
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such table: user
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Whispers\Desktop\herovii\herovii\models\base.py", line 16, in auto_commit
+    self.session.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\scoping.py", line 150, in do
+    return getattr(self.registry(), name)(*args, **kwargs)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 801, in commit
+    self.transaction.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 392, in commit
+    self._prepare_impl()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 372, in _prepare_impl
+    self.session.flush()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2015, in flush
+    self._flush(objects)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2133, in _flush
+    transaction.rollback(_capture_exception=True)
+  File "C:\python\lib\site-packages\sqlalchemy\util\langhelpers.py", line 60, in __exit__
+    compat.reraise(exc_type, exc_value, exc_tb)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 182, in reraise
+    raise value
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2097, in _flush
+    flush_context.execute()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 373, in execute
+    rec.execute(self)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 532, in execute
+    uow
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 174, in save_obj
+    mapper, table, insert)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 785, in _emit_insert_statements
+    execute(statement, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 914, in execute
+    return meth(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\sql\elements.py", line 323, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1010, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1146, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1341, in _handle_dbapi_exception
+    exc_info
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 188, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=exc_value)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 181, in reraise
+    raise value.with_traceback(tb)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: user [SQL: 'INSERT INTO user (username, email, avatar_url, password, name, description, role, reputation, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'] [parameters: (None, None, None, 'pbkdf2:sha1:1000$vk1G9TuE$66be0268f716b1456c8bc881f44fa92c0deadeca', None, None, 1, 0, '2015-10-27 06:37:52.222881', '2015-10-27 06:37:52.222881')]
+IntegrityError('(sqlite3.IntegrityError) NOT NULL constraint failed: user.username',)
+Traceback (most recent call last):
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.IntegrityError: NOT NULL constraint failed: user.username
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Whispers\Desktop\herovii\herovii\models\base.py", line 16, in auto_commit
+    self.session.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\scoping.py", line 150, in do
+    return getattr(self.registry(), name)(*args, **kwargs)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 801, in commit
+    self.transaction.commit()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 392, in commit
+    self._prepare_impl()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 372, in _prepare_impl
+    self.session.flush()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2015, in flush
+    self._flush(objects)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2133, in _flush
+    transaction.rollback(_capture_exception=True)
+  File "C:\python\lib\site-packages\sqlalchemy\util\langhelpers.py", line 60, in __exit__
+    compat.reraise(exc_type, exc_value, exc_tb)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 182, in reraise
+    raise value
+  File "C:\python\lib\site-packages\sqlalchemy\orm\session.py", line 2097, in _flush
+    flush_context.execute()
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 373, in execute
+    rec.execute(self)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 532, in execute
+    uow
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 174, in save_obj
+    mapper, table, insert)
+  File "C:\python\lib\site-packages\sqlalchemy\orm\persistence.py", line 785, in _emit_insert_statements
+    execute(statement, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 914, in execute
+    return meth(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\sql\elements.py", line 323, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1010, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1146, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1341, in _handle_dbapi_exception
+    exc_info
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 188, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=exc_value)
+  File "C:\python\lib\site-packages\sqlalchemy\util\compat.py", line 181, in reraise
+    raise value.with_traceback(tb)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\base.py", line 1139, in _execute_context
+    context)
+  File "C:\python\lib\site-packages\sqlalchemy\engine\default.py", line 450, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: user.username [SQL: 'INSERT INTO user (username, email, avatar_url, password, name, description, role, reputation, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'] [parameters: (None, None, None, 'pbkdf2:sha1:1000$DtRdELDU$06b8f51d8d46aa763cc322e9a9e25c0dfebe65c8', None, None, 1, 0, '2015-10-27 07:27:21.555654', '2015-10-27 07:27:21.555654')]
