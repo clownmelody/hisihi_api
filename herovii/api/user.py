@@ -28,12 +28,3 @@ def get_user_uid(uid):
         return jsonify(user), 200
     else:
         raise NotFound('user not found', 2000)
-
-
-# @auth.verify_password
-# def verify_password(username, password):
-#     valid = authorization.verify_by_phonenumber(username, password)
-#     if valid:
-#         return True
-#     else:
-#         return False

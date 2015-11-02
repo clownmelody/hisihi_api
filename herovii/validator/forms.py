@@ -50,6 +50,14 @@ class EmailForm(Form):
             raise StopValidation('Email has been registered.')
 
 
+class PhoneNumberForm(Form):
+    phone_number = StringField(validators=[
+        DataRequired(),
+        Length(11),
+        Regexp(r'^\d{11}$')
+    ])
+
+
 class RegisterForm(UserForm, EmailForm):
 
     def get_valid_data(self):
