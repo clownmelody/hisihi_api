@@ -5,4 +5,6 @@ __author__ = 'bliss'
 
 from herovii.api.base import ApiBlueprint
 
-api = ApiBlueprint('token')
+api = ApiBlueprint('sms')
+
+# def send_sms('')
