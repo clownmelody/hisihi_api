@@ -8,12 +8,13 @@ from flask import current_app
 
 from herovii.service import account
 from herovii.libs.error_code import AuthFaild
+from herovii.api.base import ApiBlueprint
 
-bp = Blueprint('auth', __name__)
+api = ApiBlueprint('token')
 auth = HTTPBasicAuth()
 
 
-@bp.route('/get-token')
+@api.route('/get-token')
 @auth.login_required
 def get_auth_token():
     uid = g.uid

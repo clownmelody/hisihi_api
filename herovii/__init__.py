@@ -16,10 +16,10 @@ def register_base(app):
 
 def register_base_blueprints(app):
     from .api import init_app
-    from herovii.api.authorization import auth
+    from herovii.api.authorization import token
     init_app(app)
 
-    app.register_blueprint(auth.bp, url_prefix='/v1/authorization')
+    
 
 
 def create_app(config=None):

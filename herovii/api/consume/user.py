@@ -5,7 +5,7 @@ from herovii.validator.forms import RegisterForm
 from herovii.service import user_srv
 from herovii.libs.error_code import NotFound
 from herovii.validator import user_verify
-from herovii.api.authorization.auth import *
+from herovii.api.authorization.token import *
 
 api = ApiBlueprint('user')
 # auth = HTTPBasicAuth()
