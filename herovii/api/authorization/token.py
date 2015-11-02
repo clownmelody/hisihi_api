@@ -1,6 +1,6 @@
 __author__ = 'bliss'
 
-from flask import Blueprint, jsonify, request, g
+from flask import jsonify, request, g
 from flask.ext.httpauth import HTTPBasicAuth
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature

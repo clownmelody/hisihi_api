@@ -1,3 +1,3 @@
 __author__ = 'bliss'
 
-# 消费环境下相关API，此包代表操作HISIHI主App的相关API
+# 娑堣垂鐜涓嬬浉鍏矨PI锛屾鍖呬唬琛ㄦ搷浣淗ISIHI涓籄pp鐨勭浉鍏矨PI

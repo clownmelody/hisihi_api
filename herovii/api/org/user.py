@@ -1,5 +1,4 @@
 __author__ = 'bliss'
-# 机构用户
 
 from herovii.api.base import ApiBlueprint
 from herovii.validator.forms import RegisterForm
