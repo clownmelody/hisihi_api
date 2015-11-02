@@ -1,17 +1,17 @@
 __author__ = 'Whispers'
 
 import re
+
 from flask import Blueprint
-from herovii.api.org import user as user_org
-from herovii.api.consume import user as user_csu
-from herovii.api.authorization import token
+
+from herovii.api import user, token
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
 CURRENT_VERSION = '1'
-bp_org = Blueprint('org', __name__)
-bp_consumer = Blueprint('consumer', __name__)
-bp_auth = Blueprint('auth', __name__)
+bp_v1 = Blueprint('v1', __name__)
+# bp_consumer = Blueprint('consumer', __name__)
+# bp_auth = Blueprint('auth', __name__)
 
 
 class ApiVersionMiddleware(object):
@@ -45,24 +45,28 @@ def find_version(environ):
 
 def init_app(app):
     # app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
-    reg_consumer_bp(app)
-    reg_org_bp(app)
-    reg_auth_bp(app)
+    reg_v1_bp(app)
+    # reg_org_bp(app)
+    # reg_auth_bp(app)
 
 
-# register consumer type blue print
-def reg_consumer_bp(app):
-    user_csu.api.register(bp_consumer)
-    app.register_blueprint(bp_consumer, url_prefix='/v1/csu')
+def reg_v1_bp(app):
+    user.api.register(bp_v1)
+    token.api.register(bp_v1)
 
-
-# register organization type blue print
-def reg_org_bp(app):
-    user_org.api.register(bp_org)
-    app.register_blueprint(bp_org, url_prefix='/v1/org')
-
-
-def reg_auth_bp(app):
-    token.api.register(bp_auth)
-    app.register_blueprint(bp_auth, url_prefix='/v1/auth')
+# # register consumer type blue print
+# def reg_consumer_bp(app):
+#     user_csu.api.register(bp_consumer)
+#     app.register_blueprint(bp_consumer, url_prefix='/v1/csu')
+#
+#
+# # register organization type blue print
+# def reg_org_bp(app):
+#     user_org.api.register(bp_org)
+#     app.register_blueprint(bp_org, url_prefix='/v1/org')
+#
+#
+# def reg_auth_bp(app):
+#     token.api.register(bp_auth)
+#     app.register_blueprint(bp_auth, url_prefix='/v1/auth')
 

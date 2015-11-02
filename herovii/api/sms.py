@@ -7,4 +7,7 @@ from herovii.api.base import ApiBlueprint
 
 api = ApiBlueprint('sms')
 
-# def send_sms('')
+
+@api.route('', methods=['POST'])
+def send_verify_sms():
+    pass

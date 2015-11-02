@@ -16,7 +16,7 @@ def register_base(app):
 
 def register_base_blueprints(app):
     from .api import init_app
-    from herovii.api.authorization import token
+    from herovii.api import token
     init_app(app)
 
     

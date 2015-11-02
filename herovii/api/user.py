@@ -1,11 +1,10 @@
 __author__ = 'bliss'
 
-from herovii.api.base import ApiBlueprint
 from herovii.validator.forms import RegisterForm
 from herovii.service import user_srv
 from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound
-from herovii.api.authorization.token import *
+from herovii.api.token import *
 
 api = ApiBlueprint('user')
 # auth = HTTPBasicAuth()
