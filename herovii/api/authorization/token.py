@@ -14,10 +14,10 @@ api = ApiBlueprint('token')
 auth = HTTPBasicAuth()
 
 
-@api.route('/get-token')
+@api.route('')
 @auth.login_required
 def get_auth_token():
-    uid = g.uid
+    uid = g.id
     token = generate_auth_token(uid)
     return jsonify({ 'token': token.decode('ascii') })
 
