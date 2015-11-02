@@ -90,7 +90,7 @@ class Conflict(APIException):
 class InvalidAccount(APIException):
     code = 403
     error = 'invalid_account'
-    description = 'Your account is invalid'
+    description = 'Your authorization is invalid'
 
 
 class InvalidClient(APIException):

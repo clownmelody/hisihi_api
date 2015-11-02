@@ -1,8 +1,6 @@
 __author__ = 'bliss'
 
 from .models import db
-from flask.ext.httpauth import HTTPBasicAuth
-from flask import g
 
 
 def register_base(app):
@@ -18,10 +16,10 @@ def register_base(app):
 
 def register_base_blueprints(app):
     from .api import init_app
-    from .handlers import account
+    from herovii.api.authorization import auth
     init_app(app)
 
-    app.register_blueprint(account.bp, url_prefix='/account')
+    app.register_blueprint(auth.bp, url_prefix='/v1/authorization')
 
 
 def create_app(config=None):

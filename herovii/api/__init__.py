@@ -1,13 +1,15 @@
 __author__ = 'Whispers'
 
 import re
-from flask import Blueprint, request
-from herovii.api import user
+from flask import Blueprint
+from herovii.api.org import user
+from herovii.api.consume import user
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
 CURRENT_VERSION = '1'
-bp = Blueprint('api', __name__)
+bp_org = Blueprint('org', __name__)
+bp_consumer = Blueprint('consumer', __name__)
 
 
 class ApiVersionMiddleware(object):
@@ -41,7 +43,18 @@ def find_version(environ):
 
 def init_app(app):
     # app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
-    user.api.register(bp)
+    reg_consumer_bp(app)
+    reg_org_bp(app)
 
-    # api 1.0版本 blueprint注册接口
-    app.register_blueprint(bp, url_prefix='/v1')
+
+# register consumer type blue print
+def reg_consumer_bp(app):
+    user.api.register(bp_consumer)
+    app.register_blueprint(bp_consumer, url_prefix='/v1/csu')
+
+
+# register organization type blue print
+def reg_org_bp(app):
+    user.api.register(bp_org)
+    app.register_blueprint(bp_org, url_prefix='/v1/org')
+

@@ -9,7 +9,7 @@ from flask import current_app
 from herovii.service import account
 from herovii.libs.error_code import AuthFaild
 
-bp = Blueprint('account', __name__)
+bp = Blueprint('auth', __name__)
 auth = HTTPBasicAuth()
 
 
@@ -23,6 +23,8 @@ def get_auth_token():
 
 @auth.verify_password
 def verify_password(username_or_token, password):
+    # Todo 开发时取消验证
+    return True
     r = request
     print(r.headers)
     uid = verify_auth_token(username_or_token)

@@ -1,15 +1,11 @@
 __author__ = 'bliss'
 
-from flask import jsonify, current_app
-
-from .base import ApiBlueprint
+from herovii.api.base import ApiBlueprint
 from herovii.validator.forms import RegisterForm
-from herovii.service import account
 from herovii.service import user_srv
-from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound
-from herovii.handlers.account import *
-from flask.ext.httpauth import HTTPBasicAuth
+from herovii.validator import user_verify
+from herovii.api.authorization.auth import *
 
 api = ApiBlueprint('user')
 # auth = HTTPBasicAuth()
@@ -33,12 +29,3 @@ def get_user_uid(uid):
         return jsonify(user), 200
     else:
         raise NotFound('user not found', 2000)
-
-
-# @auth.verify_password
-# def verify_password(username, password):
-#     valid = account.verify_by_phonenumber(username, password)
-#     if valid:
-#         return True
-#     else:
-#         return False
