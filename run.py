@@ -1,12 +1,12 @@
 __author__ = 'bliss'
 
 import sys
-from flask import g
-from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS
 from herovii import create_app
 from herovii.models import db
 
 app = create_app({'DEBUG': True})
+CORS(app)
 
 
 def create_database():
