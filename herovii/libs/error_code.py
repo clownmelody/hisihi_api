@@ -46,3 +46,10 @@ class AuthFaild(APIException):
     code = 401
     error_code = 1002
     error = 'Authorization is required'
+
+
+class UnknownError(APIException):
+    code = 500
+    error_code = 999
+    error = 'sorry, there is a unknown error,suck!'
+

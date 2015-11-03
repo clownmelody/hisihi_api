@@ -38,4 +38,4 @@ class BMOB(Httper):
                       'Content-Type': 'application/json'}
         post_data = {'mobilePhoneNumber': phone_number}
         response = self.post(BMOB.API_HOST, BMOB.API_SMS_CODE, post_data, header_dic)
-        status = response.status
+        return response.status, response.read()
