@@ -9,8 +9,8 @@ import datetime
 # 在返回结果中显示错误的具体内容，默认True
 SHOW_DETAIL_ERROR = True
 
-SITE_NAME = 'HisiHi'
-SITE_DESCRIPTION = 'Welcome to HisiHi'
+SITE_NAME = 'HiWebAPI'
+SITE_DESCRIPTION = 'Welcome to HiWebAPI'
 SITE_YEAR = datetime.date.today().year
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///tmp/test.db'

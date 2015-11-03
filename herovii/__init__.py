@@ -19,8 +19,6 @@ def register_base_blueprints(app):
     from herovii.api import token
     init_app(app)
 
-    
-
 
 def create_app(config=None):
     from .app import create_app

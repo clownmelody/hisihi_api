@@ -4,7 +4,7 @@ import re
 
 from flask import Blueprint
 
-from herovii.api import user, token
+from herovii.api import user, token, sms
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
@@ -53,6 +53,8 @@ def init_app(app):
 def reg_v1_bp(app):
     user.api.register(bp_v1)
     token.api.register(bp_v1)
+    sms.api.register(bp_v1)
+    app.register_blueprint(bp_v1, url_prefix='/v1')
 
 # # register consumer type blue print
 # def reg_consumer_bp(app):

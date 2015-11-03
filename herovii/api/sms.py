@@ -4,6 +4,8 @@ __author__ = 'bliss'
 # for mobile, it  doesn't need the server to receive sms.
 
 from herovii.api.base import ApiBlueprint
+from herovii.libs.httper import BMOB
+from herovii.validator.forms import PhoneNumberForm
 
 api = ApiBlueprint('sms')
 
@@ -15,9 +17,10 @@ def send_verify_sms():
     :return:
         返回操作成功信息
     """
-    bmob_app_id = '8bee8ad5acaaa664f2f644c9e3a37c2e'
-    bmob_api_key = '62060704177b04ee83d1bbc3778d5051'
-    pass
+    bmob = BMOB()
+    form = PhoneNumberForm.create_api_form()
+    phone_number = form.phone_number.data
+    bmob.send_verify_sms(phone_number)
 
 
 @api.route('/ad', methods=['POST'])
