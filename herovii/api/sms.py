@@ -7,7 +7,7 @@ from flask import json
 from herovii.api.base import ApiBlueprint
 from herovii.libs.httper import BMOB
 from herovii.validator.forms import PhoneNumberForm
-from herovii.libs.error_code import Succesful, NotFound, UnknownError
+from herovii.libs.error_code import Succesful, UnknownError
 
 api = ApiBlueprint('sms')
 
@@ -24,13 +24,11 @@ def send_verify_sms():
     phone_number = form.phone_number.data
     status, body = bmob.send_verify_sms(phone_number)
     if status == 200:
-        su = Succesful()
-        return su.get_json(), 200
-    elif status == 404:
-        j = json.loads(body)
-        raise NotFound(j.error, error_code=None, code=404)
+        ok = Succesful()
+        return ok.get_json(), 201
     else:
-        raise UnknownError()
+        j = json.loads(body)
+        raise UnknownError(j['error'], error_code=None)
 
 
 @api.route('/ad', methods=['POST'])

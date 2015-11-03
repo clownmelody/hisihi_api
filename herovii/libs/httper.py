@@ -21,8 +21,8 @@ class Httper(object):
         con = HTTPSConnection(host)
         con.request("POST", url, body=tmp_data, headers=headers)
         r = con.getresponse()
-        res = r.read()
-        return  res
+        # res = r.read()
+        return r
 
 
 class BMOB(Httper):

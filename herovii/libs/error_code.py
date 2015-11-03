@@ -11,7 +11,7 @@ class Succesful(object):
     msg = 'ok'
     error_code = 0
 
-    def __init__(self, code, msg, error_code):
+    def __init__(self, code=None, msg=None, error_code=None):
         if code is not None:
             self.code = code
         if msg is not None:
@@ -23,7 +23,7 @@ class Succesful(object):
         return text_type(json.dumps(dict(
             msg=self.msg,
             code=self.error_code,
-            request=request.method+'  ' + get_url_no_param()
+            request=request.method+'  ' + get_url_no_param(request)
         )))
 
 
@@ -49,7 +49,7 @@ class AuthFaild(APIException):
 
 
 class UnknownError(APIException):
-    code = 500
+    code = 400
     error_code = 999
     error = 'sorry, there is a unknown error,suck!'
 
