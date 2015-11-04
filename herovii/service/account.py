@@ -16,6 +16,9 @@ def register_by_email(username, email, password):
         db.session.add(user)
     return user
 
+def register_by_mobile(phone_number, password):
+    pass
+
 
 def verify_by_phonenumber(phonenumber, password):
     user = User.query.filter_by(username=phonenumber).first()

@@ -20,6 +20,7 @@ __all__ = ['User', 'UserSession']
 class User(Base):
 
     __tablename__ = 'user'
+    __bind_key__ = 'test'
 
     ROLE_SUPER = 9
     ROLE_ADMIN = 8

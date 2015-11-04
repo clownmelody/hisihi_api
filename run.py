@@ -17,7 +17,7 @@ def create_database():
         # fixtures.run()
 
 if '--initdb' in sys.argv:
-    create_database()
+    # create_database()
     sys.exit()
 
 with app.app_context():

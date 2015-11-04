@@ -58,6 +58,26 @@ class PhoneNumberForm(Form):
     ])
 
 
+class SMSCodeForm(Form):
+    sms_code = StringField(validators=[
+        DataRequired(),
+        Length(6),
+        Regexp(r'\d{6}$')
+    ])
+
+
+class PasswordForm(Form):
+    password = StringField(validators=[
+        DataRequired(),
+        # password can include number,26 letters, '~!@#$%^&*.' , length must be between 6~22
+        Regexp(r'/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/')
+    ])
+
+
+class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):
+    pass
+
+
 class RegisterForm(UserForm, EmailForm):
 
     def get_valid_data(self):

@@ -16,6 +16,8 @@ api = ApiBlueprint('sms')
 def send_verify_sms():
     """ 发送验证码短信
     发送一条验证码短信，默认使用bmob服务发送
+    :POST:
+    {'phone_number':'1869999xxxx'}
     :return:
         返回操作是否成功相关信息
     """

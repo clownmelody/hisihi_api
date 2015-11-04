@@ -11,7 +11,7 @@ class Httper(object):
         r = httpreq.urlopen(req)
         print(r)
 
-    def post(self, host,url, data, headers=None):
+    def post(self, host, url, data, headers=None):
         tmp_data = json.dumps(data)
         tmp_data = tmp_data.encode(encoding='utf-8')
         # req = httpreq.Request(url=url,
