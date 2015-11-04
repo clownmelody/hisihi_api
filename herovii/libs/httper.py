@@ -29,13 +29,22 @@ class BMOB(Httper):
     # 短信服务商参数配置
     APP_ID = '8bee8ad5acaaa664f2f644c9e3a37c2e'
     API_KEY = '62060704177b04ee83d1bbc3778d5051'
-    API_SMS_CODE = r'https://api.bmob.cn/1/requestSmsCode'
+    URI_SMS_CODE = r'https://api.bmob.cn/1/requestSmsCode'
+    URI_VERIFY_SMS_CODE = r'https://api.bmob.cn/1/verifySmsCode/'
     API_HOST = "api.bmob.cn"
+    header_dic = {'X-Bmob-Application-Id': APP_ID,
+                  'X-Bmob-REST-API-Key': API_KEY,
+                  'Content-Type': 'application/json'}
 
-    def send_verify_sms(self, phone_number):
-        header_dic = {'X-Bmob-Application-Id': BMOB.APP_ID,
-                      'X-Bmob-REST-API-Key': BMOB.API_KEY,
-                      'Content-Type': 'application/json'}
+    def send_sms_code(self, phone_number):
         post_data = {'mobilePhoneNumber': phone_number}
-        response = self.post(BMOB.API_HOST, BMOB.API_SMS_CODE, post_data, header_dic)
+        response = self.post(BMOB.API_HOST, BMOB.URI_SMS_CODE, post_data, BMOB.header_dic)
         return response.status, response.read()
+
+    def verify_sms_code(self, phone_number, code):
+        post_data = {'mobilePhoneNumber': phone_number}
+        uri = BMOB.URI_VERIFY_SMS_CODE+code
+        response = self.post(BMOB.API_HOST, uri, post_data, BMOB.header_dic)
+        return response.status, response.read()
+
+

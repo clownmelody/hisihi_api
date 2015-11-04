@@ -1,6 +1,7 @@
 __author__ = 'bliss'
 
 from herovii.models.user import User
+from herovii.models.user_org import UserOrg
 from herovii.models.base import db
 
 
@@ -16,8 +17,14 @@ def register_by_email(username, email, password):
         db.session.add(user)
     return user
 
+
 def register_by_mobile(phone_number, password):
-    pass
+    user = UserOrg()
+    user.password = password
+    user.mobile = phone_number
+    with db.auto_commit():
+        db.session.add(user)
+    return user
 
 
 def verify_by_phonenumber(phonenumber, password):

@@ -1,12 +1,14 @@
 __author__ = 'bliss'
 
+from flask import json
 from herovii.validator.forms import RegisterByMobileForm
-from herovii.service import user_srv
+from herovii.service import user_srv, account
 from herovii.validator import user_verify
-from herovii.libs.error_code import NotFound
+from herovii.libs.error_code import NotFound, UnknownError
 from herovii.api.token import *
 from herovii.models.user_org import UserOrg
 from herovii.models.base import db
+from herovii.libs.httper import BMOB
 
 api = ApiBlueprint('user')
 # auth = HTTPBasicAuth()
@@ -19,11 +21,17 @@ def create_user():
     {'phone_number':'18699998888', 'sms_code':'876876', 'password':'password'}
     :return:
     """
+    bmob = BMOB()
     form = RegisterByMobileForm.create_api_form()
-    valid_data = form.get_valid_data()
-    user = account.register_by_email(
-        valid_data['username'], valid_data['email'], valid_data['password'])
-    return jsonify(user), 201
+    phone_number = form.phone_number.data
+    sms_code = form.sms_code.data
+    status, body = bmob.verify_sms_code(phone_number, sms_code)
+    if status == 200:
+        user = account.register_by_mobile(phone_number, sms_code)
+        return jsonify(user), 201
+    else:
+        j = json.loads(body)
+        raise UnknownError(j['error'], error_code=None)
 
 
 @api.route('/<uid>', methods=['GET'])

@@ -13,7 +13,7 @@ api = ApiBlueprint('sms')
 
 
 @api.route('/verify', methods=['POST'])
-def send_verify_sms():
+def send_sms_code():
     """ 发送验证码短信
     发送一条验证码短信，默认使用bmob服务发送
     :POST:
@@ -24,7 +24,7 @@ def send_verify_sms():
     bmob = BMOB()
     form = PhoneNumberForm.create_api_form()
     phone_number = form.phone_number.data
-    status, body = bmob.send_verify_sms(phone_number)
+    status, body = bmob.send_sms_code(phone_number)
     if status == 200:
         ok = Succesful()
         return ok.get_json(), 201

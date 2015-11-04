@@ -7,7 +7,7 @@ from wtforms.validators import Email, Length, Regexp
 from wtforms.validators import DataRequired, StopValidation
 from werkzeug.datastructures import MultiDict
 
-from herovii.models import db, User
+from herovii.models import User
 from herovii.libs.errors import FormError
 
 
@@ -15,7 +15,9 @@ class Form(BaseForm):
     @classmethod
     def create_api_form(cls, obj=None):
         args = request.args
+
         formdata = MultiDict(request.get_json())
+
         merge = formdata.copy()
         merge.update(args)
         form = cls(formdata=merge, obj=obj, csrf_enabled=False)
@@ -69,8 +71,8 @@ class SMSCodeForm(Form):
 class PasswordForm(Form):
     password = StringField(validators=[
         DataRequired(),
-        # password can include number,26 letters, '~!@#$%^&*.' , length must be between 6~22
-        Regexp(r'/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/')
+        # password can only include lettes , numbers and "_"
+        Regexp(r'^[A-Za-z0-9_]{6,22}$')
     ])
 
 
