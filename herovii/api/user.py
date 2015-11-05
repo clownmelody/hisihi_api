@@ -1,11 +1,12 @@
 __author__ = 'bliss'
 
-from flask import json
+from flask import json, jsonify
 from herovii.validator.forms import RegisterByMobileForm
 from herovii.service import user_srv, account
 from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound, UnknownError
-from herovii.api.token import *
+from herovii.libs.bpbase import ApiBlueprint
+from herovii.handlers.account import auth
 from herovii.models.user_org import UserOrg
 from herovii.models.base import db
 from herovii.libs.httper import BMOB
@@ -15,10 +16,11 @@ api = ApiBlueprint('user')
 
 
 @api.route('/org', methods=['POST'])
-def create_user():
+def create_by_mobile():
     """ 添加一个机构用户
+    调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
     :POST:
-    {'phone_number':'18699998888', 'sms_code':'876876', 'password':'password'}
+        {'phone_number':'18699998888', 'sms_code':'876876', 'password':'password'}
     :return:
     """
     bmob = BMOB()

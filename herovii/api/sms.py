@@ -4,7 +4,7 @@ __author__ = 'bliss'
 # for mobile, it  doesn't need the server to receive sms.
 
 from flask import json
-from herovii.api.base import ApiBlueprint
+from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.httper import BMOB
 from herovii.validator.forms import PhoneNumberForm
 from herovii.libs.error_code import Succesful, UnknownError

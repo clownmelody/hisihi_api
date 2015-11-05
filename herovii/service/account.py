@@ -3,6 +3,7 @@ __author__ = 'bliss'
 from herovii.models.user import User
 from herovii.models.user_org import UserOrg
 from herovii.models.base import db
+from herovii.libs.error_code import NotFound
 
 
 def register_by_email(username, email, password):
@@ -18,12 +19,22 @@ def register_by_email(username, email, password):
     return user
 
 
-def register_by_mobile(phone_number, password):
+def register_by_mobile(mobile, password):
     user = UserOrg()
     user.password = password
-    user.mobile = phone_number
+    user.mobile = mobile
     with db.auto_commit():
         db.session.add(user)
+    return user
+
+
+def reset_password_by_mobile(mobile, password):
+    user = UserOrg.query.filter_by(mobile=mobile).first()
+    if user is not None:
+        with db.auto_commit():
+            user.update({UserOrg.password: password})
+    else:
+        raise NotFound(error='user not found', error_code=2000)
     return user
 
 

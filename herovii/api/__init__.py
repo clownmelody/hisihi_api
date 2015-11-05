@@ -43,7 +43,7 @@ def find_version(environ):
     return CURRENT_VERSION
 
 
-def init_app(app):
+def init_api(app):
     # app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
     reg_v1_bp(app)
     # reg_org_bp(app)
@@ -52,7 +52,7 @@ def init_app(app):
 
 def reg_v1_bp(app):
     user.api.register(bp_v1)
-    token.api.register(bp_v1)
+    # token.api.register(bp_v1)
     sms.api.register(bp_v1)
     app.register_blueprint(bp_v1, url_prefix='/v1')
 

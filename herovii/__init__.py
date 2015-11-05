@@ -15,9 +15,10 @@ def register_base(app):
 
 
 def register_base_blueprints(app):
-    from .api import init_app
-    from herovii.api import token
-    init_app(app)
+    from .api import init_api
+    from .handlers import init_handlers
+    init_api(app)
+    init_handlers(app)
 
 
 def create_app(config=None):
