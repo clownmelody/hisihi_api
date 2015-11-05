@@ -11,7 +11,7 @@ from sqlalchemy import Column
 from sqlalchemy import String, Unicode, DateTime
 from sqlalchemy import SmallInteger, Integer
 from sqlalchemy.orm.attributes import get_history
-from .base import db, Base
+from herovii.models.base import db, Base
 
 
 __all__ = ['User', 'UserSession']

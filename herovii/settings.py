@@ -16,7 +16,7 @@ SITE_YEAR = datetime.date.today().year
 SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:19851118@101.200.236.82/org'
 SQLALCHEMY_BINDS = {
     'test': 'sqlite:///tmp/test1.db',
-    'game': 'mysql+cymysql://root:19851118@101.200.236.82/game'
+    'online': 'mysql+cymysql://root:19851118@101.200.236.82/online'
 }
 SECRET_KEY = '\xeb\xb3\x1bx\x10o\xa4\xb8\x0b\x05\xf5\xb6k\x0bNX\x1f\x86\\\xb9\x1c*\x1d\x95'
 
