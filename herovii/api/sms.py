@@ -8,6 +8,7 @@ from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.httper import BMOB
 from herovii.validator.forms import PhoneNumberForm
 from herovii.libs.error_code import Succesful, UnknownError
+from herovii.libs.helper import success_json
 
 api = ApiBlueprint('sms')
 
@@ -26,8 +27,8 @@ def send_sms_code():
     phone_number = form.phone_number.data
     status, body = bmob.send_sms_code(phone_number)
     if status == 200:
-        ok = Succesful()
-        return ok.get_json(), 201
+        # ok = Succesful()
+        return success_json(), 201
     else:
         j = json.loads(body)
         raise UnknownError(j['error'], error_code=None)

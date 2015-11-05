@@ -1,9 +1,8 @@
 __author__ = 'bliss'
 
 from werkzeug._compat import text_type
-from flask import json, request
+from flask import json
 from .errors import APIException
-from herovii.libs.helper import get_url_no_param
 
 
 class Succesful(object):
@@ -11,7 +10,8 @@ class Succesful(object):
     msg = 'ok'
     error_code = 0
 
-    def __init__(self, code=None, msg=None, error_code=None):
+    def __init__(self, uri, code=None, msg=None, error_code=None):
+        self.uri = uri
         if code is not None:
             self.code = code
         if msg is not None:
@@ -23,8 +23,17 @@ class Succesful(object):
         return text_type(json.dumps(dict(
             msg=self.msg,
             code=self.error_code,
-            request=request.method+'  ' + get_url_no_param(request)
+            # request=request.method+'  ' + get_url_no_param(request)
+            request=self.uri
         )))
+
+    # @classmethod
+    # def get_json(cls):
+    #     return text_type(json.dumps(dict(
+    #         msg=cls.msg,
+    #         code=cls.error_code,
+    #         request=request.method+'  ' + get_url_no_param(request)
+    #     )))
 
 
 class ParamException(APIException):

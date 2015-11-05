@@ -1,10 +1,11 @@
 __author__ = 'bliss'
 
+from flask import request
 from .enums import MobileRace
-from enum import Enum
+from .error_code import Succesful
 
 
-def get_url_no_param(request):
+def get_url_no_param():
     full_path = str(request.full_path)
     q_index = full_path.find('?')
     full_path = full_path[0:q_index]
@@ -24,4 +25,9 @@ def android_ipad_iphone(http_user_agent):
         return MobileRace.android
 
     return MobileRace.other
+
+
+def success_json(code=None, msg=None, error_code=None):
+    url = request.method+'  ' + get_url_no_param()
+    return Succesful(url, code, msg, error_code).get_json()
 

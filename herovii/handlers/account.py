@@ -11,6 +11,7 @@ from herovii.libs.error_code import AuthFaild, Succesful, UnknownError
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.httper import BMOB
 from herovii.validator.forms import RegisterByMobileForm
+from herovii.libs.helper import success_json
 
 api = ApiBlueprint('account')
 auth = HTTPBasicAuth()
@@ -40,7 +41,7 @@ def find_password():
     status, body = bmob.verify_sms_code(mobile, sms_code)
     if status == 200:
         account.reset_password_by_mobile(mobile, password)
-        return Succesful().get_json(), 202
+        return success_json(), 202
     else:
         j = json.loads(body)
         raise UnknownError(j['error'], error_code=None)

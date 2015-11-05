@@ -3,16 +3,12 @@ __author__ = 'bliss'
 import sys
 from herovii import create_app
 from herovii.models import db
+from enum import Enum
 
-app = create_app({'DEBUG': True})
+channel= '1.222'
+a=str.isnumeric(channel)
 
+channel1 ='ddddd'
+b =str.isnumeric(channel1)
 
-
-# test for route
-@app.route('/-ddd/<int:uid>')
-def hello_world(uid):
-    return 'Hello World!'+'   '+str(uid)
-
-if __name__ == '__main__':
-    app.run()
-
+print(a,b)
