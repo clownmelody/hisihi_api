@@ -23,17 +23,8 @@ class Succesful(object):
         return text_type(json.dumps(dict(
             msg=self.msg,
             code=self.error_code,
-            # request=request.method+'  ' + get_url_no_param(request)
             request=self.uri
         )))
-
-    # @classmethod
-    # def get_json(cls):
-    #     return text_type(json.dumps(dict(
-    #         msg=cls.msg,
-    #         code=cls.error_code,
-    #         request=request.method+'  ' + get_url_no_param(request)
-    #     )))
 
 
 class ParamException(APIException):

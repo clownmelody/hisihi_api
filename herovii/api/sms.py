@@ -27,7 +27,6 @@ def send_sms_code():
     phone_number = form.phone_number.data
     status, body = bmob.send_sms_code(phone_number)
     if status == 200:
-        # ok = Succesful()
         return success_json(), 201
     else:
         j = json.loads(body)

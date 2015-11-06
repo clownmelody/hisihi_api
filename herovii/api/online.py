@@ -4,8 +4,8 @@ from herovii.libs.bpbase import ApiBlueprint
 from herovii.models.onlines.online import Online
 from herovii.models.onlines.statistic import Statistic
 from herovii.models.base import db
-from herovii.validator.forms import PVPlus1ByOnlineForm
-from herovii.service.online import pv_plus_1 as pv_added
+from herovii.validator.forms import OnlineIDForm
+from herovii.service.online import pv_added_1, share_added_1
 from herovii.libs.helper import success_json
 from herovii.libs.error_code import UnknownError
 
@@ -32,24 +32,26 @@ def pv_plus_1():
         sample: {"oid":1}
     :return:
     """
-    form = PVPlus1ByOnlineForm().create_api_form()
-    count = pv_added(form.oid.data)
+    form = OnlineIDForm().create_api_form()
+    count = pv_added_1(form.oid.data)
     if count >= 1:
         return success_json(), 202
     else:
         raise UnknownError()
 
 
-@api.route('/finished+1', methods=['PUT'])
-def finished_plus_1():
-    """ 完整参与活动数量+1
+@api.route('share+1', methods=['PUT'])
+def share_plus_1():
+    """ 分享次数+1
     :PUT:
-
+        sample: {"oid" : 1}
     :return:
     """
-
-
-def uv_plus_1():
-    pass
+    form = OnlineIDForm().create_api_form()
+    count = share_added_1(form.oid.data)
+    if count >= 1:
+        return success_json(), 202
+    else:
+        raise UnknownError()
 
 

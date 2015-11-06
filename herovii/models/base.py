@@ -35,5 +35,4 @@ class BaseMixin(object):
 class  Base(db.Model, BaseMixin):
     __abstract__ = True
     create_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
-    # cache = CacheProperty(db)
 

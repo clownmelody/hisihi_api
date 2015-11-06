@@ -1,5 +1,6 @@
+cymysql == 0.8.5
 Flask == 0.10.1
-Flask_HTTPAuth == 2.7.0
+Flask_Cors == 2.1.0
 Flask_SQLAlchemy == 2.0
 Flask_WTF == 0.12
 itsdangerous == 0.24

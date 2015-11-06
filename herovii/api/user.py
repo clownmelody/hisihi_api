@@ -12,7 +12,6 @@ from herovii.models.base import db
 from herovii.libs.httper import BMOB
 
 api = ApiBlueprint('user')
-# auth = HTTPBasicAuth()
 
 
 @api.route('/org', methods=['POST'])

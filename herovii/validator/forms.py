@@ -79,7 +79,7 @@ class DownloadPlus1Form(Form):
     channel = create_not_empty_field()
 
 
-class PVPlus1ByOnlineForm(Form):
+class OnlineIDForm(Form):
     oid = create_positive_integer_field()
 
 
