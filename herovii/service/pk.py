@@ -35,12 +35,12 @@ def downloads_plus(channel, **kwargs):
         try:
             key = DownloadChannel(channel)
         except ValueError:
-            raise ParamException(error='the channel parameter is invalid')
+            raise ParamException(error='the channel parameter is not in range')
     else:
         try:
             key = DownloadChannel(channel)
         except ValueError:
-            raise ParamException(error='the channel parameter is invalid')
+            raise ParamException(error='the channel parameter is not in range')
 
     return channels.get(key)(**kwargs)
 
