@@ -50,9 +50,8 @@ def find_password():
 @auth.verify_password
 def verify_password(username_or_token, password):
     # Todo 开发时取消验证
-    return True
-    r = request
-    print(r.headers)
+    if current_app.config['REMOVE_TOKEN_VERIFY']:
+        return True
     uid = verify_auth_token(username_or_token)
     if not uid:
         uid = account.verify_by_phonenumber(username_or_token, password)
