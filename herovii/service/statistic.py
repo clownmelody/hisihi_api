@@ -4,6 +4,7 @@ from herovii.libs.enums import MobileRace
 from herovii.models.onlines.statistic import Statistic
 from herovii.models.base import db
 from herovii.libs.enums import DownloadChannel
+from herovii.libs.error_code import ParamException
 
 
 def downloads_plus_byonline(**kwargs):
@@ -31,8 +32,15 @@ def downloads_plus(channel, **kwargs):
     }
     if str.isnumeric(channel):
         channel = int(channel)
-        key = DownloadChannel(channel)
+        try:
+            key = DownloadChannel(channel)
+        except ValueError:
+            raise ParamException(error='the channel parameter is invalid')
     else:
-        key = DownloadChannel[channel]
+        try:
+            key = DownloadChannel(channel)
+        except ValueError:
+            raise ParamException(error='the channel parameter is invalid')
+
     return channels.get(key)(**kwargs)
 

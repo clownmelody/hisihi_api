@@ -2,11 +2,9 @@ __author__ = 'bliss'
 
 from flask import request
 from flask_wtf import Form as BaseForm
-from wtforms.fields import StringField, PasswordField
-from wtforms.validators import Email, Length, Regexp
-from wtforms.validators import DataRequired, StopValidation
+from wtforms.validators import StopValidation
 from werkzeug.datastructures import MultiDict
-
+from .base import *
 from herovii.models import User
 from herovii.libs.errors import FormError
 
@@ -16,7 +14,7 @@ class Form(BaseForm):
     def create_api_form(cls, obj=None):
         args = request.args
 
-        formdata = MultiDict(request.get_json())
+        formdata = MultiDict(request.get_json(force=True))
 
         merge = formdata.copy()
         merge.update(args)
@@ -74,6 +72,11 @@ class PasswordForm(Form):
         # password can only include lettes , numbers and "_"
         Regexp(r'^[A-Za-z0-9_]{6,22}$')
     ])
+
+
+class DownloadPlus1Form(Form):
+    oid = create_positive_integer_field()
+    channel = create_not_empty_field()
 
 
 class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):

@@ -5,6 +5,7 @@ from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.helper import android_ipad_iphone, success_json
 from herovii.libs.error_code import Succesful, UnknownError
 from herovii.service.statistic import downloads_plus
+from herovii.validator.forms import DownloadPlus1Form
 
 api = ApiBlueprint('statistic')
 
@@ -18,16 +19,18 @@ def downloads_plus_1():
         sample: ?channel = 1
     :return:
     """
-    j = request.get_json()
     channel = request.args.get('channel')
+    form = DownloadPlus1Form().create_api_form()
+
     r = request.remote_addr
     head_agent = request.user_agent.string
     mobile_race = android_ipad_iphone(head_agent)
-    count = downloads_plus(channel, oid=j['oid'], mobile_race=mobile_race)
+    count = downloads_plus(channel, oid=form.oid.data, mobile_race=mobile_race)
     if count >= 1:
         return success_json(), 202
     else:
         raise UnknownError()
+
 
 def pv_plus_1():
     pass
