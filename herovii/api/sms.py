@@ -6,6 +6,7 @@ __author__ = 'bliss'
 from flask import json
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.httper import BMOB
+from herovii.handlers.account import auth
 from herovii.validator.forms import PhoneNumberForm
 from herovii.libs.error_code import Successful, UnknownError
 from herovii.libs.helper import success_json
@@ -14,6 +15,7 @@ api = ApiBlueprint('sms')
 
 
 @api.route('/verify', methods=['POST'])
+@auth.login_required
 def send_sms_code():
     """ 发送验证码短信
     发送一条验证码短信，默认使用bmob服务发送
