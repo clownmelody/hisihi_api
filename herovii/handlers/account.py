@@ -7,7 +7,7 @@ from itsdangerous import SignatureExpired, BadSignature
 from flask import current_app
 
 from herovii.service import account
-from herovii.libs.error_code import AuthFaild, Succesful, UnknownError
+from herovii.libs.error_code import AuthFaild, Successful, UnknownError
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.httper import BMOB
 from herovii.validator.forms import RegisterByMobileForm

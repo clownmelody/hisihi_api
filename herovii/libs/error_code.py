@@ -5,7 +5,7 @@ from flask import json
 from .errors import APIException
 
 
-class Succesful(object):
+class Successful(object):
     code = 201
     msg = 'ok'
     error_code = 0

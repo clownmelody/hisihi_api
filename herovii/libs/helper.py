@@ -2,7 +2,7 @@ __author__ = 'bliss'
 
 from flask import request
 from .enums import MobileRace
-from .error_code import Succesful
+from .error_code import Successful
 
 
 def get_url_no_param():
@@ -29,5 +29,5 @@ def android_ipad_iphone(http_user_agent):
 
 def success_json(code=None, msg=None, error_code=None):
     url = request.method+'  ' + get_url_no_param()
-    return Succesful(url, code, msg, error_code).get_json()
+    return Successful(url, code, msg, error_code).get_json()
 

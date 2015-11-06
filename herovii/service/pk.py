@@ -7,7 +7,7 @@ from herovii.libs.enums import DownloadChannel
 from herovii.libs.error_code import ParamException
 
 
-def downloads_plus_byonline(**kwargs):
+def downloads_plus_by_online(**kwargs):
     oid = kwargs['oid']
     mobile_race = kwargs['mobile_race']
     params = {'f_online_id': oid}
@@ -28,7 +28,7 @@ def downloads_plus_byonline(**kwargs):
 
 def downloads_plus(channel, **kwargs):
     channels = {
-        DownloadChannel.online: downloads_plus_byonline
+        DownloadChannel.online: downloads_plus_by_online
     }
     if str.isnumeric(channel):
         channel = int(channel)
