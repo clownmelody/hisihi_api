@@ -5,7 +5,7 @@ from flask_cors import CORS
 from herovii import create_app
 from herovii.models import db
 
-app = create_app({'DEBUG': True})
+app = create_app()
 CORS(app)
 
 

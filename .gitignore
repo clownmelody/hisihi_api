@@ -22,3 +22,4 @@ htmlcov/
 playbooks/roles/*.*
 .idea/
 log.txt
+secure.py

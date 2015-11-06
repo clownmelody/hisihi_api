@@ -24,6 +24,7 @@ def create_app(config=None):
 
     #: load default configuration
     app.config.from_object('herovii.settings')
+    app.config.from_object('herovii.secure')
 
     if config is not None:
         if isinstance(config, dict):
