@@ -1,7 +1,7 @@
 __author__ = 'bliss'
 
 import datetime
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 
 
@@ -14,5 +14,5 @@ class Online(Base):
     title = Column(String(50))
     desc = Column(String(200))
     begin_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
-    end_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
+    end_time = Column(Integer)
     related_url = Column(String(300))

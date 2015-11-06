@@ -3,8 +3,7 @@ __author__ = 'Whispers'
 import re
 
 from flask import Blueprint
-
-from herovii.api import user, token, sms, online, statistic
+from herovii.api import user, token, sms, online, pk
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
@@ -53,7 +52,8 @@ def init_api(app):
 def reg_v1_bp(app):
     user.api.register(bp_v1)
     online.api.register(bp_v1)
-    statistic.api.register(bp_v1)
+    pk.api.register(bp_v1)
+    # statistic.api.register(bp_v1)
     # token.api.register(bp_v1)
     sms.api.register(bp_v1)
     app.register_blueprint(bp_v1, url_prefix='/v1')

@@ -79,6 +79,10 @@ class DownloadPlus1Form(Form):
     channel = create_not_empty_field()
 
 
+class PVPlus1ByOnlineForm(Form):
+    oid = create_positive_integer_field()
+
+
 class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):
     pass
 

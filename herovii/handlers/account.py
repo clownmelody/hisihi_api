@@ -22,7 +22,7 @@ auth = HTTPBasicAuth()
 def get_auth_token():
     uid = g.id
     token = generate_auth_token(uid)
-    return jsonify({'token': token.decode('ascii')})
+    return jsonify({'token': token.decode('ascii')}), 200
 
 
 @api.route('/reset-password', methods=['PUT'])
