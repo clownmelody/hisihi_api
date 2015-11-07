@@ -16,3 +16,9 @@ def test_client_ip():
     r = request.remote_addr
     return r, 200
 
+
+@api.route('/error-log')
+def test_error_log():
+    i = 2/0
+    return i, 200
+
