@@ -40,6 +40,11 @@ def pv_plus_1():
         raise UnknownError()
 
 
+@api.route('/test', methods=['GET'])
+def test_javascript_http():
+    return 'hello', 200
+
+
 @api.route('share+1', methods=['PUT'])
 def share_plus_1():
     """ 分享次数+1
