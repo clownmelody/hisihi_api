@@ -7,16 +7,25 @@ from werkzeug.datastructures import MultiDict
 from .base import *
 from herovii.models import User
 from herovii.libs.errors import FormError
+from herovii.libs.error_code import ParamException
 
 
 class Form(BaseForm):
     @classmethod
     def create_api_form(cls, obj=None):
         args = request.args
+        # r_data = request.get_data()
+        # lt = eval(r_data)
+        # form_data = MultiDict(lt)
+        data = request.get_json(silent=True, force=True)
+        if not data:
+            raise ParamException(error=('the input json data is invalid,caution: '
+                                        'the name of json data,should be'
+                                        'in double quotation marks'))
 
-        formdata = MultiDict(request.get_json(force=True))
+        form_data = MultiDict(request.get_json(silent=True, force=True))
 
-        merge = formdata.copy()
+        merge = form_data.copy()
         merge.update(args)
         form = cls(formdata=merge, obj=obj, csrf_enabled=False)
         form._obj = obj
