@@ -24,7 +24,6 @@ def downloads_plus_1():
     # channel = request.args.get('channel')
     form = DownloadPlus1Form().create_api_form()
 
-    r = request.remote_addr
     head_agent = request.user_agent.string
     mobile_race = android_ipad_iphone(head_agent)
     count = downloads_plus(form.channel.data, oid=form.oid.data, mobile_race=mobile_race)
