@@ -24,7 +24,7 @@ with app.app_context():
     db.create_all()
 
 # 日志记录，当前测试在调试模式下，生成环境需更改为 not app.debug
-if app.debug:
+if not app.debug:
     import logging
     from logging import FileHandler
     file_handler = FileHandler('log.txt')

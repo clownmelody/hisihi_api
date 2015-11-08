@@ -70,7 +70,7 @@ def error_handler():
     raise AuthFaild()
 
 
-def generate_auth_token(uid, expiration=2000):
+def generate_auth_token(uid, expiration=7200):
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'id': uid})
 
