@@ -42,10 +42,10 @@ class NotFound(APIException):
     error_code = 1001
 
 
-class AuthFaild(APIException):
+class AuthFailed(APIException):
     code = 401
-    error_code = 1002
-    error = 'Authorization is required'
+    error_code = 1005
+    error = 'authorization failed'
 
 
 class UnknownError(APIException):

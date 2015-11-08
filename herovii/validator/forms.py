@@ -8,6 +8,7 @@ from .base import *
 from herovii.models import User
 from herovii.libs.errors import FormError
 from herovii.libs.error_code import ParamException
+from wtforms import Field
 
 
 class Form(BaseForm):
@@ -85,7 +86,13 @@ class PasswordForm(Form):
 
 class DownloadPlus1Form(Form):
     oid = create_positive_integer_field()
-    channel = create_not_empty_field()
+    channel = StringField(validators=[DataRequired()])
+
+
+class GetTokenForm(Form):
+    uid = create_not_empty_field()
+    secret = create_not_empty_field()
+    type = StringField(validators=[DataRequired()])
 
 
 class OnlineIDForm(Form):

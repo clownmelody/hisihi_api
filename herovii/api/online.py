@@ -8,11 +8,13 @@ from herovii.validator.forms import OnlineIDForm
 from herovii.service.online import pv_added_1, share_added_1
 from herovii.libs.helper import success_json
 from herovii.libs.error_code import UnknownError
+from herovii.libs.bpbase import auth
 
 api = ApiBlueprint('online')
 
 
 @api.route('', methods=['GET'])
+@auth.login_required
 def create_online():
     online = Online()
     online.title = '光棍节找妹子啦'
@@ -26,6 +28,7 @@ def create_online():
 
 
 @api.route('/pv+1', methods=['PUT'])
+@auth.login_required
 def pv_plus_1():
     """ 活动页面浏览量+1
     :PUT:
@@ -40,10 +43,8 @@ def pv_plus_1():
         raise UnknownError()
 
 
-
-
-
 @api.route('share+1', methods=['PUT'])
+@auth.login_required
 def share_plus_1():
     """ 分享次数+1
     :PUT:

@@ -1,14 +1,10 @@
-__author__ = 'bliss'
-
-import sys
-from herovii import create_app
-from herovii.models import db
-from enum import Enum
 
 
-class games(Enum):
-    hero = 1
-    msg = 2
-    tlou = 3
+import base64
 
-print(games.g)
+s = b'我是字符串'
+a = base64.b64encode(s)
+b = base64.b64decode(a)
+
+print(a)
+print(b)

@@ -6,9 +6,9 @@ __author__ = 'bliss'
 from flask import json
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.httper import BMOB
-from herovii.handlers.account import auth
+from herovii.libs.bpbase import auth
 from herovii.validator.forms import PhoneNumberForm
-from herovii.libs.error_code import Successful, UnknownError
+from herovii.libs.error_code import UnknownError
 from herovii.libs.helper import success_json
 
 api = ApiBlueprint('sms')

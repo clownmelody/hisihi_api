@@ -1,9 +1,9 @@
 __author__ = 'bliss'
 
-from herovii.libs.enums import MobileRace
+from herovii.libs.enums import MobileRaceEnum
 from herovii.models.onlines.statistic import Statistic
 from herovii.models.base import db
-from herovii.libs.enums import DownloadChannel
+from herovii.libs.enums import DownloadChannelEnum
 from herovii.libs.error_code import ParamException
 
 
@@ -13,10 +13,10 @@ def downloads_plus_by_online(**kwargs):
     params = {'f_online_id': oid}
 
     sqls = {
-        MobileRace.android: {Statistic.android_downloads: Statistic.android_downloads+1},
-        MobileRace.other: {Statistic.other_downloads: Statistic.other_downloads+1},
-        MobileRace.ipad: {Statistic.ipad_downloads: Statistic.ipad_downloads+1},
-        MobileRace.iphone: {Statistic.iphone_downloads: Statistic.iphone_downloads+1},
+        MobileRaceEnum.android: {Statistic.android_downloads: Statistic.android_downloads+1},
+        MobileRaceEnum.other: {Statistic.other_downloads: Statistic.other_downloads+1},
+        MobileRaceEnum.ipad: {Statistic.ipad_downloads: Statistic.ipad_downloads+1},
+        MobileRaceEnum.iphone: {Statistic.iphone_downloads: Statistic.iphone_downloads+1},
     }
     sql = sqls.get(mobile_race)
 
@@ -28,19 +28,16 @@ def downloads_plus_by_online(**kwargs):
 
 def downloads_plus(channel, **kwargs):
     channels = {
-        DownloadChannel.online: downloads_plus_by_online
+        DownloadChannelEnum.online: downloads_plus_by_online
     }
-    if str.isnumeric(channel):
-        channel = int(channel)
-        try:
-            key = DownloadChannel(channel)
-        except ValueError:
-            raise ParamException(error='the channel parameter is not in range')
-    else:
-        try:
-            key = DownloadChannel(channel)
-        except ValueError:
-            raise ParamException(error='the channel parameter is not in range')
+    try:
+        if isinstance(channel, int) or str.isnumeric(channel):
+            channel = int(channel)
+            channel = DownloadChannelEnum(channel)
+        else:
+            channel = DownloadChannelEnum[channel]
+    except ValueError:
+        raise ParamException(error='the channel parameter is not in range')
 
-    return channels.get(key)(**kwargs)
+    return channels.get(channel)(**kwargs)
 

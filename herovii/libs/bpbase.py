@@ -1,5 +1,9 @@
 __author__ = 'bliss'
 
+from flask.ext.httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+
 
 class ApiBlueprint(object):
     def __init__(self, name):
@@ -17,5 +21,5 @@ class ApiBlueprint(object):
             url_prefix = '/' + self.name
 
         for f, rule, options in self.deferred:
-            endpoint = options.pop("endpoint", f.__name__)
+            endpoint = self.name+'+'+options.pop("endpoint", f.__name__)
             bp.add_url_rule(url_prefix + rule, endpoint, f, **options)

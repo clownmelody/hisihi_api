@@ -8,6 +8,7 @@ from .base import Base
 class UserOrg(Base):
 
     __tablename__ = 'user_org'
+    __bind_key__ = 'org'
 
     id = Column(Integer, primary_key=True)
     username = Column(String(45), unique=True)

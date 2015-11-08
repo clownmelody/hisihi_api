@@ -1,7 +1,10 @@
 __author__ = 'bliss'
 
-from flask import request
+from flask import request, jsonify
 from herovii.libs.bpbase import ApiBlueprint
+from herovii.models.user_org import UserOrg
+from herovii.models.base import db
+from herovii.api.token import auth
 
 api = ApiBlueprint('test')
 
@@ -17,8 +20,30 @@ def test_client_ip():
     return r, 200
 
 
+@api.route('/download+1', methods=['PUT'])
+def downloads_plus_1():
+    pass
+
+
 @api.route('/error-log')
 def test_error_log():
     i = 2/0
     return i, 200
+
+
+@api.route('/auth')
+@auth.login_required
+def test_auth():
+    return 'success', 200
+
+
+@api.route('/test', methods=['GET'])
+def test():
+    # pass
+    user = UserOrg()
+    user.password = '19851118'
+    user.mobile = "18607131949"
+    with db.auto_commit():
+        db.session.add(user)
+    return jsonify(user), 201
 

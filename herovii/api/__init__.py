@@ -55,6 +55,7 @@ def reg_v1_bp(app):
     pk.api.register(bp_v1)
     sms.api.register(bp_v1)
     test.api.register(bp_v1)
+    token.api.register(bp_v1)
     app.register_blueprint(bp_v1, url_prefix='/v1')
 
 # # register consumer type blue print

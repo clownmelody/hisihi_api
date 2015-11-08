@@ -6,10 +6,9 @@ from herovii.service import user_srv, account
 from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound, UnknownError
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.handlers.account import auth
-from herovii.models.user_org import UserOrg
-from herovii.models.base import db
+from herovii.libs.bpbase import auth
 from herovii.libs.httper import BMOB
+from herovii.libs.helper import success_json
 
 api = ApiBlueprint('user')
 
@@ -35,6 +34,28 @@ def create_by_mobile():
         raise UnknownError(j['error'], error_code=None)
 
 
+@api.route('/reset-password', methods=['PUT'])
+def find_password():
+    """ 重置/找回密码
+        调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
+    :PUT:
+        {"phone_number":'18699998888', "sms_code":'876876', "password":'password'}
+    :return:
+    """
+    bmob = BMOB()
+    form = RegisterByMobileForm.create_api_form()
+    mobile = form.phone_number.data
+    password = form.password.data
+    sms_code = form.sms_code.data
+    status, body = bmob.verify_sms_code(mobile, sms_code)
+    if status == 200:
+        account.reset_password_by_mobile(mobile, password)
+        return success_json(), 202
+    else:
+        j = json.loads(body)
+        raise UnknownError(j['error'], error_code=None)
+
+
 @api.route('/<uid>', methods=['GET'])
 @auth.login_required
 def get_user_uid(uid):
@@ -45,13 +66,3 @@ def get_user_uid(uid):
     else:
         raise NotFound('user not found', 2000)
 
-
-@api.route('/test', methods=['GET'])
-def test():
-    # pass
-    user = UserOrg()
-    user.password = '19851118'
-    user.mobile = "18607131949"
-    with db.auto_commit():
-        db.session.add(user)
-    return jsonify(user), 201

@@ -4,6 +4,7 @@ from herovii.models.user import User
 from herovii.models.user_org import UserOrg
 from herovii.models.base import db
 from herovii.libs.error_code import NotFound
+from herovii.models.heroapi.app import App
 
 
 def register_by_email(username, email, password):
@@ -38,10 +39,42 @@ def reset_password_by_mobile(mobile, password):
     return user
 
 
-def verify_by_phonenumber(phonenumber, password):
-    user = User.query.filter_by(username=phonenumber).first()
+def verify_by_phone_number(phone_number, password):
+    user = UserOrg.query.filter_by(mo=phone_number).first()
     if not user or not user.check_password(password):
         return None
     else:
         return user.id
+
+
+def verify_in_heroapi(aid, secret):
+    app = App.query.filter_by(app_id=aid, app_secret=secret).first()
+    if app is not None:
+        return app.scope
+    else:
+        return None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
