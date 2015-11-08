@@ -17,7 +17,7 @@ api = ApiBlueprint('account')
 auth = HTTPBasicAuth()
 
 
-@api.route('')
+@api.route('/token')
 @auth.login_required
 def get_auth_token():
     uid = g.id
