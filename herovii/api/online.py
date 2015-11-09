@@ -43,7 +43,7 @@ def pv_plus_1():
         raise UnknownError()
 
 
-@api.route('share+1', methods=['PUT'])
+@api.route('/share+1', methods=['PUT'])
 @auth.login_required
 def share_plus_1():
     """ 分享次数+1
