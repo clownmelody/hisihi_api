@@ -11,7 +11,8 @@ api = ApiBlueprint('test')
 
 @api.route('/get', methods=['GET'])
 def test_javascript_http():
-    return 'hello', 200
+    p = request.args.get('name')
+    return p, 200
 
 
 @api.route('/client-ip', methods=['GET'])
