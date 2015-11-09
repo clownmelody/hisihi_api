@@ -30,7 +30,7 @@ def get_token():
     form = GetTokenForm.create_api_form()
     scope = verify(form.uid.data, form.secret.data, form.type.data)
     if scope is None:
-        raise AuthFailed()
+        raise AuthFailed(error='id or password is incorrect', error_code=1005)
     expiration = current_app.config['TOKEN_EXPIRES_IN']
     token = generate_auth_token(form.uid.data, form.type.data, scope, expiration)
     return jsonify({'token': token.decode('ascii')}), 200
@@ -80,6 +80,7 @@ def verify_auth_token(token):
     s = Serializer(current_app.config['SECRET_KEY'])
     try:
         data = s.loads(token)
+        # data = s.loads(token, return_header=True)
     except SignatureExpired:
         raise AuthFailed(error='token is expired', error_code=1003)
         # return None # valid token, but expired
