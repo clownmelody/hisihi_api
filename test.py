@@ -1,10 +1,20 @@
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-import base64
+# create a file handler
 
-s = b'我是字符串'
-a = base64.b64encode(s)
-b = base64.b64decode(a)
+handler = logging.FileHandler('hello.log')
+handler.setLevel(logging.INFO)
 
-print(a)
-print(b)
+# create a logging format
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+
+# add the handlers to the logger
+
+logger.addHandler(handler)
+
+logger.info('Hello baby')
