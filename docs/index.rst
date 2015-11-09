@@ -14,6 +14,9 @@ Api V1 说明
     PUT https://api.hisihi.com/v1/pk/download+1
     PUT-Data:  {"oid" : "4", "channel" : 1 }
 
+
+
+
 关于POST、PUT等HTTP动作的数据提交
 ------------------------------
 
@@ -27,6 +30,13 @@ Api V1 说明
 **正确的参数**::
 
         POST {"oid":"3", "channel": "oneline"}
+
+
+
+
+
+
+
 
 
 关于API调用的返回结果

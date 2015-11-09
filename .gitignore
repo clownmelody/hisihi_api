@@ -11,6 +11,7 @@ parts
 .DS_Store
 .installed.cfg
 docs/_build
+docs/build
 cover/
 .tox
 *.bak
