@@ -3,7 +3,7 @@ __author__ = 'bliss'
 from herovii.libs.error_code import AuthFailed
 
 
-class OnlineScope(object):
+class Online0001Scope(object):
     allow_module = ['v1.online', 'v1.pk', 'v1.test']
     forbidden_api = ['v1.test+test_auth']
     allow_api = []
@@ -13,9 +13,9 @@ class OnlineScope(object):
         index = str.find(api_endpoint, '+')
         prefix = api_endpoint[:index]
 
-        if api_endpoint in OnlineScope.allow_api:
+        if api_endpoint in Online0001Scope.allow_api:
             return True
-        if prefix in OnlineScope.allow_module and prefix not in OnlineScope.forbidden_api:
+        if prefix in Online0001Scope.allow_module and prefix not in Online0001Scope.forbidden_api:
             return True
         return False
 
