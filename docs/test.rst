@@ -28,6 +28,18 @@ Or literally include code:
 
 .. _making-a-list:
 
+
+.. note::
+
+   该功能不适于发送垃圾邮件.
+
+.. versionadded:: 2.5
+   The *spam* parameter.
+
+.. deprecated:: 3.1
+   Use :func:`spam` instead.
+
+
 Making a list
 =============
 

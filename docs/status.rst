@@ -1,3 +1,5 @@
+.. _status:
+
 HTTP返回状态说明
 =================
 Hero API 通过HTTP Status Code来说明 API 请求是否成功 下面的表格中展示了可能的

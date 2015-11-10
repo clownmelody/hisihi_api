@@ -1,4 +1,4 @@
-herovii Api V1 (Test Version)
+Herovii Api V1 (Test Version)
 ===============================
 
 Api V1 说明
@@ -13,7 +13,7 @@ Api V1 说明
 #. 不建议客户端存储用户账号、密码以及app_key和app_secret
 #. 数据格式统一使用json，不支持xml
 #. 所有Api均支持跨域，目前不做任何限制，后期根据情况可能会限制跨域访问
-#. Api遵从严格的HTTP动作并采用标准的 :ref:`status<HTTP Status Code>`作为响应状态，
+#. Api遵从严格的HTTP动作并采用标准的 :ref:`Http Status Code <status>` 作为响应状态，
    建议采用HTTP状态码作为Api调用是否成功的标识
 #. POST/PUT时中文使用UTF-8编码
 #. Api返回的时间均为时间戳，请自行转换
