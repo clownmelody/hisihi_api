@@ -7,8 +7,7 @@ from werkzeug.datastructures import MultiDict
 from .base import *
 from herovii.models import User
 from herovii.libs.errors import FormError
-from herovii.libs.error_code import ParamException
-from wtforms import Field
+from herovii.libs.error_code import JSONStyleError
 
 
 class Form(BaseForm):
@@ -20,9 +19,7 @@ class Form(BaseForm):
         # form_data = MultiDict(lt)
         data = request.get_json(silent=True, force=True)
         if not data:
-            raise ParamException(error=('the input json data is invalid,caution: '
-                                        'the name of json data,should be'
-                                        'in double quotation marks'))
+            raise JSONStyleError()
 
         form_data = MultiDict(request.get_json(silent=True, force=True))
 

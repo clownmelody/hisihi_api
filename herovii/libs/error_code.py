@@ -36,6 +36,14 @@ class ParamException(APIException):
         super().__init__(error, error_code, code, response)
 
 
+class JSONStyleError(APIException):
+    code = 400
+    error = ('the input json data is invalid,caution: '
+             'the name of json data,should be'
+             'in double quotation marks')
+    error_code = 1006
+
+
 class NotFound(APIException):
     code = 404
     error = 'the resource are not_found'

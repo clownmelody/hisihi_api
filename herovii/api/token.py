@@ -6,9 +6,9 @@ from itsdangerous import SignatureExpired, BadSignature
 from flask import current_app
 
 from herovii.service import account
-from herovii.libs.error_code import AuthFailed, ParamException
+from herovii.libs.error_code import AuthFailed, ParamException, JSONStyleError
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.validator.forms import  GetTokenForm
+from herovii.validator.forms import GetTokenForm
 from herovii.libs.scope import is_in_scope
 from herovii.libs.enums import AccountTypeEnum
 
@@ -66,6 +66,29 @@ def verify_password(token, password):
         return True
 
 
+@api.route('/info', methods=['POST'])
+def get_token_info():
+    json = request.get_json(force=True, silent=True)
+    if not json:
+        raise JSONStyleError()
+    else:
+        s = Serializer(current_app.config['SECRET_KEY'])
+        token = json['token']
+        try:
+            data = s .loads(token, return_header=True)
+        except SignatureExpired:
+            raise AuthFailed(error='token is expired', error_code=1003)
+        except BadSignature:
+            raise AuthFailed(error='token is invalid', error_code=1002)
+
+    r = {
+        'scope': data[0]['scope'],
+        'create_at': data[1]['iat'],
+        'expire_in': data[1]['exp']
+    }
+    return jsonify(r), 200
+
+
 @auth.error_handler
 def error_handler():
     raise AuthFailed()
@@ -79,8 +102,8 @@ def generate_auth_token(uid, ac_type, scope, expiration=7200):
 def verify_auth_token(token):
     s = Serializer(current_app.config['SECRET_KEY'])
     try:
+        # data = s.loads(token)
         data = s.loads(token)
-        # data = s.loads(token, return_header=True)
     except SignatureExpired:
         raise AuthFailed(error='token is expired', error_code=1003)
         # return None # valid token, but expired
