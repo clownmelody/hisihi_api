@@ -17,7 +17,7 @@ Api V1 说明
    建议采用HTTP状态码作为Api调用是否成功的标识
 #. POST/PUT时中文使用UTF-8编码
 #. Api返回的时间均为时间戳，请自行转换
-#. Api同时支持HTTP和HTTPS两种协议。由于目前没有购买证书，客户端有可能会被阻止使用HTTP
+#. Api同时支持HTTP和HTTPS两种协议。由于目前没有购买证书，客户端有可能会被阻止使用HTTPs
    协议，所以建议目前使用HTTP协议访问
 
 
@@ -27,3 +27,6 @@ Api V1 说明
    :maxdepth: 2
 
    status
+   tips
+   token
+   test

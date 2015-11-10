@@ -15,6 +15,33 @@ Url 前缀
     PUT-Data:  {"oid" : "4", "channel" : 1 }
 
 
+如何使用令牌访问Api?
+-----------------------
+
+目前所有Api的调用均需要使用令牌。如何获取令牌请参考 :ref:`Token <token>`。当获
+取令牌后需要将token加入到Http的Header里::
+
+    Authorization  basic eyJleHAiOjE0NDc0MjkxOTIsImlhdCI6MTQ0NzE2OTk5MiwiY
+                         WxnIjoiSFMyNTYifQ.eyJzY29wZSI6Ik9ubGluZTAwMDEiLCJ
+                         1aWQiOiJNbXlLc0JsSiIsImFjX3R5cGUiOiIxIn0.28Z7wog3
+                         fqXm_5V7f8is_O7kxK1c88K50gD2fk4lwmo:
+
+`Authorization` 是 **key**，后面的是 **value**。注意后面的 **:**  注意后面的
+**:**  注意后面的 **:**  ......重要的事情任需要说+10086遍。（原因是Api采用的
+是HttpBasic验证）以上的http发送后你会收到一个 *非法的token错误* 。原因是，你
+还需要将 *value* 部分使用base64编码后再发送:
+
+.. sourcecode:: http
+
+    GET /v1/test/client-ip HTTP/1.1
+    HOST: api.hisihi.com
+    Accept: application/json; version 1
+    Authorization  basic ZXlKbGVIQWlPakUwTkRjME1qa3hPVElzSW1saGRDSTZNVFEwTnp
+    FMk9UazVNaXdpWVd4bklqb2lTRk15TlRZaWZRLmV5SnpZMjl3WlNJNklrOXViR2x1WlRBd01
+    ERWlMQ0oxYVdRaU9pSk5iWGxMYzBKc1NpSXNJbUZqWDNSNWNHVWlPaUl4SW4wLjI4Wjd3b2c
+    zZnFYbV81VjdmOGlzX083a3hLMWM4OEs1MGdEMmZrNGx3bW8=
+
+
 关于POST、PUT等HTTP动作的数据提交
 ------------------------------
 
@@ -49,11 +76,8 @@ application/json.
           "request": "PUT  /v1/pk/download+1"
         }
 
-**code** 表示错误码（错误码详情可以参见 :ref:`status<错误码>` ）；**msg** 表示错误信息；
-**request** 表示此次访问的HTTP地址。当错误消息未能解决你的问题时，请查找错误返回码，以获
-取有效的错误消息。
+**code** 表示错误码（错误码详情可以参见 :ref:`Htttp Status COde<status>` ）；**msg**
+表示错误信息； **request** 表示此次访问的HTTP地址。当错误消息未能解决你的问题时，请查找
+错误返回码，以获取有效的错误消息。
 
-
-如何使用令牌访问Api?
------------------------
 
