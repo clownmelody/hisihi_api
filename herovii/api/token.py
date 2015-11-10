@@ -36,6 +36,29 @@ def get_token():
     return jsonify({'token': token.decode('ascii')}), 200
 
 
+@api.route('/info', methods=['POST'])
+def get_token_info():
+    json = request.get_json(force=True, silent=True)
+    if not json:
+        raise JSONStyleError()
+    else:
+        s = Serializer(current_app.config['SECRET_KEY'])
+        token = json['token']
+        try:
+            data = s .loads(token, return_header=True)
+        except SignatureExpired:
+            raise AuthFailed(error='token is expired', error_code=1003)
+        except BadSignature:
+            raise AuthFailed(error='token is invalid', error_code=1002)
+
+    r = {
+        'scope': data[0]['scope'],
+        'create_at': data[1]['iat'],
+        'expire_in': data[1]['exp']
+    }
+    return jsonify(r), 200
+
+
 def refresh_token():
     pass
 
@@ -64,29 +87,6 @@ def verify_password(token, password):
     else:
         g.uid = uid
         return True
-
-
-@api.route('/info', methods=['POST'])
-def get_token_info():
-    json = request.get_json(force=True, silent=True)
-    if not json:
-        raise JSONStyleError()
-    else:
-        s = Serializer(current_app.config['SECRET_KEY'])
-        token = json['token']
-        try:
-            data = s .loads(token, return_header=True)
-        except SignatureExpired:
-            raise AuthFailed(error='token is expired', error_code=1003)
-        except BadSignature:
-            raise AuthFailed(error='token is invalid', error_code=1002)
-
-    r = {
-        'scope': data[0]['scope'],
-        'create_at': data[1]['iat'],
-        'expire_in': data[1]['exp']
-    }
-    return jsonify(r), 200
 
 
 @auth.error_handler
