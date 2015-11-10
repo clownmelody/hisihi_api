@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Arial', 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;
-    font-size: 16px;
+    font-size: 15px;
     background-color: white;
     color: #000;
     margin: 0;
@@ -14,7 +14,7 @@ body {
 }
 
 div.document {
-    width: 940px;
+    width: 1000px;
     margin: 30px auto 0 auto;
 }
 
@@ -42,7 +42,7 @@ div.body {
 }
 
 div.footer {
-    width: 940px;
+    width: 1000px;
     margin: 20px auto 30px auto;
     font-size: 14px;
     color: #888;
@@ -361,6 +361,14 @@ blockquote {
 ul, ol {
     margin: 10px 0 10px 30px;
     padding: 0;
+}
+
+.body li{
+    margin: 20px;
+}
+
+cite {
+    color: #dd7700;
 }
 
 pre {
