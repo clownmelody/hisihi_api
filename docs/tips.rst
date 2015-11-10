@@ -45,7 +45,7 @@ Url 前缀
 关于POST、PUT等HTTP动作的数据提交
 ------------------------------
 
-任何参数提交（除**GET**参数外）均需要严格符合JSON数据格式。不要以单引号表示JSON
+任何参数提交（除 *GET* 参数外）均需要严格符合JSON数据格式。不要以单引号表示JSON
 的键或者值。在herovii api中所有json数据字符串都必须以双引号" " 来引用。
 
 *错误的参数* ::
@@ -56,7 +56,7 @@ Url 前缀
 
         POST {"oid":"3", "channel": "oneline"}
 
-HTTP/HTTPS Header
+application/json
 ------------------------------
 Api不会要求每次HTTP/HTTPS请求都在HTTP Header里附带 Content-type: application/json。
 但是，如果你对你所使用的HTTP请求框架不熟悉的话，还是建议在HTTP头里加上Content-Type：
@@ -67,8 +67,8 @@ application/json.
 ----------------------
 所有HTTP请求只有2种类型的json返回结果:
 1. 返回资源的特定信息（如获取用户基本信息）
-2. 返回一组消息，指明调用是否成功。这类消息通常具有共同的消息体
-通用返回格式均包含msg、code及request三个参数组成的JSON响应消息::
+2. 返回一组消息，指明调用是否成功。这类消息通常具有共同的消息体样式。
+通用返回格式是由msg、code及request三个参数组成的JSON响应体::
 
         {
           "code": 1003,

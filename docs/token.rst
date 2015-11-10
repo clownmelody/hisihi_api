@@ -6,9 +6,9 @@ v1/token
 获取令牌
 ~~~~~~~~~~~
 
-Request with `POST` method::
+URL::
 
-    `POST`      /
+    POST      /
 
 POST：
 
@@ -44,9 +44,9 @@ Response with:
 获取令牌信息
 ~~~~~~~~~~~~~~~~
 
-Request with `POST` method::
+URL::
 
-    `POST`      /info
+    POST      /info
 
 POST::
 
