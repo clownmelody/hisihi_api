@@ -1,53 +1,25 @@
-herovii ApiV1（测试版）
-=======================
+herovii Api V1 (Test Version)
+===============================
 
 Api V1 说明
 ~~~~~~~~~~~~~~~~
 
-所有的API发布版本均以 **api.hisihi.com/v1/** 开头, 测试版均以
-**test.api.hisihi.com/v1** 开头。例如::
+互联网数据可贵。使用Api，从我做起。
 
-    PUT /pk/download+1
+1. 除了 `POST v1/token` 和 `POST v1/token/info` (获取令牌及查询令牌信息)外所有Api都
+   需要申请令牌来调用
+#. 令牌具有时效性，当令牌过期时需要使用app_key和app_secret或者账号、密码重新获取令牌
+#. 令牌分为应用令牌和用户令牌，两种令牌的获取都可以通过调用 `POST v1/token`来获取
+#. 不建议客户端存储用户账号、密码以及app_key和app_secret
+#. 数据格式统一使用json，不支持xml
+#. 所有Api均支持跨域，目前不做任何限制，后期根据情况可能会限制跨域访问
+#. Api遵从严格的HTTP动作并采用标准的 :ref:`status<HTTP Status Code>`作为响应状态，
+   建议采用HTTP状态码作为Api调用是否成功的标识
+#. POST/PUT时中文使用UTF-8编码
+#. Api返回的时间均为时间戳，请自行转换
+#. Api同时支持HTTP和HTTPS两种协议。由于目前没有购买证书，客户端有可能会被阻止使用HTTP
+   协议，所以建议目前使用HTTP协议访问
 
-你需要使用如下URL来调用::
-
-    PUT https://api.hisihi.com/v1/pk/download+1
-    PUT-Data:  {"oid" : "4", "channel" : 1 }
-
-
-
-
-关于POST、PUT等HTTP动作的数据提交
-------------------------------
-
-任何参数提交（除**GET**参数外）均需要严格符合JSON数据格式。比如，以单引号表示JSON
-的键或者值。在herovii api中所有json数据字符串都必须以双引号" " 来引用。
-
-**错误的参数** ::
-
-        POST {‘oid’:'3', 'channel': 'online'}
-
-**正确的参数**::
-
-        POST {"oid":"3", "channel": "oneline"}
-
-
-
-关于API调用的返回结果
-----------------------
-
-所有的调用结果均以JSON形式返回，不支持XML格式。除具体对象返回结果（如获取用户基本信息），
-通用返回格式均包含msg、code及request三个参数组成的JSON响应消息::
-
-        {
-          "code": 1003,
-          "msg": "token is expired",
-          "request": "PUT  /v1/pk/download+1"
-        }
-
-**code** 表示错误码（具体错误码可以参见错误码页）；**msg** 表示错误信息；**request** 表示
-此次访问的HTTP地址。**错误返回码及其有用**，当错误消息未能解决你的问题时，请查找错误
-返回码，以获取有效的错误消息。
 
 
 
@@ -55,4 +27,3 @@ Api V1 说明
    :maxdepth: 2
 
    status
-
