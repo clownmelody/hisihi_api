@@ -1,6 +1,6 @@
 __author__ = 'bliss'
 
-from flask import request, jsonify
+from flask import request, jsonify, redirect
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.models.user_org import UserOrg
 from herovii.models.base import db
@@ -24,6 +24,11 @@ def test_client_ip():
 @api.route('/dev')
 def test_new_dev():
     return 'dev is ok', 200
+
+
+@api.route('/redirect')
+def test_redirect():
+    return redirect('http://sina.com')
 
 
 @api.route('/download+1', methods=['PUT'])
