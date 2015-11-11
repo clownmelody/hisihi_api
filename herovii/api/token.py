@@ -33,7 +33,7 @@ def get_token():
         raise AuthFailed(error='id or password is incorrect', error_code=1005)
     expiration = current_app.config['TOKEN_EXPIRES_IN']
     token = generate_auth_token(form.uid.data, form.type.data, scope, expiration)
-    return jsonify({'token': token.decode('ascii')}), 200
+    return jsonify({'token': token.decode('ascii')}), 201
 
 
 @api.route('/info', methods=['POST'])
