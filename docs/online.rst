@@ -19,7 +19,8 @@ PUT::
     }
 
 Parameters:
-* oid: 活动的id号
+
+* oid: 需要增加pv的活动的id号
 
 Response Status `202` ::
 
@@ -43,7 +44,8 @@ PUT::
     }
 
 Parameters:
-* oid: 活动的id号
+
+* oid: 需要增加分享次数的活动的id号
 
 Response Status `202` ::
 
