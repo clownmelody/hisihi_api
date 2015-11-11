@@ -26,7 +26,7 @@ Parameters:
 * secret: 用户密码或者app_secret
 * type: 账号类型，目前只有App类，可取值 1, "1", 或者"App"
 
-Response with:
+Response Status `201`:
 
 .. sourcecode:: json
 
@@ -58,7 +58,7 @@ Parameters:
 
 * token: 令牌（不需要base64加密）
 
-Response with::
+Response Status `200`::
 
     {
         "create_at": 1447175285,
