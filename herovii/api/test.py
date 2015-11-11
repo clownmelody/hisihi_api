@@ -21,6 +21,11 @@ def test_client_ip():
     return r, 200
 
 
+@api.route('/dev')
+def test_new_dev():
+    return 'dev is ok', 200
+
+
 @api.route('/download+1', methods=['PUT'])
 def downloads_plus_1():
     pass
