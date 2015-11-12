@@ -9,25 +9,25 @@ from herovii.libs.bpbase import auth
 api = ApiBlueprint('mall')
 
 
-@api.route('/order', methods=['POST'])
+@api.route('/order_duiba', methods=['GET'])
 def create_order():
-    uid = request.args.get('uid')
-    credit = request.args.get('credits')
+    """兑吧专用扣除积分创建订单接口"""
     duiba = DuiBa()
-    order = duiba.create_order(request.args.to_dict())
-    r_data = {
-        'status': 'ok',
-        'errorMessage': '',
-        'bizid': '20140730192133033',
-        'credits': '100'
-    }
-    if order is not None:
+    success, left_score, bizid = duiba.create_order(request.args.to_dict())
+
+    if success:
+        r_data = {
+            'status': 'ok',
+            'errorMessage': '',
+            'bizid': bizid,
+            'credits': left_score
+         }
         return jsonify(r_data), 200
     else:
         r_error = {
             'status': 'fail',
-            'errorMessage': '失败原因（显示给用户）',
-            'credits': '100'
+            'errorMessage': '积分不足',
+            'credits': left_score
         }
         return jsonify(r_error), 400
 

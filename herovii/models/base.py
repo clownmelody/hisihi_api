@@ -32,7 +32,11 @@ class BaseMixin(object):
         return getattr(self, key)
 
 
-class  Base(db.Model, BaseMixin):
+class Base(db.Model, BaseMixin):
     __abstract__ = True
     create_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
+
+
+class BaseNoCreateTime(db.Model, BaseMixin):
+    __abstract__ = True
 
