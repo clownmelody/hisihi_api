@@ -55,6 +55,9 @@ class DuiBa(object):
         else:
             return None
 
+    def deduct_credit(self, uid, credit):
+        pass
+
     def __adapter(self, params_list):
         """
         由兑吧传入的boolean类型值为 ‘true’ 或者‘false’，需要变更为Python类型
