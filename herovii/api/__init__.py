@@ -3,7 +3,7 @@ __author__ = 'Whispers'
 import re
 
 from flask import Blueprint
-from herovii.api import user, token, sms, online, pk, test, credit
+from herovii.api import user, token, sms, online, pk, test, mall
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
@@ -56,7 +56,7 @@ def reg_v1_bp(app):
     sms.api.register(bp_v1)
     test.api.register(bp_v1)
     token.api.register(bp_v1)
-    credit.api.register(bp_v1)
+    mall.api.register(bp_v1)
     app.register_blueprint(bp_v1, url_prefix='/v1')
 
 # # register consumer type blue print

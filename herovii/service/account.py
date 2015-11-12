@@ -1,7 +1,7 @@
 __author__ = 'bliss'
 
-from herovii.models.user import User
-from herovii.models.user_org import UserOrg
+from herovii.models.user.user import User
+from herovii.models.user.user_org import UserOrg
 from herovii.models.base import db
 from herovii.libs.error_code import NotFound
 from herovii.models.heroapi.app import App

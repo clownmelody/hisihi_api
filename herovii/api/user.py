@@ -13,6 +13,16 @@ from herovii.libs.helper import success_json
 api = ApiBlueprint('user')
 
 
+@api.route('/csu', methods=['POST'])
+def create_csu_user():
+    pass
+
+
+@api.route('/org1', methods=['POST'])
+def create_org_user():
+    pass
+
+
 @api.route('/org', methods=['POST'])
 def create_by_mobile():
     """ 添加一个机构用户

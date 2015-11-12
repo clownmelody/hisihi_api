@@ -2,7 +2,7 @@ __author__ = 'bliss'
 
 from sqlalchemy import Column, Integer, String, Boolean
 from werkzeug.security import generate_password_hash, check_password_hash
-from .base import Base
+from herovii.models.base import Base
 
 
 class UserOrg(Base):

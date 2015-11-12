@@ -1,6 +1,6 @@
 __author__ = 'bliss'
 
-from herovii.models.user import User
+from herovii.models.user.user import User
 
 
 def get_user_by_uid(uid):

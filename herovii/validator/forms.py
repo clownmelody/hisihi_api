@@ -5,7 +5,7 @@ from flask_wtf import Form as BaseForm
 from wtforms.validators import StopValidation
 from werkzeug.datastructures import MultiDict
 from .base import *
-from herovii.models import User
+from herovii.models.user.user import User
 from herovii.libs.errors import FormError
 from herovii.libs.error_code import JSONStyleError
 
