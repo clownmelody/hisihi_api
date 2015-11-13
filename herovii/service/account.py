@@ -51,13 +51,13 @@ def verify_by_phone_number(phone_number, password):
 def verify_in_heroapi(key, secret):
     app = App.query.filter_by(app_id=key, app_secret=secret).first()
     if app is not None:
-        return app.scope
+        return [app.app_key, app.scope]
     else:
         return None
 
 
-def verify_in_csu_by_social(uuid):
-    """
+def verify_in_csu_by_social(uuid, secret):
+    """ 通过uuid or openid 进行授权
     目前Andorid端没有将授权码Code返回服务器进行第三方授权
     而是传递的OpenId。占时只需要使用OpenId或者UUID来进行登录授权。
     极度不安全。后期需要更改为使用code码拉取用户信息的方式验证
@@ -65,9 +65,19 @@ def verify_in_csu_by_social(uuid):
     :return uid: 返回用户在服务器的ID
     """
     uid = db.session.query(UserCSUSecure.id)\
-        .filter_by(user_name=uuid).first()
+        .filter_by(username=uuid).first()
     if uid:
-        return uid
+        return [uid[0], 'UserCSU']
+    else:
+        return None
+
+
+def verify_in_csu_by_mobile(mobile, password):
+    """通过验证用户手机和密码进行授权"""
+    uid = db.session.query(UserCSUSecure.id)\
+        .filter_by(mobile=mobile, password=password).first()
+    if uid:
+        return [uid[0], 'UserCSU']
     else:
         return None
 

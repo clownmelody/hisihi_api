@@ -20,11 +20,11 @@ def get_token():
     """获取令牌"""
     # uid = g.uid
     form = GetTokenForm.create_api_form()
-    scope = verify_user(form.uid.data, form.secret.data, form.type.data)
-    if scope is None:
+    uid_scope = verify_user(form.account.data, form.secret.data, form.type.data)
+    if uid_scope is None:
         raise AuthFailed(error='id or password is incorrect', error_code=1005)
     expiration = current_app.config['TOKEN_EXPIRES_IN']
-    token = generate_auth_token(form.uid.data, form.type.data, scope, expiration)
+    token = generate_auth_token(uid_scope[0], form.type.data, uid_scope[1], expiration)
     return jsonify({'token': token.decode('ascii')}), 201
 
 
@@ -56,7 +56,7 @@ def refresh_token():
     pass
 
 
-def verify_user(uid, secret, ac_type):
+def verify_user(ac, secret, ac_type):
     """验证用户身份"""
     try:
         if isinstance(ac_type, int) or str.isnumeric(ac_type):
@@ -68,9 +68,10 @@ def verify_user(uid, secret, ac_type):
         raise ParamException(error='the type parameter is not in range')
     promise = {
                 AccountTypeEnum.app: account.verify_in_heroapi,
-                AccountTypeEnum.use_csu_by_social: account.verify_in_csu_by_social
+                AccountTypeEnum.use_csu_by_social: account.verify_in_csu_by_social,
+                AccountTypeEnum.user_csu_by_mobile: account.verify_in_csu_by_mobile
         }
-    return promise.get(ac_type)(uid, secret)
+    return promise.get(ac_type)(ac, secret)
 
 
 @auth.verify_password
@@ -79,11 +80,11 @@ def verify_password(token, password):
     # password这里没有用，但是由于使用了http-auth库，所以占时保留
     if current_app.config['REMOVE_TOKEN_VERIFY']:
         return True
-    uid = verify_auth_token(token)
-    if not uid:
+    user_info = verify_auth_token(token)
+    if not user_info:
         return False
     else:
-        g.uid = uid
+        g.user = user_info
         return True
 
 
@@ -93,8 +94,9 @@ def error_handler():
 
 
 def generate_auth_token(uid, ac_type, scope, expiration=7200):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
-        return s.dumps({'uid': uid, 'ac_type': ac_type, 'scope': scope})
+    """生成令牌"""
+    s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+    return s.dumps({'uid': uid, 'ac_type': ac_type, 'scope': scope})
 
 
 def verify_auth_token(token):
@@ -112,10 +114,11 @@ def verify_auth_token(token):
 
     uid = data['uid']
     scope = data['scope']
+    ac_type = data['type']
     if not current_app.config['REMOVE_SCOPE_CONTROL']:
         allow = is_in_scope(scope, request.endpoint)
         if not allow:
             raise AuthFailed(error='forbidden,not in scope', error_code=1004, code='403')
-    return uid
+    return [uid, ac_type]
 
 

@@ -76,7 +76,7 @@ class SMSCodeForm(Form):
 class PasswordForm(Form):
     password = StringField(validators=[
         DataRequired(),
-        # password can only include lettes , numbers and "_"
+        # password can only include letters , numbers and "_"
         Regexp(r'^[A-Za-z0-9_]{6,22}$')
     ])
 
@@ -88,7 +88,7 @@ class DownloadPlus1Form(Form):
 
 class GetTokenForm(Form):
     account = create_not_empty_field()
-    secret = create_not_empty_field()
+    secret = StringField()
     type = StringField(validators=[DataRequired()])
     device = StringField()
 
