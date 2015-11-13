@@ -15,16 +15,18 @@ POST：
 .. sourcecode:: json
 
     {
-        "uid":"MmyQsBlY",
+        "account":"MmyQsBlY",
         "secret":"E4Drd2Qx",
-        "type":"1"
+        "type":"100",
+        "device":"Nokia-Lumia-920-TW"
     }
 
 Parameters:
 
-* uid：用户账号或者app_key
+* account：用户账号或者app_key
 * secret: 用户密码或者app_secret
 * type: 账号类型，目前只有App类，可取值 100, "100"
+* device: 设备唯一标识。目前没有进行多端登录控制，所以不需要赋值或者传递空值
 
 Response Status `201`:
 

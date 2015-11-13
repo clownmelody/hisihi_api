@@ -87,9 +87,10 @@ class DownloadPlus1Form(Form):
 
 
 class GetTokenForm(Form):
-    uid = create_not_empty_field()
+    account = create_not_empty_field()
     secret = create_not_empty_field()
     type = StringField(validators=[DataRequired()])
+    device = StringField()
 
 
 class OnlineIDForm(Form):

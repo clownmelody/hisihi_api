@@ -1,5 +1,6 @@
 __author__ = 'bliss'
 
+import hashlib
 from sqlalchemy import Column, Integer, String, Boolean
 from werkzeug.security import generate_password_hash, check_password_hash
 from herovii.models.base import Base
@@ -11,6 +12,7 @@ class UserCSUSecure(Base):
     __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
+    username = Column(String(100))
     _password = Column('password', String(80), nullable=False)
     email = Column(String(50), unique=True)
     mobile = Column(String(20), unique=True)

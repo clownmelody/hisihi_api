@@ -17,18 +17,10 @@ api = ApiBlueprint('token')
 
 @api.route('', methods=['POST'])
 def get_token():
-    """ 获取token接口
-    :POST:
-        {"uid": uid, "secret": secret, "type": type}
-    :argument:
-        uid 用户名称或者App的代号
-        secret 用户密码或者App的Secret
-        type 账号类型
-    :return:
-    """
+    """获取令牌"""
     # uid = g.uid
     form = GetTokenForm.create_api_form()
-    scope = verify(form.uid.data, form.secret.data, form.type.data)
+    scope = verify_user(form.uid.data, form.secret.data, form.type.data)
     if scope is None:
         raise AuthFailed(error='id or password is incorrect', error_code=1005)
     expiration = current_app.config['TOKEN_EXPIRES_IN']
@@ -38,6 +30,7 @@ def get_token():
 
 @api.route('/info', methods=['POST'])
 def get_token_info():
+    """获取令牌信息"""
     json = request.get_json(force=True, silent=True)
     if not json:
         raise JSONStyleError()
@@ -63,7 +56,8 @@ def refresh_token():
     pass
 
 
-def verify(uid, secret, ac_type):
+def verify_user(uid, secret, ac_type):
+    """验证用户身份"""
     try:
         if isinstance(ac_type, int) or str.isnumeric(ac_type):
             ac_type = int(ac_type)
@@ -72,13 +66,17 @@ def verify(uid, secret, ac_type):
             ac_type = AccountTypeEnum[ac_type]
     except ValueError:
         raise ParamException(error='the type parameter is not in range')
-    promise = {AccountTypeEnum.app: account.verify_in_heroapi}
+    promise = {
+                AccountTypeEnum.app: account.verify_in_heroapi,
+                AccountTypeEnum.use_csu_by_social: account.verify_in_csu_by_social
+        }
     return promise.get(ac_type)(uid, secret)
 
 
 @auth.verify_password
 def verify_password(token, password):
     # Todo 开发时取消验证
+    # password这里没有用，但是由于使用了http-auth库，所以占时保留
     if current_app.config['REMOVE_TOKEN_VERIFY']:
         return True
     uid = verify_auth_token(token)
@@ -100,6 +98,7 @@ def generate_auth_token(uid, ac_type, scope, expiration=7200):
 
 
 def verify_auth_token(token):
+    """验证令牌的合法性"""
     s = Serializer(current_app.config['SECRET_KEY'])
     try:
         # data = s.loads(token)

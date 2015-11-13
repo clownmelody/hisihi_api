@@ -10,7 +10,8 @@ Api V1 说明
    需要申请令牌来调用
 #. 令牌具有时效性，当令牌过期时需要使用app_key和app_secret或者账号、密码重新获取令牌
 #. 令牌分为应用令牌和用户令牌，两种令牌的获取都可以通过调用 `POST v1/token`来获取
-#. 不建议客户端存储用户账号、密码以及app_key和app_secret
+#. 不建议客户端存储用户账号、密码，而应该通过refresh_token刷新令牌
+#  不建议客户端存储App_Secret，可以存放App_Key。App_Secret应该放在App的前置服务器中
 #. 数据格式统一使用json，不支持xml
 #. 所有Api均支持跨域，目前不做任何限制，后期根据情况可能会限制跨域访问
 #. Api遵从严格的HTTP动作并采用标准的 :ref:`Http Status Code <status>` 作为响应状态，
