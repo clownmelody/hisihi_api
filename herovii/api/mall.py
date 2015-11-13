@@ -53,5 +53,7 @@ def redirect_to_duiba():
     timestamp=1418625055000
     """
     user_info = g.user_info
+    uid = user_info[0]
+
     pass
 
