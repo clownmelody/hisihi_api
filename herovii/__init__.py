@@ -18,7 +18,7 @@ def register_base_blueprints(app):
     from .api import init_api
     from .handlers import init_handlers
     init_api(app)
-    init_handlers(app)
+    # init_handlers(app)
 
 
 def create_app(config=None):

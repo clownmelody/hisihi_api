@@ -1,6 +1,6 @@
 __author__ = 'bliss'
 
-import hashlib
+import hashlib, datetime
 from flask import current_app
 from herovii.models.mall.order_duiba import OrderDuiBa
 from herovii.models.user.user_csu import UserCSU
@@ -68,6 +68,64 @@ class DuiBa(object):
         else:
             return None
 
+    def confirm_order(self, params_list):
+        """确认订单状态"""
+        # 将兑吧的App_Secret加入到校验字符串中
+        params_list['appSecret'] = current_app.config['DUIBA_APP_SECRET']
+        sign = params_list['sign']
+
+        # 去除字典中的sign，因为sign本身不属于被签名部分
+        del(params_list['sign'])
+        valid = self.md5_check(params_list, sign)
+        if valid:
+            return self.__update_order(
+                params_list['success'], params_list['appKey'],
+                params_list['orderNum'], params_list['errorMessage'],
+                params_list['timestamp'])
+        else:
+            return "who distort my data?"
+
+    def create_login_url(self, uid):
+
+        url_params = {
+            'uid': uid,
+            'appKey': current_app.config['DUIBA_APP_KEY'],
+            'timestamp': datetime.datetime.now().timestamp(),
+        }
+        pass
+
+    def __update_order(self, success, app_key, order_num,
+                       error_msg, timestamp):
+        """更新订单状态"""
+        order = OrderDuiBa.query.\
+            filter_by(appKey=app_key, orderNum=order_num).first()
+        if order is None:
+            return "strange order_number which we don't recognize"
+        # we must confirm the order's status never be changed
+        if order.success == 0:
+            if success == 'true':
+                # if success, mark the order status success
+                order.success = 1
+                order.confirm_timestamp = timestamp
+                db.session.commit()
+                return 'ok'
+            if success == 'false':
+                # if failed, mark the order status failed
+                # the whole process, must be in a transaction
+                with db.auto_commit():
+                    order.success = -1
+                    order.error_message = error_msg
+                    order.confirm_timestamp = timestamp
+                    self.__rollback_credit(order.uid, order.credits)
+                return 'ok'
+            return "fuck, no 'true' no 'false', what's this?"
+        return "i have been updated the order's status, leave me in peace"
+
+    def __rollback_credit(self, uid, credit):
+        """如果兑吧未能成功兑换，回滚用户积分"""
+        user_csu = UserCSU.query.filter_by(uid=uid).first()
+        user_csu.score += credit
+
     def __deduct_credit(self, uid, reduced_credit):
         """扣除分数, 如果分数不够则不会扣除"""
         user_csu = UserCSU.query.filter(UserCSU.uid == uid).first()
@@ -93,6 +151,7 @@ class DuiBa(object):
             params_list['waitAudit'] = False
         else:
             params_list['waitAudit'] = True
+
 
 
 

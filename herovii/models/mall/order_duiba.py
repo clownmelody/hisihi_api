@@ -11,12 +11,18 @@ class OrderDuiBa(Base):
     __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
-    uid = Column('uid', Integer)
+    uid = Column(Integer, nullable=False)
     credits = Column('credits', Integer)
-    appKey = Column(String(255))
-    timestamp = Column(String(20))
+    appKey = Column(String(255), nullable=False)
+
+    # 兑吧的扣分申请时间
+    deduct_timestamp = Column(Integer)
+
+    # 兑吧兑换结果反馈时间
+    confirm_timestamp = Column(Integer)
+
     description = Column(String(255))
-    orderNum = Column(String(255))
+    orderNum = Column(String(255), nullable=False)
     type = Column(String(255))
     facePrice = Column('facePrice', Integer)
     actualPrice = Column('actualPrice', Integer)
@@ -24,10 +30,15 @@ class OrderDuiBa(Base):
     waitAudit = Column('waitAudit', Boolean)
     params = Column(String(255))
     sign = Column(String(255))
+
+    # 订单是否兑换成功，0：等待兑吧反馈， 1：兑换成功， -1：兑换失败
+    success = Column(SmallInteger, default=0)
+    error_message = Column(String(255))
     status = Column(SmallInteger, default=1)
 
     def __init__(self, **entries):
         self.__dict__.update(entries)
+        self.deduct_timestamp = entries['timestamp']
 
 
 

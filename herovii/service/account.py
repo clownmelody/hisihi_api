@@ -47,12 +47,14 @@ def verify_by_phone_number(phone_number, password):
         return user.id
 
 
-def verify_in_heroapi(aid, secret):
-    app = App.query.filter_by(app_id=aid, app_secret=secret).first()
+def verify_in_heroapi(key, secret):
+    app = App.query.filter_by(app_id=key, app_secret=secret).first()
     if app is not None:
         return app.scope
     else:
         return None
+
+# def verify_in_csu_by_social(openId, secret)
 
 
 

@@ -24,7 +24,7 @@ Parameters:
 
 * uid：用户账号或者app_key
 * secret: 用户密码或者app_secret
-* type: 账号类型，目前只有App类，可取值 1, "1", 或者"App"
+* type: 账号类型，目前只有App类，可取值 100, "100"
 
 Response Status `201`:
 

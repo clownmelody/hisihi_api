@@ -72,7 +72,7 @@ def verify(uid, secret, ac_type):
             ac_type = AccountTypeEnum[ac_type]
     except ValueError:
         raise ParamException(error='the type parameter is not in range')
-    promise = {AccountTypeEnum.App: account.verify_in_heroapi}
+    promise = {AccountTypeEnum.app: account.verify_in_heroapi}
     return promise.get(ac_type)(uid, secret)
 
 
