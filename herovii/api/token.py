@@ -68,8 +68,8 @@ def verify_user(ac, secret, ac_type):
         raise ParamException(error='the type parameter is not in range')
     promise = {
                 AccountTypeEnum.app: account.verify_in_heroapi,
-                AccountTypeEnum.use_csu_by_social: account.verify_in_csu_by_social,
-                AccountTypeEnum.user_csu_by_mobile: account.verify_in_csu_by_mobile
+                AccountTypeEnum.use_csu_social: account.verify_in_csu_by_social,
+                AccountTypeEnum.user_csu_mobile: account.verify_in_csu_by_mobile
         }
     return promise.get(ac_type)(ac, secret)
 

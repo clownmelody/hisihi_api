@@ -45,7 +45,7 @@ def firm_order_duiba():
         return flag, 400
 
 
-@api.route('/duiba/redirect', methods=['GET'])
+@api.route('/duiba/index', methods=['GET'])
 @auth.login_required
 def redirect_to_duiba():
     """将用户重定向到兑吧的商城中

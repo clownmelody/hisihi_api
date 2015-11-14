@@ -20,10 +20,10 @@ class DownloadChannelEnum(Enum):
 
 class AccountTypeEnum(Enum):
     app = 100
-    user_csu_by_mobile = 200
-    user_csu_by_wechat = 201
-    user_csu_by_weibo = 202
-    user_csu_by_qq = 203
-    use_csu_by_social = 230
+    user_csu_mobile = 200
+    user_csu_wechat = 201
+    user_csu_weibo = 202
+    user_csu_qq = 203
+    use_csu_social = 230
     user_org_mobile = 300
 
