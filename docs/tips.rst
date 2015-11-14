@@ -4,8 +4,8 @@
 Url 前缀
 -----------------------
 
-所有的API发布版本均以 **api.hisihi.com/v1** 开头, 测试版均以
-**test.api.hisihi.com/v1** 开头。例如::
+所有的API发布版本均以 **api.hisihi.com/v1** 开头, 开发版均以
+**dev.api.hisihi.com/v1** 开头。例如::
 
     PUT /pk/download+1
 
