@@ -69,7 +69,8 @@ def secret_password(raw, salt):
 
 def make_an_bizid():
     """生成一个微秒级别的时间字符串，并附带一个100到999之间的随机数"""
-    time_str = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
+    # time_str = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
+    time_str = datetime.datetime.now().strftime('%Y%m%d')
     bizid = time_str + str(random.randint(100, 999))
     return bizid
 
