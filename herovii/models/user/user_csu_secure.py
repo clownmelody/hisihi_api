@@ -2,11 +2,10 @@ __author__ = 'bliss'
 
 import hashlib
 from sqlalchemy import Column, Integer, String, Boolean
-from werkzeug.security import generate_password_hash, check_password_hash
-from herovii.models.base import Base
+from herovii.models.base import BaseNoCreateTime
 
 
-class UserCSUSecure(Base):
+class UserCSUSecure(BaseNoCreateTime):
 
     __tablename__ = 'hisihi_ucenter_member'
     __bind_key__ = 'csu'
@@ -31,9 +30,7 @@ class UserCSUSecure(Base):
 
     @password.setter
     def password(self, raw):
-        self._password = generate_password_hash(raw)
-
-    def check_password(self, raw):
-        if not self._password:
-            return False
-        return check_password_hash(self._password, raw)
+        m = hashlib.md5()
+        m.update(raw.encoding('utf-8'))
+        self._password = m.hexdigest()
+        # self._password = generate_password_hash(raw)

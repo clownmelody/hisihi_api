@@ -96,7 +96,7 @@ def error_handler():
 def generate_auth_token(uid, ac_type, scope, expiration=7200):
     """生成令牌"""
     s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
-    return s.dumps({'uid': uid, 'ac_type': ac_type, 'scope': scope})
+    return s.dumps({'uid': uid, 'type': int(ac_type), 'scope': scope})
 
 
 def verify_auth_token(token):

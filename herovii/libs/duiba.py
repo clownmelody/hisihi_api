@@ -5,9 +5,13 @@ from flask import current_app
 from herovii.models.mall.order_duiba import OrderDuiBa
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.base import db
+from herovii.libs.helper import dict_to_url_param
 
 
 class DuiBa(object):
+
+    DUIBA_URL = r'http://www.duiba.com.cn/autoLogin/autologin'
+
     def sorted_values(self, params_list):
         """传入dict，返回按照参数名称升序排列的参数值字符串
         :param params_list: dict类型的数据
@@ -15,8 +19,8 @@ class DuiBa(object):
         """
         sorted_items = sorted(params_list.items(), key=lambda d: d[0])
 
-        # 将list的key去掉，只保留value
-        m = map(lambda x: x[1], sorted_items)
+        # 将list的key去掉，只保留value, 并将所有value都转型成字符串
+        m = map(lambda x: str(x[1]), sorted_items)
 
         # 将元组转换为字符串并输出
         ascending_values = ''.join(m)
@@ -31,14 +35,19 @@ class DuiBa(object):
 
         # 兑吧的字符串需要按照字母的升序排列
         # 注意：是按照字典中key的字母升序来排列
-        ascending_values = self.sorted_values(params_list)
-        m = hashlib.md5()
-        m.update(ascending_values.encode('utf-8'))
-        md5 = m.hexdigest()
+
+        md5 = self.create_sign(params_list)
         if md5 == sign:
             return True
         else:
             return False
+
+    def create_sign(self, params_list):
+        ascending_values = self.sorted_values(params_list)
+        m = hashlib.md5()
+        m.update(ascending_values.encode('utf-8'))
+        sign = m.hexdigest()
+        return sign
 
     def create_order(self, params_list):
         """ 创建有兑吧生成的订单（记录兑吧的订单数据）并扣除分数
@@ -85,14 +94,21 @@ class DuiBa(object):
         else:
             return "who distort my data?"
 
-    def create_login_url(self, uid):
-
+    def create_login_url(self, uid, left_credits):
         url_params = {
             'uid': uid,
             'appKey': current_app.config['DUIBA_APP_KEY'],
-            'timestamp': datetime.datetime.now().timestamp(),
+
+            # duiba requires timestamp must be millisecond unit, so multiply 1000
+            'timestamp': int(datetime.datetime.now().timestamp()) * 1000,
+            'credits': left_credits,
+            'appSecret': current_app.config['DUIBA_APP_SECRET']
         }
-        pass
+        sign = self.create_sign(url_params)
+        url_params['sign'] = sign
+        del(url_params['appSecret'])
+        get_params = dict_to_url_param(url_params)
+        return DuiBa.DUIBA_URL+get_params
 
     def __update_order(self, success, app_key, order_num,
                        error_msg, timestamp):

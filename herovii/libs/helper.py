@@ -1,5 +1,6 @@
 __author__ = 'bliss'
 
+import hashlib
 from flask import request
 from .enums import MobileRaceEnum
 from .error_code import Successful
@@ -30,4 +31,39 @@ def android_ipad_iphone(http_user_agent):
 def success_json(code=None, msg=None, error_code=None):
     url = request.method+'  ' + get_url_no_param()
     return Successful(url, code, msg, error_code).get_json()
+
+
+def dict_to_url_param(params_dict):
+    m = map(lambda k: (k[0]+'='+str(k[1])+'&'), params_dict.items())
+    url_params = '?'+''.join(m)
+    url_params = url_params[:-1]
+    return url_params
+
+
+def check_md5_password(password, raw, salt):
+    """原始密码同md5加密的密码进行校验"""
+    if not password:
+        return False
+    md5_password = secret_password(raw, salt)
+    if md5_password == password:
+        return True
+    else:
+        return False
+
+
+def secret_password(raw, salt):
+    """适用于UserCSU的密码加密算法"""
+
+    sha1 = hashlib.sha1()
+    sha1.update(raw.encode('utf-8'))
+    sha1_psw = sha1.hexdigest()
+
+    md5_raw = sha1_psw + salt
+    m = hashlib.md5()
+    m.update(md5_raw.encode('utf-8'))
+    password = m.hexdigest()
+
+    return password
+
+
 

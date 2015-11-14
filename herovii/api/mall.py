@@ -1,9 +1,10 @@
 __author__ = 'bliss'
 
-from flask import request, jsonify, g
+from flask import request, jsonify, g, redirect
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.duiba import DuiBa
 from herovii.libs.bpbase import auth
+from herovii.models.user.user_csu import UserCSU
 
 
 api = ApiBlueprint('mall')
@@ -52,8 +53,10 @@ def redirect_to_duiba():
     credits=100&appKey=jlg88loSQobWDMmGrPLqtmr&sign=fbce303d7ba7ca7b0fe14d576b494769&
     timestamp=1418625055000
     """
-    user_info = g.user_info
+    user_info = g.user
     uid = user_info[0]
-
-    pass
+    user_csu = UserCSU.query.get(uid)
+    duiba = DuiBa()
+    login_url = duiba.create_login_url(uid, user_csu.score)
+    return redirect(login_url)
 

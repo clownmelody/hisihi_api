@@ -1,11 +1,13 @@
 __author__ = 'bliss'
 
+from flask import current_app
 from herovii.models.user.user import User
 from herovii.models.user.user_org import UserOrg
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.models.base import db
 from herovii.libs.error_code import NotFound
 from herovii.models.heroapi.app import App
+from herovii.libs.helper import check_md5_password
 
 
 def register_by_email(username, email, password):
@@ -72,12 +74,17 @@ def verify_in_csu_by_social(uuid, secret):
         return None
 
 
-def verify_in_csu_by_mobile(mobile, password):
+def verify_in_csu_by_mobile(mobile, raw_password):
     """通过验证用户手机和密码进行授权"""
-    uid = db.session.query(UserCSUSecure.id)\
-        .filter_by(mobile=mobile, password=password).first()
-    if uid:
-        return [uid[0], 'UserCSU']
+    user_csu_secure = db.session.query(UserCSUSecure)\
+        .filter_by(mobile=mobile).first()
+    if not user_csu_secure:
+        return None
+    else:
+        valid = check_md5_password(user_csu_secure.password,
+                                   raw_password, current_app.config['USER_CSU_PSW_SALT'])
+    if valid:
+        return [user_csu_secure.id, 'UserCSU']
     else:
         return None
 
