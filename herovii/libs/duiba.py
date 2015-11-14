@@ -5,7 +5,7 @@ from flask import current_app
 from herovii.models.mall.order_duiba import OrderDuiBa
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.base import db
-from herovii.libs.helper import dict_to_url_param
+from herovii.libs.helper import dict_to_url_param, make_an_bizid
 
 
 class DuiBa(object):
@@ -64,6 +64,7 @@ class DuiBa(object):
 
         # 校验完后再加入，并存入到数据库中
         params_list['sign'] = sign
+        params_list['bizId'] = make_an_bizid()
         self.__adapter(params_list)
         if valid:
 
@@ -73,7 +74,7 @@ class DuiBa(object):
                                                            int(params_list['credits']))
                 if success:
                     self.__add_one_order(params_list)
-                return success, left_score, params_list['orderNum']
+                return success, left_score, params_list['bizId']
         else:
             return None
 

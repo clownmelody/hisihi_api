@@ -22,6 +22,11 @@ class OrderDuiBa(Base):
     confirm_timestamp = Column(Integer)
 
     description = Column(String(255))
+
+    # 自有订单号
+    bizId = Column(String(255))
+
+    # 由兑吧生成的订单号
     orderNum = Column(String(255), nullable=False)
     type = Column(String(255))
     facePrice = Column('facePrice', Integer)

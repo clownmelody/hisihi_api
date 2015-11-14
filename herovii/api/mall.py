@@ -27,7 +27,7 @@ def create_order_duiba():
     else:
         r_error = {
             'status': 'fail',
-            'errorMessage': '积分不足',
+            'errorMessage': 'not enough coin',
             'credits': left_score
         }
         return jsonify(r_error), 400
