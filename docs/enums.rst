@@ -17,7 +17,7 @@ AccountTypeEnum 账号类型枚举
         use_csu_social = 230
         user_org_mobile = 300
 
-`100` 开头的表示应用类注册账号，如hisihi app
+`100` 开头的表示第三方应用类注册账号，如HiSiHi Android App
 
 * 100 : 第三方应用账号
 
