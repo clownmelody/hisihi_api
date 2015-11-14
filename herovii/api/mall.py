@@ -20,7 +20,7 @@ def create_order_duiba():
         r_data = {
             'status': 'ok',
             'errorMessage': '',
-            'bizid': bizid,
+            'bizId': bizid,
             'credits': left_score
          }
         return jsonify(r_data), 200
