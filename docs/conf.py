@@ -46,7 +46,7 @@ templates_path = ['mrrrtemplates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
@@ -102,7 +102,7 @@ exclude_patterns = ['mrrrbuild']
 
 # The name of the Pygments (syntax highlighting) style to use.
 #pygments_style = 'colorful'
-pygments_style = 'sphinx'
+pygments_style = 'colorful'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -170,19 +170,19 @@ html_static_path = ['static']
 #html_additional_pages = {}
 
 # If false, no module index is generated.
-#html_domain_indices = True
+html_domain_indices = False
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = False
 
 # If true, the index is split into individual pages for each letter.
-#html_split_index = False
+html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-#html_show_sphinx = True
+html_show_sphinx = False
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 #html_show_copyright = True

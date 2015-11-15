@@ -48,11 +48,11 @@ Url 前缀
 任何参数提交（除 *GET* 参数外）均需要严格符合JSON数据格式。不要以单引号表示JSON
 的键或者值。在herovii api中所有json数据字符串都必须以双引号" " 来引用。
 
-*错误的参数* ::
+**错误的参数** ::
 
         POST {'oid':'3', 'channel': 'online'}
 
-*正确的参数*::
+**正确的参数**::
 
         POST {"oid":"3", "channel": "oneline"}
 

@@ -5,10 +5,12 @@
 /* -- page layout ----------------------------------------------------------- */
 
 body {
-    font-family: 'Arial', 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;
-    font-size: 15px;
+    /*font-family: 'Arial', 'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif;*/
+    font-family: 'Helvetica Neue','Arial',"Hiragino Sans GB","STHeiti","Microsoft YaHei","WenQuanYi Micro Hei",'SimSun,Song','sans-serif';
+    font-size: 16px;
+    font-weight: 400;
     background-color: white;
-    color: #000;
+    color: #2c3f51;
     margin: 0;
     padding: 0;
 }
@@ -37,7 +39,7 @@ hr {
 
 div.body {
     background-color: #ffffff;
-    color: #3E4349;
+    color: #2c3f51;
     padding: 0 30px 0 30px;
 }
 
@@ -164,7 +166,8 @@ div.sphinxsidebar hr {
 /* -- body styles ----------------------------------------------------------- */
 
 a {
-    color: #004B6B;
+    /*color: #004B6B;*/
+    color: #c7254e;
     text-decoration: underline;
 }
 
@@ -179,17 +182,18 @@ div.body h3,
 div.body h4,
 div.body h5,
 div.body h6 {
-    font-family: 'Garamond', 'Georgia', serif;
-    font-weight: normal;
+    /*font-family: 'Garamond', 'Georgia', serif;*/
+    font-weight: bold;
+    color: #2c3f51;
     margin: 60px 0px 10px 0px;
     padding: 0;
 }
 
-div.body h1 { margin-top: 0; padding-top: 0; font-size: 240%; }
-div.body h2 { font-size: 180%; }
-div.body h3 { font-size: 150%; }
-div.body h4 { font-size: 130%; }
-div.body h5 { font-size: 100%; }
+div.body h1 { margin-top: 0; padding-top: 0; font-size: 200%; }
+div.body h2 { font-size: 150%; }
+div.body h3 { font-size: 130%; }
+div.body h4 { font-size: 120%; }
+div.body h5 { font-size: 110%; }
 div.body h6 { font-size: 100%; }
 
 a.headerlink {
@@ -204,7 +208,7 @@ a.headerlink:hover {
 }
 
 div.body p, div.body dd, div.body li {
-    line-height: 1.4em;
+    line-height: 1.7em;
 }
 
 div.admonition {
@@ -364,11 +368,11 @@ ul, ol {
 }
 
 .body li{
-    margin: 20px;
+    margin: 10px;
 }
 
 cite {
-    color: #dd7700;
+    color: #c7254e;
 }
 
 pre {
@@ -401,7 +405,7 @@ tt.xref, code.xref, a tt {
 
 a.reference {
     text-decoration: none;
-    border-bottom: 1px dotted #004B6B;
+    /*border-bottom: 1px dotted #004B6B;*/
 }
 
 a.reference:hover {
