@@ -12,10 +12,10 @@ class UserCSU(BaseNoCreateTime):
 
     uid = Column(Integer, primary_key=True)
     nickname = Column(String(16), unique=True, nullable=False)
-    sex = Column(SmallInteger, nullable=False)
-    birthday = Column(Date, nullable=False)
+    sex = Column(SmallInteger)
+    birthday = Column(Date)
     qq = Column(CHAR(20))
-    score = Column(Integer, default=0, nullable=False)
+    score = Column(Integer, default=0)
 
     status = Column(Boolean)
 

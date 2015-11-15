@@ -7,9 +7,14 @@ from flask import json
 
 class Httper(object):
     def get(self, url):
-        req = httpreq.Request(url, method='GET')
-        r = httpreq.urlopen(req)
-        print(r)
+        return httpreq.urlopen(url)
+        # with httpreq.urlopen(url) as f:
+        #     data = f.read()
+        #     print('Status:', f.status, f.reason)
+        #     for k, v in f.getheaders():
+        #         print('%s: %s' % (k, v))
+        #     print('Data:', data.decode('utf-8'))
+        # return f
 
     def post(self, host, url, data, headers=None):
         tmp_data = json.dumps(data)

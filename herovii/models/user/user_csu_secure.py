@@ -30,7 +30,7 @@ class UserCSUSecure(BaseNoCreateTime):
 
     @password.setter
     def password(self, raw):
-        m = hashlib.md5()
-        m.update(raw.encoding('utf-8'))
-        self._password = m.hexdigest()
+        from herovii.libs.helper import secret_password
+        from flask import current_app
+        self._password = secret_password(raw, current_app.config['USER_CSU_PSW_SALT'])
         # self._password = generate_password_hash(raw)

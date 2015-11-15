@@ -49,13 +49,3 @@ def test_auth():
     return 'success', 200
 
 
-@api.route('/test', methods=['GET'])
-def test():
-    # pass
-    user = UserOrg()
-    user.password = '19851118'
-    user.mobile = "18607131949"
-    with db.auto_commit():
-        db.session.add(user)
-    return jsonify(user), 201
-

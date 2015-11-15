@@ -6,11 +6,11 @@ v1/token
 获取令牌
 ~~~~~~~~~~~
 
-URL::
+**URL**::
 
     POST      /
 
-POST：
+**POST**：
 
 .. sourcecode:: json
 
@@ -21,14 +21,14 @@ POST：
         "device":"Nokia-Lumia-920-TW"
     }
 
-Parameters:
+**Parameters**:
 
 * account：用户账号或者app_key
 * secret: 用户密码或者app_secret
 * type: 账号类型，可取值参见 :ref:`枚举类型说明 <enums>`
 * device: 设备唯一标识。目前没有进行多端登录控制，所以不需要赋值或者传递空值
 
-Response Status `201`:
+**Response Status** `201`:
 
 .. sourcecode:: json
 
@@ -46,21 +46,21 @@ Response Status `201`:
 获取令牌信息
 ~~~~~~~~~~~~~~~~
 
-URL::
+**URL**::
 
     POST      /info
 
-POST::
+**POST**::
 
     {
         "token":"eyJleHAiOjE0NDc0MzQ0OD"
     }
 
-Parameters:
+**Parameters**:
 
 * token: 令牌（不需要base64加密）
 
-Response Status `200`::
+**Response Status** `200`::
 
     {
         "create_at": 1447175285,
@@ -72,7 +72,7 @@ Response Status `200`::
 * expire_in: token的过期时间
 * scope: token的权限域
 
-Memo:
+**Memo**:
 
     此接口同样不需要Http Basic 验证
 

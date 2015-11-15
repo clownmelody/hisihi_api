@@ -74,10 +74,10 @@ def verify_in_csu_by_social(uuid, secret):
         return None
 
 
-def verify_in_csu_by_mobile(mobile, raw_password):
+def verify_in_csu_by_mobile(username, raw_password):
     """通过验证用户手机和密码进行授权"""
     user_csu_secure = db.session.query(UserCSUSecure)\
-        .filter_by(mobile=mobile).first()
+        .filter_by(username=username).first()
     if not user_csu_secure:
         return None
     else:
