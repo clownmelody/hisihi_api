@@ -9,15 +9,7 @@ app = create_app()
 CORS(app)
 
 
-def create_database():
-    # import fixtures
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        # fixtures.run()
-
 if '--initdb' in sys.argv:
-    # create_database()
     sys.exit()
 
 with app.app_context():
