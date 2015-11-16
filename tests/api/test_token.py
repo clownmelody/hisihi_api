@@ -13,5 +13,4 @@ class TestToken(TestCase):
         })
 
         rv = self.client.post('/v1/token', data=data)
-        print(rv.data)
         assert rv.status_code == 201

@@ -5,8 +5,8 @@ from ._base import TestCase
 from herovii.libs.httper import Httper
 
 
-class TestToken(TestCase):
-    def test_get_token(self):
+class TestMall(TestCase):
+    def test_redirect_to_duiba(self):
         headers = self.get_authorized_header()
         rv = self.client.get('/v1/mall/duiba/index', headers=headers)
         http = Httper()

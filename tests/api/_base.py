@@ -34,9 +34,6 @@ class TestCase(unittest.TestCase):
     def setUp(self):
         app = create_app({
             'SQLALCHEMY_BINDS': SQLALCHEMY_BINDS,
-            'ZERQU_CACHE_TYPE': 'simple',
-            'OAUTH_CACHE_TYPE': 'simple',
-            'RATE_LIMITER_TYPE': 'cache',
             'SECRET_KEY': 'secret',
         })
         app.testing = True
@@ -65,7 +62,9 @@ class TestCase(unittest.TestCase):
             ('zy', 8000),
         ]
         for nickname, score in users:
-            user = UserCSU(nickname=nickname, score=score)
+            user = UserCSU()
+            user.nickname = nickname
+            user.score = score
             db.session.add(user)
         db.session.commit()
 
@@ -74,8 +73,11 @@ class TestCase(unittest.TestCase):
             ('2', 'bliss', '123123')
         ]
 
-        for id, username, password in users_secure:
-            user = UserCSUSecure(id=id, username=username, password=password)
+        for uid, username, password in users_secure:
+            user = UserCSUSecure()
+            user.id = uid
+            user.username = username
+            user.password = password
             db.session.add(user)
         db.session.commit()
 
