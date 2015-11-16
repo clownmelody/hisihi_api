@@ -9,8 +9,6 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 SQLALCHEMY_BINDS = {
-    'test': 'sqlite:///tmp/test1.db',
-
     # online database
     'online': 'sqlite:///tmp/online.db',
 
