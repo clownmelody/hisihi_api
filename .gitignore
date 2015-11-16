@@ -20,6 +20,7 @@ cover/
 *.mo
 venv/
 htmlcov/
+herovii/tmp
 playbooks/roles/*.*
 .idea/
 log.txt
