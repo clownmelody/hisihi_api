@@ -17,7 +17,6 @@ class UserOrg(Base):
 
     _password = Column('password', String(100))
     organization_id = Column(Integer, unique=True)
-    status = Column(Boolean)
 
     def keys(self):
         return (

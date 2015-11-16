@@ -17,8 +17,6 @@ class UserCSU(BaseNoCreateTime):
     qq = Column(CHAR(20))
     score = Column(Integer, default=0)
 
-    status = Column(Boolean)
-
     def keys(self):
         return (
             'uid', 'nickname', 'sex',

@@ -39,7 +39,7 @@ class OrderDuiBa(Base):
     # 订单是否兑换成功，0：等待兑吧反馈， 1：兑换成功， -1：兑换失败
     success = Column(SmallInteger, default=0)
     error_message = Column(String(255))
-    status = Column(SmallInteger, default=1)
+    # status = Column(SmallInteger, default=1)
 
     def __init__(self, **entries):
         self.__dict__.update(entries)

@@ -59,7 +59,7 @@ class TestCase(unittest.TestCase):
 
         users = [
             ('leilei', 5000),
-            ('zy', 8000),
+            ('zy', 300),
         ]
         for nickname, score in users:
             user = UserCSU()

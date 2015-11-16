@@ -2,7 +2,7 @@ __author__ = 'bliss'
 
 import datetime
 from contextlib import contextmanager
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, SmallInteger
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
 
@@ -35,8 +35,10 @@ class BaseMixin(object):
 class Base(db.Model, BaseMixin):
     __abstract__ = True
     create_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
+    status = Column(SmallInteger, default=1)
 
 
 class BaseNoCreateTime(db.Model, BaseMixin):
     __abstract__ = True
+    status = Column(SmallInteger, default=1)
 

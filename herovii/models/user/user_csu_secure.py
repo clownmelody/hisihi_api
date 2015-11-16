@@ -16,8 +16,6 @@ class UserCSUSecure(BaseNoCreateTime):
     email = Column(String(50), unique=True)
     mobile = Column(String(20), unique=True)
 
-    status = Column(Boolean)
-
     def keys(self):
         return (
             # 'id', 'username', 'mobile',

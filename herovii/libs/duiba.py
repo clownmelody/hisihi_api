@@ -4,6 +4,7 @@ import hashlib, datetime
 from flask import current_app
 from herovii.models.mall.order_duiba import OrderDuiBa
 from herovii.models.user.user_csu import UserCSU
+from herovii.models.user.user_csu_credit_dynamic import UserCSUCreditDynamic
 from herovii.models.base import db
 from herovii.libs.helper import dict_to_url_param, make_an_bizid
 
@@ -70,16 +71,19 @@ class DuiBa(object):
 
             # 先扣除积分再生成订单，如果某一步操作错误，需要回滚数据
             with db.auto_commit():
-                success, left_score = self.__deduct_credit(int(params_list['uid']),
-                                                           int(params_list['credits']))
+                success, left_credit = self.__deduct_credit(int(params_list['uid']),
+                                                            int(params_list['credits']))
                 if success:
                     self.__add_one_order(params_list)
-                return success, left_score, params_list['bizId']
+                    # 注意下面的params_list['credits']需要取负数表示扣除
+                    self.__add_a_credit_dynamic(params_list['uid'], -int(params_list['credits']),
+                                                params_list['description'], '兑吧', left_credit)
+                return success, left_credit, params_list['bizId']
         else:
             return None
 
     def confirm_order(self, params_list):
-        """确认订单状态"""
+        """确认订单状态，反馈兑换结果"""
         # 将兑吧的App_Secret加入到校验字符串中
         params_list['appSecret'] = current_app.config['DUIBA_APP_SECRET']
         sign = params_list['sign']
@@ -96,6 +100,7 @@ class DuiBa(object):
             return "who distort my data?"
 
     def create_login_url(self, uid, left_credits):
+        """生成免登陆Url"""
         url_params = {
             'uid': uid,
             'appKey': current_app.config['DUIBA_APP_KEY'],
@@ -110,6 +115,17 @@ class DuiBa(object):
         del(url_params['appSecret'])
         get_params = dict_to_url_param(url_params)
         return DuiBa.DUIBA_URL+get_params
+
+    def __add_a_credit_dynamic(self, uid, credit, reason, party,
+                               left_credit):
+        """向数据库写入一条积分动态"""
+        dynamic = UserCSUCreditDynamic()
+        dynamic.uid = uid
+        dynamic.credit_dynamic = credit
+        dynamic.left_credit = left_credit
+        dynamic.reason = reason
+        dynamic.party = party
+        db.session.add(dynamic)
 
     def __update_order(self, success, app_key, order_num,
                        error_msg, timestamp):
@@ -133,15 +149,20 @@ class DuiBa(object):
                     order.success = -1
                     order.error_message = error_msg
                     order.confirm_timestamp = timestamp
-                    self.__rollback_credit(order.uid, order.credits)
+                    left_credit = self.__rollback_credit(order.uid, order.credits)
+                    self.__add_a_credit_dynamic(order.uid, order.credits,
+                                                '兑吧出错，回滚积分', 'system', left_credit)
                 return 'ok'
             return "fuck, no 'true' no 'false', what's this?"
+        # if order.success != 0 means this order has been updated,
+        # should never be updated again
         return "i have been updated the order's status, leave me in peace"
 
     def __rollback_credit(self, uid, credit):
         """如果兑吧未能成功兑换，回滚用户积分"""
         user_csu = UserCSU.query.filter_by(uid=uid).first()
         user_csu.score += credit
+        return user_csu.score
 
     def __deduct_credit(self, uid, reduced_credit):
         """扣除分数, 如果分数不够则不会扣除"""
