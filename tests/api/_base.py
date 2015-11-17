@@ -55,11 +55,12 @@ class TestCase(unittest.TestCase):
         from herovii.models.user.user_csu import UserCSU
         from herovii.models.user.user_csu_secure import UserCSUSecure
 
-        users = [
+        users_csu = [
             ('leilei', 5000),
             ('zy', 300),
+            ('social', 100)
         ]
-        for nickname, score in users:
+        for nickname, score in users_csu:
             user = UserCSU()
             user.nickname = nickname
             user.score = score
@@ -68,7 +69,8 @@ class TestCase(unittest.TestCase):
 
         users_secure =[
             ('1', 'aswind', '123123'),
-            ('2', 'bliss', '123123')
+            ('2', 'bliss', '111222333'),
+            ('3', 'openid', '123456')
         ]
 
         for uid, username, password in users_secure:
@@ -78,6 +80,10 @@ class TestCase(unittest.TestCase):
             user.password = password
             db.session.add(user)
         db.session.commit()
+
+        users_org = [
+            ('18607131949', '123123')
+        ]
 
     def get_authorized_header(self, user_id=1, scope='UserCSU', expiration=7200):
         # prepare token

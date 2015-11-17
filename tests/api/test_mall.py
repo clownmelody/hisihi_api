@@ -11,9 +11,7 @@ from herovii.models.user.user_csu import UserCSU
 class TestMall(TestCase):
 
     def test_create_order_duiba(self):
-        """
-        主要测试积分的扣除是否正常
-        """
+        """商城：积分的扣除是否正常"""
 
         get_params = ("?uid=1&orderNum=order-for-test-1447670790415&"
                       "credits=1000&params=15045678901&type=phonebill&"
@@ -49,6 +47,7 @@ class TestMall(TestCase):
         assert left_credit == user_score_after[0]
 
     def test_create_order_create_time(self):
+        """商城：两次订单的创建时间是否不一样"""
         get_params = ("?uid=1&orderNum=order-for-test-1447670790415&"
                       "credits=1000&params=15045678901&type=phonebill&"
                       "paramsTest10=10&ip=192.168.1.100&sign=4ae02d3ac2e007f877b8912361445780&"
@@ -70,8 +69,8 @@ class TestMall(TestCase):
         assert user_dynamic_credit[0].create_time != user_dynamic_credit[1].create_time
 
     def test_create_order_duiba_not_enough_coin(self):
-        """
-        主要测试积分不足时候的扣分情况uid=2 只有300分
+        """商城：积分不足时候的扣分情况
+        uid=2 只有300分
         """
 
         get_params = ("?uid=2&paramsTest32=32&orderNum=order-for-test-1447732196174&"
@@ -102,11 +101,11 @@ class TestMall(TestCase):
         pass
 
     def test_redirect_to_duiba(self):
+        """商城：生成免登录Url后重定向到兑吧"""
         headers = self.get_authorized_header()
         rv = self.client.get('/v1/mall/duiba/index', headers=headers)
         http = Httper()
         r_redirect = http.get(rv.location)
 
-        print(r_redirect.status)
         assert r_redirect.status == 200
 

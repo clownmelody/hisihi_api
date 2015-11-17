@@ -69,7 +69,8 @@ def verify_user(ac, secret, ac_type):
     promise = {
                 AccountTypeEnum.app: account.verify_in_heroapi,
                 AccountTypeEnum.use_csu_social: account.verify_in_csu_by_social,
-                AccountTypeEnum.user_csu_mobile: account.verify_in_csu_by_mobile
+                AccountTypeEnum.user_csu_mobile: account.verify_in_csu_by_mobile,
+                AccountTypeEnum.user_org_mobile: account.verify_in_org_by_mobile
         }
     return promise.get(ac_type)(ac, secret)
 

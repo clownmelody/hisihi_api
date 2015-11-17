@@ -1,3 +1,5 @@
+from herovii.libs.helper import secret_password, check_md5_password
+
 __author__ = 'bliss'
 
 from sqlalchemy import Column, Integer, String, Boolean
@@ -30,9 +32,9 @@ class UserOrg(Base):
 
     @password.setter
     def password(self, raw):
-        self._password = generate_password_hash(raw)
+        self._password = secret_password(raw)
 
     def check_password(self, raw):
         if not self._password:
             return False
-        return check_password_hash(self._password, raw)
+        return check_md5_password(self._password, raw)

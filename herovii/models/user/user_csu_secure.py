@@ -1,3 +1,5 @@
+from herovii.libs.helper import check_md5_password
+
 __author__ = 'bliss'
 
 import hashlib
@@ -29,6 +31,11 @@ class UserCSUSecure(BaseNoCreateTime):
     @password.setter
     def password(self, raw):
         from herovii.libs.helper import secret_password
-        from flask import current_app
-        self._password = secret_password(raw, current_app.config['USER_CSU_PSW_SALT'])
+        if raw is not None or '':
+            self._password = secret_password(raw)
         # self._password = generate_password_hash(raw)
+
+    def check_password(self, raw):
+        if not self._password:
+            return False
+        return check_md5_password(self._password, raw)

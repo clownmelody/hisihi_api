@@ -1,8 +1,10 @@
+from herovii.service.user_org import register_by_mobile
+
 __author__ = 'bliss'
 
 from flask import json, jsonify
 from herovii.validator.forms import RegisterByMobileForm
-from herovii.service import user_srv, account
+from herovii.service import user_org, account
 from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound, UnknownError
 from herovii.libs.bpbase import ApiBlueprint
@@ -18,13 +20,8 @@ def create_csu_user():
     pass
 
 
-@api.route('/org1', methods=['POST'])
-def create_org_user():
-    pass
-
-
 @api.route('/org', methods=['POST'])
-def create_by_mobile():
+def create_org_user():
     """ 添加一个机构用户
     调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
     :POST:
@@ -34,17 +31,18 @@ def create_by_mobile():
     bmob = BMOB()
     form = RegisterByMobileForm.create_api_form()
     phone_number = form.phone_number.data
+    password = form.password.data
     sms_code = form.sms_code.data
     status, body = bmob.verify_sms_code(phone_number, sms_code)
     if status == 200:
-        user = account.register_by_mobile(phone_number, sms_code)
+        user = register_by_mobile(phone_number, password)
         return jsonify(user), 201
     else:
         j = json.loads(body)
         raise UnknownError(j['error'], error_code=None)
 
 
-@api.route('/reset-password', methods=['PUT'])
+@api.route('/org/password', methods=['PUT'])
 def find_password():
     """ 重置/找回密码
         调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
@@ -70,7 +68,7 @@ def find_password():
 @auth.login_required
 def get_user_uid(uid):
     uid = user_verify.verify_uid(uid)
-    user = user_srv.get_user_by_uid(uid)
+    user = user_org.get_user_by_uid(uid)
     if user:
         return jsonify(user), 200
     else:

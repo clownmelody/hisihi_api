@@ -2,7 +2,7 @@ __author__ = 'bliss'
 
 import hashlib
 import datetime,  random
-from flask import request
+from flask import request, current_app
 from .enums import MobileRaceEnum
 from .error_code import Successful
 
@@ -41,20 +41,20 @@ def dict_to_url_param(params_dict):
     return url_params
 
 
-def check_md5_password(password, raw, salt):
+def check_md5_password(password, raw):
     """原始密码同md5加密的密码进行校验"""
     if not password:
         return False
-    md5_password = secret_password(raw, salt)
+    md5_password = secret_password(raw)
     if md5_password == password:
         return True
     else:
         return False
 
 
-def secret_password(raw, salt):
+def secret_password(raw):
     """适用于UserCSU的密码加密算法"""
-
+    salt = current_app.config['USER_PSW_SALT']
     sha1 = hashlib.sha1()
     sha1.update(raw.encode('utf-8'))
     sha1_psw = sha1.hexdigest()
