@@ -53,6 +53,7 @@ class NotFound(APIException):
 class AuthFailed(APIException):
     code = 401
     error_code = 1005
+    # WWW-Authenticat 响应头是为了支持Android解析401 状态码的响应
     headers = {
      'WWW-Authenticate': 'xBasic realm=""',
      'Content-Type': 'application/json'

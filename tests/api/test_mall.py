@@ -1,6 +1,6 @@
 __author__ = 'bliss'
 
-
+import time
 from ._base import TestCase
 from herovii.libs.httper import Httper
 from herovii.models.base import db
@@ -27,7 +27,6 @@ class TestMall(TestCase):
             wrong_sign_params = get_params+'name=33'
             url_w_sign = '/v1/mall/duiba/order' + wrong_sign_params
             r_w = self.client.get(url_w_sign)
-            print(r_w.status_code, r_w.data)
             assert r_w.status_code == 400 and b'999' in r_w.data
 
         user_score = db.session.query(UserCSU.score).filter_by(uid=1).first()
@@ -48,6 +47,27 @@ class TestMall(TestCase):
         left_credit = user_dynamic_credit[1]
         assert dynamic_credit == -1000
         assert left_credit == user_score_after[0]
+
+    def test_create_order_create_time(self):
+        get_params = ("?uid=1&orderNum=order-for-test-1447670790415&"
+                      "credits=1000&params=15045678901&type=phonebill&"
+                      "paramsTest10=10&ip=192.168.1.100&sign=4ae02d3ac2e007f877b8912361445780&"
+                      "timestamp=1447670790415&waitAudit=true&actualPrice=1000&"
+                      "description=%E6%89%8B%E6%9C%BA%E5%8F%B7%3A15045678901+%E5%85%85%E5%80%BC10%E5%85%83&"
+                      "facePrice=1000&appKey=tLCk6CH9b3deXPbedS8TEfmLbnR&")
+
+        url = '/v1/mall/duiba/order'+get_params
+        rv = self.client.get(url)
+        assert rv.status_code == 200
+
+        time.sleep(2)
+
+        rv1 = self.client.get(url)
+        assert rv1.status_code == 200
+
+        user_dynamic_credit = UserCSUCreditDynamic.query.filter_by(uid=1).all()
+        assert len(user_dynamic_credit) == 2
+        assert user_dynamic_credit[0].create_time != user_dynamic_credit[1].create_time
 
     def test_create_order_duiba_not_enough_coin(self):
         """
