@@ -79,9 +79,9 @@ class TestCase(unittest.TestCase):
             db.session.add(user)
         db.session.commit()
 
-    def get_authorized_header(self, user_id=1, scope='UserCSU',):
+    def get_authorized_header(self, user_id=1, scope='UserCSU', expiration=7200):
         # prepare token
-        token = self.generate_auth_token(user_id, 200, scope)
+        token = self.generate_auth_token(user_id, 200, scope, expiration)
 
         return {
             'Authorization': 'basic %s' % encode_base64(str(token, 'utf-8') + ':'),
