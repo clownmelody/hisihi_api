@@ -33,9 +33,15 @@ class TestMall(TestCase):
         user_score = db.session.query(UserCSU.score).filter_by(uid=1).first()
         url = '/v1/mall/duiba/order'+get_params
         rv = self.client.get(url)
+
+        # 正确返回200
         assert rv.status_code == 200
+
+        # 测试分数充足时，是否正确的扣除了用户的分数
         user_score_after = db.session.query(UserCSU.score).filter_by(uid=1).first()
         assert user_score_after[0] == user_score[0] - 1000
+
+        # 是否正确的加入了积分动态
         user_dynamic_credit = db.session.query(UserCSUCreditDynamic.credit_dynamic,
                                                UserCSUCreditDynamic.left_credit).first()
         dynamic_credit = user_dynamic_credit[0]
@@ -58,11 +64,16 @@ class TestMall(TestCase):
         user_score = db.session.query(UserCSU.score).filter_by(uid=2).first()
         url = '/v1/mall/duiba/order'+get_params
         rv = self.client.get(url)
-        print(rv.data)
+
+        # 当积分不足时返回码是400
         assert rv.status_code == 400
+
+        # 当积分不足时，用户积分不应该被扣除
         user_score_after = db.session.query(UserCSU.score).filter_by(uid=2).first()
         assert user_score_after[0] == user_score[0]
         assert user_score_after[0] == 300
+
+        # 用户的积分动态也不应该生成，应该为None
         user_dynamic_credit = db.session.query(UserCSUCreditDynamic.credit_dynamic,
                                                UserCSUCreditDynamic.left_credit).first()
         assert user_dynamic_credit is None
