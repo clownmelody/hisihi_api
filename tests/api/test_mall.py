@@ -21,6 +21,15 @@ class TestMall(TestCase):
                       "timestamp=1447670790415&waitAudit=true&actualPrice=1000&"
                       "description=%E6%89%8B%E6%9C%BA%E5%8F%B7%3A15045678901+%E5%85%85%E5%80%BC10%E5%85%83&"
                       "facePrice=1000&appKey=tLCk6CH9b3deXPbedS8TEfmLbnR&")
+
+        with self.subTest():
+            # 测试当参数被修改时是否会正确提示
+            wrong_sign_params = get_params+'name=33'
+            url_w_sign = '/v1/mall/duiba/order' + wrong_sign_params
+            r_w = self.client.get(url_w_sign)
+            print(r_w.status_code, r_w.data)
+            assert r_w.status_code == 400 and b'999' in r_w.data
+
         user_score = db.session.query(UserCSU.score).filter_by(uid=1).first()
         url = '/v1/mall/duiba/order'+get_params
         rv = self.client.get(url)
@@ -33,6 +42,30 @@ class TestMall(TestCase):
         left_credit = user_dynamic_credit[1]
         assert dynamic_credit == -1000
         assert left_credit == user_score_after[0]
+
+    def test_create_order_duiba_not_enough_coin(self):
+        """
+        主要测试积分不足时候的扣分情况uid=2 只有300分
+        """
+
+        get_params = ("?uid=2&paramsTest32=32&orderNum=order-for-test-1447732196174&"
+                      "credits=1000&params=15045678901&type=phonebill&ip=192.168.1.100&"
+                      "sign=3680acf95d90232d406b7eb52b44eb83&timestamp=1447732196174&"
+                      "waitAudit=true&actualPrice=1000&"
+                      "description=%E6%89%8B%E6%9C%BA%E5%8F%B7%3A15045678901+%E5%85%85%E5%80%BC10%E5%85%83&"
+                      "facePrice=1000&appKey=tLCk6CH9b3deXPbedS8TEfmLbnR&")
+
+        user_score = db.session.query(UserCSU.score).filter_by(uid=2).first()
+        url = '/v1/mall/duiba/order'+get_params
+        rv = self.client.get(url)
+        print(rv.data)
+        assert rv.status_code == 400
+        user_score_after = db.session.query(UserCSU.score).filter_by(uid=2).first()
+        assert user_score_after[0] == user_score[0]
+        assert user_score_after[0] == 300
+        user_dynamic_credit = db.session.query(UserCSUCreditDynamic.credit_dynamic,
+                                               UserCSUCreditDynamic.left_credit).first()
+        assert user_dynamic_credit is None
 
     def test_update_order_duiba(self):
         pass
