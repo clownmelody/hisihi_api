@@ -53,6 +53,10 @@ class NotFound(APIException):
 class AuthFailed(APIException):
     code = 401
     error_code = 1005
+    headers = {
+     'WWW-Authenticate': 'xBasic realm=""',
+     'Content-Type': 'application/json'
+    }
     error = 'authorization failed'
 
 
