@@ -10,7 +10,7 @@ class APIException(HTTPException):
     code = 400
     error = 'invalid_request'
     error_code = 999
-    headers = {'Content-Type':'application/json'}
+    headers = {}
 
     def __init__(self, error=None, error_code=None, code=None, headers=None,
                  response=None):
