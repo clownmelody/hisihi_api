@@ -10,14 +10,21 @@ class APIException(HTTPException):
     code = 400
     error = 'invalid_request'
     error_code = 999
+    headers = {'Content-Type':'application/json'}
 
-    def __init__(self, error=None, error_code=None, code=None, response=None):
+    def __init__(self, error=None, error_code=None, code=None, headers=None,
+                 response=None):
         if code is not None:
             self.code = code
         if error is not None:
             self.error = error
         if error_code is not None:
             self.error_code = error_code
+        if headers is not None:
+            headers_merged = headers.copy()
+            headers_merged.update(self.headers)
+            self.headers = headers_merged
+
         super(APIException, self).__init__(error, response)
 
     def get_body(self, environ=None):
@@ -36,7 +43,8 @@ class APIException(HTTPException):
         return full_path
 
     def get_headers(self, environ=None):
-        return [('Content-Type', 'application/json')]
+        return self.headers
+        # return [('Content-Type', 'application/json')]
 
 
 class FormError(APIException):

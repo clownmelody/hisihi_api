@@ -1,6 +1,6 @@
 __author__ = 'bliss'
 
-from flask import jsonify, request, g
+from flask import jsonify, request, g, make_response
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature
 from flask import current_app
@@ -37,19 +37,28 @@ def get_token_info():
     else:
         s = Serializer(current_app.config['SECRET_KEY'])
         token = json['token']
+        # sign_bad_body = jsonify(AuthFailed(error='token is expired', error_code=1003))
+        # sign_expired_body = jsonify(AuthFailed(error='token is invalid', error_code=1002))
+        # failed_response = make_response()
+        # failed_response.headers['WWW-Authenticate'] = "xBasic realm=\"\""
         try:
+            headers = {'WWW-Authenticate': 'xBasic realm=""'}
             data = s .loads(token, return_header=True)
         except SignatureExpired:
-            raise AuthFailed(error='token is expired', error_code=1003)
+            raise AuthFailed(error='token is expired', error_code=1003, headers=headers)
         except BadSignature:
-            raise AuthFailed(error='token is invalid', error_code=1002)
+            raise AuthFailed(error='token is invalid', error_code=1002, headers=headers)
 
     r = {
         'scope': data[0]['scope'],
         'create_at': data[1]['iat'],
         'expire_in': data[1]['exp']
     }
-    return jsonify(r), 200
+    headers = {
+        'WWW-Authenticate': "xBasic realm=\"\""
+    }
+    print('dddddd')
+    return jsonify(r), 200, headers
 
 
 def refresh_token():
