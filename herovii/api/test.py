@@ -24,6 +24,7 @@ def test_client_ip():
 
 @api.route('/dev')
 def test_new_dev():
+    a = 1/0
     return 'dev is ok', 200
 
 
