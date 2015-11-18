@@ -157,7 +157,7 @@ class DuiBa(object):
             return "fuck, no 'true' no 'false', what's this?"
         # if order.success != 0 means this order has been updated,
         # should never be updated again
-        return "i have been updated the order's status, leave me in peace"
+        return 'ok'
 
     def __rollback_credit(self, uid, credit):
         """如果兑吧未能成功兑换，回滚用户积分"""
