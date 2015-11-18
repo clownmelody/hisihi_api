@@ -101,6 +101,11 @@ class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):
     pass
 
 
+class PagingForm(Form):
+    page = IntegerField(default=1, validators=[NumberRange(1)])
+    count = IntegerField(default=20, validators=[NumberRange(1)])
+
+
 class RegisterForm(UserForm, EmailForm):
 
     def get_valid_data(self):

@@ -1,7 +1,4 @@
 from herovii.service.user_org import register_by_mobile
-
-__author__ = 'bliss'
-
 from flask import json, jsonify
 from herovii.validator.forms import RegisterByMobileForm
 from herovii.service import user_org, account
@@ -11,6 +8,8 @@ from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.bpbase import auth
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
+
+__author__ = 'bliss'
 
 api = ApiBlueprint('user')
 

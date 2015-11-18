@@ -98,3 +98,7 @@ class TestCase(unittest.TestCase):
         from flask import current_app
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'uid': uid, 'type': int(ac_type), 'scope': scope})
+
+
+class TestUserCSUCase(TestCase):
+    pass
