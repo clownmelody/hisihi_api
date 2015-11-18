@@ -1,3 +1,6 @@
+from herovii.models.news.news_org import NewsOrg
+from herovii.models.user.user_org import UserOrg
+
 __author__ = 'bliss'
 
 import base64
@@ -48,10 +51,38 @@ class TestCase(unittest.TestCase):
         self.client = app.test_client()
         self.prepare_data()
 
+    def prepare_data(self):
+        pass
+
     def tearDown(self):
         self._ctx.pop()
 
+    def get_authorized_header(self, user_id=1, scope='UserCSU', expiration=7200):
+        # prepare token
+        token = self.generate_auth_token(user_id, 200, scope, expiration)
+
+        return {
+            'Authorization': 'basic %s' % encode_base64(str(token, 'utf-8') + ':'),
+            'Content-Type': 'application/json',
+        }
+
+    def generate_auth_token(self, uid, ac_type, scope, expiration=7200):
+        from flask import current_app
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'uid': uid, 'type': int(ac_type), 'scope': scope})
+
+
+class TestUserCSUCase(TestCase):
     def prepare_data(self):
+        prepare_csu_data()
+
+
+class TestNewsOrgCase(TestCase):
+    def prepare_data(self):
+        prepare_org_data()
+
+
+def prepare_csu_data():
         from herovii.models.user.user_csu import UserCSU
         from herovii.models.user.user_csu_secure import UserCSUSecure
 
@@ -81,24 +112,30 @@ class TestCase(unittest.TestCase):
             db.session.add(user)
         db.session.commit()
 
-        users_org = [
-            ('18607131949', '123123')
-        ]
 
-    def get_authorized_header(self, user_id=1, scope='UserCSU', expiration=7200):
-        # prepare token
-        token = self.generate_auth_token(user_id, 200, scope, expiration)
+def prepare_org_data():
+    users_org = [
+        ('18607131949', '123123'),
+        ('18607138888', '111222333')
+    ]
+    for mobile, password in users_org:
+        user = UserOrg()
+        user.mobile = mobile
+        user.password = password
+        db.session.add(user)
+    db.session.commit()
 
-        return {
-            'Authorization': 'basic %s' % encode_base64(str(token, 'utf-8') + ':'),
-            'Content-Type': 'application/json',
-        }
-
-    def generate_auth_token(self, uid, ac_type, scope, expiration=7200):
-        from flask import current_app
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
-        return s.dumps({'uid': uid, 'type': int(ac_type), 'scope': scope})
-
-
-class TestUserCSUCase(TestCase):
-    pass
+    news = [
+        ('头条', '开业酬宾', '头条内容'),
+        ('头条', '开业酬宾', '头条内容'),
+        ('头条', '开业酬宾', '头条内容'),
+        ('头条', '开业酬宾', '头条内容'),
+        ('头条', '开业酬宾', '头条内容')
+    ]
+    for tag, title, content in news:
+        news = NewsOrg()
+        news.tag = tag
+        news.title = title
+        news.content = content
+        db.session.add(news)
+    db.session.commit()

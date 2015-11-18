@@ -1,12 +1,10 @@
 from herovii.models.user.user_csu_secure import UserCSUSecure
-from tests.api._base import TestCase
+from tests.api._base import TestCase, TestUserCSUCase
 
 __author__ = 'bliss'
 
-import unittest
 
-
-class TestUserCSU(TestCase):
+class TestUserCSU(TestUserCSUCase):
     def test_password_md5(self):
         """消费用户：密码加密是否符合预期"""
         user = UserCSUSecure.query.filter_by(id=2).first()

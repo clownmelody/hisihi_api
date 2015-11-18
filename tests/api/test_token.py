@@ -1,10 +1,12 @@
+from tests.api._base import TestUserCSUCase
+
 __author__ = 'bliss'
 
 import json, time
 from ._base import TestCase
 
 
-class TestToken(TestCase):
+class TestToken(TestUserCSUCase):
     def test_get_token(self):
         """Token：CSU用户通过账号密码获取令牌"""
         data = json.dumps({

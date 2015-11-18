@@ -18,13 +18,15 @@ class Form(BaseForm):
         # lt = eval(r_data)
         # form_data = MultiDict(lt)
         data = request.get_json(silent=True, force=True)
-        if not data:
+        if not data and not args:
             raise JSONStyleError()
 
-        form_data = MultiDict(request.get_json(silent=True, force=True))
+        json_obj = request.get_json(silent=True, force=True)
+        if json_obj is not None:
+            form_data = MultiDict(json_obj)
+             merge = form_data.copy()
+             merge.update(args)
 
-        merge = form_data.copy()
-        merge.update(args)
         form = cls(formdata=merge, obj=obj, csrf_enabled=False)
         form._obj = obj
         if not form.validate():

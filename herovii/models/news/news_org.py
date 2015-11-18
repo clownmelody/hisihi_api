@@ -8,6 +8,9 @@ __author__ = 'bliss'
 
 
 class NewsOrg(Base):
+    __tablename__ = 'org_news'
+    __bind_key__ = 'org'
+
     id = Column(Integer, primary_key=True)
     organization_id = Column(Integer, default=0)
     tag = Column(String(45))
@@ -18,7 +21,7 @@ class NewsOrg(Base):
 
     def keys(self):
         return (
-            'id', 'tag', 'title', 'content'
+            'id', 'tag', 'title', 'content',
             'create_time', 'update_time'
         )
 

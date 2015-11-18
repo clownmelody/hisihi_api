@@ -1,14 +1,15 @@
+from tests.api._base import TestUserCSUCase
+
 __author__ = 'bliss'
 
 import time
-from ._base import TestCase
 from herovii.libs.httper import Httper
 from herovii.models.base import db
 from herovii.models.user.user_csu_credit_dynamic import UserCSUCreditDynamic
 from herovii.models.user.user_csu import UserCSU
 
 
-class TestMall(TestCase):
+class TestMall(TestUserCSUCase):
 
     def test_create_order_duiba(self):
         """商城：积分的扣除是否正常"""
