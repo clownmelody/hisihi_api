@@ -11,7 +11,7 @@ api = ApiBlueprint('news')
 
 @api.route('/org', methods=['GET'])
 def list_news():
-    form = PagingForm.create_api_form()
+    form = PagingForm.create_api_form(ignore_none=True)
     news = get_news_dto_paginate(form.page.data, form.count.data)
     headers = {'Content-Type': 'application/json'}
     return json.dumps(news), 200, headers

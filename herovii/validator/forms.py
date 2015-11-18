@@ -12,21 +12,26 @@ from herovii.libs.error_code import JSONStyleError
 
 class Form(BaseForm):
     @classmethod
-    def create_api_form(cls, obj=None):
+    def create_api_form(cls, obj=None, ignore_none=False):
         args = request.args
         # r_data = request.get_data()
         # lt = eval(r_data)
         # form_data = MultiDict(lt)
         data = request.get_json(silent=True, force=True)
-        if not data and not args:
+        if not data and not args and not ignore_none:
+            # 当POST body 和 args参数都为None，且不允许忽略空值时，抛出异常
+            # 注意，空参数且需要验证的情况，仅出现在form有给参数赋予默认值的情况下
+            # 比如 分页参数，page和count，他们都可以不传递，form会自动为其赋值
             raise JSONStyleError()
 
         json_obj = request.get_json(silent=True, force=True)
         if json_obj is not None:
             form_data = MultiDict(json_obj)
-             merge = form_data.copy()
-             merge.update(args)
-
+            merge = form_data.copy()
+            merge.update(args)
+        else:
+            # 进入这里，有两种情况一种是args有值，一种是args为[]空值
+            merge = MultiDict(args)
         form = cls(formdata=merge, obj=obj, csrf_enabled=False)
         form._obj = obj
         if not form.validate():
