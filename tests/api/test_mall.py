@@ -1,5 +1,8 @@
 from tests.api._base import TestUserCSUCase
 
+from herovii.models.mall.order_duiba import OrderDuiBa
+
+
 __author__ = 'bliss'
 
 import time
@@ -65,9 +68,12 @@ class TestMall(TestUserCSUCase):
         rv1 = self.client.get(url)
         assert rv1.status_code == 200
 
-        user_dynamic_credit = UserCSUCreditDynamic.query.filter_by(uid=1).all()
-        assert len(user_dynamic_credit) == 2
-        assert user_dynamic_credit[0].create_time != user_dynamic_credit[1].create_time
+        dynamic_credits = UserCSUCreditDynamic.query.filter_by(uid=1).all()
+        orders = OrderDuiBa.query.filter_by(uid=1).all()
+        self.assertEqual(len(dynamic_credits), 2)
+        self.assertEqual(len(orders), 2)
+        self.assertNotEqual(dynamic_credits[0].create_time, dynamic_credits[1].create_time)
+        self.assertNotEqual(orders[0].create_time, orders[1].create_time)
 
     def test_create_order_duiba_not_enough_coin(self):
         """商城：积分不足时候的扣分情况
