@@ -49,7 +49,7 @@ def test_log():
     file_handler.setLevel(logging.WARNING)
     logger = logging.getLogger('test')
     logger.addHandler(file_handler)
-    logger.warning('zzzzzzzzzzzzzz')
+    logger.warning(path)
     return 'success', 200
 
 
