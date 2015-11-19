@@ -1,3 +1,5 @@
+import os
+
 __author__ = 'bliss'
 
 from flask import request, jsonify, redirect
@@ -41,7 +43,8 @@ def test_log():
     )
 
     file_handler = logging.FileHandler('log.txt')
-    print('fffffffffffff')
+    path = os.path.abspath('.')
+    print(path)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.WARNING)
     logger = logging.getLogger('test')
