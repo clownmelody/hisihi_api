@@ -4,6 +4,9 @@ from logging.handlers import SMTPHandler
 from flask_cors import CORS
 from herovii import create_app
 from herovii.models import db
+from flask.ext.sqlalchemy import get_debug_queries
+from herovii.secure import DATABASE_QUERY_TIMEOUT
+
 
 __author__ = 'bliss'
 
@@ -35,6 +38,17 @@ if not app.debug:
         sh.setFormatter(formatter)
         app.logger.addHandler(sh)
 
+
+@app.after_request
+def after_request(response):
+    """数据库性能测试"""
+    print('xxxxxxxxxxxxxxxxx')
+    for query in get_debug_queries():
+        print(query.duration)
+        if query.duration >= DATABASE_QUERY_TIMEOUT:
+            app.logger.warning("SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
+                               (query.statement, query.parameters, query.duration, query.context))
+    return response
 
 if __name__ == '__main__':
     app.run()
