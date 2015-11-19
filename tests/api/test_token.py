@@ -10,12 +10,13 @@ class TestToken(TestUserCSUCase):
     def test_get_token(self):
         """Token：CSU用户通过账号密码获取令牌"""
         data = json.dumps({
-            'account': 'aswind',
+            'account': '17777777777',
             'secret': '123123',
             'type': '200'
         })
 
         rv = self.client.post('/v1/token', data=data)
+        print(rv.data)
         assert rv.status_code == 201
 
     def test_csu_get_token_by_social(self):

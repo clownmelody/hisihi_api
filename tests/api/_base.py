@@ -99,16 +99,17 @@ def prepare_csu_data():
         db.session.commit()
 
         users_secure =[
-            ('1', 'aswind', '123123'),
-            ('2', 'bliss', '111222333'),
-            ('3', 'openid', '123456')
+            ('1', 'aswind', 17777777777, '123123'),
+            ('2', 'bliss', 18888888888, '123123'),
+            ('3', 'openid', '', '123456')
         ]
 
-        for uid, username, password in users_secure:
+        for uid, username, mobile, password in users_secure:
             user = UserCSUSecure()
             user.id = uid
             user.username = username
             user.password = password
+            user.mobile = mobile
             db.session.add(user)
         db.session.commit()
 
