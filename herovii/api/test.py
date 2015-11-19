@@ -1,12 +1,10 @@
-import os
+import os, sys
 
 __author__ = 'bliss'
 
-from flask import request, jsonify, redirect
+from flask import request, redirect
 
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.models.user.user_org import UserOrg
-from herovii.models.base import db
 from herovii.api.token import auth
 
 api = ApiBlueprint('test')
@@ -45,13 +43,15 @@ def test_log():
     file_handler = logging.FileHandler('log.txt')
     path = os.path.abspath('.')
     path1 = os.getcwd()
-    print(path)
-    print(path1)
+
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.WARNING)
     logger = logging.getLogger('test')
     logger.addHandler(file_handler)
     logger.warning(path)
+    logger.warning(path1)
+    path2 = cur_file_dir()
+    logging.warning(path2)
     return 'success', 200
 
 
@@ -70,5 +70,15 @@ def test_error_log():
 @auth.login_required
 def test_auth():
     return 'success', 200
+
+
+def cur_file_dir():
+     #获取脚本路径
+     path = sys.path[0]
+     #判断为脚本文件还是py2exe编译后的文件，如果是脚本文件，则返回的是脚本的目录，如果是py2exe编译后的文件，则返回的是编译后的文件路径
+     if os.path.isdir(path):
+         return path
+     elif os.path.isfile(path):
+         return os.path.dirname(path)
 
 
