@@ -1,4 +1,5 @@
 import os, sys
+import stat
 
 __author__ = 'bliss'
 
@@ -33,26 +34,18 @@ def test_redirect():
     return redirect('http://sina.com')
 
 
-@api.route('/log')
-def test_log():
-    import logging
-    formatter = logging.Formatter(
-        '[%(asctime)s %(levelname)s %(funcName)s %(filename)s:%(lineno)d]: %(message)s'
-    )
-
-    file_handler = logging.FileHandler('log.txt')
-    path = os.path.abspath('.')
-    path1 = os.getcwd()
-
-    file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.WARNING)
-    logger = logging.getLogger('test')
-    logger.addHandler(file_handler)
-    logger.warning(path)
-    logger.warning(path1)
-    path2 = cur_file_dir()
-    logging.warning(path2)
-    return 'success', 200
+@api.route('/oss', methods=['POST'])
+def test_oss_put_object():
+    # file_object = open('E:/test/t.txt', 'w')
+    # file_object.write('ddddddddddd')
+    # file_object.close( )
+    # # os.chmod("E:/test", stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+    # r =request
+    file = request.files['file']
+    print(os.path.join('E:/test', file.filename))
+    if file:
+        file.save(os.path.join('E:/test', file.filename))
+    return 'ok', 200
 
 
 @api.route('/download+1', methods=['PUT'])
@@ -71,14 +64,5 @@ def test_error_log():
 def test_auth():
     return 'success', 200
 
-
-def cur_file_dir():
-     #获取脚本路径
-     path = sys.path[0]
-     #判断为脚本文件还是py2exe编译后的文件，如果是脚本文件，则返回的是脚本的目录，如果是py2exe编译后的文件，则返回的是编译后的文件路径
-     if os.path.isdir(path):
-         return path
-     elif os.path.isfile(path):
-         return os.path.dirname(path)
 
 

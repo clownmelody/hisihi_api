@@ -1,3 +1,5 @@
+from flask.ext.wtf.file import FileField
+
 __author__ = 'bliss'
 
 from flask import request
