@@ -28,11 +28,11 @@ if not app.debug:
     file_handler.setLevel(logging.WARNING)
     app.logger.addHandler(file_handler)
 
-    sh = SMTPHandler(
-                        'smtp.qq.com', '499055803@qq.com', '499055803@qq.com', 'bugger:!!!',
-                        credentials=('499055803@qq.com', 'll38966621314520'))
-    sh.setFormatter(formatter)
-    app.logger.addHandler(sh)
+    # sh = SMTPHandler(
+    #                     'smtp.qq.com', '499055803@qq.com', '499055803@qq.com', 'bugger:!!!',
+    #                     credentials=('499055803@qq.com', 'll38966621314520'))
+    # sh.setFormatter(formatter)
+    # app.logger.addHandler(sh)
 
 
 if __name__ == '__main__':
