@@ -33,6 +33,23 @@ def test_redirect():
     return redirect('http://sina.com')
 
 
+@api.route('/log')
+def test_log():
+    import logging
+    formatter = logging.Formatter(
+        '[%(asctime)s %(levelname)s %(funcName)s %(filename)s:%(lineno)d]: %(message)s'
+    )
+
+    file_handler = logging.FileHandler('log.txt')
+    print('fffffffffffff')
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.WARNING)
+    logger = logging.getLogger('test')
+    logger.addHandler(file_handler)
+    logger.warning('zzzzzzzzzzzzzz')
+    return 'success', 200
+
+
 @api.route('/download+1', methods=['PUT'])
 def downloads_plus_1():
     pass
