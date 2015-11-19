@@ -44,7 +44,9 @@ def test_log():
 
     file_handler = logging.FileHandler('log.txt')
     path = os.path.abspath('.')
+    path1 = os.getcwd()
     print(path)
+    print(path1)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.WARNING)
     logger = logging.getLogger('test')
