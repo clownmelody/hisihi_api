@@ -23,16 +23,17 @@ if not app.debug:
     formatter = logging.Formatter(
         '[%(asctime)s %(levelname)s %(funcName)s %(filename)s:%(lineno)d]: %(message)s'
     )
-    file_handler = logging.FileHandler('log.txt')
+    file_handler = logging.FileHandler(app.config['LOG_FILE'])
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.WARNING)
     app.logger.addHandler(file_handler)
 
-    # sh = SMTPHandler(
-    #                     'smtp.qq.com', '499055803@qq.com', '499055803@qq.com', 'bugger:!!!',
-    #                     credentials=('499055803@qq.com', 'll38966621314520'))
-    # sh.setFormatter(formatter)
-    # app.logger.addHandler(sh)
+    if app.config['SEND_LOG_EMAIL']:
+        sh = SMTPHandler(
+                            ('smtp.exmail.qq.com', 25), 'leilei@hisihi.com', '499055803@qq.com', 'bugger:!!!',
+                            credentials=('leilei@hisihi.com', 'Abc123321'))
+        sh.setFormatter(formatter)
+        app.logger.addHandler(sh)
 
 
 if __name__ == '__main__':
