@@ -9,7 +9,6 @@ api = ApiBlueprint('news')
 
 
 @api.route('/org', methods=['GET'])
-@auth.login_required
 def list_news():
     form = PagingForm.create_api_form(ignore_none=True)
     news = get_news_dto_paginate(form.page.data, form.count.data)
