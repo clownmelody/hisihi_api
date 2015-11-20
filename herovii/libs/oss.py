@@ -9,7 +9,7 @@ from herovii.libs.util import get_content_type_by_filename, get_resource, is_oss
 __author__ = 'bliss'
 
 
-class OssAPI:
+class OssAPI(object):
     """fuck ali python sdk don't support python 3
     rewrite SDK to fit python 3 by leilei
     """
@@ -39,35 +39,25 @@ class OssAPI:
         self.is_oss_domain = False
         self.sts_token = sts_token
 
-    def put_object_from_string(self, bucket, object, input_content, content_type='', headers=None, params=None):
-        """
-        Put object into bucket, the content of object is from input_content
+    def put_object_from_bytes(self, bucket, name, input_bytes, content_type='', headers=None, params=None):
+        if not headers:
+            headers = {}
+        if not content_type:
+            content_type = get_content_type_by_filename(object)
+        if not headers.get('Content-Type') and not headers.get('content-type'):
+            headers['Content-Type'] = content_type
+        headers['Content-Length'] = input_bytes.tell()
+        res = self.put_object_from_fp(bucket, name, input_bytes, content_type, headers, params)
+        input_bytes.close()
+        return res
 
-        :type bucket: string
-        :param
+    # def put_object_from_string(self, bucket, name, input_content, content_type='', headers=None, params=None):
+    #     method = "PUT"
+    #     return self._put_object_from_string(bucket, name, input_content,
+    #                                                 content_type, headers, params)
 
-        :type object: string
-        :param
-
-        :type input_content: string
-        :param
-
-        :type content_type: string
-        :param: the object content type that supported by HTTP
-
-        :type headers: dict
-        :param: HTTP header
-
-        Returns:
-            HTTP Response
-        """
-        method = "PUT"
-        return self._put_or_post_object_from_string(method,
-                                                    bucket, object, input_content,
-                                                    content_type, headers, params)
-
-    def _put_or_post_object_from_string(self, method, bucket, object,
-                                        input_content, content_type, headers, params):
+    def put_object_from_string(self, bucket, object,
+                               input_content, content_type, headers, params):
         if not headers:
             headers = {}
         if not content_type:
@@ -87,7 +77,7 @@ class OssAPI:
         return self._put_or_post_object_from_fp(method, bucket, name, fp, content_type, headers, params)
 
     def _put_or_post_object_from_fp(self, method, bucket, name, fp,
-                                    content_type=DefaultContentType, headers=None, params=None):
+                                    content_type=DefaultContentType, is_bytes=True, headers=None, params=None):
         tmp_object = name
         tmp_headers = {}
         tmp_params = {}
@@ -97,10 +87,10 @@ class OssAPI:
             tmp_params = params.copy()
 
         fp.seek(os.SEEK_SET, os.SEEK_END)
-        filesize = fp.tell()
+        file_size = fp.tell()
         fp.seek(os.SEEK_SET)
-        conn = self._open_conn_to_put_object(method, bucket, name, filesize, content_type, headers, params)
-        totallen = 0
+        conn = self._open_conn_to_put_object(method, bucket, name, file_size, content_type, headers, params)
+        total_len = 0
         l = fp.read(self.SendBufferSize)
         retry_times = 0
         while len(l) > 0:
@@ -108,13 +98,16 @@ class OssAPI:
                 print("reach max retry times: %s" % retry_times)
                 raise ValueError()
             try:
-                conn.send(l.encode('utf-8'))
+                if is_bytes:
+                    conn.send(l.encode('utf-8'))
+                else:
+                    conn.send(l)
                 retry_times = 0
             except Exception as e:
                 s = e
                 retry_times += 1
                 continue
-            totallen += len(l)
+            total_len += len(l)
             l = fp.read(self.SendBufferSize)
         res = conn.getresponse()
         return res

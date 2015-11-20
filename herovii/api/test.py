@@ -1,13 +1,10 @@
-import os, sys
-import pickle
-import stat
-
-__author__ = 'bliss'
-
 from flask import request, redirect
 
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
+from herovii.libs.oss import OssAPI
+
+__author__ = 'bliss'
 
 api = ApiBlueprint('test')
 
@@ -37,21 +34,17 @@ def test_redirect():
 
 @api.route('/oss', methods=['POST'])
 def test_oss_put_object():
-    # file_object = open('E:/test/t.txt', 'w')
-    # file_object.write('ddddddddddd')
-    # file_object.close( )
-    # # os.chmod("E:/test", stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
-    r =request
-    file = request.files['file']
+    # file = request.files['file']
+    file = request.files.to_dict()
+    s = file.itms()
     f = file.stream
-    print(f.getvalue())
-    fw = open('D:/321.png', 'rb')
-    pickle.dump(f.getvalue(), fw)
-    f.close()
-    # print(os.path.join('E:/test', file.filename))
-    # print(file.stream)
-    # if file:
-    #     file.save(os.path.join('E:/test', file.filename))
+    # print(f.getvalue())
+    # fw = open('D:/321.jpg', 'wb')
+    # fw.write(file.getvalue())
+    oss = OssAPI(access_id='3uFZDrxg6fGKZq8P', is_security=True,
+                 secret_access_key='LxsXIcp7ghkyqABJYIHYjmcsku1VOS')
+    oss.put_object_from_fp('hisihi-avator', 'xxx.jpg', f)
+
     return 'ok', 200
 
 

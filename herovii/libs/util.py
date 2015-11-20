@@ -31,13 +31,13 @@ def get_content_type_by_filename(file_name):
     try:
         name = os.path.basename(file_name)
         suffix = name.split('.')[-1]
+        suffix = '.'+suffix
         if suffix in mime_map.keys():
             mime_type = mime_map[suffix]
         else:
             from .mime import types_map
             mime_type = types_map[suffix]
-
-    except Exception:
+    except Exception as e:
         mime_type = 'application/octet-stream'
     if not mime_type:
         mime_type = 'application/octet-stream'
