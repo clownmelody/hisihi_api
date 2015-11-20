@@ -1,4 +1,5 @@
 import os, sys
+import pickle
 import stat
 
 __author__ = 'bliss'
@@ -42,9 +43,15 @@ def test_oss_put_object():
     # # os.chmod("E:/test", stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
     r =request
     file = request.files['file']
-    print(os.path.join('E:/test', file.filename))
-    if file:
-        file.save(os.path.join('E:/test', file.filename))
+    f = file.stream
+    print(f.getvalue())
+    fw = open('D:/321.png', 'rb')
+    pickle.dump(f.getvalue(), fw)
+    f.close()
+    # print(os.path.join('E:/test', file.filename))
+    # print(file.stream)
+    # if file:
+    #     file.save(os.path.join('E:/test', file.filename))
     return 'ok', 200
 
 
