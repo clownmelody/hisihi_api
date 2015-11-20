@@ -3,7 +3,7 @@ from flask import current_app
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
 from herovii.libs.oss import OssAPI
-from herovii.libs.util import get_timestamp_with_random, file_extension
+from herovii.libs.util import get_timestamp_with_random, file_extension, year_month_day
 
 __author__ = 'bliss'
 
@@ -42,7 +42,7 @@ def test_oss_put_object():
         f = file.stream
         oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
                      secret_access_key=current_app.config['ALI_OSS_SECRET'])
-        oss_url = current_app.config['ALI_OSS_ORG_DIR'] + random_name
+        oss_url = year_month_day() + '/' + random_name
         oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], oss_url, f)
     # print(f.getvalue())
     # fw = open('D:/321.jpg', 'wb')

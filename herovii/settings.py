@@ -9,5 +9,3 @@ ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']
 
 ALI_OSS_ORG_BUCKET_NAME = 'hisihi-other'
 
-ALI_OSS_ORG_DIR = 'org/'
-

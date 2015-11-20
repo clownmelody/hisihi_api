@@ -210,5 +210,7 @@ def file_extension(name):
     return extension
 
 
-
+def year_month_day():
+    time_str = datetime.datetime.now().strftime('%Y-%m-%d')
+    return time_str
 
