@@ -1,7 +1,5 @@
 from flask import request, redirect
 from flask import current_app
-from sphinx.util.osutil import os_path
-
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
 from herovii.libs.oss import OssAPI
