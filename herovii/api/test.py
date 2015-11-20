@@ -2,6 +2,8 @@ from flask import request, redirect
 from flask import current_app
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
+from herovii.libs.error_code import ParamException
+from herovii.libs.helper import allowed_uploaded_file_type
 from herovii.libs.oss import OssAPI
 from herovii.libs.util import get_timestamp_with_random, file_extension, year_month_day
 
@@ -38,6 +40,9 @@ def test_oss_put_object():
     # file = request.files['file']
     uploaded_files = request.files.getlist('files')
     for file in uploaded_files:
+        allowed = allowed_uploaded_file_type(file.filename)
+        if not allowed:
+            raise ParamException(error='extension of the file is forbidden for upload', error_code=4001)
         random_name = get_timestamp_with_random() + '.' + file_extension(file.filename)
         f = file.stream
         oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
