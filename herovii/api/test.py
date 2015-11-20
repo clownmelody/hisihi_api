@@ -1,8 +1,11 @@
 from flask import request, redirect
+from flask import current_app
+from sphinx.util.osutil import os_path
 
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
 from herovii.libs.oss import OssAPI
+from herovii.libs.util import get_timestamp_with_random, file_extension
 
 __author__ = 'bliss'
 
@@ -35,16 +38,17 @@ def test_redirect():
 @api.route('/oss', methods=['POST'])
 def test_oss_put_object():
     # file = request.files['file']
-    file = request.files.to_dict()
-    s = file.itms()
-    f = file.stream
+    uploaded_files = request.files.getlist('files')
+    for file in uploaded_files:
+        random_name = get_timestamp_with_random() + '.' + file_extension(file.filename)
+        f = file.stream
+        oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
+                     secret_access_key=current_app.config['ALI_OSS_SECRET'])
+        oss_url = current_app.config['ALI_OSS_ORG_DIR'] + random_name
+        oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], oss_url, f)
     # print(f.getvalue())
     # fw = open('D:/321.jpg', 'wb')
     # fw.write(file.getvalue())
-    oss = OssAPI(access_id='3uFZDrxg6fGKZq8P', is_security=True,
-                 secret_access_key='LxsXIcp7ghkyqABJYIHYjmcsku1VOS')
-    oss.put_object_from_fp('hisihi-avator', 'xxx.jpg', f)
-
     return 'ok', 200
 
 

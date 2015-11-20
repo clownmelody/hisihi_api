@@ -1,7 +1,11 @@
+import datetime
 import hmac
 import os
 import base64
 from hashlib import sha1 as sha
+import random
+import time
+from herovii.libs.error_code import ParamException
 
 __author__ = 'bliss'
 
@@ -31,7 +35,7 @@ def get_content_type_by_filename(file_name):
     try:
         name = os.path.basename(file_name)
         suffix = name.split('.')[-1]
-        suffix = '.'+suffix
+        suffix = '.'+ str(suffix)
         if suffix in mime_map.keys():
             mime_type = mime_map[suffix]
         else:
@@ -160,9 +164,7 @@ def get_assign(secret_access_key, method, headers=None, resource="/", result=Non
                 canonicalized_oss_headers += "%s:%s\n" % (k, tmp_headers[k])
 
     string_to_sign = method + "\n" + content_md5.strip() + "\n" + content_type + "\n" + \
-                     date + "\n" + canonicalized_oss_headers + canonicalized_resource
-    # string_to_sign = method + "\n" + content_type + "\n" + \
-    #             date + "\n" + canonicalized_oss_headers + canonicalized_resource
+                    date + "\n" + canonicalized_oss_headers + canonicalized_resource
     result.append(string_to_sign)
     h = hmac.new(secret_access_key.encode('utf-8'),
                  string_to_sign.encode('utf-8'), sha)
@@ -196,5 +198,17 @@ def get_fp_md5(fd):
     md5string = m.hexdigest()
     base64md5 = base64.encodestring(m.digest()).strip()
     return md5string, base64md5
+
+
+def get_timestamp_with_random():
+    timestamp = int(time.time()*1000)
+    return str(timestamp) + str(random.randint(100, 999))
+
+
+def file_extension(name):
+    extension = name.rsplit('.', 1)[1]
+    return extension
+
+
 
 

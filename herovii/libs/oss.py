@@ -204,8 +204,7 @@ class OssAPI(object):
 
     def _create_sign_for_normal_auth(self, method, headers=None, resource="/"):
         auth_value = "%s %s:%s" % (self.provider, self.access_id,
-                                   get_assign(self.secret_access_key, method,
-                                   headers, resource, None, self.debug))
+                                   get_assign(self.secret_access_key, method, headers, resource, None, self.debug))
         return auth_value
 
 
