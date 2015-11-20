@@ -1,7 +1,7 @@
 __author__ = 'bliss'
 
 from urllib import request as httpreq
-from http.client import HTTPSConnection, HTTPResponse
+from http.client import HTTPSConnection
 from flask import json
 
 

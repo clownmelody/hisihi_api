@@ -40,7 +40,7 @@ def test_oss_put_object():
     # file_object.write('ddddddddddd')
     # file_object.close( )
     # # os.chmod("E:/test", stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
-    # r =request
+    r =request
     file = request.files['file']
     print(os.path.join('E:/test', file.filename))
     if file:
