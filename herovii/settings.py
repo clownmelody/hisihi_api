@@ -5,7 +5,12 @@ __author__ = 'bliss'
 # 在返回结果中显示错误的具体内容，默认True
 SHOW_DETAIL_ERROR = True
 
-ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']
+# 仅允许以下扩展名格式的文件上传
+ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'amr']
 
+# ORG应用对应OSS的Bucket名称
 ALI_OSS_ORG_BUCKET_NAME = 'hisihi-other'
+
+# 上传文件的最大限制为1MB
+MAX_CONTENT_LENGTH = 1 * 1024 * 1024
 

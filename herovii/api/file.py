@@ -1,50 +1,28 @@
-from flask import request, redirect
+from flask import request
 from flask import current_app
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.api.token import auth
-from herovii.libs.error_code import ParamException, Successful, FileUploadFailed
+from herovii.libs.error_code import ParamException, FileUploadFailed
 from herovii.libs.helper import allowed_uploaded_file_type, success_json
 from herovii.libs.oss import OssAPI
 from herovii.libs.util import get_timestamp_with_random, file_extension, year_month_day
 
 __author__ = 'bliss'
 
-api = ApiBlueprint('test')
+api = ApiBlueprint('file')
 
 
-@api.route('/get', methods=['GET'])
-def test_javascript_http():
-    p = request.args.get('name')
-    return p, 200
-
-
-@api.route('/client-ip', methods=['GET'])
-def test_client_ip():
-    r = request.remote_addr
-    return r, 200
-
-
-@api.route('/dev')
-def test_new_dev():
-    a = 1/0
-    return 'dev is ok', 200
-
-
-@api.route('/redirect')
-def test_redirect():
-    return redirect('http://sina.com')
-
-
-@api.route('/oss', methods=['POST'])
-def test_oss_put_object():
+@api.route('/', methods=['POST'])
+def upload_files():
     try:
         files_list = request.files.lists()
     except RequestEntityTooLarge:
         raise ParamException(error='upload file length is too large',
                              error_code=4003, code=413)
 
+    file_urls_dict = {}
     for key, files in files_list:
+        files_urls = []
         for file in files:
             allowed = allowed_uploaded_file_type(file.filename)
             if not allowed:
@@ -65,23 +43,5 @@ def test_oss_put_object():
             except:
                 raise FileUploadFailed()
     return success_json()
-
-
-@api.route('/download+1', methods=['PUT'])
-def downloads_plus_1():
-    pass
-
-
-@api.route('/error-log')
-def test_error_log():
-    i = 2/0
-    return i, 200
-
-
-@api.route('/auth')
-@auth.login_required
-def test_auth():
-    return 'success', 200
-
 
 

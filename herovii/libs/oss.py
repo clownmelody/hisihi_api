@@ -96,7 +96,6 @@ class OssAPI(object):
         while len(l) > 0:
             if retry_times > 100:
                 print("reach max retry times: %s" % retry_times)
-                raise ValueError()
             try:
                 if is_bytes:
                     conn.send(l.encode('utf-8'))
