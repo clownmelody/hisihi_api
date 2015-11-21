@@ -6,11 +6,12 @@ __author__ = 'bliss'
 SHOW_DETAIL_ERROR = True
 
 # 仅允许以下扩展名格式的文件上传
-ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'amr']
+ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'amr', 'rar']
 
 # ORG应用对应OSS的Bucket名称
 ALI_OSS_ORG_BUCKET_NAME = 'hisihi-other'
 
+ALI_OSS_HOST = 'oss-cn-qingdao.aliyuncs.com'
+
 # 上传文件的最大限制为1MB
 MAX_CONTENT_LENGTH = 1 * 1024 * 1024
-

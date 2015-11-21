@@ -32,8 +32,8 @@ class ParamException(APIException):
     error = 'invalid_parameter'
     error_code = 1000
 
-    def __init__(self, error='invalid_parameter', code=400, error_code=1000, response=None):
-        super().__init__(error, error_code, code, response)
+    # def __init__(self, error='invalid_parameter', code=400, error_code=1000, response=None):
+    #     super().__init__(error, error_code, code, response)
 
 
 class JSONStyleError(APIException):
@@ -46,8 +46,14 @@ class JSONStyleError(APIException):
 
 class NotFound(APIException):
     code = 404
-    error = 'the resource are not_found'
+    error = 'the resource are not_found O__O...'
     error_code = 1001
+
+
+class ServerError(APIException):
+    code = 500
+    error = 'sorry, we made a mistake O__O...'
+    error_code = 1007
 
 
 class AuthFailed(APIException):

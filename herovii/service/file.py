@@ -13,23 +13,28 @@ class FilePiper(object):
 
     def __init__(self, files_list):
         self.files_list = files_list
-        pass
 
     def upload_to_oss(self):
+        """上传一组文件到OSS（多Key）"""
         file_urls_dict = {}
 
         for key, files in self.files_list:
-            file_urls = []
+            file_urls = FilePiper.upload_batch_to_oss(files)
+            file_urls_dict.update({key: file_urls})
+        return file_urls_dict
 
-            for file in files:
+    @staticmethod
+    def upload_batch_to_oss(files):
+        """上传一组文件到OSS（单Key）"""
+        file_urls = []
+        for file in files:
                 url = FilePiper.upload_one_to_oss(file)
                 file_urls.append(url)
-
-            file_urls_dict.update({key: file_urls})
-        return success_json()
+        return file_urls
 
     @staticmethod
     def upload_one_to_oss(file):
+        """上传单一文件到OSS"""
         allowed = allowed_uploaded_file_type(file.filename)
         if not allowed:
             raise ParamException(error='extension of the file is forbidden for upload',
@@ -38,13 +43,30 @@ class FilePiper(object):
         f = file.stream
         oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
                      secret_access_key=current_app.config['ALI_OSS_SECRET'])
-        oss_url = year_month_day() + '/' + random_name
+        object_url = year_month_day() + '/' + random_name
 
         try:
-            res = oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], oss_url, f)
+            res = oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], object_url, f)
             if res.code == 200:
-                return oss_url
+                return FilePiper.get_full_oss_url(object_url)
             else:
                 raise FileUploadFailed()
         except:
             raise FileUploadFailed()
+
+    @staticmethod
+    def get_full_oss_url(object_url):
+        host = current_app.config['ALI_OSS_HOST']
+        bucket = current_app.config['ALI_OSS_ORG_BUCKET_NAME']
+        full_oss_url = 'http://'+bucket + '.' + host + '/' + object_url
+        return full_oss_url
+
+
+
+
+
+
+
+
+
+

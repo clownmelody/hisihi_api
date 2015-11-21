@@ -3,6 +3,7 @@ import logging
 from logging.handlers import SMTPHandler
 from flask_cors import CORS
 from herovii import create_app
+from herovii.libs.error_code import ParamException, NotFound, ServerError
 from herovii.models import db
 from flask.ext.sqlalchemy import get_debug_queries
 from herovii.secure import DATABASE_QUERY_TIMEOUT
@@ -17,8 +18,9 @@ CORS(app)
 if '--initdb' in sys.argv:
     sys.exit()
 
-with app.app_context():
-    db.create_all()
+if app.config['CHECK_DB']:
+    with app.app_context():
+        db.create_all()
 
 # # 日志记录，当前测试在调试模式下，生成环境需更改为 not app.debug
 if not app.debug:
@@ -42,13 +44,22 @@ if not app.debug:
 @app.after_request
 def after_request(response):
     """数据库性能测试"""
-    print('xxxxxxxxxxxxxxxxx')
     for query in get_debug_queries():
         print(query.duration)
         if query.duration >= DATABASE_QUERY_TIMEOUT:
             app.logger.warning("SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" %
                                (query.statement, query.parameters, query.duration, query.context))
     return response
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return NotFound()
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return ServerError()
 
 if __name__ == '__main__':
     app.run()

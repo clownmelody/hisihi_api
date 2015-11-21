@@ -19,6 +19,12 @@ def test_javascript_http():
     return p, 200
 
 
+@api.route('/')
+def nothing():
+    a = 1/0
+    return 0
+
+
 @api.route('/client-ip', methods=['GET'])
 def test_client_ip():
     r = request.remote_addr
