@@ -20,6 +20,7 @@ def upload_object():
 
     file_piper = FilePiper(files_list)
     files_urls = file_piper.upload_to_oss()
+    ddd
     return json.dumps(files_urls), 201
 
 
