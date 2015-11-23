@@ -19,7 +19,7 @@ def create_csu_user():
     pass
 
 
-@api.route('/org', methods=['POST'])
+@api.route('/org/admin', methods=['POST'])
 def create_org_user():
     """ 添加一个机构用户
     调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
@@ -29,7 +29,7 @@ def create_org_user():
     """
     bmob = BMOB()
     form = RegisterByMobileForm.create_api_form()
-    phone_number = form.phone_number.data
+    phone_number = form.mobile.data
     password = form.password.data
     sms_code = form.sms_code.data
     status, body = bmob.verify_sms_code(phone_number, sms_code)
@@ -41,7 +41,7 @@ def create_org_user():
         raise UnknownError(j['error'], error_code=None)
 
 
-@api.route('/org/password', methods=['PUT'])
+@api.route('/org/admin/password', methods=['PUT'])
 def find_password():
     """ 重置/找回密码
         调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码

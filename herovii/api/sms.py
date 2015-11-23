@@ -14,7 +14,7 @@ from herovii.libs.helper import success_json
 api = ApiBlueprint('sms')
 
 
-@api.route('/verification', methods=['POST'])
+@api.route('/verify', methods=['POST'])
 @auth.login_required
 def send_sms_code():
     """ 发送验证码短信

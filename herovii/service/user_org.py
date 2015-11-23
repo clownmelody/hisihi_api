@@ -1,6 +1,6 @@
 from flask import current_app
 from herovii.models.base import db
-from herovii.models.user.user_org import UserOrg
+from herovii.models.user.user_org import UserOrgAdmin
 from herovii.models.user.user import User
 
 __author__ = 'bliss'
@@ -15,7 +15,7 @@ def get_user_by_uid(uid):
 
 
 def register_by_mobile(mobile, password):
-    user = UserOrg()
+    user = UserOrgAdmin()
     user.password = password
     user.mobile = mobile
     with db.auto_commit():

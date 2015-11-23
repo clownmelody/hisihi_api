@@ -7,7 +7,7 @@ from herovii.service.file import FilePiper
 
 __author__ = 'bliss'
 
-api = ApiBlueprint('object')
+api = ApiBlueprint('file')
 
 
 @api.route('', methods=['POST'])
@@ -20,7 +20,6 @@ def upload_object():
 
     file_piper = FilePiper(files_list)
     files_urls = file_piper.upload_to_oss()
-    ddd
     return json.dumps(files_urls), 201
 
 

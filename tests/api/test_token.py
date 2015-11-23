@@ -3,7 +3,6 @@ from tests.api._base import TestUserCSUCase
 __author__ = 'bliss'
 
 import json, time
-from ._base import TestCase
 
 
 class TestToken(TestUserCSUCase):

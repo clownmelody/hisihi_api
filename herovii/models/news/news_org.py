@@ -8,7 +8,7 @@ __author__ = 'bliss'
 
 
 class NewsOrg(Base):
-    __tablename__ = 'org_news'
+    __tablename__ = 'news'
     __bind_key__ = 'org'
 
     id = Column(Integer, primary_key=True)

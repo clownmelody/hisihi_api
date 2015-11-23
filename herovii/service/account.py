@@ -2,7 +2,7 @@ __author__ = 'bliss'
 
 from flask import current_app
 from herovii.models.user.user import User
-from herovii.models.user.user_org import UserOrg
+from herovii.models.user.user_org import UserOrgAdmin
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.models.base import db
 from herovii.libs.error_code import NotFound
@@ -24,12 +24,12 @@ def register_by_email(username, email, password):
 
 
 def reset_password_by_mobile(mobile, password):
-    user = UserOrg.query.filter_by(mobile=mobile).first()
+    user = UserOrgAdmin.query.filter_by(mobile=mobile).first()
     if user is not None:
         with db.auto_commit():
             user.update(
                 {
-                    UserOrg.password: password
+                    UserOrgAdmin.password: password
                 }
             )
     else:
@@ -38,7 +38,7 @@ def reset_password_by_mobile(mobile, password):
 
 
 # def verify_by_phone_number(phone_number, password):
-#     user = UserOrg.query.filter_by(mo=phone_number).first()
+#     user = UserOrgAdmin.query.filter_by(mo=phone_number).first()
 #     if not user or not user.check_password(password):
 #         return None
 #     else:
@@ -85,7 +85,7 @@ def verify_in_csu_by_mobile(mobile, raw_password):
 
 def verify_in_org_by_mobile(mobile, raw_password):
     """通过验证Org用户的手机和密码进行授权"""
-    user_org = UserOrg.query.filter_by(mobile=mobile).first()
+    user_org = UserOrgAdmin.query.filter_by(mobile=mobile).first()
     if user_org.check_password(raw_password):
         return True
     else:

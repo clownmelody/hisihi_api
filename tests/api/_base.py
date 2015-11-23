@@ -1,5 +1,5 @@
 from herovii.models.news.news_org import NewsOrg
-from herovii.models.user.user_org import UserOrg
+from herovii.models.user.user_org import UserOrgAdmin
 
 __author__ = 'bliss'
 
@@ -120,7 +120,7 @@ def prepare_org_data():
         ('18607138888', '111222333')
     ]
     for mobile, password in users_org:
-        user = UserOrg()
+        user = UserOrgAdmin()
         user.mobile = mobile
         user.password = password
         db.session.add(user)

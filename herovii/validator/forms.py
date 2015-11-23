@@ -67,7 +67,7 @@ class EmailForm(Form):
 
 
 class PhoneNumberForm(Form):
-    phone_number = StringField(validators=[
+    mobile = StringField(validators=[
         DataRequired(),
         Length(11),
         Regexp(r'^\d{11}$')
@@ -112,7 +112,7 @@ class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):
 
 class PagingForm(Form):
     page = IntegerField(default=1, validators=[NumberRange(1)])
-    count = IntegerField(default=20, validators=[NumberRange(1)])
+    per_page = IntegerField(default=20, validators=[NumberRange(1)])
 
 
 class RegisterForm(UserForm, EmailForm):

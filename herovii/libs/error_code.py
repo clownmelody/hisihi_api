@@ -68,7 +68,7 @@ class AuthFailed(APIException):
 
 
 class FileUploadFailed(APIException):
-    code = 400
+    code = 413
     error_code = 4001
     error = 'uploaded to oss failed'
 

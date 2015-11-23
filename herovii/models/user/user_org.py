@@ -3,13 +3,12 @@ from herovii.libs.helper import secret_password, check_md5_password
 __author__ = 'bliss'
 
 from sqlalchemy import Column, Integer, String, Boolean
-from werkzeug.security import generate_password_hash, check_password_hash
 from herovii.models.base import Base
 
 
-class UserOrg(Base):
+class UserOrgAdmin(Base):
 
-    __tablename__ = 'user_org'
+    __tablename__ = 'admin'
     __bind_key__ = 'org'
 
     id = Column(Integer, primary_key=True)
