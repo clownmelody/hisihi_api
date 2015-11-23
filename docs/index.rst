@@ -37,6 +37,5 @@ Api V1 说明
    user
    online
    mall
-   test
-   md
+   file
 

@@ -55,9 +55,9 @@ v1/file
 服务器目前返回的文件URI是经过CDN加速的URI。原始URI不再开放。通过CDN加速的URI支持对
 图片文件进行裁剪和缩放。例如：
 
-http://pic.hisihi.com/2015-11-23/6736273647.jpg@100w_100h.jpg
+http://pic.hisihi.com/2015-11-22%2F1448124241200305.jpg@300w
 
-调用这个URI将对 *6736273647.jpg* 裁剪，得到一张高100宽100的图片
+使用 `@300w` 调用这个URI将对 *1448124241200305.jpg* 裁剪，得到一张定宽（300），保持比例的新图片
 更多的裁剪、缩放、管道示例参见：
 
 http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.html
