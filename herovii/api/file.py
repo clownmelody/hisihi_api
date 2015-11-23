@@ -1,5 +1,5 @@
 import json
-from flask import request, jsonify
+from flask import request
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.error_code import ParamException

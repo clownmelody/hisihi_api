@@ -14,4 +14,4 @@ ALI_OSS_ORG_BUCKET_NAME = 'hisihi-other'
 ALI_OSS_HOST = 'oss-cn-qingdao.aliyuncs.com'
 
 # 上传文件的最大限制为1MB
-MAX_CONTENT_LENGTH = 1 * 1024 * 1024
+MAX_CONTENT_LENGTH = 6 * 1024 * 1024
