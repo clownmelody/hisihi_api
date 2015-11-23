@@ -154,7 +154,7 @@ def prepare_org_data():
 
     for tag_type, value in tags:
         tag = Tag()
-        tag.tag_type = type
+        tag.type = tag_type.value
         tag.value = value
         db.session.add(tag)
     db.session.commit()
@@ -177,6 +177,6 @@ def prepare_org_data():
         org.type = org_info[6]
         org.audit_status = org_info[7]
         org.phone_num = org_info[8]
-        org.advantage = org.info[9]
+        org.advantage = org_info[9]
         db.session.add(org)
     db.session.commit()

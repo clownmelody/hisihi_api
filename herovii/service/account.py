@@ -10,17 +10,17 @@ from herovii.models.heroapi.app import App
 from herovii.libs.helper import check_md5_password
 
 
-def register_by_email(username, email, password):
-    user = User(
-        username=username,
-        email=email
-    )
-
-    user.password = password
-    user.role = User.ROLE_ACTIVE
-    with db.auto_commit():
-        db.session.add(user)
-    return user
+# def register_by_email(username, email, password):
+#     user = User(
+#         username=username,
+#         email=email
+#     )
+#
+#     user.password = password
+#     user.role = User.ROLE_ACTIVE
+#     with db.auto_commit():
+#         db.session.add(user)
+#     return user
 
 
 def reset_password_by_mobile(mobile, password):

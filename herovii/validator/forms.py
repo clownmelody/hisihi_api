@@ -36,6 +36,7 @@ class Form(BaseForm):
             merge = MultiDict(args)
         form = cls(formdata=merge, obj=obj, csrf_enabled=False)
         form._obj = obj
+        form.body_data = json_obj
         if not form.validate():
             raise FormError(form)
         return form

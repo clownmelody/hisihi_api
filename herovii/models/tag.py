@@ -6,7 +6,7 @@ __author__ = 'bliss'
 
 
 class Tag(Base):
-    __tablename__ = 'Tag'
+    __tablename__ = 'tag'
     __bind_key__ = 'org'
 
     id = Column(Integer, primary_key=True)
