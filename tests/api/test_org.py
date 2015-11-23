@@ -1,5 +1,5 @@
 import json
-from herovii.models.org import Org
+from herovii.models.org import OrgInfo
 from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'
@@ -7,11 +7,23 @@ __author__ = 'bliss'
 
 class TestOrgInfo(TestOrgCase):
     def test_org_info_updated(self):
-        """Org：测试Org基本信息的更新操作"""
-        pass
+        """OrgInfo：测试Org基本信息的更新操作"""
+        org_info = {
+            'id': 1,
+            'name': '名字被改变',
+            'introduce': '新增名字'
+        }
+        headers = self.get_authorized_header(2, scope='OrgAdmin')
+        org_json = json.dumps(org_info)
+        rv = self.client.put('v1/org', data=org_json, headers=headers)
+        self.assertEqual(rv.status_code, 403)
+
+        headers = self.get_authorized_header(1, scope='OrgAdmin')
+        rv = self.client.put('v1/org', data=org_json, headers=headers)
+        self.assertEqual(rv.status_code, 202)
 
     def test_org_info_created(self):
-        """Org：测试Org基本信息的添加操作"""
+        """OrgInfo：测试Org基本信息的添加操作"""
         uid = 1
         headers = self.get_authorized_header(uid, scope='OrgAdmin')
         org_info = \
@@ -38,3 +50,9 @@ class TestOrgInfo(TestOrgCase):
 
     def test_org_info_query(self):
         pass
+
+    def test_g(self):
+        headers = self.get_authorized_header(2, scope='OrgAdmin')
+        r = self.client.get('v1/test/auth')
+        print(r.data)
+        self.assertEqual(r.status_code, 200)

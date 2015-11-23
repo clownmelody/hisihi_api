@@ -67,6 +67,12 @@ class AuthFailed(APIException):
     error = 'authorization failed'
 
 
+class IllegalOperation(APIException):
+    code = 403
+    error_code = 1008
+    error = 'your operation is illegal'
+
+
 class FileUploadFailed(APIException):
     code = 413
     error_code = 4001

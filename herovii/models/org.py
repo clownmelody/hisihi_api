@@ -7,12 +7,13 @@ from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 
 
-class Org(Base):
+class OrgInfo(Base):
 
     __tablename__ = 'org_info'
     __bind_key__ = 'org'
 
     id = Column(Integer, primary_key=True)
+    uid = Column(Integer)
     name = Column(String(80), nullable=False)
 
     # 宣传语
@@ -44,7 +45,7 @@ class Org(Base):
 
     def __init__(self, **entries):
         self.__dict__.update(entries)
-        super(Org, self).__init__()
+        super(OrgInfo, self).__init__()
 
     def keys(self):
         return (

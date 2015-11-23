@@ -44,17 +44,19 @@ class Online0001Scope(ScopeBase):
 
 class UserCSUScope(ScopeBase):
     """消费用户权限域"""
-    allow_api = ['v1.mall+redirect_to_duiba']
+    allow_api = ['v1.mall+redirect_to_duiba', 'v1.test+test_auth']
+    allow_module = ['v1.org']
 
 
 class OrgBaseScope(ScopeBase):
     """第一方Org应用程序的权限域"""
     allow_api = ['v1.sms+send_sms_code']
+    allow_module =['v1.org']
 
 
 class OrgAdminScope(ScopeBase):
     """Org管理员用户应用权限"""
-    allow_api = ['v1.file+upload_object'] + OrgBaseScope.allow_api
+    allow_api = ['v1.file+upload_object', 'v1.test+test_auth'] + OrgBaseScope.allow_api
     allow_module = ['v1.news', 'v1.org'] + OrgBaseScope.allow_module
 
 

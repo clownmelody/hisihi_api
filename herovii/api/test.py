@@ -1,5 +1,5 @@
 from flask import request, redirect
-from flask import current_app
+from flask import current_app, g
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
@@ -87,6 +87,7 @@ def test_error_log():
 @api.route('/auth')
 @auth.login_required
 def test_auth():
+    uid = g.user[0]
     return 'success', 200
 
 

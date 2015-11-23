@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, Boolean
 from herovii.models.base import Base
 
 
-class UserOrgAdmin(Base):
+class OrgAdmin(Base):
 
     __tablename__ = 'admin'
     __bind_key__ = 'org'
@@ -17,7 +17,7 @@ class UserOrgAdmin(Base):
     mobile = Column(String(15), unique=True, nullable=False)
 
     _password = Column('password', String(100))
-    organization_id = Column(Integer, unique=True)
+    # organization_id = Column(Integer, unique=True)
 
     def keys(self):
         return (

@@ -1,8 +1,8 @@
 from herovii.libs.enums import TagType
 from herovii.models.news.news_org import NewsOrg
-from herovii.models.org import Org
+from herovii.models.org import OrgInfo
 from herovii.models.tag import Tag
-from herovii.models.user.user_org import UserOrgAdmin
+from herovii.models.user.user_org import OrgAdmin
 
 __author__ = 'bliss'
 
@@ -123,7 +123,7 @@ def prepare_org_data():
         ('18607138888', '111222333', 2)
     ]
     for mobile, password, organization_id in users_org:
-        user = UserOrgAdmin()
+        user = OrgAdmin()
         user.mobile = mobile
         user.password = password
         user.organization_id = organization_id
@@ -161,13 +161,13 @@ def prepare_org_data():
 
     orgs = [
         ('北大青鸟', '培训！培训！培训万岁', '武汉市洪山区光谷新世界1602', '武汉',
-         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效'),
+         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效', 1),
         ('火星时代', '培训！培训！培训万岁', '武汉市洪山区光谷新世界1602', '北京',
-         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效')
+         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效', 2)
     ]
 
     for org_info in orgs:
-        org = Org()
+        org = OrgInfo()
         org.name = org_info[0]
         org.slogan = org_info[1]
         org.location = org_info[2]
@@ -178,5 +178,6 @@ def prepare_org_data():
         org.audit_status = org_info[7]
         org.phone_num = org_info[8]
         org.advantage = org_info[9]
+        org.uid = org_info[10]
         db.session.add(org)
     db.session.commit()
