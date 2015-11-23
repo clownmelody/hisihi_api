@@ -115,6 +115,10 @@ class PagingForm(Form):
     per_page = IntegerField(default=20, validators=[NumberRange(1)])
 
 
+class OrgForm(Form):
+    name = StringField(validators=[DataRequired()])
+
+
 class RegisterForm(UserForm, EmailForm):
 
     def get_valid_data(self):

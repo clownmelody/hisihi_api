@@ -1,4 +1,7 @@
+from herovii.libs.enums import TagType
 from herovii.models.news.news_org import NewsOrg
+from herovii.models.org import Org
+from herovii.models.tag import Tag
 from herovii.models.user.user_org import UserOrgAdmin
 
 __author__ = 'bliss'
@@ -77,7 +80,7 @@ class TestUserCSUCase(TestCase):
         prepare_csu_data()
 
 
-class TestNewsOrgCase(TestCase):
+class TestOrgCase(TestCase):
     def prepare_data(self):
         prepare_org_data()
 
@@ -116,13 +119,14 @@ def prepare_csu_data():
 
 def prepare_org_data():
     users_org = [
-        ('18607131949', '123123'),
-        ('18607138888', '111222333')
+        ('18607131949', '123123', 1),
+        ('18607138888', '111222333', 2)
     ]
-    for mobile, password in users_org:
+    for mobile, password, organization_id in users_org:
         user = UserOrgAdmin()
         user.mobile = mobile
         user.password = password
+        user.organization_id = organization_id
         db.session.add(user)
     db.session.commit()
 
@@ -139,4 +143,40 @@ def prepare_org_data():
         news.title = title
         news.content = content
         db.session.add(news)
+    db.session.commit()
+
+    tags = [
+        (TagType.org_advantage, '世界500强CEO授课'),
+        (TagType.org_advantage, '无敌的培训学校'),
+        (TagType.org_type, '设计培训'),
+        (TagType.org_type, '互联网精英培训')
+    ]
+
+    for tag_type, value in tags:
+        tag = Tag()
+        tag.tag_type = type
+        tag.value = value
+        db.session.add(tag)
+    db.session.commit()
+
+    orgs = [
+        ('北大青鸟', '培训！培训！培训万岁', '武汉市洪山区光谷新世界1602', '武汉',
+         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效'),
+        ('火星时代', '培训！培训！培训万岁', '武汉市洪山区光谷新世界1602', '北京',
+         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效')
+    ]
+
+    for org_info in orgs:
+        org = Org()
+        org.name = org_info[0]
+        org.slogan = org_info[1]
+        org.location = org_info[2]
+        org.city = org_info[3]
+        org.lon = org_info[4]
+        org.lat = org_info[5]
+        org.type = org_info[6]
+        org.audit_status = org_info[7]
+        org.phone_num = org_info[8]
+        org.advantage = org.info[9]
+        db.session.add(org)
     db.session.commit()

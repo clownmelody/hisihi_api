@@ -1,9 +1,9 @@
-from tests.api._base import TestNewsOrgCase
+from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'
 
 
-class TestOrgNews(TestNewsOrgCase):
+class TestOrgNews(TestOrgCase):
     def test_org_news_paging(self):
         """News：对Org的新闻查新接口做测试"""
         url = '/v1/news/org?page=1&count=2'

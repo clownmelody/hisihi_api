@@ -27,3 +27,19 @@ class AccountTypeEnum(Enum):
     use_csu_social = 230
     user_org_mobile = 300
 
+
+class TagType(Enum):
+    # 机构类型类
+    org_type = 100
+
+    # 机构优势类
+    org_advantage = 101
+
+
+class OrgAuditStatus(Enum):
+    wait = 0
+    in_progress = 1
+    done = 2
+    success = 3
+    reject = 4
+
