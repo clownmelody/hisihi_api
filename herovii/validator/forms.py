@@ -124,6 +124,10 @@ class OrgUpdateForm(Form):
     id = IntegerField(validators=[DataRequired()])
 
 
+class IDForm(Form):
+    ID = IntegerField(validators=[NumberRange(1)])
+
+
 class RegisterForm(UserForm, EmailForm):
 
     def get_valid_data(self):

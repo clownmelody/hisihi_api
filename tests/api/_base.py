@@ -161,9 +161,11 @@ def prepare_org_data():
 
     orgs = [
         ('北大青鸟', '培训！培训！培训万岁', '武汉市洪山区光谷新世界1602', '武汉',
-         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效', 1),
+         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效', 1,
+         '介绍', 'video', 'video_img', 'logo'),
         ('火星时代', '培训！培训！培训万岁', '武汉市洪山区光谷新世界1602', '北京',
-         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效', 2)
+         '114.421816', '30.498029', '设计培训#精英培训', 1, '0278888888', '无敌#高效', 2,
+         '介绍', 'video', 'video_img', 'logo')
     ]
 
     for org_info in orgs:
@@ -179,5 +181,9 @@ def prepare_org_data():
         org.phone_num = org_info[8]
         org.advantage = org_info[9]
         org.uid = org_info[10]
+        org.introduce = org_info[11]
+        org.video = org_info[12]
+        org.video_img = org_info[13]
+        org.logo = org_info[14]
         db.session.add(org)
     db.session.commit()

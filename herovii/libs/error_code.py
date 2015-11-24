@@ -79,8 +79,15 @@ class FileUploadFailed(APIException):
     error = 'uploaded to oss failed'
 
 
+class OrgNotFound(APIException):
+    code = 404
+    error_code = 5000
+    error = 'org not found'
+
+
 class UnknownError(APIException):
     code = 400
     error_code = 999
     error = 'sorry, there is a unknown error,suck!'
+
 

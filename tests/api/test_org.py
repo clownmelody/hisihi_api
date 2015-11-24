@@ -1,11 +1,10 @@
-import json
-from herovii.models.org import OrgInfo
+from flask import json
 from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'
 
 
-class TestOrgInfo(TestOrgCase):
+class TestOrg(TestOrgCase):
     def test_org_info_updated(self):
         """OrgInfo：测试Org基本信息的更新操作"""
         org_info = {
@@ -42,17 +41,20 @@ class TestOrgInfo(TestOrgCase):
             'advantage': org_info[9]
         }
         org_json = json.dumps(org)
-        print(org_json)
         rv = self.client.post('v1/org', data=org_json, headers=headers)
 
-        print(rv.data)
         self.assertEqual(rv.status_code, 201)
 
     def test_org_info_query(self):
-        pass
-
-    def test_g(self):
+        oid = '2'
         headers = self.get_authorized_header(2, scope='OrgAdmin')
-        r = self.client.get('v1/test/auth')
-        print(r.data)
-        self.assertEqual(r.status_code, 200)
+        rv = self.client.get('v1/org/'+oid, headers=headers)
+        print(type(rv.data))
+        self.assertEqual(rv.status_code, 200)
+        json_obj = json.loads(rv.data)
+        print(json_obj)
+        self.assertEqual(json_obj['id'], 2)
+
+        oid = '-1'
+        rv = self.client.get('v1/org' + oid, headers=headers)
+        self.assertEqual(rv.status_code, 404)

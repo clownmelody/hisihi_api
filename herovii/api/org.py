@@ -1,6 +1,6 @@
 from flask import jsonify, g
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import NotFound, IllegalOperation
+from herovii.libs.error_code import NotFound, IllegalOperation, OrgNotFound
 from herovii.models.base import db
 from herovii.models.org import OrgInfo
 from herovii.service.org import create_org_info
@@ -28,7 +28,7 @@ def update_org():
     org_id = form.id.data
     org_info = OrgInfo.query.get(org_id)
     if not org_info:
-        raise NotFound(error='org_info is not found')
+        raise OrgNotFound()
     if org_info.uid != g.user[0]:
         print(org_info.uid)
         print(g.user[0])
@@ -41,4 +41,14 @@ def update_org():
             setattr(org_info, key, value)
     return jsonify(org_info), 202
 
+
+@api.route('/<int:oid>', methods=['GET'])
+# @auth.login_required
+def get_org(oid):
+    org_info = OrgInfo.query.get(oid)
+    if not org_info:
+        raise OrgNotFound()
+    # if org_info.uid != g.user[0]:
+    #     raise IllegalOperation()
+    return jsonify(org_info), 200
 
