@@ -48,7 +48,7 @@ def get_org(oid):
     org_info = OrgInfo.query.get(oid)
     if not org_info:
         raise OrgNotFound()
-    # if org_info.uid != g.user[0]:
-    #     raise IllegalOperation()
+    if org_info.uid != g.user[0]:
+        raise IllegalOperation()
     return jsonify(org_info), 200
 
