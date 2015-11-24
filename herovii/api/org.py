@@ -43,7 +43,7 @@ def update_org():
 
 
 @api.route('/<int:oid>', methods=['GET'])
-# @auth.login_required
+@auth.login_required
 def get_org(oid):
     org_info = OrgInfo.query.get(oid)
     if not org_info:
