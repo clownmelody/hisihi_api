@@ -58,3 +58,4 @@ class TestOrg(TestOrgCase):
         oid = '-1'
         rv = self.client.get('v1/org' + oid, headers=headers)
         self.assertEqual(rv.status_code, 404)
+

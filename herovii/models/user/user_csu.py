@@ -1,7 +1,7 @@
 __author__ = 'bliss'
 
 
-from sqlalchemy import Column, Integer, String, Boolean, Date, CHAR, SmallInteger
+from sqlalchemy import Column, Integer, String, Date, CHAR, SmallInteger
 from herovii.models.base import BaseNoCreateTime
 
 

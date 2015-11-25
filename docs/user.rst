@@ -42,7 +42,7 @@ v1 / user
 
 **URL**::
 
-    PUT     /org/admin/password
+    PUT     /password
 
 **PUT Sample**:
 
@@ -51,7 +51,8 @@ v1 / user
     {
         "mobile": "18677771949",
         "sms_code": "567663",
-        "password": "hiyouth"
+        "password": "hiyouth",
+        "type": "230"
     }
 
 **Parameters**:
@@ -59,6 +60,7 @@ v1 / user
 * mobile：手机号（注册账号）
 * sms_code: 短信验证码（需要开发者首先调用 :ref:`短信发送` <sms>`
 * password: 用户新密码
+* type: 账号类型，可取值参见 :ref:`枚举类型说明 <enums>`
 
 **Response Sample** `202`:
 

@@ -1,6 +1,7 @@
+from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.service.user_org import register_by_mobile
 from flask import json, jsonify
-from herovii.validator.forms import RegisterByMobileForm
+from herovii.validator.forms import RegisterByMobileForm, PhoneNumberForm
 from herovii.service import user_org, account
 from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound, UnknownError
@@ -20,7 +21,7 @@ def create_csu_user():
 
 
 @api.route('/org/admin', methods=['POST'])
-def create_org_user():
+def create_org_admin():
     """ 添加一个机构用户
     调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
     :POST:
@@ -41,8 +42,18 @@ def create_org_user():
         raise UnknownError(j['error'], error_code=None)
 
 
-@api.route('/org/admin/password', methods=['PUT'])
-def find_password():
+@api.route('/org/admin', methods=['GET'])
+def get_org_admin():
+    pass
+
+
+@api.route('/org/admin', methods=['PUT'])
+def get_org_admin():
+    pass
+
+
+@api.route('/password', methods=['PUT'])
+def find_user_password():
     """ 重置/找回密码
         调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
     :PUT:
@@ -61,6 +72,38 @@ def find_password():
     else:
         j = json.loads(body)
         raise UnknownError(j['error'], error_code=None)
+
+
+@api.route('/group', methods=["PUT"])
+@auth.login_required
+def change_group():
+    """改变用户操作组"""
+    bmob = BMOB()
+    form = RegisterByMobileForm.create_api_form()
+    phone_number = form.mobile.data
+    password = form.password.data
+    sms_code = form.sms_code.data
+    status, body = bmob.verify_sms_code(phone_number, sms_code)
+    if status == 200:
+        user = register_by_mobile(phone_number, password)
+        return jsonify(user), 201
+    else:
+        j = json.loads(body)
+        raise UnknownError(j['error'], error_code=None)
+
+
+@api.route('/csu', methods=['GET'])
+@auth.login_required
+def get_csu():
+    form = PhoneNumberForm.create_api_form()
+    mobile = form.mobile.data
+    user = UserCSUSecure.query.filter_by(mobile=mobile).first_or_404()
+    return jsonify(user), 200
+
+
+@api.route('/csu', methods=['PUT'])
+def update_csu():
+    pass
 
 
 @api.route('/<uid>', methods=['GET'])
