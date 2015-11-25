@@ -2,6 +2,9 @@ from herovii.libs.enums import TagType
 from herovii.models.news.news_org import NewsOrg
 from herovii.models.org import OrgInfo
 from herovii.models.tag import Tag
+from herovii.models.user import identity
+from herovii.models.user.id_realeation import IdRelation
+from herovii.models.user.identity import Identity
 from herovii.models.user.user_org import OrgAdmin
 
 __author__ = 'bliss'
@@ -116,6 +119,26 @@ def prepare_csu_data():
             db.session.add(user)
         db.session.commit()
 
+        identities = [
+            ('设计师', '普通设计师学员'),
+            ('教师', '机构老师')
+        ]
+
+        for title, description in identities:
+            iden = Identity()
+            iden.title = title
+            iden.description = description
+        db.session.commit()
+
+        identities_realation = [
+            (1, 1), (2, 2)
+        ]
+        for uid, iden in identities_realation:
+            iden_r = IdRelation()
+            iden_r.uid = uid
+            iden_r.group_id = iden
+        db.session.commit()
+
 
 def prepare_org_data():
     users_org = [
@@ -187,3 +210,4 @@ def prepare_org_data():
         org.logo = org_info[14]
         db.session.add(org)
     db.session.commit()
+

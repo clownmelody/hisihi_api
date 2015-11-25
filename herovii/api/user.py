@@ -1,7 +1,9 @@
 from herovii.models.user.user_csu_secure import UserCSUSecure
+from herovii.service.user_csu import db_change_indentity
 from herovii.service.user_org import register_by_mobile
 from flask import json, jsonify
-from herovii.validator.forms import RegisterByMobileForm, PhoneNumberForm
+from herovii.validator.forms import RegisterByMobileForm, PhoneNumberForm, \
+    UserCSUChangeIdentityForm
 from herovii.service import user_org, account
 from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound, UnknownError
@@ -48,7 +50,7 @@ def get_org_admin():
 
 
 @api.route('/org/admin', methods=['PUT'])
-def get_org_admin():
+def update_org_admin():
     pass
 
 
@@ -74,22 +76,13 @@ def find_user_password():
         raise UnknownError(j['error'], error_code=None)
 
 
-@api.route('/group', methods=["PUT"])
+@api.route('/csu/identity', methods=["PUT"])
 @auth.login_required
-def change_group():
-    """改变用户操作组"""
-    bmob = BMOB()
-    form = RegisterByMobileForm.create_api_form()
-    phone_number = form.mobile.data
-    password = form.password.data
-    sms_code = form.sms_code.data
-    status, body = bmob.verify_sms_code(phone_number, sms_code)
-    if status == 200:
-        user = register_by_mobile(phone_number, password)
-        return jsonify(user), 201
-    else:
-        j = json.loads(body)
-        raise UnknownError(j['error'], error_code=None)
+def change_identity():
+    """改变CSU用户操作组"""
+    form = UserCSUChangeIdentityForm.create_api_form()
+    id_realation = db_change_indentity(form.uid.data, form.group_id.data)
+    return jsonify(id_realation), 202
 
 
 @api.route('/csu', methods=['GET'])

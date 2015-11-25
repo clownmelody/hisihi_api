@@ -4,7 +4,7 @@ from herovii.models.base import BaseNoCreateTime
 __author__ = 'bliss'
 
 
-class Group(BaseNoCreateTime):
+class Identity(BaseNoCreateTime):
 
     __tablename__ = 'hisihi_auth_group'
     __bind_key__ = 'csu'

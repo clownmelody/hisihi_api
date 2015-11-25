@@ -36,6 +36,14 @@ class TagType(Enum):
     org_advantage = 101
 
 
+class UserCSUIdentity(Enum):
+    normal = 1
+    designer = 5
+    teacher = 6
+    server_admin = 7
+    super = 8
+
+
 class OrgAuditStatus(Enum):
     wait = 0
     in_progress = 1

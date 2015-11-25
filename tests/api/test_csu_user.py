@@ -14,13 +14,19 @@ class TestUserCSU(TestUserCSUCase):
         should_be = '7c3307fac7459f1cd889810bdbb3e683'
         self.assertEqual(user.password, should_be)
 
-    def test_make_a_teacher(self):
+    def test_csu_query(self):
+        headers = self.get_authorized_header()
+
+        get_param = '?mobile=18888888888'
+        rv = self.client.get('v1/user/csu' + get_param, headers=headers)
+        self.assertEqual(200, rv.status_code)
+
+    def test_user_identity_change(self):
         headers = self.get_authorized_header()
         data = {
-                'mobile': '18888888888'
+            'uid': 1,
+            'group_id': 2
         }
-        json_str = jsonify(data)
-        rv = self.client.put('v1/teacher', data=json_str, headers)
-        self.assertEqual(202, rv.status_code)
-
-
+        data_json = json.dumps(data)
+        rv = self.client.put('v1/user/csu/indentity', data=data_json)
+        self.assertEqual(rv.status_code, 202)

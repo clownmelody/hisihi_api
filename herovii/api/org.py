@@ -1,10 +1,11 @@
 from flask import jsonify, g
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import NotFound, IllegalOperation, OrgNotFound
+from herovii.libs.error_code import IllegalOperation, OrgNotFound
 from herovii.models.base import db
-from herovii.models.org import OrgInfo
+from herovii.models.org.org_info import OrgInfo
+from herovii.models.org.teacher_group import TeacherGroup
 from herovii.service.org import create_org_info
-from herovii.validator.forms import OrgForm, OrgUpdateForm
+from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm
 
 __author__ = 'bliss'
 
@@ -30,16 +31,22 @@ def update_org():
     if not org_info:
         raise OrgNotFound()
     if org_info.uid != g.user[0]:
-        print(org_info.uid)
-        print(g.user[0])
         raise IllegalOperation()
 
-    # form.populate_obj(org_info)
     with db.auto_commit():
-        # org_info.__dict__.update(**form.body_data)
         for key, value in form.body_data.items():
             setattr(org_info, key, value)
     return jsonify(org_info), 202
+
+
+@api.route('/teacher/group', methods=['POST'])
+def create_teacher_group():
+    form = TeacherGroupForm.create_api_form()
+    group = TeacherGroup()
+    with db.auto_commit():
+        group.organization_id = form.organization_id.data
+        group.title = form.title.data
+    return jsonify(group), 201
 
 
 @api.route('/<int:oid>', methods=['GET'])

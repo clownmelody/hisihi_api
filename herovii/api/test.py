@@ -3,11 +3,11 @@ from flask import current_app, g
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
-from herovii.libs.error_code import ParamException, Successful, FileUploadFailed
+from herovii.libs.error_code import ParamException, FileUploadFailed
 from herovii.libs.helper import allowed_uploaded_file_type, success_json
 from herovii.libs.oss import OssAPI
 from herovii.libs.util import get_timestamp_with_random, file_extension, year_month_day
-from herovii.models.org import OrgInfo
+from herovii.validator.forms import OnlineIDForm
 
 __author__ = 'bliss'
 
@@ -22,10 +22,9 @@ def test_javascript_http():
 
 @api.route('/')
 def nothing():
-    id = 1
-    a = OrgInfo.query.filter_by(id=id).first()
-    s = a.id
-    return jsonify(a), 200
+    args = request.args
+    form = OnlineIDForm.create_api_form(obj=args)
+    return 'ok', 200
 
 
 @api.route('/client-ip', methods=['GET'])
