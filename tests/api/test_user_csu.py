@@ -1,5 +1,5 @@
 from herovii.models.user.user_csu_secure import UserCSUSecure
-from tests.api._base import TestCase, TestUserCSUCase
+from tests.api._base import  TestUserCSUCase
 
 __author__ = 'bliss'
 

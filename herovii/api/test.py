@@ -1,4 +1,4 @@
-from flask import request, redirect
+from flask import request, redirect, jsonify
 from flask import current_app, g
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint
@@ -7,6 +7,7 @@ from herovii.libs.error_code import ParamException, Successful, FileUploadFailed
 from herovii.libs.helper import allowed_uploaded_file_type, success_json
 from herovii.libs.oss import OssAPI
 from herovii.libs.util import get_timestamp_with_random, file_extension, year_month_day
+from herovii.models.org import OrgInfo
 
 __author__ = 'bliss'
 
@@ -21,8 +22,10 @@ def test_javascript_http():
 
 @api.route('/')
 def nothing():
-    a = 1/0
-    return 0
+    id = 1
+    a = OrgInfo.query.filter_by(id=id).first()
+    s = a.id
+    return jsonify(a), 200
 
 
 @api.route('/client-ip', methods=['GET'])

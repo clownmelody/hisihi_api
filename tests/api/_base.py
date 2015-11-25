@@ -60,7 +60,7 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         self._ctx.pop()
 
-    def get_authorized_header(self, user_id=1, scope='UserCSU', expiration=7200):
+    def get_authorized_header(self, user_id=1, scope='OrgAdmin', expiration=7200):
         # prepare token
         token = self.generate_auth_token(user_id, 200, scope, expiration)
 

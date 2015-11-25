@@ -30,17 +30,6 @@ class Online0001Scope(ScopeBase):
     allow_module = ['v1.online', 'v1.pk', 'v1.test']
     forbidden = ['v1.test+test_auth']
 
-    # @staticmethod
-    # def is_in_scope(api_endpoint):
-    #     index = str.find(api_endpoint, '+')
-    #     prefix = api_endpoint[:index]
-    #
-    #     if api_endpoint in Online0001Scope.allow_api:
-    #         return True
-    #     if prefix in Online0001Scope.allow_module and prefix not in Online0001Scope.forbidden_api:
-    #         return True
-    #     return False
-
 
 class UserCSUScope(ScopeBase):
     """消费用户权限域"""
@@ -50,7 +39,7 @@ class UserCSUScope(ScopeBase):
 
 class OrgBaseScope(ScopeBase):
     """第一方Org应用程序的权限域"""
-    allow_api = ['v1.sms+send_sms_code']
+    allow_api = ['v1.sms+send_sms_code', 'v1.tag+get_tags']
     allow_module =['v1.org']
 
 
