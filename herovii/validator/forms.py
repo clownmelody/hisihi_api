@@ -4,7 +4,7 @@ __author__ = 'bliss'
 
 from flask import request
 from flask_wtf import Form as BaseForm
-from wtforms.validators import StopValidation
+from wtforms.validators import StopValidation, ValidationError
 from werkzeug.datastructures import MultiDict
 from .base import *
 from herovii.models.user.user import User
@@ -14,25 +14,26 @@ from herovii.libs.error_code import JSONStyleError
 
 class Form(BaseForm):
     @classmethod
-    def create_api_form(cls, obj=None, ignore_none=False):
-        args = request.args
+    def create_api_form(cls, obj=None, data=None, **args):
+        # args = request.args
         json_obj = request.get_json(silent=True, force=True)
-        if not json_obj and not args and not ignore_none:
-            # 当POST body 和 args参数都为None，且不允许忽略空值时，抛出异常
-            # 注意，空参数且需要验证的情况，仅出现在form有给参数赋予默认值的情况下
-            # 比如 分页参数，page和count，他们都可以不传递，form会自动为其赋值
-            raise JSONStyleError()
+        # if not json_obj and not args and not ignore_none:
+        #     # 当POST body 和 args参数都为None，且不允许忽略空值时，抛出异常
+        #     # 注意，空参数且需要验证的情况，仅出现在form有给参数赋予默认值的情况下
+        #     # 比如 分页参数，page和count，他们都可以不传递，form会自动为其赋值
+        #     raise JSONStyleError()
 
-        if json_obj is not None:
-            form_data = MultiDict(json_obj)
-            merge = form_data.copy()
-            merge.update(args)
-        else:
-            # 进入这里，有两种情况一种是args有值，一种是args为[]空值
-            merge = MultiDict(args)
-        form = cls(formdata=merge, obj=obj, csrf_enabled=False)
+        # if json_obj is not None:
+        form_data = MultiDict(json_obj)
+            # merge = form_data.copy()
+            # merge.update(args)
+        # else:
+        #     # 进入这里，有两种情况一种是args有值，一种是args为[]空值
+        #     merge = MultiDict(args)
+        form = cls(formdata=form_data, obj=obj, data=data, csrf_enabled=False, **args)
         form._obj = obj
         form.body_data = json_obj
+        form.args = obj
         if not form.validate():
             raise FormError(form)
         return form
@@ -108,9 +109,16 @@ class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):
 
 
 class PagingForm(Form):
-    page = IntegerField(default=1, validators=[NumberRange(1)])
-    per_page = IntegerField(default=20, validators=[NumberRange(1)])
+    page = StringField(default='1')
+    per_page = StringField(default='20')
 
+    def validate_page(self, filed):
+        if int(filed.data[0]) < 1:
+            raise ValidationError('Name must be less than 50 characters')
+
+    def validate_per_page(self, filed):
+        if int(filed.data[0]) < 1:
+            raise ValidationError('Name must be less than 50 characters')
 
 class OrgForm(Form):
     name = StringField(validators=[DataRequired()])
