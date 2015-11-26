@@ -4,7 +4,8 @@ from herovii.libs.error_code import IllegalOperation, OrgNotFound
 from herovii.models.base import db
 from herovii.models.org.org_info import OrgInfo
 from herovii.models.org.teacher_group import TeacherGroup
-from herovii.service.org import create_org_info
+from herovii.models.org.teacher_group_realation import TeacherGroupRealation
+from herovii.service.org import create_org_info, get_org_teachers_by_group
 from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm
 
 __author__ = 'bliss'
@@ -39,7 +40,7 @@ def update_org():
     return jsonify(org_info), 202
 
 
-@api.route('/teacher/group', methods=['POST'])
+@api.route('/group/teacher', methods=['POST'])
 def create_teacher_group():
     form = TeacherGroupForm.create_api_form()
     group = TeacherGroup()
@@ -47,6 +48,21 @@ def create_teacher_group():
         group.organization_id = form.organization_id.data
         group.title = form.title.data
     return jsonify(group), 201
+
+
+@api.route('/group/<int:g_id>/teacher/<int:uid>/join', methods=['POST'])
+def join_teacher_group(uid, g_id):
+    t_g_realation = TeacherGroupRealation()
+    t_g_realation.teacher_group_id = g_id
+    t_g_realation.uid = uid
+    with db.auto_commit():
+        db.session.add(t_g_realation)
+    return jsonify(t_g_realation)
+
+
+@api.route('/<int:oid>/teachers', methods=['GET'])
+def get_teachers_in_org(oid):
+    get_org_teachers_by_group(oid)
 
 
 @api.route('/<int:oid>', methods=['GET'])

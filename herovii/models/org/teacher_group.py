@@ -1,10 +1,5 @@
 __author__ = 'bliss'
 
-from sqlalchemy.sql.sqltypes import SmallInteger
-
-__author__ = 'bliss'
-
-
 from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 

@@ -1,4 +1,5 @@
 from flask.ext.wtf.file import FileField
+from wtforms.fields.core import BooleanField
 
 __author__ = 'bliss'
 
@@ -120,6 +121,7 @@ class PagingForm(Form):
         if int(filed.data[0]) < 1:
             raise ValidationError('Name must be less than 50 characters')
 
+
 class OrgForm(Form):
     name = StringField(validators=[DataRequired()])
 
@@ -140,6 +142,10 @@ class UserCSUChangeIdentityForm(Form):
 class TeacherGroupForm(Form):
     organization_id = IntegerField(validators=[NumberRange(1)])
     title = StringField(validators=[DataRequired()])
+
+
+class OrgTeacherQuery(Form):
+    group = StringField(default='*')
 
 
 class RegisterForm(UserForm, EmailForm):

@@ -1,7 +1,7 @@
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.service.user_csu import db_change_indentity
 from herovii.service.user_org import register_by_mobile
-from flask import json, jsonify
+from flask import json, jsonify, request
 from herovii.validator.forms import RegisterByMobileForm, PhoneNumberForm, \
     UserCSUChangeIdentityForm
 from herovii.service import user_org, account
@@ -88,7 +88,7 @@ def change_identity():
 @api.route('/csu', methods=['GET'])
 @auth.login_required
 def get_csu():
-    form = PhoneNumberForm.create_api_form()
+    form = PhoneNumberForm.create_api_form(**request.args)
     mobile = form.mobile.data
     user = UserCSUSecure.query.filter_by(mobile=mobile).first_or_404()
     return jsonify(user), 200
