@@ -7,6 +7,7 @@ from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_credit_dynamic import UserCSUCreditDynamic
 from herovii.models.base import db
 from herovii.libs.helper import dict_to_url_param, make_an_bizid
+from herovii.libs.error_code import ParamException
 
 
 class DuiBa(object):
@@ -80,7 +81,7 @@ class DuiBa(object):
                                                 params_list['description'], '兑吧', left_credit)
                 return success, left_credit, params_list['bizId']
         else:
-            return None
+            raise ParamException(error='invalid sign,who move my cheese?', error_code=999)
 
     def confirm_order(self, params_list):
         """确认订单状态，反馈兑换结果"""
@@ -156,7 +157,7 @@ class DuiBa(object):
             return "fuck, no 'true' no 'false', what's this?"
         # if order.success != 0 means this order has been updated,
         # should never be updated again
-        return "i have been updated the order's status, leave me in peace"
+        return 'ok'
 
     def __rollback_credit(self, uid, credit):
         """如果兑吧未能成功兑换，回滚用户积分"""

@@ -44,6 +44,7 @@ class OrderDuiBa(Base):
     def __init__(self, **entries):
         self.__dict__.update(entries)
         self.deduct_timestamp = entries['timestamp']
+        super(OrderDuiBa, self).__init__()
 
 
 

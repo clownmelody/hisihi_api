@@ -34,7 +34,12 @@ class BaseMixin(object):
 
 class Base(db.Model, BaseMixin):
     __abstract__ = True
-    create_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
+
+    create_time = Column('create_time', Integer)
+
+    def __init__(self):
+        self.create_time = int(datetime.datetime.now().timestamp())
+
     status = Column(SmallInteger, default=1)
 
 

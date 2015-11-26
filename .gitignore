@@ -25,4 +25,4 @@ playbooks/roles/*.*
 .idea/
 log.txt
 secure.py
-test.py
+/test.py
