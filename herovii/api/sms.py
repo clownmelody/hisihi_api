@@ -1,4 +1,3 @@
-__author__ = 'bliss'
 
 # just for web application. web application need server to help receive the verify sms
 # for mobile, it  doesn't need the server to receive sms.
@@ -10,6 +9,9 @@ from herovii.libs.bpbase import auth
 from herovii.validator.forms import PhoneNumberForm
 from herovii.libs.error_code import UnknownError
 from herovii.libs.helper import success_json
+
+__author__ = 'bliss'
+
 
 api = ApiBlueprint('sms')
 

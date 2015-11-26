@@ -1,4 +1,4 @@
-from flask import jsonify, g
+from flask import jsonify, g, json
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import IllegalOperation, OrgNotFound
 from herovii.models.base import db
@@ -40,7 +40,7 @@ def update_org():
     return jsonify(org_info), 202
 
 
-@api.route('/group/teacher', methods=['POST'])
+@api.route('/group', methods=['POST'])
 def create_teacher_group():
     form = TeacherGroupForm.create_api_form()
     group = TeacherGroup()
@@ -62,7 +62,10 @@ def join_teacher_group(uid, g_id):
 
 @api.route('/<int:oid>/teachers', methods=['GET'])
 def get_teachers_in_org(oid):
-    get_org_teachers_by_group(oid)
+    teachers = get_org_teachers_by_group(oid)
+    headers = {'Content-Type': 'application/json'}
+    t = json.dumps(teachers)
+    return t, 200, headers
 
 
 @api.route('/<int:oid>', methods=['GET'])

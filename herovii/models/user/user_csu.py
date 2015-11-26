@@ -19,7 +19,6 @@ class UserCSU(BaseNoCreateTime):
 
     def keys(self):
         return (
-            'uid', 'nickname', 'sex',
-            'create_time'
+            'uid', 'nickname', 'sex'
         )
 
