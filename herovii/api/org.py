@@ -72,13 +72,13 @@ def list_news():
     return json.dumps(news), 200, headers
 
 
-@api.route('/admin', methods=['GET'])
-def get_org_admin():
+@api.route('/admin/<int:id>', methods=['GET'])
+def get_org_admin(id):
     pass
 
 
-@api.route('/admin', methods=['PUT'])
-def update_org_admin():
+@api.route('/admin/<int:id>', methods=['PUT'])
+def update_org_admin(id):
     pass
 
 
@@ -109,7 +109,7 @@ def update_org():
     return jsonify(org_info), 202
 
 
-@api.route('/group', methods=['POST'])
+@api.route('/teacher/group', methods=['POST'])
 def create_teacher_group():
     form = TeacherGroupForm.create_api_form()
     group = TeacherGroup()
@@ -119,7 +119,7 @@ def create_teacher_group():
     return jsonify(group), 201
 
 
-@api.route('/group/<int:g_id>/teacher/<int:uid>/join', methods=['POST'])
+@api.route('/teacher/<int:uid>/group/<int:g_id>/join', methods=['POST'])
 def join_teacher_group(uid, g_id):
     t_g_realation = TeacherGroupRealation()
     t_g_realation.teacher_group_id = g_id
