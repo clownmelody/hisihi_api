@@ -1,15 +1,15 @@
 .. _user:
 
-v1 / user
+用户
 =============
 
 
-重置机构用户密码
+重置机构管理员密码
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **URL**::
 
-    PUT     /password
+    PUT     org/admin/password
 
 **PUT Sample**:
 

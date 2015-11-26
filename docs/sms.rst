@@ -1,6 +1,6 @@
 .. _sms:
 
-v1/sms
+短信
 ========
 
 发送验证码短信
@@ -8,7 +8,7 @@ v1/sms
 
 **URL**::
 
-    POST   /verify
+    POST   sms/verify
 
 **POST Simple**
 

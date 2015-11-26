@@ -1,6 +1,6 @@
 .. _file:
 
-v1/file
+文件
 ===========
 
 上传文件
@@ -8,7 +8,7 @@ v1/file
 
 **URL**::
 
-    POST      /
+    POST      file/
 
 **POST Sample**：
 

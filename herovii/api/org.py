@@ -1,16 +1,85 @@
-from flask import jsonify, g, json
+from flask import jsonify, g, json, request
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import IllegalOperation, OrgNotFound
+from herovii.libs.error_code import IllegalOperation, OrgNotFound, UnknownError
+from herovii.libs.httper import BMOB
+from herovii.libs.helper import success_json
 from herovii.models.base import db
 from herovii.models.org.org_info import OrgInfo
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
+from herovii.service import account
 from herovii.service.org import create_org_info, get_org_teachers_by_group
-from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm
+from herovii.service.news import get_news_dto_paginate
+from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm, RegisterByMobileForm, PagingForm
+from herovii.service.user_org import register_by_mobile
 
 __author__ = 'bliss'
 
 api = ApiBlueprint('org')
+
+
+@api.route('/admin', methods=['POST'])
+def create_org_admin():
+    """ 添加一个机构用户
+    调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
+    :POST:
+        {'phone_number':'18699998888', 'sms_code':'876876', 'password':'password'}
+    :return:
+    """
+    bmob = BMOB()
+    form = RegisterByMobileForm.create_api_form()
+    phone_number = form.mobile.data
+    password = form.password.data
+    sms_code = form.sms_code.data
+    status, body = bmob.verify_sms_code(phone_number, sms_code)
+    if status == 200:
+        user = register_by_mobile(phone_number, password)
+        return jsonify(user), 201
+    else:
+        j = json.loads(body)
+        raise UnknownError(j['error'], error_code=None)
+
+
+@api.route('/admin/password', methods=['PUT'])
+def find_admin_password():
+    """ 重置/找回密码
+        调用此接口需要先调用'/v1/sms/verify' 接口，以获得短信验证码
+    :PUT:
+        {"phone_number":'18699998888', "sms_code":'876876', "password":'password'}
+    :return:
+    """
+    bmob = BMOB()
+    form = RegisterByMobileForm.create_api_form()
+    mobile = form.phone_number.data
+    password = form.password.data
+    sms_code = form.sms_code.data
+    status, body = bmob.verify_sms_code(mobile, sms_code)
+    if status == 200:
+        account.reset_password_by_mobile(mobile, password)
+        return success_json(), 202
+    else:
+        j = json.loads(body)
+        raise UnknownError(j['error'], error_code=None)
+
+
+@api.route('/news', methods=['GET'])
+@auth.login_required
+def list_news():
+    args = request.args
+    form = PagingForm.create_api_form(**args)
+    news = get_news_dto_paginate(int(form.page.data[0]), int(form.per_page.data[0]))
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(news), 200, headers
+
+
+@api.route('/admin', methods=['GET'])
+def get_org_admin():
+    pass
+
+
+@api.route('/admin', methods=['PUT'])
+def update_org_admin():
+    pass
 
 
 @api.route('', methods=['POST'])

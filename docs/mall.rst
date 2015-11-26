@@ -1,6 +1,6 @@
 .. _mall:
 
-v1/mall
+商城
 =============
     表示商城类资源
 
@@ -8,7 +8,7 @@ v1/mall
 ~~~~~~~~~~~~~~~~~~~~
 URL::
 
-    GET     /duiba/index
+    GET     mall/duiba/index
 
 Response Status `301` :
 

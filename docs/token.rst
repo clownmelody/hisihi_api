@@ -1,6 +1,6 @@
 .. _token:
 
-v1/token
+令牌
 ===========
 
 获取令牌
@@ -8,7 +8,7 @@ v1/token
 
 **URL**::
 
-    POST      /
+    POST      token/
 
 **POST**：
 
@@ -48,7 +48,7 @@ v1/token
 
 **URL**::
 
-    POST      /info
+    POST      token/info
 
 **POST**::
 

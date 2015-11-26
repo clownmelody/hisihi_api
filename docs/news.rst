@@ -1,6 +1,6 @@
 .. _news:
 
-v1/news
+新闻
 ===========
 
 获取面向机构的新闻列表
@@ -8,7 +8,7 @@ v1/news
 
 **URL**::
 
-    GET      /org
+    GET      org/news
 
 **GET Sample**：
 
