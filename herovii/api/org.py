@@ -4,13 +4,17 @@ from herovii.libs.error_code import IllegalOperation, OrgNotFound, UnknownError
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.models.base import db
+from herovii.models.org import org_course
+from herovii.models.org.org_course import OrgCourse
 from herovii.models.org.org_info import OrgInfo
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.service import account
-from herovii.service.org import create_org_info, get_org_teachers_by_group
+from herovii.service.org import create_org_info, get_org_teachers_by_group, get_org_courses, dto_org_courses_paginate, \
+    get_course_by_id
 from herovii.service.news import get_news_dto_paginate
-from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm, RegisterByMobileForm, PagingForm
+from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm, RegisterByMobileForm, PagingForm, \
+    OrgCourseForm, OrgCourseUpdateForm
 from herovii.service.user_org import register_by_mobile
 
 __author__ = 'bliss'
@@ -110,16 +114,31 @@ def update_org():
 
 
 @api.route('/teacher/group', methods=['POST'])
+@auth.login_required
 def create_teacher_group():
     form = TeacherGroupForm.create_api_form()
     group = TeacherGroup()
     with db.auto_commit():
         group.organization_id = form.organization_id.data
         group.title = form.title.data
+        db.session.add(group)
     return jsonify(group), 201
 
 
+@api.route('/teacher/group/<int:gid>', methods=['Delete'])
+@auth.login_required
+def delete_teacher_group(gid):
+    with db.auto_commit():
+        count = db.session.query(TeacherGroup).\
+                        filter_by(id=gid).delete()
+        count1 = db.session.query(TeacherGroupRealation).filter_by(
+            teacher_group_id=gid).delete()
+    msg = str(count+count1) + ' groups has been deleted'
+    return success_json(msg=msg), 202
+
+
 @api.route('/teacher/<int:uid>/group/<int:g_id>/join', methods=['POST'])
+@auth.login_required
 def join_teacher_group(uid, g_id):
     t_g_realation = TeacherGroupRealation()
     t_g_realation.teacher_group_id = g_id
@@ -129,7 +148,19 @@ def join_teacher_group(uid, g_id):
     return jsonify(t_g_realation)
 
 
+@api.route('/teacher/<int:uid>/group/<int:gid>/join', methods=['DELETE'])
+@auth.login_required
+def retire_from_teacher_group(uid, gid):
+    s = 1
+    count = TeacherGroupRealation.query.filter(
+        TeacherGroupRealation.uid == uid, TeacherGroupRealation.teacher_group_id == gid) \
+        .delete()
+    msg = count + 'teacher identity has been removed'
+    return success_json(msg=msg), 202
+
+
 @api.route('/<int:oid>/teachers', methods=['GET'])
+@auth.login_required
 def get_teachers_in_org(oid):
     teachers = get_org_teachers_by_group(oid)
     headers = {'Content-Type': 'application/json'}
@@ -146,4 +177,57 @@ def get_org(oid):
     if org_info.uid != g.user[0]:
         raise IllegalOperation()
     return jsonify(org_info), 200
+
+
+@api.route('/course', methods=['POST'])
+@auth.login_required
+def create_org_course():
+    form = OrgCourseForm.create_api_form()
+    course = OrgCourse()
+    for key, value in form.body_data.items():
+        setattr(course, key, value)
+    with db.auto_commit():
+        db.session.add(course)
+    return jsonify(course), 201
+
+
+@api.route('/course', methods=['PUT'])
+@auth.login_required
+def update_org_course():
+    form = OrgCourseUpdateForm.create_api_form()
+    course = OrgCourse.query.filter_by(id=form.id.data).first_or_404()
+    with db.auto_commit():
+        for key, value in form.body_data.items():
+            setattr(course, key, value)
+    return jsonify(course), 202
+
+
+@api.route('/course/<int:cid>', methods=['DELETE'])
+@auth.login_required
+def delete_org_course(cid):
+    OrgCourse.query.filter_by(id=cid).delete()
+    return success_json(), 202
+
+
+@api.route('/<int:oid>/courses')
+@auth.login_required
+def list_courses(oid):
+    args = request.args
+    form = PagingForm.create_api_form(**args)
+    dto = dto_org_courses_paginate(oid, form.page.data[0], form.per_page.data[0])
+    headers = {'Content-Type': 'application/json'}
+    json_obj = json.dumps(dto)
+    return json_obj, 200, headers
+
+
+@api.route('/courses/<int:cid>')
+@auth.login_required
+def get_course(cid):
+    course = get_course_by_id(cid)
+    json_data = json.dumps(course)
+    headers = {'Content-Type': 'application/json'}
+    return json_data, 200, headers
+
+
+
 

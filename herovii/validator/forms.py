@@ -148,6 +148,20 @@ class OrgTeacherQuery(Form):
     group = StringField(default='*')
 
 
+class OrgCourseForm(Form):
+    organization_id = IntegerField(
+        validators=[NumberRange(1), DataRequired()])
+    title = StringField(
+        validators=[DataRequired()]
+    )
+
+
+class OrgCourseUpdateForm(OrgCourseForm):
+    id = IntegerField(
+        validators=[NumberRange(1), DataRequired()]
+    )
+
+
 class RegisterForm(UserForm, EmailForm):
 
     def get_valid_data(self):
