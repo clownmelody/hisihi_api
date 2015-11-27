@@ -12,10 +12,10 @@ class IdRelation(BaseNoCreateTime):
     id = Column(Integer, primary_key=True)
 
     uid = Column(Integer)
-    group_id = Column(Integer, unique=True)
+    group_id = Column(Integer)
     # uid_group = Index("some_index", uid, group_id)
 
     def keys(self):
         return (
-            'uid', 'group_id', 'description'
+            'uid', 'group_id'
         )

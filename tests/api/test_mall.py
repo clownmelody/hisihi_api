@@ -109,9 +109,10 @@ class TestMall(TestUserCSUCase):
 
     def test_redirect_to_duiba(self):
         """商城：生成免登录Url后重定向到兑吧"""
-        headers = self.get_authorized_header()
+        headers = self.get_authorized_header(scope='UserCSU')
         rv = self.client.get('/v1/mall/duiba/index', headers=headers)
         http = Httper()
+
         r_redirect = http.get(rv.location)
 
         assert r_redirect.status == 200

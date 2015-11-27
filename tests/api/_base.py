@@ -77,15 +77,16 @@ class TestCase(unittest.TestCase):
 
 class TestUserCSUCase(TestCase):
     def prepare_data(self):
-        prepare_csu_data()
+        prepare_user_data()
 
 
 class TestOrgCase(TestCase):
     def prepare_data(self):
+        prepare_user_data()
         prepare_org_data()
 
 
-def prepare_csu_data():
+def prepare_user_data():
         from herovii.models.user.user_csu import UserCSU
         from herovii.models.user.user_csu_secure import UserCSUSecure
 
@@ -125,6 +126,7 @@ def prepare_csu_data():
             iden = Identity()
             iden.title = title
             iden.description = description
+            db.session.add(iden)
         db.session.commit()
 
         identities_realation = [
@@ -134,6 +136,7 @@ def prepare_csu_data():
             iden_r = IdRelation()
             iden_r.uid = uid
             iden_r.group_id = iden
+            db.session.add(iden_r)
         db.session.commit()
 
 

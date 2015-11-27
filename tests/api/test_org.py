@@ -45,7 +45,19 @@ class TestOrg(TestOrgCase):
 
         self.assertEqual(rv.status_code, 201)
 
+    def test_user_identity_change(self):
+        """身份：测试用户身份改变"""
+        headers = self.get_authorized_header()
+        data = {
+            'uid': 1,
+            'group_id': 2
+        }
+        data_json = json.dumps(data)
+        rv = self.client.put('v1/user/csu/identity', data=data_json, headers=headers)
+        self.assertEqual(rv.status_code, 202)
+
     def test_org_info_query(self):
+        """机构信息：测试机构信息查询"""
         oid = '2'
         headers = self.get_authorized_header(2, scope='OrgAdmin')
         rv = self.client.get('v1/org/' + oid, headers=headers)
@@ -58,6 +70,7 @@ class TestOrg(TestOrgCase):
         self.assertEqual(rv.status_code, 404)
 
     def test_org_pics_create(self):
+        """图片上传：测试Org的图片上传"""
         oid = '1'
         headers = self.get_authorized_header(1, scope='OrgAdmin')
         data = [

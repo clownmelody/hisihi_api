@@ -18,6 +18,7 @@ class Form(BaseForm):
         if not self_data:
             json_obj = request.get_json(silent=True, force=True)
         else:
+            # 当self_data!=None 时，不需要Form自动获取request body参数
             json_obj = self_data
 
         # if json_obj is not None:

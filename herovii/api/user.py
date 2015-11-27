@@ -33,7 +33,8 @@ def change_identity():
 @api.route('/csu', methods=['GET'])
 @auth.login_required
 def get_csu():
-    form = PhoneNumberForm.create_api_form(**request.args)
+    s = request.args
+    form = PhoneNumberForm.create_api_form(**request.args.to_dict())
     mobile = form.mobile.data
     user = UserCSUSecure.query.filter_by(mobile=mobile).first_or_404()
     return jsonify(user), 200
@@ -44,7 +45,7 @@ def update_csu():
     pass
 
 
-@api.route('/csu/<uid>', methods=['GET'])
+@api.route('/csu/<int:uid>', methods=['GET'])
 @auth.login_required
 def get_user_uid(uid):
     uid = user_verify.verify_uid(uid)

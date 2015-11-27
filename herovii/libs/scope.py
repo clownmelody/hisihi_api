@@ -34,7 +34,8 @@ class Online0001Scope(ScopeBase):
 class UserCSUScope(ScopeBase):
     """消费用户权限域"""
     allow_api = ['v1.mall+redirect_to_duiba', 'v1.test+test_auth']
-    allow_module = ['v1.org']
+    allow_module = ['v1.user']
+    forbidden = ['v1.user+change_identity']
 
 
 class OrgBaseScope(ScopeBase):
@@ -45,8 +46,8 @@ class OrgBaseScope(ScopeBase):
 
 class OrgAdminScope(ScopeBase):
     """Org管理员用户应用权限"""
-    allow_api = ['v1.file+upload_object', 'v1.test+test_auth'] + OrgBaseScope.allow_api
-    allow_module = ['v1.news', 'v1.org'] + OrgBaseScope.allow_module
+    allow_api = ['v1.file+upload_object', 'v1.test+test_auth', 'v1.user+change_identity'] + OrgBaseScope.allow_api
+    allow_module = ['v1.org'] + OrgBaseScope.allow_module
 
 
 def is_in_scope(scope, api_endpoint):

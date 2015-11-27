@@ -15,18 +15,8 @@ class TestUserCSU(TestUserCSUCase):
         self.assertEqual(user.password, should_be)
 
     def test_csu_query(self):
-        headers = self.get_authorized_header()
+        headers = self.get_authorized_header(scope='UserCSU')
 
         get_param = '?mobile=18888888888'
         rv = self.client.get('v1/user/csu' + get_param, headers=headers)
         self.assertEqual(200, rv.status_code)
-
-    def test_user_identity_change(self):
-        headers = self.get_authorized_header()
-        data = {
-            'uid': 1,
-            'group_id': 2
-        }
-        data_json = json.dumps(data)
-        rv = self.client.put('v1/user/csu/indentity', data=data_json)
-        self.assertEqual(rv.status_code, 202)

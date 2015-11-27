@@ -5,6 +5,7 @@ __author__ = 'bliss'
 
 
 def db_change_indentity(uid, identity):
+    print(uid)
     identity_realation = IdRelation.query.filter_by(uid=uid).first_or_404()
     identity_realation.group_id = identity
     db.session.commit()

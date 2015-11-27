@@ -70,9 +70,9 @@ def find_admin_password():
 @api.route('/news', methods=['GET'])
 @auth.login_required
 def list_news():
-    args = request.args
+    args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
-    news = get_news_dto_paginate(int(form.page.data[0]), int(form.per_page.data[0]))
+    news = get_news_dto_paginate(int(form.page.data), int(form.per_page.data))
     headers = {'Content-Type': 'application/json'}
     return json.dumps(news), 200, headers
 
