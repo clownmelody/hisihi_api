@@ -104,10 +104,15 @@ def get_video_by_course_id(cid):
 
 
 def create_org_pics(pics):
+    print(pics)
+    # with db.auto_commit():
+    #     db.session.execute(
+    #         OrgPic.__table__.insert(),
+    #         [pic for pic in pics]
+    #     )
     with db.auto_commit():
-        db.session.execute(
-            OrgPic.__table__.insert(),
-            [pic for pic in pics]
-        )
+        for pic in pics:
+            db.session.add(pic)
+    return pics
 
 

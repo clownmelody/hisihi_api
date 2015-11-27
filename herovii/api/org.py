@@ -246,13 +246,13 @@ def upload_pic(oid):
     for temp_pic in temp_pics:
         OrgPicForm.create_api_form(self_data=temp_pic)
         temp_pic['organization_id'] = oid
-        for key, value in temp_pic:
-            pic = OrgPic()
+        pic = OrgPic()
+        for key, value in temp_pic.items():
             setattr(pic, key, value)
-            pics.append(pic)
+        pics.append(pic)
     r_pics = create_org_pics(pics)
     str_data = json.dumps(r_pics)
-    headers = {'Content-Type', 'application/json'}
+    headers = {'Content-Type': 'application/json'}
     return str_data, 201, headers
 
 

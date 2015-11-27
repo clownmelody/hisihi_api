@@ -15,7 +15,6 @@ class TestToken(TestUserCSUCase):
         })
 
         rv = self.client.post('/v1/token', data=data)
-        print(rv.data)
         assert rv.status_code == 201
 
     def test_csu_get_token_by_social(self):

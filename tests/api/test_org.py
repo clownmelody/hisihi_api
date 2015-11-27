@@ -48,11 +48,9 @@ class TestOrg(TestOrgCase):
     def test_org_info_query(self):
         oid = '2'
         headers = self.get_authorized_header(2, scope='OrgAdmin')
-        rv = self.client.get('v1/org/'+oid, headers=headers)
-        print(type(rv.data))
+        rv = self.client.get('v1/org/' + oid, headers=headers)
         self.assertEqual(rv.status_code, 200)
         json_obj = json.loads(rv.data)
-        print(json_obj)
         self.assertEqual(json_obj['id'], 2)
 
         oid = '-1'
@@ -64,12 +62,12 @@ class TestOrg(TestOrgCase):
         headers = self.get_authorized_header(1, scope='OrgAdmin')
         data = [
             {
-                'url': 'http://321.com',
+                'uri': 'http://321.com',
                 'type': 1,
-                'description': 'this is for test'
+                'description': 'this is for test',
             },
             {
-                'url': 'http://321.com',
+                'uri': 'http://321.com',
                 'type': 2,
                 'description': 'this is for test'
             }
@@ -78,4 +76,3 @@ class TestOrg(TestOrgCase):
         rv = self.client.post('v1/org/' + oid + '/pics',
                               data=data_str, headers=headers)
         self.assertEqual(rv.status_code, 201)
-

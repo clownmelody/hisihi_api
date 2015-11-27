@@ -1,4 +1,3 @@
-
 __author__ = 'bliss'
 
 from flask import request
@@ -24,7 +23,6 @@ class Form(BaseForm):
         # if json_obj is not None:
 
         form_data = MultiDict(json_obj)
-        print(form_data)
         # merge = form_data.copy()
         # merge.update(args)
         # else:
@@ -162,20 +160,18 @@ class OrgCourseUpdateForm(OrgCourseForm):
 
 
 class OrgPicForm(Form):
-    organization_id = IntegerField(
-        validators=[NumberRange(1), DataRequired()]
-    )
+    # organization_id = IntegerField(
+    #     validators=[NumberRange(1), DataRequired()]
+    # )
     uri = StringField(
         validators=[DataRequired()]
     )
 
 
 class RegisterForm(UserForm, EmailForm):
-
     def get_valid_data(self):
         return {
             'username': self.username.data,
             'password': self.password.data,
             'email': self.email.data
         }
-

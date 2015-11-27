@@ -45,7 +45,6 @@ def get_content_type_by_filename(file_name):
         mime_type = 'application/octet-stream'
     if not mime_type:
         mime_type = 'application/octet-stream'
-    print(mime_type)
     return mime_type
 
 
