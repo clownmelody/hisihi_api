@@ -1,5 +1,3 @@
-from flask.ext.wtf.file import FileField
-from wtforms.fields.core import BooleanField
 
 __author__ = 'bliss'
 
@@ -10,24 +8,25 @@ from werkzeug.datastructures import MultiDict
 from .base import *
 from herovii.models.user.user import User
 from herovii.libs.errors import FormError
-from herovii.libs.error_code import JSONStyleError
 
 
 class Form(BaseForm):
     @classmethod
-    def create_api_form(cls, obj=None, data=None, **args):
+    def create_api_form(cls, obj=None, data=None, self_data=None, **args):
+        """验证request body或者 args，一次只能验证其中一种类型的参数"""
         # args = request.args
-        json_obj = request.get_json(silent=True, force=True)
-        # if not json_obj and not args and not ignore_none:
-        #     # 当POST body 和 args参数都为None，且不允许忽略空值时，抛出异常
-        #     # 注意，空参数且需要验证的情况，仅出现在form有给参数赋予默认值的情况下
-        #     # 比如 分页参数，page和count，他们都可以不传递，form会自动为其赋值
-        #     raise JSONStyleError()
+        # json_obj = None
+        if not self_data:
+            json_obj = request.get_json(silent=True, force=True)
+        else:
+            json_obj = self_data
 
         # if json_obj is not None:
+
         form_data = MultiDict(json_obj)
-            # merge = form_data.copy()
-            # merge.update(args)
+        print(form_data)
+        # merge = form_data.copy()
+        # merge.update(args)
         # else:
         #     # 进入这里，有两种情况一种是args有值，一种是args为[]空值
         #     merge = MultiDict(args)
@@ -159,6 +158,15 @@ class OrgCourseForm(Form):
 class OrgCourseUpdateForm(OrgCourseForm):
     id = IntegerField(
         validators=[NumberRange(1), DataRequired()]
+    )
+
+
+class OrgPicForm(Form):
+    organization_id = IntegerField(
+        validators=[NumberRange(1), DataRequired()]
+    )
+    uri = StringField(
+        validators=[DataRequired()]
     )
 
 

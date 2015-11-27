@@ -1,21 +1,18 @@
+import base64
+import unittest
 from herovii.libs.enums import TagType
 from herovii.models.news.news_org import NewsOrg
-from herovii.models.org import OrgInfo
+from herovii.models.org.info import OrgInfo
 from herovii.models.tag import Tag
-from herovii.models.user import identity
 from herovii.models.user.id_realeation import IdRelation
 from herovii.models.user.identity import Identity
 from herovii.models.user.user_org import OrgAdmin
-
-__author__ = 'bliss'
-
-import base64
-import unittest
 from flask_oauthlib.utils import to_unicode, to_bytes
 from herovii.models.base import db
 from herovii import create_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
+__author__ = 'bliss'
 
 SQLALCHEMY_BINDS = {
     # online database

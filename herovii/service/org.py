@@ -1,6 +1,7 @@
 from herovii.libs.error_code import NotFound
 from herovii.models.base import db
-from herovii.models.org.org_course import OrgCourse
+from herovii.models.org.course import OrgCourse
+from herovii.models.org.pic import OrgPic
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.models.org.video import OrgVideo
@@ -102,5 +103,11 @@ def get_video_by_course_id(cid):
     return videos
 
 
+def create_org_pics(pics):
+    with db.auto_commit():
+        db.session.execute(
+            OrgPic.__table__.insert(),
+            [pic for pic in pics]
+        )
 
 

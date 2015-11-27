@@ -1,8 +1,6 @@
-__author__ = 'bliss'
-
 from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
-
+__author__ = 'bliss'
 
 class TeacherGroup(Base):
     __tablename__ = 'teacher_group'

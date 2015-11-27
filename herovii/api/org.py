@@ -1,20 +1,21 @@
 from flask import jsonify, g, json, request
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import IllegalOperation, OrgNotFound, UnknownError
+from herovii.libs.error_code import IllegalOperation, OrgNotFound, UnknownError, ParamException, \
+    VolumeTooLarge
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.models.base import db
-from herovii.models.org import org_course
-from herovii.models.org.org_course import OrgCourse
-from herovii.models.org.org_info import OrgInfo
+from herovii.models.org.course import OrgCourse
+from herovii.models.org.info import OrgInfo
+from herovii.models.org.pic import OrgPic
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.service import account
-from herovii.service.org import create_org_info, get_org_teachers_by_group, get_org_courses, dto_org_courses_paginate, \
-    get_course_by_id
+from herovii.service.org import create_org_info, get_org_teachers_by_group, dto_org_courses_paginate, \
+    get_course_by_id, create_org_pics
 from herovii.service.news import get_news_dto_paginate
 from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm, RegisterByMobileForm, PagingForm, \
-    OrgCourseForm, OrgCourseUpdateForm
+    OrgCourseForm, OrgCourseUpdateForm, OrgPicForm
 from herovii.service.user_org import register_by_mobile
 
 __author__ = 'bliss'
@@ -150,7 +151,7 @@ def join_teacher_group(uid, g_id):
 
 @api.route('/teacher/<int:uid>/group/<int:gid>/join', methods=['DELETE'])
 @auth.login_required
-def retire_from_teacher_group(uid, gid):
+def quit_from_teacher_group(uid, gid):
     s = 1
     count = TeacherGroupRealation.query.filter(
         TeacherGroupRealation.uid == uid, TeacherGroupRealation.teacher_group_id == gid) \
@@ -227,6 +228,32 @@ def get_course(cid):
     json_data = json.dumps(course)
     headers = {'Content-Type': 'application/json'}
     return json_data, 200, headers
+
+
+@api.route('/<int:oid>/pics', methods=['POST'])
+@auth.login_required
+def upload_pic(oid):
+    org_info = OrgInfo.query.filter_by(uid=g.user[0]).first()
+    if org_info.id != oid:
+        raise IllegalOperation()
+    temp_pics = request.get_json(silent=True, force=True)
+    if not temp_pics:
+        raise ParamException()
+    if len(temp_pics) >= 20:
+        raise VolumeTooLarge()
+
+    pics = []
+    for temp_pic in temp_pics:
+        OrgPicForm.create_api_form(self_data=temp_pic)
+        temp_pic['organization_id'] = oid
+        for key, value in temp_pic:
+            pic = OrgPic()
+            setattr(pic, key, value)
+            pics.append(pic)
+    r_pics = create_org_pics(pics)
+    str_data = json.dumps(r_pics)
+    headers = {'Content-Type', 'application/json'}
+    return str_data, 201, headers
 
 
 

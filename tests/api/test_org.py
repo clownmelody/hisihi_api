@@ -59,3 +59,23 @@ class TestOrg(TestOrgCase):
         rv = self.client.get('v1/org' + oid, headers=headers)
         self.assertEqual(rv.status_code, 404)
 
+    def test_org_pics_create(self):
+        oid = '1'
+        headers = self.get_authorized_header(1, scope='OrgAdmin')
+        data = [
+            {
+                'url': 'http://321.com',
+                'type': 1,
+                'description': 'this is for test'
+            },
+            {
+                'url': 'http://321.com',
+                'type': 2,
+                'description': 'this is for test'
+            }
+        ]
+        data_str = json.dumps(data)
+        rv = self.client.post('v1/org/' + oid + '/pics',
+                              data=data_str, headers=headers)
+        self.assertEqual(rv.status_code, 201)
+

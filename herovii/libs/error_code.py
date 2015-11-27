@@ -73,6 +73,12 @@ class IllegalOperation(APIException):
     error = 'your operation is illegal'
 
 
+class VolumeTooLarge(APIException):
+    code = 413
+    error_code = 5001
+    error = 'Volume is too large'
+
+
 class FileUploadFailed(APIException):
     code = 413
     error_code = 4001
