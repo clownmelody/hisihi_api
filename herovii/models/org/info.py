@@ -9,7 +9,7 @@ from herovii.models.base import Base
 
 class OrgInfo(Base):
 
-    __tablename__ = 'org_info'
+    __tablename__ = 'info'
     __bind_key__ = 'org'
 
     id = Column(Integer, primary_key=True)
@@ -38,7 +38,7 @@ class OrgInfo(Base):
 
     # 简介
     introduce = Column(String(1000))
-    pv = Column(Integer, default=0)
+    view_count = Column(Integer, default=0)
 
     # 剩余担保人数
     guarantee_num = Column(Integer, default=200)

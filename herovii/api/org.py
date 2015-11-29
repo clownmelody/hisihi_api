@@ -152,7 +152,6 @@ def join_teacher_group(uid, g_id):
 @api.route('/teacher/<int:uid>/group/<int:gid>/join', methods=['DELETE'])
 @auth.login_required
 def quit_from_teacher_group(uid, gid):
-    s = 1
     count = TeacherGroupRealation.query.filter(
         TeacherGroupRealation.uid == uid, TeacherGroupRealation.teacher_group_id == gid) \
         .delete()
