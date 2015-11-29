@@ -4,9 +4,13 @@ from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 
 
-class OrgCourse(Base):
-    __tablename__ = 'course'
+class OrgEnroll(Base):
+    __tablename__ = 'enroll'
     __bind_key__ = 'org'
+
+    STATUS_ENROLL_SUCCESS = 2
+    STATUS_ENROLL_WAITING = 1
+    STATUS_ENROLL_REJECT = -2
 
     id = Column(Integer, primary_key=True)
 

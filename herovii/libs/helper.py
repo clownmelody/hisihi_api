@@ -1,4 +1,9 @@
+from io import BytesIO
 import os
+from PIL import Image
+import qrcode
+from wtforms.validators import data_required
+from herovii.libs.util import get_timestamp_with_random, year_month_day
 
 __author__ = 'bliss'
 
@@ -79,6 +84,28 @@ def make_an_bizid():
 def allowed_uploaded_file_type(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in current_app.config['ALLOWED_FILE_EXTENSIONS']
+
+
+def get_oss_file_url(extension):
+    random_name = get_timestamp_with_random() + '.' + extension
+    object_url = year_month_day() + '/' + random_name
+    return object_url
+
+
+def make_a_qrcode(uri):
+    """生成一张二维码,返回一组bytes"""
+    qr = qrcode.QRCode(
+                        version=2,
+                        error_correction=qrcode.constants.ERROR_CORRECT_L,
+                        box_size=10,
+                        border=1
+    )
+    qr.add_data(uri)
+    qr.make(fit=True)
+    img = qr.make_image()
+    png_bytes = BytesIO()
+    img.save(png_bytes, 'png')
+    return png_bytes
 
 
 

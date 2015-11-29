@@ -2,7 +2,7 @@ from flask import request
 from flask import current_app
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.error_code import ParamException, FileUploadFailed
-from herovii.libs.helper import allowed_uploaded_file_type, success_json
+from herovii.libs.helper import allowed_uploaded_file_type, success_json, get_oss_file_url
 from herovii.libs.oss import OssAPI
 from herovii.libs.util import get_timestamp_with_random, file_extension, year_month_day
 
@@ -33,17 +33,32 @@ class FilePiper(object):
         return file_urls
 
     @staticmethod
+    def upload_bytes_to_oss(f):
+        oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
+                     secret_access_key=current_app.config['ALI_OSS_SECRET'])
+        object_url = get_oss_file_url('png')
+        try:
+            res = oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], object_url, f)
+            if res.code == 200:
+                return FilePiper.get_full_oss_url(object_url)
+            else:
+                raise FileUploadFailed()
+        except:
+            raise FileUploadFailed()
+
+    @staticmethod
     def upload_one_to_oss(file):
         """上传单一文件到OSS"""
         allowed = allowed_uploaded_file_type(file.filename)
         if not allowed:
             raise ParamException(error='extension of the file is forbidden for upload',
                                  error_code=4002, code=403)
-        random_name = get_timestamp_with_random() + '.' + file_extension(file.filename)
+        # random_name = get_timestamp_with_random() + '.' + file_extension(file.filename)
         f = file.stream
         oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
                      secret_access_key=current_app.config['ALI_OSS_SECRET'])
-        object_url = year_month_day() + '/' + random_name
+        extension = file_extension(file.filename)
+        object_url = get_oss_file_url(extension)
 
         try:
             res = oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], object_url, f)

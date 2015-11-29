@@ -5,6 +5,7 @@ import base64
 from hashlib import sha1 as sha
 import random
 import time
+import qrcode
 from herovii.libs.error_code import ParamException
 
 __author__ = 'bliss'
@@ -212,4 +213,6 @@ def file_extension(name):
 def year_month_day():
     time_str = datetime.datetime.now().strftime('%Y-%m-%d')
     return time_str
+
+
 
