@@ -269,9 +269,14 @@ def get_student_stats_count(oid):
     return jsonify(data), 200
 
 
-@api.route('/<int:oid>/qrcode/sign-in/')
+@api.route('/<int:oid>/qrcode/sign-in/today', methods=['POST'])
 @auth.login_required
-def get_qrcode_for_sign_in(oid):
+def get_qrcode_sign_in_today(oid, date):
+    pass
+
+
+@api.route('/<int:oid>/student/sign-in/<date>')
+def student_sign_in(oid, uid, date):
     pass
 
 

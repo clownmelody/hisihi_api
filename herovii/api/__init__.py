@@ -9,6 +9,7 @@ VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
 CURRENT_VERSION = '1'
 bp_v1 = Blueprint('v1', __name__)
+# bp_org = Blueprint('org', __name__)
 # bp_consumer = Blueprint('consumer', __name__)
 # bp_auth = Blueprint('auth', __name__)
 
@@ -61,7 +62,11 @@ def reg_v1_bp(app):
     file.api.register(bp_v1)
     org.api.register(bp_v1)
     tag.api.register(bp_v1)
+    # course.api.register(bp_org)
+    # info.api.register(bp_org)
+    # lecture.api.register(bp_org)
     app.register_blueprint(bp_v1, url_prefix='/v1')
+    # app.register_blueprint(bp_org, url_prefix='/v1/org')
 
 # # register consumer type blue print
 # def reg_consumer_bp(app):
