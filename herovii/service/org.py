@@ -1,6 +1,9 @@
+from _operator import or_
+from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import NotFound
 from herovii.models.base import db
 from herovii.models.org.course import OrgCourse
+from herovii.models.org.enroll import OrgEnroll
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.models.org.video import OrgVideo
@@ -113,5 +116,15 @@ def create_org_pics(pics):
         for pic in pics:
             db.session.add(pic)
     return pics
+
+
+def view_student_count(oid):
+    """查找status=1（正在审核的学生）和status=2已经审核过的学生数量"""
+    counts = db.session.query(func.count('*')).\
+        filter(OrgEnroll.organization_id == oid).\
+        group_by(OrgEnroll.status).\
+        having(or_(OrgEnroll.status == 1, OrgEnroll.status == 2)).\
+        all()
+    return counts
 
 

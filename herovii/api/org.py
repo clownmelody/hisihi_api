@@ -1,7 +1,7 @@
 from flask import jsonify, g, json, request
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import IllegalOperation, OrgNotFound, UnknownError, ParamException, \
-    VolumeTooLarge
+    VolumeTooLarge, NotFound
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.models.base import db
@@ -12,7 +12,7 @@ from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.service import account
 from herovii.service.org import create_org_info, get_org_teachers_by_group, dto_org_courses_paginate, \
-    get_course_by_id, create_org_pics
+    get_course_by_id, create_org_pics, view_student_count
 from herovii.service.news import get_news_dto_paginate
 from herovii.validator.forms import OrgForm, OrgUpdateForm, TeacherGroupForm, RegisterByMobileForm, PagingForm, \
     OrgCourseForm, OrgCourseUpdateForm, OrgPicForm
@@ -233,10 +233,9 @@ def get_course(cid):
 @auth.login_required
 def upload_pic(oid):
     org_info = OrgInfo.query.filter_by(uid=g.user[0]).first()
-    print(org_info)
+
     if org_info.id != oid:
         raise IllegalOperation()
-    print(org_info)
     temp_pics = request.get_json(silent=True, force=True)
     if not temp_pics:
         raise ParamException()
@@ -255,6 +254,27 @@ def upload_pic(oid):
     str_data = json.dumps(r_pics)
     headers = {'Content-Type': 'application/json'}
     return str_data, 201, headers
+
+
+@api.route('/<int:oid>/student/stats/count')
+@auth.login_required
+def get_student_stats_count(oid):
+    counts = view_student_count(oid)
+    if not counts:
+        raise NotFound(error='no student in organization')
+    data = {
+        'student_in_count': counts[1],
+        'student_standby_count': counts[0]
+    }
+    return jsonify(data), 200
+
+
+@api.route('/<int:oid>/qrcode/sign-in/')
+@auth.login_required
+def get_qrcode_for_sign_in(oid):
+    pass
+
+
 
 
 

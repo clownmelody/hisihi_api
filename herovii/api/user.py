@@ -1,15 +1,13 @@
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.service.user_csu import db_change_indentity
-from flask import json, jsonify, request
-from herovii.validator.forms import RegisterByMobileForm, PhoneNumberForm, \
+from flask import jsonify, request
+from herovii.validator.forms import PhoneNumberForm, \
     UserCSUChangeIdentityForm
-from herovii.service import user_org, account
+from herovii.service import user_org
 from herovii.validator import user_verify
-from herovii.libs.error_code import NotFound, UnknownError
+from herovii.libs.error_code import NotFound
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.bpbase import auth
-from herovii.libs.httper import BMOB
-from herovii.libs.helper import success_json
 
 __author__ = 'bliss'
 
