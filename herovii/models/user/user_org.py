@@ -8,8 +8,8 @@ from herovii.models.base import Base
 
 class OrgAdmin(Base):
 
-    __tablename__ = 'admin'
-    __bind_key__ = 'org'
+    __tablename__ = 'hisihi_organization_admin'
+    __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
     username = Column(String(45), unique=True)

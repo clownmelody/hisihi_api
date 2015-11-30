@@ -233,8 +233,10 @@ def get_course(cid):
 @auth.login_required
 def upload_pic(oid):
     org_info = OrgInfo.query.filter_by(uid=g.user[0]).first()
+    print(org_info)
     if org_info.id != oid:
         raise IllegalOperation()
+    print(org_info)
     temp_pics = request.get_json(silent=True, force=True)
     if not temp_pics:
         raise ParamException()

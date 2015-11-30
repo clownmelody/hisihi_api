@@ -75,14 +75,14 @@ class TestOrg(TestOrgCase):
         headers = self.get_authorized_header(1, scope='OrgAdmin')
         data = [
             {
-                'uri': 'http://321.com',
-                'type': 1,
-                'description': 'this is for test',
+                "url": "http://321.com",
+                "type": 1,
+                "description": "this is for test"
             },
             {
-                'uri': 'http://321.com',
-                'type': 2,
-                'description': 'this is for test'
+                "url": "http://321.com",
+                "type": 2,
+                "description": "this is for test"
             }
         ]
         data_str = json.dumps(data)

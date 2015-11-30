@@ -164,7 +164,7 @@ class OrgPicForm(Form):
     # organization_id = IntegerField(
     #     validators=[NumberRange(1), DataRequired()]
     # )
-    pic_id = StringField(
+    url = StringField(
         validators=[DataRequired()]
     )
 

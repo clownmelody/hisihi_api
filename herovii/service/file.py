@@ -45,6 +45,8 @@ class FilePiper(object):
                 raise FileUploadFailed()
         except:
             raise FileUploadFailed()
+        # finally:)
+        #     res.close(
 
     @staticmethod
     def upload_one_to_oss(file):

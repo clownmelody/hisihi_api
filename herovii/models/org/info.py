@@ -49,8 +49,8 @@ class OrgInfo(Base):
 
     def keys(self):
         return (
-            'id', 'name', 'slogan', 'location', 'lon', 'lat',
+            'id', 'name', 'slogan', 'location', 'longitude', 'latitude',
             'phone_num', 'logo', 'video', 'video_img', 'advantage',
-            'introduce', 'pv', 'guarantee_num'
+            'introduce', 'view_count', 'guarantee_num'
         )
 

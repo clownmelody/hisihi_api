@@ -9,7 +9,7 @@ class OrgPic(Base):
     __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
-    pic_id = Column(String(120))
+    url = Column(String(120))
     description = Column(String(300))
     type = Column(SmallInteger)
 
@@ -17,7 +17,7 @@ class OrgPic(Base):
 
     def keys(self):
         return (
-            'id', 'organization_id', 'pic_id',
+            'id', 'organization_id', 'url',
             'description', 'type'
         )
 

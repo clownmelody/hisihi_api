@@ -109,6 +109,7 @@ class OssAPI(object):
             total_len += len(l)
             l = fp.read(self.SendBufferSize)
         res = conn.getresponse()
+        conn.close()
         return res
 
     def _open_conn_to_put_object(self, method, bucket, object,
