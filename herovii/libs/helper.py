@@ -1,8 +1,5 @@
 from io import BytesIO
-import os
-from PIL import Image
 import qrcode
-from wtforms.validators import data_required
 from herovii.libs.util import get_timestamp_with_random, year_month_day
 
 __author__ = 'bliss'

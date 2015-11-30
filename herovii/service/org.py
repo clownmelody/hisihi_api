@@ -1,7 +1,6 @@
 from herovii.libs.error_code import NotFound
 from herovii.models.base import db
 from herovii.models.org.course import OrgCourse
-from herovii.models.org.pic import OrgPic
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.models.org.video import OrgVideo

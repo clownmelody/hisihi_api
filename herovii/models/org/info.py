@@ -9,8 +9,8 @@ from herovii.models.base import Base
 
 class OrgInfo(Base):
 
-    __tablename__ = 'info'
-    __bind_key__ = 'org'
+    __tablename__ = 'hisihi_organization'
+    __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
     uid = Column(Integer)
@@ -19,14 +19,14 @@ class OrgInfo(Base):
     # 宣传语
     slogan = Column(String(80))
     location = Column(String(100))
-    lon = Column(String(40))
-    lat = Column(String(40))
+    longitude = Column(String(40))
+    latitude = Column(String(40))
 
     # 机构类型，使用#号分隔，内容为Tag表的记录id
     type = Column(String(80))
 
     # 机构审核进度
-    audit_status = Column(SmallInteger, default=0)
+    application_status = Column(SmallInteger, default=0)
     phone_num = Column(String(80))
     chat_id = Column(Integer)
     logo = Column(String(255))

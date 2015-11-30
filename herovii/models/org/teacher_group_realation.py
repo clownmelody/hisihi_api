@@ -6,8 +6,8 @@ __author__ = 'bliss'
 
 
 class TeacherGroupRealation(Base):
-    __tablename__ = 'teacher_group_realation'
-    __bind_key__ = 'org'
+    __tablename__ = 'hisihi_organization_relation'
+    __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
     uid = Column(Integer)

@@ -5,11 +5,11 @@ __author__ = 'bliss'
 
 
 class OrgPic(Base):
-    __tablename__ = 'pic'
-    __bind_key__ = 'org'
+    __tablename__ = 'hisihi_organization_resource'
+    __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
-    uri = Column(String(120))
+    pic_id = Column(String(120))
     description = Column(String(300))
     type = Column(SmallInteger)
 
@@ -17,7 +17,7 @@ class OrgPic(Base):
 
     def keys(self):
         return (
-            'id', 'organization_id', 'uri',
+            'id', 'organization_id', 'pic_id',
             'description', 'type'
         )
 

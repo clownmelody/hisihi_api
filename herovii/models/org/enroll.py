@@ -5,8 +5,8 @@ from herovii.models.base import Base
 
 
 class OrgEnroll(Base):
-    __tablename__ = 'enroll'
-    __bind_key__ = 'org'
+    __tablename__ = 'hisihi_organization_enroll'
+    __bind_key__ = 'csu'
 
     STATUS_ENROLL_SUCCESS = 2
     STATUS_ENROLL_WAITING = 1

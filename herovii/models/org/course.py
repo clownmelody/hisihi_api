@@ -9,8 +9,8 @@ from herovii.models.base import Base
 
 
 class OrgCourse(Base):
-    __tablename__ = 'course'
-    __bind_key__ = 'org'
+    __tablename__ = 'hisihi_organization_course'
+    __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
 
