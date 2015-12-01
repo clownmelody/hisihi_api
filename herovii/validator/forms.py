@@ -1,4 +1,5 @@
 from flask.globals import current_app
+from herovii.settings import PER_PAGE_DEFAULT, PAGE_DEFAULT
 
 __author__ = 'bliss'
 
@@ -110,8 +111,8 @@ class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):
 
 
 class PagingForm(Form):
-    page = StringField(default=str(current_app.config['PAGE_DEFAULT']))
-    per_page = StringField(default=str(current_app.config['PER_PAGE_DEFAULT']))
+    page = StringField(defaulat=str(PAGE_DEFAULT))
+    per_page = StringField(default=str(PER_PAGE_DEFAULT))
 
     def validate_page(self, filed):
         if int(filed.data[0]) < 1:
