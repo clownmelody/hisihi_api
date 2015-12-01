@@ -2,7 +2,7 @@ import base64
 import unittest
 from herovii.libs.enums import TagType
 from herovii.models.news.news_org import NewsOrg
-from herovii.models.org.info import OrgInfo
+from herovii.models.org.info import Info
 from herovii.models.tag import Tag
 from herovii.models.user.id_realeation import IdRelation
 from herovii.models.user.identity import Identity
@@ -192,7 +192,7 @@ def prepare_org_data():
     ]
 
     for org_info in orgs:
-        org = OrgInfo()
+        org = Info()
         org.name = org_info[0]
         org.slogan = org_info[1]
         org.location = org_info[2]

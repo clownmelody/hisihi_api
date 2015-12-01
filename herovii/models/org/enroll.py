@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 
 
-class OrgEnroll(Base):
+class Enroll(Base):
     __tablename__ = 'hisihi_organization_enroll'
     __bind_key__ = 'csu'
 

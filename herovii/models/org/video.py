@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 
 
-class OrgVideo(Base):
+class Video(Base):
     __tablename__ = 'hisihi_organization_video'
     __bind_key__ = 'csu'
 
@@ -21,7 +21,7 @@ class OrgVideo(Base):
 
     def __init__(self):
         self.update_time = time.time()
-        super(OrgVideo, self).__init__()
+        super(Video, self).__init__()
         
     def keys(self):
         return (

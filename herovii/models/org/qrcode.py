@@ -9,7 +9,7 @@ from herovii.service.file import FilePiper
 __author__ = 'bliss'
 
 
-class OrgQrcodeSignIn(Base):
+class QrcodeSignIn(Base):
     """签到二维码，每个机构每天一张"""
     __tablename__ = 'hisihi_organization_qrcode_sign_in'
     __bind_key__ = 'csu'
@@ -23,7 +23,7 @@ class OrgQrcodeSignIn(Base):
     def __init__(self, oid, date):
         self.date = date.strftime('%Y-%m-%d')
         self.organization_id = oid
-        super(OrgQrcodeSignIn, self).__init__()
+        super(QrcodeSignIn, self).__init__()
 
     def keys(self):
         return (

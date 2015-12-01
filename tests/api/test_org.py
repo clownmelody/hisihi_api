@@ -3,7 +3,7 @@ from flask import json
 from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import IllegalOperation
 from herovii.models.base import db
-from herovii.models.org.sign_in import OrgStudentSignIn
+from herovii.models.org.sign_in import StudentSignIn
 from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'
@@ -11,7 +11,7 @@ __author__ = 'bliss'
 
 class TestOrg(TestOrgCase):
     def test_org_info_updated(self):
-        """OrgInfo：测试Org基本信息的更新操作"""
+        """Info：测试Org基本信息的更新操作"""
         org_info = {
             'id': 1,
             'name': '名字被改变',
@@ -27,7 +27,7 @@ class TestOrg(TestOrgCase):
         self.assertEqual(rv.status_code, 202)
 
     def test_org_info_created(self):
-        """OrgInfo：测试Org基本信息的添加操作"""
+        """Info：测试Org基本信息的添加操作"""
         uid = 1
         headers = self.get_authorized_header(uid, scope='OrgAdmin')
         org_info = \

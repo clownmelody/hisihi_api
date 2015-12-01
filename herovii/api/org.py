@@ -7,11 +7,11 @@ from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.libs.util import is_today
 from herovii.models.base import db
-from herovii.models.org.course import OrgCourse
-from herovii.models.org.info import OrgInfo
-from herovii.models.org.pic import OrgPic
-from herovii.models.org.qrcode import OrgQrcodeSignIn
-from herovii.models.org.sign_in import OrgStudentSignIn
+from herovii.models.org.course import Course
+from herovii.models.org.info import Info
+from herovii.models.org.pic import Pic
+from herovii.models.org.qrcode import QrcodeSignIn
+from herovii.models.org.sign_in import StudentSignIn
 from herovii.service import account
 from herovii.service.org import create_org_info, dto_org_courses_paginate, \
     get_course_by_id, create_org_pics, view_student_count
@@ -94,7 +94,7 @@ def update_org_admin(id):
 def create_org():
     form = OrgForm.create_api_form()
     post_data = form.body_data
-    org = OrgInfo(**post_data)
+    org = Info(**post_data)
     create_org_info(org)
     return jsonify(org), 201
 
@@ -104,7 +104,7 @@ def create_org():
 def update_org():
     form = OrgUpdateForm().create_api_form()
     org_id = form.id.data
-    org_info = OrgInfo.query.get(org_id)
+    org_info = Info.query.get(org_id)
     if not org_info:
         raise OrgNotFound()
     if org_info.uid != g.user[0]:
@@ -119,7 +119,7 @@ def update_org():
 @api.route('/<int:oid>', methods=['GET'])
 @auth.login_required
 def get_org(oid):
-    org_info = OrgInfo.query.get(oid)
+    org_info = Info.query.get(oid)
     if not org_info:
         raise OrgNotFound()
     if org_info.uid != g.user[0]:
@@ -131,7 +131,7 @@ def get_org(oid):
 @auth.login_required
 def create_org_course():
     form = OrgCourseForm.create_api_form()
-    course = OrgCourse()
+    course = Course()
     for key, value in form.body_data.items():
         setattr(course, key, value)
     with db.auto_commit():
@@ -143,7 +143,7 @@ def create_org_course():
 @auth.login_required
 def update_org_course():
     form = OrgCourseUpdateForm.create_api_form()
-    course = OrgCourse.query.filter_by(id=form.id.data).first_or_404()
+    course = Course.query.filter_by(id=form.id.data).first_or_404()
     with db.auto_commit():
         for key, value in form.body_data.items():
             setattr(course, key, value)
@@ -153,7 +153,7 @@ def update_org_course():
 @api.route('/course/<int:cid>', methods=['DELETE'])
 @auth.login_required
 def delete_org_course(cid):
-    OrgCourse.query.filter_by(id=cid).delete()
+    Course.query.filter_by(id=cid).delete()
     return success_json(), 202
 
 
@@ -180,7 +180,7 @@ def get_course(cid):
 @api.route('/<int:oid>/pics', methods=['POST'])
 @auth.login_required
 def upload_pic(oid):
-    org_info = OrgInfo.query.filter_by(uid=g.user[0]).first()
+    org_info = Info.query.filter_by(uid=g.user[0]).first()
 
     if org_info.id != oid:
         raise IllegalOperation()
@@ -194,7 +194,7 @@ def upload_pic(oid):
     for temp_pic in temp_pics:
         OrgPicForm.create_api_form(self_data=temp_pic)
         temp_pic['organization_id'] = oid
-        pic = OrgPic()
+        pic = Pic()
         for key, value in temp_pic.items():
             setattr(pic, key, value)
         pics.append(pic)
@@ -222,11 +222,11 @@ def get_student_stats_count(oid):
 def get_qrcode_sign_in_today(oid):
     today = datetime.datetime.now()
     date_str = today.strftime('%Y-%m-%d')
-    qrcode = OrgQrcodeSignIn.query.filter_by(
+    qrcode = QrcodeSignIn.query.filter_by(
         organization_id=oid, date=date_str).first()
     if qrcode:
         return jsonify(qrcode), 201
-    qrcode = OrgQrcodeSignIn(oid, today)
+    qrcode = QrcodeSignIn(oid, today)
     qrcode.make()
     with db.auto_commit():
         db.session.add(qrcode)
@@ -242,15 +242,15 @@ def student_sign_in(oid, uid, date):
     if not today:
         raise IllegalOperation(error='date is not today')
 
-    sign_in = OrgStudentSignIn.query.filter(
-        OrgStudentSignIn.date == date, OrgStudentSignIn.uid == uid,
-        OrgStudentSignIn.organization_id == oid).first()
+    sign_in = StudentSignIn.query.filter(
+        StudentSignIn.date == date, StudentSignIn.uid == uid,
+        StudentSignIn.organization_id == oid).first()
 
     if sign_in:
         return jsonify(sign_in), 201
 
     with db.auto_commit():
-        sign_in = OrgStudentSignIn()
+        sign_in = StudentSignIn()
         sign_in.organization_id = oid
         sign_in.date = date
         sign_in.uid = uid

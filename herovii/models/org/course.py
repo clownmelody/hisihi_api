@@ -1,4 +1,3 @@
-from dateutil.parser import _timelex
 from sqlalchemy.sql.sqltypes import SmallInteger
 import time
 
@@ -8,7 +7,7 @@ from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 
 
-class OrgCourse(Base):
+class Course(Base):
     __tablename__ = 'hisihi_organization_course'
     __bind_key__ = 'csu'
 

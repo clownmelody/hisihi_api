@@ -5,7 +5,7 @@ from herovii.models.base import Base
 __author__ = 'bliss'
 
 
-class OrgStudentSignIn(Base):
+class StudentSignIn(Base):
     __tablename__ = 'hisihi_organization_sign_in'
     __bind_key__ = 'csu'
 
@@ -17,7 +17,7 @@ class OrgStudentSignIn(Base):
     
     def __init__(self):
         self.sign_in_time = int(time.time())
-        super(OrgStudentSignIn, self).__init__()
+        super(StudentSignIn, self).__init__()
 
     def keys(self):
         return (

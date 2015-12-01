@@ -4,7 +4,7 @@ from herovii.models.base import Base
 __author__ = 'bliss'
 
 
-class OrgPic(Base):
+class Pic(Base):
     __tablename__ = 'hisihi_organization_resource'
     __bind_key__ = 'csu'
 

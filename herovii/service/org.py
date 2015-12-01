@@ -2,11 +2,11 @@ from _operator import or_
 from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import NotFound
 from herovii.models.base import db
-from herovii.models.org.course import OrgCourse
-from herovii.models.org.enroll import OrgEnroll
+from herovii.models.org.course import Course
+from herovii.models.org.enroll import Enroll
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
-from herovii.models.org.video import OrgVideo
+from herovii.models.org.video import Video
 from herovii.models.user.user_csu import UserCSU
 
 __author__ = 'bliss'
@@ -83,14 +83,14 @@ def dto_org_courses_paginate(oid, page, count):
 
 
 def get_org_courses_paging(oid, page ,count):
-    q = OrgCourse.query.fitler_by(organization_id=oid)
+    q = Course.query.fitler_by(organization_id=oid)
     courses = q.paginate(page, count).items
     total_count = q.count()
     return courses, total_count
 
 
 def get_course_by_id(cid):
-    course = OrgCourse.query.get(cid).first_or_404
+    course = Course.query.get(cid).first_or_404
     teacher = UserCSU.query.get(course.lecture).first()
     videos = get_video_by_course_id(cid)
     return {
@@ -101,7 +101,7 @@ def get_course_by_id(cid):
 
 
 def get_video_by_course_id(cid):
-    videos = OrgVideo.query.filter_by(course_id=cid).all()
+    videos = Video.query.filter_by(course_id=cid).all()
     return videos
 
 
@@ -109,7 +109,7 @@ def create_org_pics(pics):
     print(pics)
     # with db.auto_commit():
     #     db.session.execute(
-    #         OrgPic.__table__.insert(),
+    #         Pic.__table__.insert(),
     #         [pic for pic in pics]
     #     )
     with db.auto_commit():
@@ -121,9 +121,9 @@ def create_org_pics(pics):
 def view_student_count(oid):
     """查找status=1（正在审核的学生）和status=2已经审核过的学生数量"""
     counts = db.session.query(func.count('*')).\
-        filter(OrgEnroll.organization_id == oid).\
-        group_by(OrgEnroll.status).\
-        having(or_(OrgEnroll.status == 1, OrgEnroll.status == 2)).\
+        filter(Enroll.organization_id == oid).\
+        group_by(Enroll.status).\
+        having(or_(Enroll.status == 1, Enroll.status == 2)).\
         all()
     return counts
 

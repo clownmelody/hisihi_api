@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, String
 from herovii.models.base import Base
 
 
-class OrgInfo(Base):
+class Info(Base):
 
     __tablename__ = 'hisihi_organization'
     __bind_key__ = 'csu'
@@ -45,7 +45,7 @@ class OrgInfo(Base):
 
     def __init__(self, **entries):
         self.__dict__.update(entries)
-        super(OrgInfo, self).__init__()
+        super(Info, self).__init__()
 
     def keys(self):
         return (
