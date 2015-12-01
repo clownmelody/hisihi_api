@@ -274,13 +274,23 @@ def get_student_stats_count(oid):
 
 
 @api.route('/<int:oid>/qrcode/sign-in/today', methods=['POST'])
-@auth.login_required
-def get_qrcode_sign_in_today(oid, date):
-    pass
+# @auth.login_required
+def get_qrcode_sign_in_today(oid):
+    today = datetime.datetime.now()
+    date_str = today.strftime('%Y-%m-%d')
+    qrcode = OrgQrcodeSignIn.query.filter_by(
+        organization_id=oid, date=date_str).first()
+    if qrcode:
+        return jsonify(qrcode), 201
+    qrcode = OrgQrcodeSignIn(oid, today)
+    qrcode.make()
+    with db.auto_commit():
+        db.session.add(qrcode)
+    return jsonify(qrcode), 201
 
 
 @api.route('/<int:oid>/student/<int:uid>/sign-in/<date>', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def student_sign_in(oid, uid, date):
     date_sign_in = datetime.datetime.strptime(date, '%Y-%m-%d')
     today = is_today(date_sign_in)

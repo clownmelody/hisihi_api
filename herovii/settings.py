@@ -11,6 +11,8 @@ ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'amr', 'ra
 # ORG应用对应OSS的Bucket名称
 ALI_OSS_ORG_BUCKET_NAME = 'hisihi-other'
 
+ALI_OSS_CDN_HOST = 'pic.hisihi.com'
+
 ALI_OSS_HOST = 'oss-cn-qingdao.aliyuncs.com'
 
 # 上传文件的最大限制为1MB

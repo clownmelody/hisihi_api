@@ -22,8 +22,8 @@ def test_javascript_http():
 
 @api.route('/')
 def nothing():
-    args = request.args
-    form = OnlineIDForm.create_api_form(obj=args)
+    a = current_app.config['ALI_OSS_HOST']
+    s = current_app.config['ALI_OSS_CDN_HOST']
     return 'ok', 200
 
 
@@ -73,11 +73,6 @@ def test_oss_put_object():
             except:
                 raise FileUploadFailed()
     return success_json()
-
-
-@api.route('/download+1', methods=['PUT'])
-def downloads_plus_1():
-    pass
 
 
 @api.route('/error-log')

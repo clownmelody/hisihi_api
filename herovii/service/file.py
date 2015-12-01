@@ -40,7 +40,7 @@ class FilePiper(object):
         try:
             res = oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], object_url, f)
             if res.code == 200:
-                return FilePiper.get_full_oss_url(object_url)
+                return FilePiper.get_full_oss_url(object_url, True)
             else:
                 raise FileUploadFailed()
         except:
@@ -65,17 +65,22 @@ class FilePiper(object):
         try:
             res = oss.put_object_from_fp(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], object_url, f)
             if res.code == 200:
-                return FilePiper.get_full_oss_url(object_url)
+                return FilePiper.get_full_oss_url(object_url, True)
             else:
                 raise FileUploadFailed()
         except:
             raise FileUploadFailed()
 
     @staticmethod
-    def get_full_oss_url(object_url):
-        host = current_app.config['ALI_OSS_HOST']
-        bucket = current_app.config['ALI_OSS_ORG_BUCKET_NAME']
-        full_oss_url = 'http://'+bucket + '.' + host + '/' + object_url
+    def get_full_oss_url(object_url, cdn=False):
+        if cdn:
+            host = current_app.config['ALI_OSS_CDN_HOST']
+            full_oss_url = 'http://' + host + '/' + object_url
+        else:
+            host = current_app.config['ALI_OSS_HOST']
+            bucket = current_app.config['ALI_OSS_ORG_BUCKET_NAME']
+            full_oss_url = 'http://'+bucket + '.' + host + '/' + object_url
+
         return full_oss_url
 
 

@@ -4,6 +4,7 @@ import re
 
 from flask import Blueprint
 from herovii.api import user, token, sms, online, pk, test, mall, news, file, org, tag
+from herovii.api.tests import test1
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
@@ -62,6 +63,7 @@ def reg_v1_bp(app):
     file.api.register(bp_v1)
     org.api.register(bp_v1)
     tag.api.register(bp_v1)
+    test1.api.register(bp_v1)
     # course.api.register(bp_org)
     # info.api.register(bp_org)
     # lecture.api.register(bp_org)
