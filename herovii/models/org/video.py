@@ -17,8 +17,12 @@ class OrgVideo(Base):
     url = Column(String(300))
     duration = Column(Integer, default=0)
     view_count = Column(Integer, default=0)
-    update_time = Column(Integer, default=int(time.time()))
+    update_time = Column(Integer)
 
+    def __init__(self):
+        self.update_time = time.time()
+        super(OrgVideo, self).__init__()
+        
     def keys(self):
         return (
             'id', 'course_id', 'name', 'url',

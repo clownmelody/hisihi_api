@@ -12,8 +12,12 @@ class OrgStudentSignIn(Base):
     id = Column(Integer, primary_key=True)
     uid = Column(Integer)
     organization_id = Column(Integer)
-    sign_in_time = Column(Integer, default=int(time.time()))
+    sign_in_time = Column(Integer)
     date = Column(String(30))
+    
+    def __init__(self):
+        self.sign_in_time = int(time.time())
+        super(OrgStudentSignIn, self).__init__()
 
     def keys(self):
         return (
