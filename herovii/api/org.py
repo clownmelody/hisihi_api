@@ -116,9 +116,6 @@ def update_org():
     return jsonify(org_info), 202
 
 
-
-
-
 @api.route('/<int:oid>', methods=['GET'])
 @auth.login_required
 def get_org(oid):
@@ -221,7 +218,7 @@ def get_student_stats_count(oid):
 
 
 @api.route('/<int:oid>/qrcode/sign-in/today', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def get_qrcode_sign_in_today(oid):
     today = datetime.datetime.now()
     date_str = today.strftime('%Y-%m-%d')

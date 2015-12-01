@@ -11,9 +11,16 @@ ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'amr', 'ra
 # ORG应用对应OSS的Bucket名称
 ALI_OSS_ORG_BUCKET_NAME = 'hisihi-other'
 
+# OSS CDN HOST，支持CDN加速和图片裁剪
 ALI_OSS_CDN_HOST = 'pic.hisihi.com'
 
 ALI_OSS_HOST = 'oss-cn-qingdao.aliyuncs.com'
+
+# 全局默认分页记录条数
+PER_PAGE_DEFAULT = 20
+
+# 全局默认分页起始页
+PAGE_DEFAULT = 1
 
 # 上传文件的最大限制为1MB
 MAX_CONTENT_LENGTH = 6 * 1024 * 1024

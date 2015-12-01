@@ -1,3 +1,5 @@
+from flask.globals import current_app
+
 __author__ = 'bliss'
 
 from flask import request
@@ -108,8 +110,8 @@ class RegisterByMobileForm(SMSCodeForm, PhoneNumberForm, PasswordForm):
 
 
 class PagingForm(Form):
-    page = StringField(default='1')
-    per_page = StringField(default='20')
+    page = StringField(default=str(current_app.config['PAGE_DEFAULT']))
+    per_page = StringField(default=str(current_app.config['PER_PAGE_DEFAULT']))
 
     def validate_page(self, filed):
         if int(filed.data[0]) < 1:

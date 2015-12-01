@@ -20,10 +20,13 @@ class OrgEnroll(Base):
     phone_number = Column(String(20))
     student_university = Column(String(50))
     course_id = Column(Integer)
+    confirm_time = Column(Integer)
+    blz_id = Column(String(30))
 
     def keys(self):
         return {
             'id', 'organization_id', 'student_uid', 'student_name',
-            'phone_number', 'student_university', 'course_id'
+            'phone_number', 'student_university', 'course_id', 'confirm_time',
+            'blz_id'
         }
 
