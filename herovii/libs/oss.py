@@ -51,11 +51,6 @@ class OssAPI(object):
         input_bytes.close()
         return res
 
-    # def put_object_from_string(self, bucket, name, input_content, content_type='', headers=None, params=None):
-    #     method = "PUT"
-    #     return self._put_object_from_string(bucket, name, input_content,
-    #                                                 content_type, headers, params)
-
     def put_object_from_string(self, bucket, object,
                                input_content, content_type, headers, params):
         if not headers:
