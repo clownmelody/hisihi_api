@@ -1,8 +1,7 @@
 import datetime
-from flask.ext.restful.fields import String
 from flask.helpers import url_for
 from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import Integer
+from sqlalchemy.sql.sqltypes import Integer, String
 from herovii.libs.helper import make_a_qrcode
 from herovii.models.base import Base
 from herovii.service.file import FilePiper

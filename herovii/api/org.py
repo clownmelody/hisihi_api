@@ -1,13 +1,17 @@
+import datetime
 from flask import jsonify, g, json, request
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import IllegalOperation, OrgNotFound, UnknownError, ParamException, \
     VolumeTooLarge, NotFound
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
+from herovii.libs.util import is_today
 from herovii.models.base import db
 from herovii.models.org.course import OrgCourse
 from herovii.models.org.info import OrgInfo
 from herovii.models.org.pic import OrgPic
+from herovii.models.org.qrcode import OrgQrcodeSignIn
+from herovii.models.org.sign_in import OrgStudentSignIn
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.service import account
@@ -275,9 +279,30 @@ def get_qrcode_sign_in_today(oid, date):
     pass
 
 
-@api.route('/<int:oid>/student/sign-in/<date>')
+@api.route('/<int:oid>/student/<int:uid>/sign-in/<date>', methods=['POST'])
+@auth.login_required
 def student_sign_in(oid, uid, date):
-    pass
+    date_sign_in = datetime.datetime.strptime(date, '%Y-%m-%d')
+    today = is_today(date_sign_in)
+
+    if not today:
+        raise IllegalOperation(error='date is not today')
+
+    sign_in = OrgStudentSignIn.query.filter(
+        OrgStudentSignIn.date == date, OrgStudentSignIn.uid == uid,
+        OrgStudentSignIn.organization_id == oid).first()
+
+    if sign_in:
+        return jsonify(sign_in), 201
+
+    with db.auto_commit():
+        sign_in = OrgStudentSignIn()
+        sign_in.organization_id = oid
+        sign_in.date = date
+        sign_in.uid = uid
+        db.session.add(sign_in)
+    return jsonify(sign_in), 201
+
 
 
 

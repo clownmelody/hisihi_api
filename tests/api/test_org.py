@@ -1,4 +1,9 @@
+import datetime
 from flask import json
+from sqlalchemy.sql.functions import func
+from herovii.libs.error_code import IllegalOperation
+from herovii.models.base import db
+from herovii.models.org.sign_in import OrgStudentSignIn
 from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'
@@ -89,3 +94,25 @@ class TestOrg(TestOrgCase):
         rv = self.client.post('v1/org/' + oid + '/pics',
                               data=data_str, headers=headers)
         self.assertEqual(rv.status_code, 201)
+
+    def test_sign_in(self):
+        headers = self.get_authorized_header(1, scope='UserCSU')
+
+        rv_fail = self.client.post('v1/org/1/student/1/sign-in/2015-11-30',
+                                   headers=headers)
+        self.assertEqual(rv_fail.status_code, 403)
+
+        today = datetime.datetime.now().strftime('%Y-%m-%d')
+        print(today)
+
+        rv_right = self.client.post('v1/org/1/student/1/sign-in/' + today,
+                                    headers=headers)
+        self.assertEqual(rv_right.status_code, 201)
+
+        rv_again = self.client.post('v1/org/1/student/1/sign-in/' + today,
+                                    headers=headers)
+        self.assertEqual(rv_again.status_code, 201)
+
+        count = db.session.query(func.count('*')).first()
+        self.assertEqual(count[0], 1)
+

@@ -215,4 +215,13 @@ def year_month_day():
     return time_str
 
 
+def is_today(date):
+    today = datetime.datetime.today()
+    delta = today-date
+    if delta.days != 0:
+        return False
+    else:
+        return True
+
+
 
