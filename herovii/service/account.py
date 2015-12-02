@@ -84,10 +84,12 @@ def verify_in_csu_by_mobile(mobile, raw_password):
 def verify_in_org_by_mobile(mobile, raw_password):
     """通过验证Org用户的手机和密码进行授权"""
     user_org = OrgAdmin.query.filter_by(mobile=mobile).first()
+    if not user_org:
+        return None
     if user_org.check_password(raw_password):
-        return True
+        return [user_org.id, 'OrgAdmin']
     else:
-        return False
+        return None
 
 
 
