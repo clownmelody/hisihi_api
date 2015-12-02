@@ -89,42 +89,6 @@ def update_org_admin(id):
     pass
 
 
-@api.route('', methods=['POST'])
-@auth.login_required
-def create_org():
-    form = OrgForm.create_api_form()
-    post_data = form.body_data
-    org = Info(**post_data)
-    create_org_info(org)
-    return jsonify(org), 201
-
-
-@api.route('', methods=['PUT'])
-@auth.login_required
-def update_org():
-    form = OrgUpdateForm().create_api_form()
-    org_id = form.id.data
-    org_info = Info.query.get(org_id)
-    if not org_info:
-        raise OrgNotFound()
-    if org_info.uid != g.user[0]:
-        raise IllegalOperation()
-
-    with db.auto_commit():
-        for key, value in form.body_data.items():
-            setattr(org_info, key, value)
-    return jsonify(org_info), 202
-
-
-@api.route('/<int:oid>', methods=['GET'])
-@auth.login_required
-def get_org(oid):
-    org_info = Info.query.get(oid)
-    if not org_info:
-        raise OrgNotFound()
-    if org_info.uid != g.user[0]:
-        raise IllegalOperation()
-    return jsonify(org_info), 200
 
 
 @api.route('/course', methods=['POST'])

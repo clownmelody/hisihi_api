@@ -116,3 +116,14 @@ class TestOrg(TestOrgCase):
         count = db.session.query(func.count('*')).first()
         self.assertEqual(count[0], 1)
 
+    def test_get_org(self):
+        headers = self.get_authorized_header(1, scope='OrgAdmin')
+
+        rv1 = self.client.get('v1/org', headers=headers)
+        self.assertEqual(rv1.status_code, 200)
+
+        rv2 = self.client.get('v1/org?oid=1', headers=headers)
+        self.assertEqual(rv2.status_code, 200)
+
+        rv3 = self.client.get('v1/org?uid=1', headers=headers)
+        self.assertEqual(rv3.status_code, 403)

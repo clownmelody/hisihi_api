@@ -1,5 +1,6 @@
 from io import BytesIO
 import qrcode
+from herovii.libs.error_code import IllegalOperation
 from herovii.libs.util import get_timestamp_with_random, year_month_day
 
 __author__ = 'bliss'
@@ -103,6 +104,15 @@ def make_a_qrcode(uri):
     png_bytes = BytesIO()
     img.save(png_bytes, 'png')
     return png_bytes
+
+
+def is_first_party_cms():
+    """是否是第一方CMS"""
+    remote_addr = request.remote_addr
+    if remote_addr == '115.29.44.35':
+        return True
+    else:
+        return False
 
 
 

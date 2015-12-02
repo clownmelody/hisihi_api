@@ -1,9 +1,11 @@
 from _operator import or_
+from flask import jsonify
 from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import NotFound
 from herovii.models.base import db
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
+from herovii.models.org.info import Info
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.models.org.video import Video
@@ -126,5 +128,19 @@ def view_student_count(oid):
         having(or_(Enroll.status == 1, Enroll.status == 2)).\
         all()
     return counts
+
+
+def get_org_by_id(oid):
+    org_info = Info.query.get(oid)
+    if not org_info:
+        raise NotFound('org not found')
+    return org_info
+
+
+def get_org_by_uid(uid):
+    org_info = Info.query.filter_by(uid=uid)
+    if not org_info:
+        raise NotFound('org not found')
+    return org_info
 
 
