@@ -1,3 +1,4 @@
+
 __author__ = 'Whispers'
 
 import re
@@ -5,7 +6,7 @@ import re
 from flask import Blueprint
 from herovii.api import user, token, sms, online, pk, test, mall, news, file, org, tag
 from herovii.api.tests import test1
-from herovii.api.orgs import lecture
+from herovii.api.orgs import lecture, info, stats, enroll
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
@@ -69,6 +70,10 @@ def reg_v1_bp(app):
     # course.api.register(bp_org)
     # info.api.register(bp_org)
     # lecture.api.register(bp_org)
+
+    info.api.register(bp_v1)
+    stats.api.register(bp_v1)
+    enroll.api.register(bp_v1)
     app.register_blueprint(bp_v1, url_prefix='/v1')
     # app.register_blueprint(bp_org, url_prefix='/v1/org')
 

@@ -138,7 +138,7 @@ def get_org_by_id(oid):
 
 
 def get_org_by_uid(uid):
-    org_info = Info.query.filter_by(uid=uid)
+    org_info = Info.query.filter_by(uid=uid).first()
     if not org_info:
         raise NotFound('org not found')
     return org_info

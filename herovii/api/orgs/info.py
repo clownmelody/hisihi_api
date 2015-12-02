@@ -1,4 +1,3 @@
-from django.http import request
 from flask import jsonify
 from flask.globals import g, request
 from herovii.libs.bpbase import ApiBlueprint, auth

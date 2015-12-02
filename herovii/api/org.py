@@ -89,8 +89,6 @@ def update_org_admin(id):
     pass
 
 
-
-
 @api.route('/course', methods=['POST'])
 @auth.login_required
 def create_org_course():
