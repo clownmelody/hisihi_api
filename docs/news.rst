@@ -12,7 +12,7 @@
 
 **GET Sample**：
 
-    http://dev.api.hisihi.com/v1/news/org?page=1&per_page=10
+    http://dev.api.hisihi.com/v1/org/news?page=1&per_page=10
 
 **Parameters**:
 

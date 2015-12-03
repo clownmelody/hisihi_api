@@ -31,6 +31,7 @@
     }
 
 **Memo**:
+
 * 一次上传的所有文件总大小不可以超过6MB，否则会返回一个413错误码
 * 支持以下文件类型['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'amr']
 * 如果任何一个文件上传失败都会返回错误码，并不会返回哪个文件上传成功，哪些文件上传失败
@@ -140,4 +141,4 @@ oss_url 是二维码图片的资源地址。qrcode_url是二维码指向的访�
 对扫描出的二维码路径做进一步的处理。处理项目包括：
 
 1. 在qrcode_url前面加上Host地址，如http://dev.api.hisihi.com或者http://api.hisihi.com
-*. 将qrcode_url的student/0/中的0替换为需要签到的用户的id号
+#. 将qrcode_url的student/0/中的0替换为需要签到的用户的id号
