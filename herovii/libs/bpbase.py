@@ -24,7 +24,7 @@ class ApiBlueprint(object):
             url_prefix = '/' + self.name
 
         for f, rule, options in self.deferred:
-            # endpoint = self.name+'+'+options.pop("endpoint", f.__name__)
-            endpoint = options.pop("endpoint", f.__name__)
+            endpoint = self.name+'+'+options.pop("endpoint", f.__name__)
+            # endpoint = options.pop("endpoint", f.__name__)
             # print(url_for(endpoint))
             bp.add_url_rule(url_prefix + rule, endpoint, f, **options)
