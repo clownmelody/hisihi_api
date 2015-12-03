@@ -1,3 +1,5 @@
+from sqlalchemy.sql.sqltypes import SmallInteger
+
 __author__ = 'bliss'
 
 from sqlalchemy import Column, Integer, String
@@ -17,16 +19,17 @@ class Enroll(Base):
     organization_id = Column(Integer)
     student_uid = Column(Integer)
     student_name = Column(String(30))
-    phone_number = Column(String(20))
+    phone_num = Column(String(20))
     student_university = Column(String(50))
     course_id = Column(Integer)
     confirm_time = Column(Integer)
     blz_id = Column(String(30))
+    status = Column(SmallInteger, default=STATUS_ENROLL_WAITING)
 
     def keys(self):
         return {
             'id', 'organization_id', 'student_uid', 'student_name',
-            'phone_number', 'student_university', 'course_id', 'confirm_time',
+            'phone_num', 'student_university', 'course_id', 'confirm_time',
             'blz_id'
         }
 

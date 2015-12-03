@@ -2,6 +2,7 @@ from _operator import or_
 from flask import jsonify
 from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import NotFound
+from herovii.libs.helper import get_full_oss_url
 from herovii.models.base import db
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
@@ -40,6 +41,7 @@ def dto_teachers_group(oid, l, teachers):
     # groups = []
     group_keys = {}
     for t, avatar in teachers:
+        avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
         t = {'teacher': t, 'avatar': avatar}
         for uid, group_id, title in l:
             if uid == t['teacher'].uid:
@@ -145,5 +147,18 @@ def get_org_by_uid(uid):
     if not org_info:
         raise NotFound('org not found')
     return org_info
+
+
+def dto_get_blzs_paginate(page, count, oid):
+    blzs_query = db.session.query(
+        Enroll, UserCSU.nickname, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
+        join(UserCSU, Enroll.student_uid == UserCSU.uid).\
+        join(Avatar, Enroll.student_uid == Avatar.uid).\
+        filter(Enroll.organization_id == oid).\
+        order_by(Enroll.status)
+    blzs_query = blzs_query.offset((page-1) * count)
+    blzs_query = blzs_query.limit(count)
+    blzs = blzs_query.all()
+    return blzs
 
 

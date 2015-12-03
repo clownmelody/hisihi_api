@@ -115,11 +115,11 @@ class PagingForm(Form):
 
     def validate_page(self, filed):
         if int(filed.data[0]) < 1:
-            raise ValidationError('Name must be less than 50 characters')
+            raise ValidationError('page parameter must be an positive integer')
 
     def validate_per_page(self, filed):
         if int(filed.data[0]) < 1:
-            raise ValidationError('Name must be less than 50 characters')
+            raise ValidationError('per_page parameter must be an positive integer')
 
 
 class OrgForm(Form):

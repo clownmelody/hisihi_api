@@ -11,6 +11,8 @@ ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'amr', 'ra
 # ORG应用对应OSS的Bucket名称
 ALI_OSS_ORG_BUCKET_NAME = 'hisihi-other'
 
+ALI_OSS_AVATAR_BUCKET_NAME = 'hisihi-avator'
+
 # OSS CDN HOST，支持CDN加速和图片裁剪
 ALI_OSS_CDN_HOST = 'pic.hisihi.com'
 

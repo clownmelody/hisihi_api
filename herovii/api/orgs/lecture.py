@@ -64,7 +64,7 @@ def quit_from_teacher_group(uid, gid):
 
 
 @api.route('/<int:oid>/group/lectures', methods=['GET'])
-# @auth.login_required
+@auth.login_required
 def get_teachers_in_org(oid):
     teachers = get_org_teachers_by_group(oid)
     headers = {'Content-Type': 'application/json'}
