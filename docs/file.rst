@@ -103,7 +103,7 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
         }
     ]
 
-**Memo** `201`:
+**Memo** :
    需要OrgAdminScope权限.支持一次上传多张图片信息
 
 

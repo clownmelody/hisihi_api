@@ -38,5 +38,7 @@ Api V1 说明
    online
    mall
    file
+   lecture
+   statistic
    org
 

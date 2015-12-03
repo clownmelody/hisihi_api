@@ -54,13 +54,11 @@
 更新机构信息
 ~~~~~~~~~~~~~~~~~~~~~~
 
-** URL **::
+**URL**::
 
     PUT        /org
 
-**PUT Sample**：
-
-.. sourcecode:: json
+**PUT Sample**::
 
     {
        "id"  : 1
@@ -72,13 +70,13 @@
 **Parameters**:
 
 参数均为顶部OrgInfo类中的属性字段。"id"为必填字段，其余均为选填。
-如果需要上传　** logo ** ，请先调用 :ref:`File API <file>`
+如果需要上传　**logo** ，请先调用 :ref:`File API <file>`
 
 
 查询机构信息
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-** URL **::
+**URL**::
 
     GET      /org
 
