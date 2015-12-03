@@ -79,3 +79,28 @@ Response Status `202` ::
         "request": "PUT  /v1/pk/download+1"
     }
 
+
+机构学生报名情况统计
+~~~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    /<int:oid>/enroll/stats/count
+
+**Parameters**:
+
+* oid: 机构的id号
+
+Response Status `200` :
+
+.. sourcecode:: json
+
+    {
+        "in_count": 25
+        "standby_count": 3
+    }
+
+**Memo**:
+
+* in_count, 现有学生数(已报名)
+* standby_count, 待处理的人数

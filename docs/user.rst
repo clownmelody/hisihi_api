@@ -53,7 +53,7 @@
         "mobile": "18677771949",
         "sms_code": "567663",
         "password": "hiyouth",
-        "type": "230"
+        "type": "300"
     }
 
 **Parameters**:
@@ -74,36 +74,3 @@
     }
 
 
-.. sourcecode:: json
-     {
-          "groups": [
-            {
-              "group_id": 1,
-              "group_title": "用户组1",
-              "teachers": [
-                {
-                  "nickname": "admin",
-                  "sex": 0,
-                  "uid": 1
-                },
-                {
-                  "nickname": "大家好，我是雪菲菲",
-                  "sex": 0,
-                  "uid": 367
-                }
-              ]
-            },
-            {
-              "group_id": 2,
-              "group_title": "用户组2",
-              "teachers": [
-                {
-                  "nickname": "中国合伙人",
-                  "sex": 1,
-                  "uid": 378
-                }
-              ]
-            }
-          ],
-          "org_id": 1
-     }

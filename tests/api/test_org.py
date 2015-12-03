@@ -1,9 +1,7 @@
 import datetime
 from flask import json
 from sqlalchemy.sql.functions import func
-from herovii.libs.error_code import IllegalOperation
 from herovii.models.base import db
-from herovii.models.org.sign_in import StudentSignIn
 from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'

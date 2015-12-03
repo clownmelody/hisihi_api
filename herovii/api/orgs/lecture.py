@@ -9,7 +9,7 @@ from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 
 from herovii.service.org import  get_org_teachers_by_group
-from herovii.validator.forms import TeacherGroupForm
+from herovii.validator.forms import TeacherGroupForm, LectureJoinForm
 
 __author__ = 'bliss'
 
@@ -34,24 +34,25 @@ def delete_teacher_group(gid):
     with db.auto_commit():
         count = db.session.query(TeacherGroup).\
                         filter_by(id=gid).delete()
-        count1 = db.session.query(TeacherGroupRealation).filter_by(
+        db.session.query(TeacherGroupRealation).filter_by(
             teacher_group_id=gid).delete()
-    msg = str(count+count1) + ' groups has been deleted'
+    msg = str(count) + ' groups has been deleted'
     return success_json(msg=msg), 202
 
 
-@api.route('/lecture/<int:uid>/group/<int:g_id>/join', methods=['POST'])
+@api.route('/lecture/group/join', methods=['POST'])
 @auth.login_required
-def join_teacher_group(uid, g_id):
+def join_teacher_group():
+    form = LectureJoinForm.create_api_form()
     t_g_realation = TeacherGroupRealation()
-    t_g_realation.teacher_group_id = g_id
-    t_g_realation.uid = uid
+    t_g_realation.teacher_group_id = form.teacher_group_id.data
+    t_g_realation.uid = form.uid.data
     with db.auto_commit():
         db.session.add(t_g_realation)
-    return jsonify(t_g_realation)
+    return jsonify(t_g_realation), 201
 
 
-@api.route('/lecture/<int:uid>/group/<int:gid>/join', methods=['DELETE'])
+@api.route('/lecture/<int:uid>/group/<int:gid>/quite', methods=['DELETE'])
 @auth.login_required
 def quit_from_teacher_group(uid, gid):
     count = TeacherGroupRealation.query.filter(
@@ -61,7 +62,7 @@ def quit_from_teacher_group(uid, gid):
     return success_json(msg=msg), 202
 
 
-@api.route('/<int:oid>/lectures', methods=['GET'])
+@api.route('/<int:oid>/group/lectures', methods=['GET'])
 @auth.login_required
 def get_teachers_in_org(oid):
     teachers = get_org_teachers_by_group(oid)

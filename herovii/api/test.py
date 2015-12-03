@@ -19,11 +19,16 @@ def test_javascript_http():
     return p, 200
 
 
-@api.route('/')
-def nothing():
-    a = current_app.config['ALI_OSS_HOST']
-    s = current_app.config['ALI_OSS_CDN_HOST']
-    return 'ok', 200
+# @api.route('/')
+# def nothing():
+#     a = current_app.config['ALI_OSS_HOST']
+#     s = current_app.config['ALI_OSS_CDN_HOST']
+#     return 'ok', 200
+
+
+@api.route('', methods=['POST'])
+def nothing_1():
+    return 'ok', 201
 
 
 @api.route('/client-ip', methods=['GET'])

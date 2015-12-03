@@ -172,6 +172,11 @@ class OrgPicForm(Form):
     )
 
 
+class LectureJoinForm(Form):
+    uid = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    teacher_group_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+
+
 class RegisterForm(UserForm, EmailForm):
     def get_valid_data(self):
         return {

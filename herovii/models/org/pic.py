@@ -8,6 +8,9 @@ class Pic(Base):
     __tablename__ = 'hisihi_organization_resource'
     __bind_key__ = 'csu'
 
+    TYPE_STUDENT = 1
+    TYPE_ENVIRONMENT = 2
+
     id = Column(Integer, primary_key=True)
     url = Column(String(120))
     description = Column(String(300))

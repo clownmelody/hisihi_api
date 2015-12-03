@@ -12,7 +12,7 @@
 
 **URL**::
 
-    POST      org
+    POST      /org
 
 **POST Sample**：
 
@@ -56,7 +56,7 @@
 
 ** URL **::
 
-    PUT        org
+    PUT        /org
 
 **PUT Sample**：
 
@@ -80,17 +80,17 @@
 
 ** URL **::
 
-    GET      org
+    GET      /org
 
 **Parameters**:
 
-* uid : 通过uid来查找机构的基本信息
-* oid : 通过oid来查找机构的基本信息
+* uid : 通过机构管理员id号来查找机构的基本信息
+* oid : 通过机构id号来查找机构的基本信息
 
 
 **Memo**:
 1. 如果任何参数都不传，则会返回当前用户的机构信息
-2. uid与oid都为互斥参数，且oid的优先级高于uid.如果同时传递uid和oid，以oid为判断条件
+2. uid与oid为互斥参数，且oid的优先级高于uid.如果同时传递uid和oid，以oid为判断条件
 
 
 

@@ -63,5 +63,81 @@ http://pic.hisihi.com/2015-11-22%2F1448124241200305.jpg@300w
 http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.html
 
 
+机构上传图片
+~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    POST      org/pics
+
+**POST Sample**：
+
+.. sourcecode:: json
+    [
+        {
+            "url" : "http://pic.hisihi.com",
+            "description" : "测试图片"
+            "type": 1
+            "organization_id" : 2
+        }
+    ]
+
+**Parameters**:
+
+* url：图片路径，调用图片上传接口获取
+* description: 描述信息
+* type: 图片用途; 1 学生作品  2 机构环境
+* organization_id: 机构id号
+
+**Response** `201`:
+
+.. sourcecode:: json
+
+    [
+        {
+            "id" ：2
+            "url" : "http://pic.hisihi.com",
+            "description" : "测试图片"
+            "type": 1
+            "organization_id" : 2
+        }
+    ]
+
+**Memo** `201`:
+   需要OrgAdminScope权限.支持一次上传多张图片信息
 
 
+
+获取每日签到二维码
+~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    /<int:oid>/qrcode/sign-in/today
+
+
+**Parameters**:
+
+* oid：机构id号
+
+**Response** `201`:
+
+.. sourcecode:: json
+
+    [
+        {
+            "id" ：2
+            "qrcode_url" : "v1/1/student/0/sign-in/2015-12-3",
+            "date" : "2015-12-3"
+            "organization_id": 1
+            "oss_url" : "http://pic.hisihi.com/2015-2-3/23942374294.jpg"
+        }
+    ]
+
+**Memo**:
+
+oss_url 是二维码图片的资源地址。qrcode_url是二维码指向的访问地址。通常用户需要
+对扫描出的二维码路径做进一步的处理。处理项目包括：
+
+1. 在qrcode_url前面加上Host地址，如http://dev.api.hisihi.com或者http://api.hisihi.com
+*. 将qrcode_url的student/0/中的0替换为需要签到的用户的id号
