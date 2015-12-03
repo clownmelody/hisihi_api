@@ -15,7 +15,7 @@ __author__ = 'bliss'
 api = ApiBlueprint('org')
 
 
-@api.route('/pics', methods=['POST'])
+@api.route('/<int:oid>/pics', methods=['POST'])
 @auth.login_required
 def upload_pic(oid):
     org_info = Info.query.filter_by(uid=g.user[0]).first()

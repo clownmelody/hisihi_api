@@ -12,7 +12,7 @@ class TestOrgGroup(TestOrgCase):
         }
         json_data = json.dumps(data)
         headers = self.get_authorized_header()
-        rv = self.client.post('v1/org/teacher/group', data=json_data, headers=headers)
+        rv = self.client.post('v1/org/lecture/group', data=json_data, headers=headers)
         self.assertEqual(201, rv.status_code)
 
     def test_org_group_delete(self):

@@ -59,37 +59,36 @@ class TestOrg(TestOrgCase):
         rv = self.client.put('v1/user/csu/identity', data=data_json, headers=headers)
         self.assertEqual(rv.status_code, 202)
 
-    def test_org_info_query(self):
-        """机构信息：测试机构信息查询"""
-        oid = '2'
-        headers = self.get_authorized_header(2, scope='OrgAdmin')
-        rv = self.client.get('v1/org/' + oid, headers=headers)
-        self.assertEqual(rv.status_code, 200)
-        json_obj = json.loads(rv.data)
-        self.assertEqual(json_obj['id'], 2)
-
-        oid = '-1'
-        rv = self.client.get('v1/org' + oid, headers=headers)
-        self.assertEqual(rv.status_code, 404)
+    # def test_org_info_query(self):
+    #     """机构信息：测试机构信息查询"""
+    #     oid = '2'
+    #     headers = self.get_authorized_header(2, scope='OrgAdmin')
+    #     rv = self.client.get('v1/org' + oid, headers=headers)
+    #     self.assertEqual(rv.status_code, 200)
+    #     json_obj = json.loads(rv.data)
+    #     self.assertEqual(json_obj['id'], 2)
+    #
+    #     oid = '-1'
+    #     rv = self.client.get('v1/org' + oid, headers=headers)
+    #     self.assertEqual(rv.status_code, 404)
 
     def test_org_pics_create(self):
         """图片上传：测试Org的图片上传"""
-        oid = '1'
         headers = self.get_authorized_header(1, scope='OrgAdmin')
         data = [
             {
                 "url": "http://321.com",
                 "type": 1,
-                "description": "this is for test"
+                "description": "this is for test",
             },
             {
                 "url": "http://321.com",
                 "type": 2,
-                "description": "this is for test"
+                "description": "this is for test",
             }
         ]
         data_str = json.dumps(data)
-        rv = self.client.post('v1/org/' + oid + '/pics',
+        rv = self.client.post('v1/org/1/pics',
                               data=data_str, headers=headers)
         self.assertEqual(rv.status_code, 201)
 
