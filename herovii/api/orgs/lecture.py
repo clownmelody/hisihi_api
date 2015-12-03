@@ -7,6 +7,7 @@ from herovii.models.base import db
 
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
+from herovii.models.user.user_csu import UserCSU
 
 from herovii.service.org import  get_org_teachers_by_group
 from herovii.validator.forms import TeacherGroupForm, LectureJoinForm
@@ -63,9 +64,16 @@ def quit_from_teacher_group(uid, gid):
 
 
 @api.route('/<int:oid>/group/lectures', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def get_teachers_in_org(oid):
     teachers = get_org_teachers_by_group(oid)
     headers = {'Content-Type': 'application/json'}
     t = json.dumps(teachers)
     return t, 200, headers
+
+
+@api.route('/lecture/<int:lid>')
+def get_lecture(lid):
+    lecture = UserCSU.query.get(lid)
+    return jsonify(lecture), 200
+

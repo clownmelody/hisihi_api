@@ -9,6 +9,7 @@ from herovii.models.org.info import Info
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.models.org.video import Video
+from herovii.models.user.avatar import Avatar
 from herovii.models.user.user_csu import UserCSU
 
 __author__ = 'bliss'
@@ -29,7 +30,8 @@ def get_org_teachers_by_group(oid):
 
     m = map(lambda x: x[0], collection)
     l = list(m)
-    teachers = db.session.query(UserCSU).filter(UserCSU.uid.in_(l)).all()
+    teachers = db.session.query(UserCSU, Avatar.path). \
+        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l)).all()
 
     return dto_teachers_group(oid, collection, teachers)
 
@@ -37,9 +39,10 @@ def get_org_teachers_by_group(oid):
 def dto_teachers_group(oid, l, teachers):
     # groups = []
     group_keys = {}
-    for t in teachers:
+    for t, avatar in teachers:
+        t = {'teacher': t, 'avatar': avatar}
         for uid, group_id, title in l:
-            if uid == t.uid:
+            if uid == t['teacher'].uid:
                 if group_keys.get(group_id):
                     group_keys[group_id]['teachers'].append(t)
                     # group_keys.append(group_id)

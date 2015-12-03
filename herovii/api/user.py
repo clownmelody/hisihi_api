@@ -44,7 +44,7 @@ def update_csu():
 
 
 @api.route('/csu/<int:uid>', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def get_user_uid(uid):
     uid = user_verify.verify_uid(uid)
     user = user_org.get_user_by_uid(uid)

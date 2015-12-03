@@ -136,38 +136,61 @@
 
 .. sourcecode:: json
 
-     {
-          "groups": [
+    {
+      "groups": [
+        {
+          "group_id": 5,
+          "group_title": "平面设计培训组",
+          "teachers": [
             {
-              "group_id": 1,
-              "group_title": "用户组1",
-              "teachers": [
-                {
-                  "nickname": "admin",
-                  "sex": 0,
-                  "uid": 1
-                },
-                {
-                  "nickname": "大家好，我是雪菲菲",
-                  "sex": 0,
-                  "uid": 367
-                }
-              ]
+              "avatar": "2015-07-15/55a6367000dd5-05505543.jpg",
+              "teacher": {
+                "nickname": "Mouri",
+                "sex": 0,
+                "uid": 536
+              }
             },
             {
-              "group_id": 2,
-              "group_title": "用户组2",
-              "teachers": [
-                {
-                  "nickname": "中国合伙人",
-                  "sex": 1,
-                  "uid": 378
-                }
-              ]
+              "avatar": "2015-07-15/55a63ecfafbfb-05505543.jpg",
+              "teacher": {
+                "nickname": "Use",
+                "sex": 0,
+                "uid": 543
+              }
             }
-          ],
-          "org_id": 1
-     }
+          ]
+        },
+        {
+          "group_id": 6,
+          "group_title": "UI设计培训组",
+          "teachers": [
+            {
+              "avatar": "2015-07-15/55a63dec7e9f8-05505543.jpg",
+              "teacher": {
+                "nickname": "Frankie",
+                "sex": 0,
+                "uid": 542
+              }
+            }
+          ]
+        },
+        {
+          "group_id": 7,
+          "group_title": "网页设计培训组",
+          "teachers": [
+            {
+              "avatar": "2015-07-20/55ac659074d27.png",
+              "teacher": {
+                "nickname": "Rfly",
+                "sex": 1,
+                "uid": 69
+              }
+            }
+          ]
+        }
+      ],
+      "org_id": 2
+    }
 
 **Memo**：
    需要OrgAdminScope权限
