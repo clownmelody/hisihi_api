@@ -41,3 +41,37 @@ v1/token
 .. note::
     ' / '   表示v1/token 完整示例：`http://api.hisihi.com/v1/token` 后续不再赘述。此接口
     不需要Http Basic验证
+
+
+[
+  [
+    {
+      "blz_id": "2345234535",
+      "confirm_time": null,
+      "course_id": 76,
+      "id": 2,
+      "organization_id": 2,
+      "phone_num": "13945670987",
+      "student_name": "李二狗",
+      "student_uid": 565,
+      "student_university": "武汉大学"
+    },
+    "李长春",
+    "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-13/5645b11e133f0-05505543.jpg"
+  ],
+  [
+    {
+      "blz_id": "234523452345",
+      "confirm_time": null,
+      "course_id": 76,
+      "id": 1,
+      "organization_id": 2,
+      "phone_num": "13876567898",
+      "student_name": "赵虎",
+      "student_uid": 566,
+      "student_university": "武汉大学"
+    },
+    "皇帝的新衣",
+    "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-13/5645b325d2dd7-05505543.jpg"
+  ]
+]
