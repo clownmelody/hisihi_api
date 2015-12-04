@@ -1,4 +1,3 @@
-from sqlalchemy.inspection import _self_inspects
 from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'

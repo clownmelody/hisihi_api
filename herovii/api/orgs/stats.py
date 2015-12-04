@@ -2,7 +2,7 @@ from flask import jsonify
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import NotFound
 from herovii.service.org import view_student_count
-from herovii.validator.forms import PagingForm
+from herovii.validator.forms import StatsSignInCountForm
 
 __author__ = 'bliss'
 
@@ -13,7 +13,7 @@ api = ApiBlueprint('org')
 @api.route('/<int:oid>/enroll/stats/count')
 @auth.login_required
 def get_student_stats_count(oid):
-    form = PagingForm.create_api_form()
+    # form = StatsSignInCountForm.create_api_form()
     counts = view_student_count(oid)
     if not counts:
         raise NotFound(error='no student in organization')

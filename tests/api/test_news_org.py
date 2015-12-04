@@ -1,4 +1,3 @@
-from flask import json
 from tests.api._base import TestOrgCase
 
 __author__ = 'bliss'

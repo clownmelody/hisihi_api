@@ -1,5 +1,6 @@
 from _operator import or_
 from flask import jsonify
+from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
@@ -151,6 +152,8 @@ def get_org_by_uid(uid):
 
 def dto_get_blzs_paginate(page, count, oid):
     # 可能会造成性能低下，尽量将筛选条件在第一次join时应用，以减少记录数
+    # query里用到outerjoin是因为不希望在course为null的情况下造成没有查询结果
+    # 使用outerjoin将保证即使没有课程，也可以筛选报名结果
     blzs_query = db.session.query(
         Enroll, UserCSU.nickname, Course.title,
         get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')

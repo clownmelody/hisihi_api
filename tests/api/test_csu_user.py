@@ -1,4 +1,3 @@
-from flask import json, jsonify
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from tests.api._base import  TestUserCSUCase
 

@@ -122,8 +122,9 @@ class PagingForm(Form):
             raise ValidationError('per_page parameter must be an positive integer')
 
 
-class StatsSignInCount(PagingForm):
-    pass
+class StatsSignInCountForm(PagingForm):
+    since = IntegerField()
+    end = IntegerField()
 
 
 class OrgForm(Form):
