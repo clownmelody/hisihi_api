@@ -158,7 +158,7 @@ def dto_get_blzs_paginate(page, count, oid):
         join(UserCSU, Enroll.student_uid == UserCSU.uid).\
         join(Avatar, Enroll.student_uid == Avatar.uid).\
         outerjoin(Course, Enroll.course_id == Course.id).\
-        order_by(Enroll.status)
+        order_by(Enroll.create_time.desc())
 
     blzs_query = blzs_query.offset((page-1) * count)
     blzs_query = blzs_query.limit(count)

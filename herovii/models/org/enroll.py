@@ -30,6 +30,6 @@ class Enroll(Base):
         return {
             'id', 'organization_id', 'student_uid', 'student_name',
             'phone_num', 'student_university', 'course_id', 'confirm_time',
-            'blz_id'
+            'blz_id', 'status', 'create_time'
         }
 
