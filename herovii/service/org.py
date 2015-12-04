@@ -150,15 +150,33 @@ def get_org_by_uid(uid):
 
 
 def dto_get_blzs_paginate(page, count, oid):
+    # 可能会造成性能低下，尽量将筛选条件在第一次join时应用，以减少记录数
     blzs_query = db.session.query(
-        Enroll, UserCSU.nickname, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
+        Enroll, UserCSU.nickname, Course.title,
+        get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+    ).filter(Enroll.organization_id == oid).\
         join(UserCSU, Enroll.student_uid == UserCSU.uid).\
         join(Avatar, Enroll.student_uid == Avatar.uid).\
-        filter(Enroll.organization_id == oid).\
+        outerjoin(Course, Enroll.course_id == Course.id).\
         order_by(Enroll.status)
+
     blzs_query = blzs_query.offset((page-1) * count)
     blzs_query = blzs_query.limit(count)
     blzs = blzs_query.all()
-    return blzs
+    dto_blzs = __assign_blzs(blzs)
+    return dto_blzs
 
+
+def __assign_blzs(blzs):
+    dto_blz = []
+    for blz in blzs:
+        # for blz_base, nickname, avatar in blz:
+        data = {
+            'blz': blz[0],
+            'name': blz[1],
+            'course': blz[2],
+            'avatar': blz[3]
+        }
+        dto_blz.append(data)
+    return dto_blz
 
