@@ -29,13 +29,14 @@ def get_org_teachers_by_group(oid):
 
     collection = db.session.query(TeacherGroupRealation.uid, TeacherGroupRealation.teacher_group_id,
                                   TeacherGroup.title).\
-        join(TeacherGroup, TeacherGroup.id == TeacherGroupRealation.teacher_group_id).filter_by(
-        organization_id=oid).all()
+        join(TeacherGroup, TeacherGroup.id == TeacherGroupRealation.teacher_group_id).filter(
+        TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRealation.status != -1).\
+        all()
 
     m = map(lambda x: x[0], collection)
     l = list(m)
     teachers = db.session.query(UserCSU, Avatar.path). \
-        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l)).all()
+        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).all()
 
     return dto_teachers_group(oid, collection, teachers)
 
@@ -131,7 +132,7 @@ def create_org_pics(pics):
 def view_student_count(oid):
     """查找status=1（正在审核的学生）和status=2已经审核过的学生数量"""
     counts = db.session.query(func.count('*')).\
-        filter(Enroll.organization_id == oid).\
+        filter(Enroll.organization_id == oid, Enroll.status != -1).\
         group_by(Enroll.status).\
         having(or_(Enroll.status == 1, Enroll.status == 2)).\
         all()
@@ -153,10 +154,10 @@ def view_sign_in_count(oid, form):
     if not since and end:
         time_line = 'create_time <=' + end
     counts = db.session.query(func.count('*')).\
-        filter(StudentSignIn.organization_id == oid, text(time_line)).\
+        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.statu != -1).\
         group_by(StudentSignIn.date).\
-        slice(start, stop)
-    total = db.session.query().select_from(Enroll).filter_by(status=2).count()
+        slice(start, stop).all()
+    total = db.session.query(func.count('*')).select_from(Enroll).filter_by(status=2).scalar()
     return counts, total
 
 
@@ -181,7 +182,7 @@ def dto_get_blzs_paginate(page, count, oid):
     blzs_query = db.session.query(
         Enroll, UserCSU.nickname, Course.title,
         get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
-    ).filter(Enroll.organization_id == oid).\
+    ).filter(Enroll.organization_id == oid, Enroll.status != -1).\
         join(UserCSU, Enroll.student_uid == UserCSU.uid).\
         join(Avatar, Enroll.student_uid == Avatar.uid).\
         outerjoin(Course, Enroll.course_id == Course.id).\

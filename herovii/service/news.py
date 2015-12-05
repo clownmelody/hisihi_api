@@ -5,7 +5,7 @@ __author__ = 'bliss'
 
 
 def get_news_org_by_paging(page, count):
-    news = NewsOrg.query.paginate(page, count).items
+    news = NewsOrg.query.filter(NewsOrg.status != -1).paginate(page, count).items
     total_count = NewsOrg.query.count()
     return total_count, news
 
