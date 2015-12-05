@@ -5,9 +5,11 @@ from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.base import db
+from herovii.models.org import enroll
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
+from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_realation import TeacherGroupRealation
 from herovii.models.org.video import Video
@@ -134,6 +136,28 @@ def view_student_count(oid):
         having(or_(Enroll.status == 1, Enroll.status == 2)).\
         all()
     return counts
+
+
+def view_sign_in_count(oid, form):
+    since = form.since.data
+    end = form.end.data
+    page = int(form.page.data)
+    per_page = int(form.per_page.data)
+    start = (page-1) * per_page
+    stop = start+per_page
+    time_line = ''
+    if since and end:
+        time_line = 'create_time >=' + since + 'and create_time <=' + end
+    if since and not end:
+        time_line = 'create_time >=' + since
+    if not since and end:
+        time_line = 'create_time <=' + end
+    counts = db.session.query(func.count('*')).\
+        filter(StudentSignIn.organization_id == oid, text(time_line)).\
+        group_by(StudentSignIn.date).\
+        slice(start, stop)
+    total = db.session.query().select_from(Enroll).filter_by(status=2).count()
+    return counts, total
 
 
 def get_org_by_id(oid):

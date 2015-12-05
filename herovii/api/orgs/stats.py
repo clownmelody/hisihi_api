@@ -1,7 +1,7 @@
 from flask import jsonify
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import NotFound
-from herovii.service.org import view_student_count
+from herovii.service.org import view_student_count, view_sign_in_count
 from herovii.validator.forms import StatsSignInCountForm
 
 __author__ = 'bliss'
@@ -26,7 +26,8 @@ def get_student_stats_count(oid):
 
 @api.route('/<int:oid>/sign-in/status/count')
 def get_sign_in_count_stats(oid):
-    pass
+    form = StatsSignInCountForm.create_api_form()
+    count , total = view_sign_in_count(oid, form)
 
 
 @api.route('/<int:oid>/team/sign-in/status/count')
