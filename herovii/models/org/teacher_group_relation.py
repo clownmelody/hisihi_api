@@ -5,7 +5,7 @@ from herovii.models.base import Base
 __author__ = 'bliss'
 
 
-class TeacherGroupRealation(Base):
+class TeacherGroupRelation(Base):
     __tablename__ = 'hisihi_organization_relation'
     __bind_key__ = 'csu'
 

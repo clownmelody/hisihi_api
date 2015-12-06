@@ -1,11 +1,9 @@
 from _operator import or_
-from flask import jsonify
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import func
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.base import db
-from herovii.models.org import enroll
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
@@ -154,7 +152,7 @@ def view_sign_in_count(oid, form):
     if not since and end:
         time_line = 'create_time <=' + end
     counts = db.session.query(func.count('*')).\
-        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.statu != -1).\
+        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1).\
         group_by(StudentSignIn.date).\
         slice(start, stop).all()
     total = db.session.query(func.count('*')).select_from(Enroll).filter_by(status=2).scalar()

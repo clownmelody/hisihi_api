@@ -161,6 +161,14 @@ class OrgCourseForm(Form):
     )
 
 
+class StudentClassForm(Form):
+    organization_id = IntegerField(
+        validators=[NumberRange(1), DataRequired()])
+    title = StringField(
+        validators=[DataRequired()]
+    )
+
+
 class OrgCourseUpdateForm(OrgCourseForm):
     id = IntegerField(
         validators=[NumberRange(1), DataRequired()]
@@ -179,6 +187,11 @@ class OrgPicForm(Form):
 class LectureJoinForm(Form):
     uid = IntegerField(validators=[DataRequired(), NumberRange(1)])
     teacher_group_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+
+
+class StudentJoinForm(Form):
+    uid = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    student_class_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
 
 
 class RegisterForm(UserForm, EmailForm):
