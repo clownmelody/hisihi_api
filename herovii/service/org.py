@@ -42,7 +42,7 @@ def get_org_teachers_by_group(oid):
     teachers = db.session.query(UserCSU, Avatar.path). \
         join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).all()
 
-    return dto_teachers_group(oid, collection, teachers)
+    return dto_teachers_group_1(oid, collection, teachers)
 
 
 def dto_teachers_group(oid, l, teachers):
@@ -58,6 +58,32 @@ def dto_teachers_group(oid, l, teachers):
                     # group_keys.append(group_id)
 
                 else:
+                    group = {
+                        'group_id': group_id,
+                        'group_title': title,
+                        'lectures': [t]
+                    }
+                    group_keys[group_id] = group
+
+    groups = tuple(group_keys.values())
+
+    return {
+        'org_id': oid,
+        'groups': groups
+    }
+
+
+def dto_teachers_group_1(oid, l, teachers):
+    group_keys = {}
+    for uid, group_id, title in l:
+        for t, avatar in teachers:
+            avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+            t = {'lecture': t, 'avatar': avatar}
+            if uid == t['lecture'].uid:
+                 if group_keys.get(group_id):
+                    group_keys[group_id]['lectures'].append(t)
+
+                 else:
                     group = {
                         'group_id': group_id,
                         'group_title': title,
@@ -221,6 +247,8 @@ def create_student_sign_in(oid, uid, date):
     if sign_in:
         return sign_in
 
+    init_classmate_mirror(oid, date)
+
     with db.auto_commit():
         sign_in = StudentSignIn()
         sign_in.organization_id = oid
@@ -231,8 +259,12 @@ def create_student_sign_in(oid, uid, date):
 
 
 def init_classmate_mirror(oid, date):
-
+    """每一天第一个人签到时，需要生成班级成员的镜像，以做历史记录"""
     today = get_today_string()
+    has_inited = __class_mirror_inited(oid, today)
+    if has_inited:
+        return
+
     classes_uids = db.session.query(Classmate.class_id, Classmate.uid).\
         order_by(Classmate.class_id).all()
 
@@ -254,7 +286,11 @@ def add_classmate_mirror():
     pass
 
 
-def __class_mirror_inited(oid, date):
+def __class_mirror_inited(oid, today):
     classmate_mirror = ClassMirror.query.filter_by(
-        organization_id=oid, date=date)
+        organization_id=oid, date=today).first()
+    if classmate_mirror:
+        return True
+    else:
+        return False
 

@@ -1,12 +1,11 @@
 import datetime
 from flask import jsonify
-from herovii.libs.bpbase import ApiBlueprint, auth
+from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.error_code import IllegalOperation
 from herovii.libs.util import is_today
 from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
-# from herovii.models.org.student_class_stats import StudentClassStats
 from herovii.service.org import create_student_sign_in, init_classmate_mirror
 from herovii.validator.forms import StudentClassForm, StudentJoinForm
 
