@@ -1,6 +1,7 @@
 from _operator import or_
-from sqlalchemy.sql.expression import text
+from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
+from sqlalchemy.orm import aliased
 from werkzeug.datastructures import MultiDict
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
@@ -29,18 +30,39 @@ def create_org_info(org):
 
 def get_org_teachers_by_group(oid):
 
-    collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
-                                  TeacherGroup.title).\
-        join(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
-        TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
-        all()
+    # collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
+    #                               TeacherGroup.title).\
+    #     outerjoin(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
+    #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
+    #     all()
+
+    # relation = aliased
+    # 这里需要使用子查询 subquery
+    sub_query = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id).\
+        filter(TeacherGroupRelation.status != -1).subquery()
+
+    # 需要使用subquery的.c 属性来引用字段
+    collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid).\
+        filter(TeacherGroup.organization_id == oid, TeacherGroup.status != -1).\
+        outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id)
+
+    # collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, TeacherGroupRelation.uid).filter(
+    #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1).\
+    #     outerjoin(TeacherGroupRelation, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).\
+    #     filter(TeacherGroupRelation.status != -1)
+
+    s = collection_query.statement
+    collection = collection_query.all()
 
     m = map(lambda x: x[0], collection)
     l = list(m)
     if not l:
         raise NotFound(error='organization not found')
+
+    # 下面的group_by 是为了去重，部分用户在avatar表有2个以上的头像
     teachers = db.session.query(UserCSU, Avatar.path). \
-        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).all()
+        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).\
+        group_by(UserCSU.uid).all()
 
     return dto_teachers_group_1(oid, collection, teachers)
 
@@ -74,29 +96,53 @@ def dto_teachers_group(oid, l, teachers):
 
 
 def dto_teachers_group_1(oid, l, teachers):
-    group_keys = {}
+    group_keys = MultiDict()
     for uid, group_id, title in l:
-        for t, avatar in teachers:
-            avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
-            t = {'lecture': t, 'avatar': avatar}
-            if uid == t['lecture'].uid:
-                 if group_keys.get(group_id):
-                    group_keys[group_id]['lectures'].append(t)
+        group_keys.add((group_id, title), uid)
 
-                 else:
-                    group = {
-                        'group_id': group_id,
-                        'group_title': title,
-                        'lectures': [t]
-                    }
-                    group_keys[group_id] = group
+    groups = []
 
-    groups = tuple(group_keys.values())
+    for key in group_keys.keys():
+        uids = group_keys.getlist(key)
+        group = {
+            'group_id': key[0],
+            'group_title': key[1]
+        }
+        lectures = []
+        for uid in uids:
+            for t, avatar in teachers:
+                if uid == t.uid:
+                    avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+                    t = {'lecture': t, 'avatar': avatar}
+                    lectures.append(t)
+        group['lectures'] = lectures
+        groups.append(group)
 
     return {
         'org_id': oid,
         'groups': groups
     }
+
+
+    # for uid, group_id, title in l:
+    #     for t, avatar in teachers:
+    #         avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+    #         t = {'lecture': t, 'avatar': avatar}
+    #         if uid == t['lecture'].uid:
+    #             if group_keys.get(group_id):
+    #                 group_keys[group_id]['lectures'].append(t)
+    #
+    #             else:
+    #                 group = {
+    #                     'group_id': group_id,
+    #                     'group_title': title,
+    #                     'lectures': [t]
+    #                 }
+    #                 group_keys[group_id] = group
+    #
+    # groups = tuple(group_keys.values())
+
+
 
 
 def dto_org_courses_paginate(oid, page, count):
