@@ -141,10 +141,10 @@
         {
           "group_id": 5,
           "group_title": "平面设计培训组",
-          "teachers": [
+          "lectures": [
             {
               "avatar": "2015-07-15/55a6367000dd5-05505543.jpg",
-              "teacher": {
+              "lecture": {
                 "nickname": "Mouri",
                 "sex": 0,
                 "uid": 536
@@ -152,7 +152,7 @@
             },
             {
               "avatar": "2015-07-15/55a63ecfafbfb-05505543.jpg",
-              "teacher": {
+              "lecture": {
                 "nickname": "Use",
                 "sex": 0,
                 "uid": 543
@@ -163,10 +163,10 @@
         {
           "group_id": 6,
           "group_title": "UI设计培训组",
-          "teachers": [
+          "lectures": [
             {
               "avatar": "2015-07-15/55a63dec7e9f8-05505543.jpg",
-              "teacher": {
+              "lecture": {
                 "nickname": "Frankie",
                 "sex": 0,
                 "uid": 542
@@ -177,10 +177,10 @@
         {
           "group_id": 7,
           "group_title": "网页设计培训组",
-          "teachers": [
+          "lectures": [
             {
               "avatar": "2015-07-20/55ac659074d27.png",
-              "teacher": {
+              "lecture": {
                 "nickname": "Rfly",
                 "sex": 1,
                 "uid": 69

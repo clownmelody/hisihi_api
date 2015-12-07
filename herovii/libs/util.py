@@ -5,9 +5,6 @@ import base64
 from hashlib import sha1 as sha
 import random
 import time
-from aniso8601 import date
-import qrcode
-from herovii.libs.error_code import ParamException
 
 __author__ = 'bliss'
 

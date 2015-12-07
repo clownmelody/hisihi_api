@@ -37,6 +37,8 @@ def get_org_teachers_by_group(oid):
 
     m = map(lambda x: x[0], collection)
     l = list(m)
+    if not l:
+        raise NotFound(error='organization not found')
     teachers = db.session.query(UserCSU, Avatar.path). \
         join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).all()
 
@@ -48,18 +50,18 @@ def dto_teachers_group(oid, l, teachers):
     group_keys = {}
     for t, avatar in teachers:
         avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
-        t = {'teacher': t, 'avatar': avatar}
+        t = {'lecture': t, 'avatar': avatar}
         for uid, group_id, title in l:
-            if uid == t['teacher'].uid:
+            if uid == t['lecture'].uid:
                 if group_keys.get(group_id):
-                    group_keys[group_id]['teachers'].append(t)
+                    group_keys[group_id]['lectures'].append(t)
                     # group_keys.append(group_id)
 
                 else:
                     group = {
                         'group_id': group_id,
                         'group_title': title,
-                        'teachers': [t]
+                        'lectures': [t]
                     }
                     group_keys[group_id] = group
 
