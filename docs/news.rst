@@ -17,7 +17,7 @@
 **Parameters**:
 
 * page：页码，默认值为1
-* per_page: 每页条数，默认值为每页10条
+* per_page: 每页条数，默认值为每页20条
 
 **Response** `200`:
 

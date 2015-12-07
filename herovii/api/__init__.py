@@ -76,14 +76,11 @@ def reg_v1_bp(app):
     resource.api.register(bp_v1)
     stats.api.register(bp_v1)
     student.api.register(bp_v1)
-    team.api.register(bp_v1)
-    # course.api.register(bp_org)
-    # info.api.register(bp_org)
-    # lecture.api.register(bp_org)
+    # team.api.register(bp_v1)
 
-    info.api.register(bp_v1)
-    stats.api.register(bp_v1)
-    enroll.api.register(bp_v1)
+    # info.api.register(bp_v1)
+    # stats.api.register(bp_v1)
+    # enroll.api.register(bp_v1)
     app.register_blueprint(bp_v1, url_prefix='/v1')
     # app.register_blueprint(bp_org, url_prefix='/v1/org')
 

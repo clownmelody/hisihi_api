@@ -81,22 +81,4 @@ v1/token
 
 def view_student_count(oid, form):
     """查找status=1（正在审核的学生）和status=2已经审核过的学生数量"""
-    since = form.since.data
-    end = form.end.data
-    page = int(form.page.data)
-    per_page = int(form.per_page.data)
-    start = (page-1) * per_page
-    stop = start+per_page
-    time_line = ''
-    if since and end:
-        time_line = 'create_time >=' + since + 'and create_time <=' + end
-    if since and not end:
-        time_line = 'create_time >=' + since
-    if not since and end:
-        time_line = 'create_time <=' + end
-    counts = db.session.query(func.count('*')).\
-        filter(Enroll.organization_id == oid, text(time_line)).\
-        group_by(Enroll.status).\
-        having(or_(Enroll.status == 1, Enroll.status == 2)).\
-        slice(start, stop)
-    return counts
+

@@ -5,6 +5,7 @@ import base64
 from hashlib import sha1 as sha
 import random
 import time
+from aniso8601 import date
 import qrcode
 from herovii.libs.error_code import ParamException
 
@@ -222,6 +223,11 @@ def is_today(date):
         return False
     else:
         return True
+
+
+def get_today_string():
+    today = datetime.date.today().strftime('%Y-%m-%d')
+    return today
 
 
 

@@ -6,7 +6,7 @@ from herovii.libs.helper import success_json
 from herovii.models.base import db
 
 from herovii.models.org.teacher_group import TeacherGroup
-from herovii.models.org.teacher_group_realation import TeacherGroupRealation
+from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.user.user_csu import UserCSU
 
 from herovii.service.org import  get_org_teachers_by_group
@@ -35,7 +35,7 @@ def delete_teacher_group(gid):
     with db.auto_commit():
         count = db.session.query(TeacherGroup).\
                         filter_by(id=gid).delete()
-        db.session.query(TeacherGroupRealation).filter_by(
+        db.session.query(TeacherGroupRelation).filter_by(
             teacher_group_id=gid).delete()
     msg = str(count) + ' groups has been deleted'
     return success_json(msg=msg), 202
@@ -45,7 +45,7 @@ def delete_teacher_group(gid):
 @auth.login_required
 def join_teacher_group():
     form = LectureJoinForm.create_api_form()
-    t_g_realation = TeacherGroupRealation()
+    t_g_realation = TeacherGroupRelation()
     t_g_realation.teacher_group_id = form.teacher_group_id.data
     t_g_realation.uid = form.uid.data
     with db.auto_commit():
@@ -56,8 +56,8 @@ def join_teacher_group():
 @api.route('/lecture/<int:uid>/group/<int:gid>/quite', methods=['DELETE'])
 @auth.login_required
 def quit_from_teacher_group(uid, gid):
-    count = TeacherGroupRealation.query.filter(
-        TeacherGroupRealation.uid == uid, TeacherGroupRealation.teacher_group_id == gid) \
+    count = TeacherGroupRelation.query.filter(
+        TeacherGroupRelation.uid == uid, TeacherGroupRelation.teacher_group_id == gid) \
         .delete()
     msg = count + 'teacher identity has been removed'
     return success_json(msg=msg), 202

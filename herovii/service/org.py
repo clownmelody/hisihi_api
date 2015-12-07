@@ -1,15 +1,19 @@
 from _operator import or_
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import func
+from werkzeug.datastructures import MultiDict
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
+from herovii.libs.util import get_today_string
 from herovii.models.base import db
+from herovii.models.org.class_mirror import ClassMirror
+from herovii.models.org.classmate import Classmate
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.teacher_group import TeacherGroup
-from herovii.models.org.teacher_group_realation import TeacherGroupRealation
+from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.video import Video
 from herovii.models.user.avatar import Avatar
 from herovii.models.user.user_csu import UserCSU
@@ -25,10 +29,10 @@ def create_org_info(org):
 
 def get_org_teachers_by_group(oid):
 
-    collection = db.session.query(TeacherGroupRealation.uid, TeacherGroupRealation.teacher_group_id,
+    collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
                                   TeacherGroup.title).\
-        join(TeacherGroup, TeacherGroup.id == TeacherGroupRealation.teacher_group_id).filter(
-        TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRealation.status != -1).\
+        join(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
+        TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
         all()
 
     m = map(lambda x: x[0], collection)
@@ -205,4 +209,50 @@ def __assign_blzs(blzs):
         }
         dto_blz.append(data)
     return dto_blz
+
+
+def create_student_sign_in(oid, uid, date):
+    sign_in = StudentSignIn.query.filter(
+        StudentSignIn.date == date, StudentSignIn.uid == uid,
+        StudentSignIn.organization_id == oid).first()
+
+    if sign_in:
+        return sign_in
+
+    with db.auto_commit():
+        sign_in = StudentSignIn()
+        sign_in.organization_id = oid
+        sign_in.date = date
+        sign_in.uid = uid
+        db.session.add(sign_in)
+    return sign_in
+
+
+def init_classmate_mirror(oid, date):
+
+    today = get_today_string()
+    classes_uids = db.session.query(Classmate.class_id, Classmate.uid).\
+        order_by(Classmate.class_id).all()
+
+    dicts = MultiDict(classes_uids)
+    for key in dicts.keys():
+        uids = dicts.getlist(key)
+        classmate_mirror = ClassMirror()
+        classmate_mirror.organization_id = oid
+        classmate_mirror.date = date
+        classmates_str = ''
+        for uid in uids:
+            classmates_str += uid + '#'
+        classmates_str = classmates_str[:-1]
+        classmate_mirror.classmates = classmates_str
+    return classes_uids
+
+
+def add_classmate_mirror():
+    pass
+
+
+def __class_mirror_inited(oid, date):
+    classmate_mirror = ClassMirror.query.filter_by(
+        organization_id=oid, date=date)
 
