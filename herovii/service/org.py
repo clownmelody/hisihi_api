@@ -44,7 +44,8 @@ def get_org_teachers_by_group(oid):
     # 需要使用subquery的.c 属性来引用字段
     collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid).\
         filter(TeacherGroup.organization_id == oid, TeacherGroup.status != -1).\
-        outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id)
+        outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id).\
+        order_by(TeacherGroup.id)
 
     # collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, TeacherGroupRelation.uid).filter(
     #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1).\
@@ -117,7 +118,7 @@ def dto_teachers_group_1(oid, l, teachers):
                     lectures.append(t)
         group['lectures'] = lectures
         groups.append(group)
-
+    groups = sorted(groups, key=lambda g: g['group_id'])
     return {
         'org_id': oid,
         'groups': groups
