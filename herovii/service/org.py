@@ -54,7 +54,7 @@ def get_org_teachers_by_group(oid):
     s = collection_query.statement
     collection = collection_query.all()
 
-    m = map(lambda x: x[0], collection)
+    m = map(lambda x: x[2], collection)
     l = list(m)
     if not l:
         raise NotFound(error='organization not found')
@@ -97,7 +97,7 @@ def dto_teachers_group(oid, l, teachers):
 
 def dto_teachers_group_1(oid, l, teachers):
     group_keys = MultiDict()
-    for uid, group_id, title in l:
+    for group_id, title, uid in l:
         group_keys.add((group_id, title), uid)
 
     groups = []
