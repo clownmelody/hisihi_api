@@ -53,7 +53,7 @@ def join_teacher_group():
 
 
 @api.route('/lecture/<int:uid>/group/<int:gid>/quite', methods=['DELETE'])
-# @auth.login_required
+@auth.login_required
 def quit_from_teacher_group(uid, gid):
     count = TeacherGroupRelation.query.filter(
         TeacherGroupRelation.uid == uid, TeacherGroupRelation.teacher_group_id == gid) \
