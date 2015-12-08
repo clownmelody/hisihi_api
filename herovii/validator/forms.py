@@ -153,6 +153,10 @@ class OrgTeacherQuery(Form):
     group = StringField(default='*')
 
 
+# class OrgLectureQuery(Form):
+#     lid = StringField()
+
+
 class OrgCourseForm(Form):
     organization_id = IntegerField(
         validators=[NumberRange(1), DataRequired()])

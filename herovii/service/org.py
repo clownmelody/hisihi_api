@@ -1,7 +1,7 @@
 from _operator import or_
-from sqlalchemy.sql.expression import text, distinct
+from flask import jsonify, json
+from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import func
-from sqlalchemy.orm import aliased
 from werkzeug.datastructures import MultiDict
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
@@ -18,6 +18,7 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.video import Video
 from herovii.models.user.avatar import Avatar
 from herovii.models.user.user_csu import UserCSU
+from herovii.models.user.user_csu_secure import UserCSUSecure
 
 __author__ = 'bliss'
 
@@ -310,12 +311,14 @@ def init_classmate_mirror(oid, date):
     today = get_today_string()
     has_inited = __class_mirror_inited(oid, today)
     if has_inited:
+        # 如果镜像已经初始化则什么都不做
         return
 
     classes_uids = db.session.query(Classmate.class_id, Classmate.uid).\
         order_by(Classmate.class_id).all()
 
     dicts = MultiDict(classes_uids)
+    class_mirrors = []
     for key in dicts.keys():
         uids = dicts.getlist(key)
         classmate_mirror = ClassMirror()
@@ -326,7 +329,10 @@ def init_classmate_mirror(oid, date):
             classmates_str += uid + '#'
         classmates_str = classmates_str[:-1]
         classmate_mirror.classmates = classmates_str
-    return classes_uids
+        class_mirrors.append(classmate_mirror)
+    with db.auto_commit():
+        db.session.add(class_mirrors)
+    return class_mirrors
 
 
 def add_classmate_mirror():
@@ -340,4 +346,37 @@ def __class_mirror_inited(oid, today):
         return True
     else:
         return False
+
+
+def search_lecture(args):
+    lid = args.get('lid')
+    if lid:
+        lecture = db.session.query(
+            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
+            filter(UserCSU.uid == lid, UserCSU.status!=-1).\
+            outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
+        return _filter_lecture_dto(lecture)
+
+    mobile = args.get('mobile')
+    if mobile:
+        lecture = db.session.query(
+            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
+            join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid).\
+            filter(UserCSUSecure.mobile == mobile).\
+            outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
+        return _filter_lecture_dto(lecture)
+
+    raise NotFound()
+
+
+def _filter_lecture_dto(lecture):
+    if not lecture:
+        raise NotFound()
+    lecture_temp = lecture[0]
+    avatar = lecture[1]
+    data = {
+        'lecture': lecture_temp,
+        'avatar': avatar
+    }
+    return json.dumps(data)
 
