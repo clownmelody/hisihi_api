@@ -1,5 +1,6 @@
 from _operator import or_
-from flask import jsonify, json
+import re
+from flask import json
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
@@ -231,11 +232,21 @@ def view_sign_in_count(oid, form):
         time_line = 'create_time >=' + since
     if not since and end:
         time_line = 'create_time <=' + end
-    counts = db.session.query(func.count('*')).\
+    # 按时间轴统计签到人数
+    counts = db.session.query(StudentSignIn.date, func.count('*')).\
         filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1).\
         group_by(StudentSignIn.date).\
         slice(start, stop).all()
-    total = db.session.query(func.count('*')).select_from(Enroll).filter_by(status=2).scalar()
+
+    # 根据日期获取当日的总人数
+    m = map(lambda x: x[0], counts)
+    dates = list(m)
+    total = db.session.query(ClassMirror.date, func.group_concat(ClassMirror.classmates)).\
+        filter(ClassMirror.date.in_(dates)).\
+        group_by(ClassMirror.date).slice(start, stop).all()
+
+    m = map(lambda x: (x[0], len(re.split(',|#', x[1]))), total)
+    total = list(m)
     return counts, total
 
 
@@ -293,6 +304,7 @@ def create_student_sign_in(oid, uid, date):
         StudentSignIn.organization_id == oid).first()
 
     if sign_in:
+        # 如果已经签到，则不再重复签到
         return sign_in
 
     init_classmate_mirror(oid, date)
@@ -319,19 +331,21 @@ def init_classmate_mirror(oid, date):
 
     dicts = MultiDict(classes_uids)
     class_mirrors = []
+    # key 就是 class_id
     for key in dicts.keys():
         uids = dicts.getlist(key)
         classmate_mirror = ClassMirror()
         classmate_mirror.organization_id = oid
         classmate_mirror.date = date
+        classmate_mirror.class_id = key
         classmates_str = ''
         for uid in uids:
-            classmates_str += uid + '#'
+            classmates_str += str(uid) + '#'
         classmates_str = classmates_str[:-1]
         classmate_mirror.classmates = classmates_str
         class_mirrors.append(classmate_mirror)
     with db.auto_commit():
-        db.session.add(class_mirrors)
+        db.session.add_all(class_mirrors)
     return class_mirrors
 
 
@@ -340,6 +354,7 @@ def add_classmate_mirror():
 
 
 def __class_mirror_inited(oid, today):
+    # 今天是否已经初始化了班级人员镜像
     classmate_mirror = ClassMirror.query.filter_by(
         organization_id=oid, date=today).first()
     if classmate_mirror:
@@ -353,7 +368,7 @@ def search_lecture(args):
     if lid:
         lecture = db.session.query(
             UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
-            filter(UserCSU.uid == lid, UserCSU.status!=-1).\
+            filter(UserCSU.uid == lid, UserCSU.status != -1).\
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
         return _filter_lecture_dto(lecture)
 

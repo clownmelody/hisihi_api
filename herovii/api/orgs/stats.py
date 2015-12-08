@@ -10,7 +10,7 @@ __author__ = 'bliss'
 api = ApiBlueprint('org')
 
 
-@api.route('/<int:oid>/enroll/stats/count')
+@api.route('/<int:oid>/student/enroll/stats/count')
 @auth.login_required
 def get_student_stats_count(oid):
     # form = StatsSignInCountForm.create_api_form()
@@ -24,18 +24,18 @@ def get_student_stats_count(oid):
     return jsonify(data), 200
 
 
-@api.route('/<int:oid>/sign-in/status/count')
+@api.route('/<int:oid>/student/sign-in/stats/count')
 def get_sign_in_count_stats(oid):
     form = StatsSignInCountForm.create_api_form()
     count, total = view_sign_in_count(oid, form)
     data = {
-        'sign_in_distribute': count,
+        'sign_in_count': count,
         'total_student_count': total
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(data), 200, headers
 
 
-@api.route('/<int:oid>/class/sign-in/status/count')
+@api.route('/<int:oid>/class/sign-in/stats/count')
 def get_list_class_sign_in_count_status(oid):
     pass

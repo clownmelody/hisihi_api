@@ -6,7 +6,7 @@ from herovii.libs.util import is_today
 from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
-from herovii.service.org import create_student_sign_in, init_classmate_mirror
+from herovii.service.org import create_student_sign_in
 from herovii.validator.forms import StudentClassForm, StudentJoinForm
 
 __author__ = 'bliss'
@@ -17,14 +17,15 @@ api = ApiBlueprint('org')
 @api.route('/<int:oid>/student/<int:uid>/sign-in/<date>', methods=['POST'])
 # @auth.login_required
 def student_sign_in(oid, uid, date):
-    init_classmate_mirror(oid, date)
+    # init_classmate_mirror(oid, date)
     date_sign_in = datetime.datetime.strptime(date, '%Y-%m-%d')
     today = is_today(date_sign_in)
 
     if not today:
         raise IllegalOperation(error='date is not today')
 
-    sign_in = create_student_sign_in(oid, uid, date)
+    today_str = date_sign_in.strftime('%Y-%m-%d')
+    sign_in = create_student_sign_in(oid, uid, today_str)
     return jsonify(sign_in), 201
 
 
