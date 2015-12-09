@@ -17,7 +17,7 @@ api = ApiBlueprint('sms')
 
 
 @api.route('/verify', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def send_sms_code():
     """ 发送验证码短信
     发送一条验证码短信，默认使用bmob服务发送
