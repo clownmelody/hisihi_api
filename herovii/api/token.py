@@ -77,7 +77,6 @@ def verify_user(ac, secret, ac_type):
 
 @auth.verify_password
 def verify_password(token, password):
-    # Todo 开发时取消验证
     # password这里没有用，但是由于使用了http-auth库，所以占时保留
     if current_app.config['REMOVE_TOKEN_VERIFY']:
         return True
