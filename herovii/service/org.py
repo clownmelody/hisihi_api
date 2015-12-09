@@ -152,7 +152,7 @@ def dto_org_courses_paginate(oid, page, count):
 
 
 def get_org_courses_paging(oid, page ,count):
-    q = Course.query.fitler_by(organization_id=oid)
+    q = Course.query.filter_by(organization_id=oid)
     courses = q.paginate(page, count).items
     total_count = q.count()
     return courses, total_count
@@ -198,6 +198,7 @@ def view_student_count(oid):
 
 
 def view_sign_in_count(oid, form):
+    # 分页查询签到统计信息，如果某天没有任何人签到，则结果不会包含这天的信息
     since = form.since.data
     end = form.end.data
     page = int(form.page.data)
@@ -206,7 +207,7 @@ def view_sign_in_count(oid, form):
     stop = start+per_page
     time_line = ''
     if since and end:
-        time_line = 'create_time >=' + since + 'and create_time <=' + end
+        time_line = 'create_time >=' + since + ' and create_time <=' + end
     if since and not end:
         time_line = 'create_time >=' + since
     if not since and end:
@@ -214,6 +215,7 @@ def view_sign_in_count(oid, form):
     # 按时间轴统计签到人数
     counts = db.session.query(StudentSignIn.date, func.count('*')).\
         filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1).\
+        order_by(StudentSignIn.date.desc()).\
         group_by(StudentSignIn.date).\
         slice(start, stop).all()
 
@@ -226,9 +228,18 @@ def view_sign_in_count(oid, form):
 
     m = map(lambda x: (x[0], len(re.split(',|#', x[1]))), total)
     total = dict(m)
-    # for date, count in counts:
-
-    return counts, total
+    dto = []
+    for date, count in counts:
+        total_count = total.get(date)
+        if not total_count:
+            total_count = 0
+        data = {
+            'date': date,
+            'sign_in_count': count,
+            'total_count': total_count
+        }
+        dto.append(data)
+    return dto
 
 
 def get_org_by_id(oid):

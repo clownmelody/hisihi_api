@@ -1,4 +1,5 @@
 from flask import jsonify, json
+from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import NotFound
 from herovii.service.org import view_student_count, view_sign_in_count
@@ -27,14 +28,11 @@ def get_student_stats_count(oid):
 
 @api.route('/<int:oid>/student/sign-in/stats/count')
 def get_sign_in_count_stats(oid):
-    form = StatsSignInCountForm.create_api_form()
-    count, total = view_sign_in_count(oid, form)
-    data = {
-        'sign_in_count': count,
-        'total_student_count': total
-    }
+    args = request.args.to_dict()
+    form = StatsSignInCountForm.create_api_form(**args)
+    dto = view_sign_in_count(oid, form)
     headers = {'Content-Type': 'application/json'}
-    return json.dumps(data), 200, headers
+    return json.dumps(dto), 200, headers
 
 
 @api.route('/<int:oid>/class/sign-in/stats/count')

@@ -104,3 +104,19 @@ Response Status `200` :
 
 * in_count, 现有学生数(已报名)
 * standby_count, 待处理的人数
+
+
+
+
+[
+  {
+    "date": "2015-12-09",
+    "sign_in_count": 1,
+    "total_count": 4
+  },
+  {
+    "date": "2015-12-08",
+    "sign_in_count": 1,
+    "total_count": 4
+  }
+]
