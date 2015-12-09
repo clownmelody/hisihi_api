@@ -42,7 +42,7 @@ def delete_org_course(cid):
 
 
 @api.route('/<int:oid>/courses')
-# @auth.login_required
+@auth.login_required
 def list_courses(oid):
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
