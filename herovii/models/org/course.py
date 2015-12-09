@@ -16,9 +16,9 @@ class Course(Base):
     organization_id = Column(Integer)
     title = Column(String(300), nullable=False)
     content = Column(String(500))
-    img = Column(String(300))
+    img_str = Column(String(300))
     category_id = Column(Integer)
-    lecture = Column(Integer)
+    lecturer = Column(Integer)
     auth = Column(SmallInteger, default=1)
     view_count = Column(Integer, default=0)
     update_time = Column(Integer, default=int(time.time()))
@@ -26,6 +26,8 @@ class Course(Base):
 
     def keys(self):
         return (
-            'id', 'organization_id', 'title'
+            'id', 'organization_id', 'title', 'img_str',
+            'category_id', 'lecturer', 'auth', 'view_count',
+            'update_time', 'content'
         )
 

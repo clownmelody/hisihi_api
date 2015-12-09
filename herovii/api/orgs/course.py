@@ -42,11 +42,11 @@ def delete_org_course(cid):
 
 
 @api.route('/<int:oid>/courses')
-@auth.login_required
+# @auth.login_required
 def list_courses(oid):
-    args = request.args
+    args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
-    dto = dto_org_courses_paginate(oid, form.page.data[0], form.per_page.data[0])
+    dto = dto_org_courses_paginate(oid, form.page.data, form.per_page.data)
     headers = {'Content-Type': 'application/json'}
     json_obj = json.dumps(dto)
     return json_obj, 200, headers

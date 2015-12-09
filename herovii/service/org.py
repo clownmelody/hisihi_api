@@ -128,12 +128,12 @@ def dto_teachers_group_1(oid, l, teachers):
 
 
 def dto_org_courses_paginate(oid, page, count):
-    courses, total_count = get_org_courses_paging(oid, page, count)
+    courses, total_count = get_org_courses_paging(oid, int(page), int(count))
     if not courses:
         raise NotFound(error='courses not found')
-    m = map(lambda x: x.lecture, courses)
+    m = map(lambda x: x.lecturer, courses)
     l = list(m)
-    teachers = UserCSU.query.filter(UserCSU.id_in(l)).all()
+    teachers = UserCSU.query.filter(UserCSU.uid.in_(l)).all()
     c_l = []
     for c in courses:
         course = {
@@ -141,7 +141,7 @@ def dto_org_courses_paginate(oid, page, count):
             }
 
         for t in teachers:
-            if t.id == c.lecture:
+            if t.uid == c.lecturer:
                 course['teacher'] = t
         c_l.append(course)
     return {
