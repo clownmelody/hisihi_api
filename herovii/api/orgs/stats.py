@@ -21,7 +21,8 @@ def get_student_stats_count(oid):
         'in_count': counts[1],
         'standby_count': counts[0]
     }
-    return jsonify(data), 200
+    headers = {'Content-Type': 'application/json'}
+    return jsonify(data), 200, headers
 
 
 @api.route('/<int:oid>/student/sign-in/stats/count')

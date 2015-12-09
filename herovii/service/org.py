@@ -127,27 +127,6 @@ def dto_teachers_group_1(oid, l, teachers):
     }
 
 
-    # for uid, group_id, title in l:
-    #     for t, avatar in teachers:
-    #         avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
-    #         t = {'lecture': t, 'avatar': avatar}
-    #         if uid == t['lecture'].uid:
-    #             if group_keys.get(group_id):
-    #                 group_keys[group_id]['lectures'].append(t)
-    #
-    #             else:
-    #                 group = {
-    #                     'group_id': group_id,
-    #                     'group_title': title,
-    #                     'lectures': [t]
-    #                 }
-    #                 group_keys[group_id] = group
-    #
-    # groups = tuple(group_keys.values())
-
-
-
-
 def dto_org_courses_paginate(oid, page, count):
     courses, total_count = get_org_courses_paging(oid, page, count)
     if not courses:
@@ -246,7 +225,9 @@ def view_sign_in_count(oid, form):
         group_by(ClassMirror.date).slice(start, stop).all()
 
     m = map(lambda x: (x[0], len(re.split(',|#', x[1]))), total)
-    total = list(m)
+    total = dict(m)
+    # for date, count in counts:
+
     return counts, total
 
 
