@@ -227,4 +227,10 @@ def get_today_string():
     return today
 
 
+def convert_paginate(page, per_page):
+    start = (page-1) * per_page
+    stop = start+per_page
+    return start, stop
+
+
 

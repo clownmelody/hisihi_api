@@ -6,8 +6,9 @@ from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
-from herovii.libs.util import get_today_string
+from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.base import db
+from herovii.models.issue import Issue
 from herovii.models.org.class_mirror import ClassMirror
 from herovii.models.org.classmate import Classmate
 from herovii.models.org.course import Course
@@ -128,21 +129,22 @@ def dto_teachers_group_1(oid, l, teachers):
 
 
 def dto_org_courses_paginate(oid, page, count):
-    courses, total_count = get_org_courses_paging(oid, int(page), int(count))
-    if not courses:
+    courses_categories, total_count = get_org_courses_paging(oid, int(page), int(count))
+    if not courses_categories:
         raise NotFound(error='courses not found')
-    m = map(lambda x: x.lecturer, courses)
+    m = map(lambda x: x[0].lecturer, courses_categories)
     l = list(m)
     teachers = UserCSU.query.filter(UserCSU.uid.in_(l)).all()
     c_l = []
-    for c in courses:
+    for c, category in courses_categories:
         course = {
                 'course': c,
+                'category': category
             }
 
         for t in teachers:
             if t.uid == c.lecturer:
-                course['teacher'] = t
+                course['lecture'] = t
         c_l.append(course)
     return {
         'organization_id': oid,
@@ -151,10 +153,15 @@ def dto_org_courses_paginate(oid, page, count):
     }
 
 
-def get_org_courses_paging(oid, page ,count):
-    q = Course.query.filter_by(organization_id=oid)
-    courses = q.paginate(page, count).items
+def get_org_courses_paging(oid, page, count):
+    # q = Course.query.filter_by(organization_id=oid)
+    # courses = q.paginate(page, count).items
+    q = db.session.query(Course, Issue).filter(
+        Course.status != -1, Issue.status != -1, Course.organization_id == oid
+    ).join(Issue, Course.category_id == Issue.id)
     total_count = q.count()
+    start, stop = convert_paginate(page, count)
+    courses = q.slice(start, stop).all()
     return courses, total_count
 
 

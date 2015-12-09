@@ -1,6 +1,5 @@
 from io import BytesIO
 import qrcode
-from herovii.libs.error_code import IllegalOperation
 from herovii.libs.util import get_timestamp_with_random, year_month_day
 
 __author__ = 'bliss'

@@ -7,7 +7,7 @@
 ~~~~~~~~~~~~~~~
 URL::
 
-    PUT     online/pv+1
+    PUT     /online/pv+1
 
 PUT::
 
@@ -32,7 +32,7 @@ Response Status `202` ::
 ~~~~~~~~~~~~~~~
 URL::
 
-    PUT     online/share+1
+    PUT     /online/share+1
 
 PUT::
 
@@ -57,7 +57,7 @@ Response Status `202` ::
 ~~~~~~~~~~~~~~~~~~~~
 URL::
 
-    PUT       pk/download+1
+    PUT       /pk/download+1
 
 PUT::
 
@@ -105,8 +105,8 @@ Response Status `200` :
 * in_count, 现有学生数(已报名)
 * standby_count, 待处理的人数
 
-
-
+机构学生签到情况统计
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 [
   {
