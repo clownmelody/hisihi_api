@@ -41,4 +41,5 @@ Api V1 说明
    lecture
    statistic
    org
+   student
 

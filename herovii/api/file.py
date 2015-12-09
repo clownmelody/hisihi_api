@@ -26,7 +26,7 @@ def upload_object():
 
 
 @api.route('/qrcode', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def create_a_qrcode():
     json_url = request.get_json(force=True)
     url = json_url['url']
@@ -36,3 +36,5 @@ def create_a_qrcode():
         'qrcode_url': oss_url
     }
     return jsonify(data), 201
+
+

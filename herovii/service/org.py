@@ -249,6 +249,27 @@ def view_sign_in_count(oid, form):
     return dto
 
 
+def view_sign_in_count_single(oid, date):
+    # 查询某一天的签到情况
+    count = db.session.query(func.count('*')).select_from(StudentSignIn).\
+        filter(StudentSignIn.organization_id == oid, StudentSignIn.status != -1, StudentSignIn.date == date).\
+        scalar()
+    if not count:
+        raise NotFound()
+
+    total = db.session.query(ClassMirror.class_id, func.group_concat(ClassMirror.classmates)).filter(ClassMirror.date == date).\
+        group_by(ClassMirror.class_id).all()
+
+    count_by_class = map(lambda x: len(re.split(',|#', x[1])), total)
+    total_count = sum(list(count_by_class))
+    data = {
+        'date': date,
+        'sign_in_count': count,
+        'total_count': total_count
+    }
+    return data
+
+
 def get_org_by_id(oid):
     org_info = Info.query.get(oid)
     if not org_info:

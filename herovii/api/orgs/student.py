@@ -1,6 +1,6 @@
 import datetime
 from flask import jsonify
-from herovii.libs.bpbase import ApiBlueprint
+from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import IllegalOperation
 from herovii.libs.util import is_today
 from herovii.models.base import db
@@ -15,7 +15,7 @@ api = ApiBlueprint('org')
 
 
 @api.route('/<int:oid>/student/<int:uid>/sign-in/<date>', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def student_sign_in(oid, uid, date):
     # init_classmate_mirror(oid, date)
     date_sign_in = datetime.datetime.strptime(date, '%Y-%m-%d')
