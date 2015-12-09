@@ -28,7 +28,7 @@ def send_sms_code():
     """
     bmob = BMOB()
     form = PhoneNumberForm.create_api_form()
-    phone_number = form.data.mobile
+    phone_number = form.mobile.data
     status, body = bmob.send_sms_code(phone_number)
     if status == 200:
         return success_json(), 201
