@@ -28,7 +28,7 @@ def view_blz(blz_id):
     """查看订单详情
        blz_id: 订单号
        请完成接口并测试后在方法上添加@auth.login_required
-       最后在docs/classmate 里编写文档
+       最后在docs/blz 里编写文档
     """
     # Todo: @杨楚杰
     pass
@@ -39,7 +39,7 @@ def update_blz():
     """查看订单详情
        输入：PUT 一个 Enroll 对象（支持部分属性更新）
        请完成接口并测试后在方法上添加@auth.login_required
-       最后在docs/classmate 里编写文档
+       最后在docs/blz 里编写文档
     """
     # Todo: @杨楚杰
     pass
