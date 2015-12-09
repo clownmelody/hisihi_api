@@ -42,4 +42,5 @@ Api V1 说明
    statistic
    org
    student
+   blz
 

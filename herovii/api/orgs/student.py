@@ -59,4 +59,28 @@ def move_student_to_class():
     return jsonify(s_c_relation), 201
 
 
+@api.route('/student/<int:uid>/profile')
+def get_student_profile(uid):
+    """获取学生资料
+       uid: 学生id号
+       请完成接口并测试后在方法上添加@auth.login_required
+       最后在docs/student 里编写文档
+    """
+    # Todo: @杨楚杰
+    pass
+
+
+@api.route('/student/<int:uid>/sign-in/history')
+def get_student_sign_in_history(uid):
+    """获取学生历史签到记录
+       uid: 学生id号
+       请完成接口并测试后在方法上添加@auth.login_required
+       最后在docs/student 里编写文档
+    """
+    # Todo: @杨楚杰
+    pass
+
+
+
+
 

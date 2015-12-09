@@ -42,6 +42,15 @@ def get_sign_in_count_status_single(oid, date):
     return jsonify(sign_in), 200
 
 
-@api.route('/<int:oid>/class/sign-in/stats/count')
-def get_list_class_sign_in_count_status(oid):
+@api.route('/<int:oid>/class/sign-in/<date>/stats/count')
+def get_list_class_sign_in_count_stats(oid, date):
+    """获取签到情况，按班级分类
+       分页参数：page， per_page (可选)， 参见get_sin_in_count_stats 处理方式
+       oid : 机构id号
+       date: 日期 2015-12-10
+       请完成接口并测试后在方法上添加@auth.login_required
+       最后在docs/stats 里编写文档
+    """
+    # Todo: @楚杰
     pass
+
