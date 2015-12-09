@@ -2,7 +2,6 @@ from flask import json
 from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.error_code import NotFound
-from herovii.models.org.enroll import Enroll
 from herovii.service.org import dto_get_blzs_paginate
 from herovii.validator.forms import PagingForm
 

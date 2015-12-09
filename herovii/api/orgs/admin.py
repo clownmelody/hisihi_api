@@ -42,7 +42,7 @@ def find_admin_password():
     """
     bmob = BMOB()
     form = RegisterByMobileForm.create_api_form()
-    mobile = form.phone_number.data
+    mobile = form.mobile.data
     password = form.password.data
     sms_code = form.sms_code.data
     status, body = bmob.verify_sms_code(mobile, sms_code)

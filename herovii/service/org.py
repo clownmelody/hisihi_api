@@ -300,7 +300,7 @@ def create_student_sign_in(oid, uid, date):
 
 
 def init_classmate_mirror(oid, date):
-    """每一天第一个人签到时，需要生成班级成员的镜像，以做历史记录"""
+    """每一天第一个人签到时，需要生成班级成员的镜像，作为历史记录"""
     today = get_today_string()
     has_inited = __class_mirror_inited(oid, today)
     if has_inited:
