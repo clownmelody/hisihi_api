@@ -1,11 +1,14 @@
 from _operator import or_
+import re
+from flask import json
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import get_full_oss_url
-from herovii.libs.util import get_today_string
+from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.base import db
+from herovii.models.issue import Issue
 from herovii.models.org.class_mirror import ClassMirror
 from herovii.models.org.classmate import Classmate
 from herovii.models.org.course import Course
@@ -17,6 +20,7 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.video import Video
 from herovii.models.user.avatar import Avatar
 from herovii.models.user.user_csu import UserCSU
+from herovii.models.user.user_csu_secure import UserCSUSecure
 
 __author__ = 'bliss'
 
@@ -29,20 +33,42 @@ def create_org_info(org):
 
 def get_org_teachers_by_group(oid):
 
-    collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
-                                  TeacherGroup.title).\
-        join(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
-        TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
-        all()
+    # collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
+    #                               TeacherGroup.title).\
+    #     outerjoin(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
+    #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
+    #     all()
 
-    m = map(lambda x: x[0], collection)
+    # relation = aliased
+    # 这里需要使用子查询 subquery
+    sub_query = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id).\
+        filter(TeacherGroupRelation.status != -1).subquery()
+
+    # 需要使用subquery的.c 属性来引用字段
+    collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid).\
+        filter(TeacherGroup.organization_id == oid, TeacherGroup.status != -1).\
+        outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id).\
+        order_by(TeacherGroup.id)
+
+    # collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, TeacherGroupRelation.uid).filter(
+    #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1).\
+    #     outerjoin(TeacherGroupRelation, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).\
+    #     filter(TeacherGroupRelation.status != -1)
+
+    s = collection_query.statement
+    collection = collection_query.all()
+
+    m = map(lambda x: x[2], collection)
     l = list(m)
     if not l:
         raise NotFound(error='organization not found')
-    teachers = db.session.query(UserCSU, Avatar.path). \
-        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).all()
 
-    return dto_teachers_group(oid, collection, teachers)
+    # 下面的group_by 是为了去重，部分用户在avatar表有2个以上的头像
+    teachers = db.session.query(UserCSU, Avatar.path). \
+        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).\
+        group_by(UserCSU.uid).all()
+
+    return dto_teachers_group_1(oid, collection, teachers)
 
 
 def dto_teachers_group(oid, l, teachers):
@@ -73,22 +99,52 @@ def dto_teachers_group(oid, l, teachers):
     }
 
 
+def dto_teachers_group_1(oid, l, teachers):
+    group_keys = MultiDict()
+    for group_id, title, uid in l:
+        group_keys.add((group_id, title), uid)
+
+    groups = []
+
+    for key in group_keys.keys():
+        uids = group_keys.getlist(key)
+        group = {
+            'group_id': key[0],
+            'group_title': key[1]
+        }
+        lectures = []
+        for uid in uids:
+            for t, avatar in teachers:
+                if uid == t.uid:
+                    avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+                    t = {'lecture': t, 'avatar': avatar}
+                    lectures.append(t)
+        group['lectures'] = lectures
+        groups.append(group)
+    groups = sorted(groups, key=lambda g: g['group_id'])
+    return {
+        'org_id': oid,
+        'groups': groups
+    }
+
+
 def dto_org_courses_paginate(oid, page, count):
-    courses, total_count = get_org_courses_paging(oid, page, count)
-    if not courses:
+    courses_categories, total_count = get_org_courses_paging(oid, int(page), int(count))
+    if not courses_categories:
         raise NotFound(error='courses not found')
-    m = map(lambda x: x.lecture, courses)
+    m = map(lambda x: x[0].lecturer, courses_categories)
     l = list(m)
-    teachers = UserCSU.query.filter(UserCSU.id_in(l)).all()
+    teachers = UserCSU.query.filter(UserCSU.uid.in_(l)).all()
     c_l = []
-    for c in courses:
+    for c, category in courses_categories:
         course = {
                 'course': c,
+                'category': category
             }
 
         for t in teachers:
-            if t.id == c.lecture:
-                course['teacher'] = t
+            if t.uid == c.lecturer:
+                course['lecture'] = t
         c_l.append(course)
     return {
         'organization_id': oid,
@@ -97,10 +153,15 @@ def dto_org_courses_paginate(oid, page, count):
     }
 
 
-def get_org_courses_paging(oid, page ,count):
-    q = Course.query.fitler_by(organization_id=oid)
-    courses = q.paginate(page, count).items
+def get_org_courses_paging(oid, page, count):
+    # q = Course.query.filter_by(organization_id=oid)
+    # courses = q.paginate(page, count).items
+    q = db.session.query(Course, Issue).filter(
+        Course.status != -1, Issue.status != -1, Course.organization_id == oid
+    ).join(Issue, Course.category_id == Issue.id)
     total_count = q.count()
+    start, stop = convert_paginate(page, count)
+    courses = q.slice(start, stop).all()
     return courses, total_count
 
 
@@ -144,6 +205,7 @@ def view_student_count(oid):
 
 
 def view_sign_in_count(oid, form):
+    # 分页查询签到统计信息，如果某天没有任何人签到，则结果不会包含这天的信息
     since = form.since.data
     end = form.end.data
     page = int(form.page.data)
@@ -152,17 +214,60 @@ def view_sign_in_count(oid, form):
     stop = start+per_page
     time_line = ''
     if since and end:
-        time_line = 'create_time >=' + since + 'and create_time <=' + end
+        time_line = 'create_time >=' + since + ' and create_time <=' + end
     if since and not end:
         time_line = 'create_time >=' + since
     if not since and end:
         time_line = 'create_time <=' + end
-    counts = db.session.query(func.count('*')).\
+    # 按时间轴统计签到人数
+    counts = db.session.query(StudentSignIn.date, func.count('*')).\
         filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1).\
+        order_by(StudentSignIn.date.desc()).\
         group_by(StudentSignIn.date).\
         slice(start, stop).all()
-    total = db.session.query(func.count('*')).select_from(Enroll).filter_by(status=2).scalar()
-    return counts, total
+
+    # 根据日期获取当日的总人数
+    m = map(lambda x: x[0], counts)
+    dates = list(m)
+    total = db.session.query(ClassMirror.date, func.group_concat(ClassMirror.classmates)).\
+        filter(ClassMirror.date.in_(dates)).\
+        group_by(ClassMirror.date).slice(start, stop).all()
+
+    m = map(lambda x: (x[0], len(re.split(',|#', x[1]))), total)
+    total = dict(m)
+    dto = []
+    for date, count in counts:
+        total_count = total.get(date)
+        if not total_count:
+            total_count = 0
+        data = {
+            'date': date,
+            'sign_in_count': count,
+            'total_count': total_count
+        }
+        dto.append(data)
+    return dto
+
+
+def view_sign_in_count_single(oid, date):
+    # 查询某一天的签到情况
+    count = db.session.query(func.count('*')).select_from(StudentSignIn).\
+        filter(StudentSignIn.organization_id == oid, StudentSignIn.status != -1, StudentSignIn.date == date).\
+        scalar()
+    if not count:
+        raise NotFound()
+
+    total = db.session.query(ClassMirror.class_id, func.group_concat(ClassMirror.classmates)).filter(ClassMirror.date == date).\
+        group_by(ClassMirror.class_id).all()
+
+    count_by_class = map(lambda x: len(re.split(',|#', x[1])), total)
+    total_count = sum(list(count_by_class))
+    data = {
+        'date': date,
+        'sign_in_count': count,
+        'total_count': total_count
+    }
+    return data
 
 
 def get_org_by_id(oid):
@@ -219,7 +324,10 @@ def create_student_sign_in(oid, uid, date):
         StudentSignIn.organization_id == oid).first()
 
     if sign_in:
+        # 如果已经签到，则不再重复签到
         return sign_in
+
+    init_classmate_mirror(oid, date)
 
     with db.auto_commit():
         sign_in = StudentSignIn()
@@ -231,30 +339,79 @@ def create_student_sign_in(oid, uid, date):
 
 
 def init_classmate_mirror(oid, date):
-
+    """每一天第一个人签到时，需要生成班级成员的镜像，作为历史记录"""
     today = get_today_string()
+    has_inited = __class_mirror_inited(oid, today)
+    if has_inited:
+        # 如果镜像已经初始化则什么都不做
+        return
+
     classes_uids = db.session.query(Classmate.class_id, Classmate.uid).\
         order_by(Classmate.class_id).all()
 
     dicts = MultiDict(classes_uids)
+    class_mirrors = []
+    # key 就是 class_id
     for key in dicts.keys():
         uids = dicts.getlist(key)
         classmate_mirror = ClassMirror()
         classmate_mirror.organization_id = oid
         classmate_mirror.date = date
+        classmate_mirror.class_id = key
         classmates_str = ''
         for uid in uids:
-            classmates_str += uid + '#'
+            classmates_str += str(uid) + '#'
         classmates_str = classmates_str[:-1]
         classmate_mirror.classmates = classmates_str
-    return classes_uids
+        class_mirrors.append(classmate_mirror)
+    with db.auto_commit():
+        db.session.add_all(class_mirrors)
+    return class_mirrors
 
 
 def add_classmate_mirror():
     pass
 
 
-def __class_mirror_inited(oid, date):
+def __class_mirror_inited(oid, today):
+    # 今天是否已经初始化了班级人员镜像
     classmate_mirror = ClassMirror.query.filter_by(
-        organization_id=oid, date=date)
+        organization_id=oid, date=today).first()
+    if classmate_mirror:
+        return True
+    else:
+        return False
+
+
+def search_lecture(args):
+    lid = args.get('lid')
+    if lid:
+        lecture = db.session.query(
+            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
+            filter(UserCSU.uid == lid, UserCSU.status != -1).\
+            outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
+        return _filter_lecture_dto(lecture)
+
+    mobile = args.get('mobile')
+    if mobile:
+        lecture = db.session.query(
+            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
+            join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid).\
+            filter(UserCSUSecure.mobile == mobile).\
+            outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
+        return _filter_lecture_dto(lecture)
+
+    raise NotFound()
+
+
+def _filter_lecture_dto(lecture):
+    if not lecture:
+        raise NotFound()
+    lecture_temp = lecture[0]
+    avatar = lecture[1]
+    data = {
+        'lecture': lecture_temp,
+        'avatar': avatar
+    }
+    return json.dumps(data)
 

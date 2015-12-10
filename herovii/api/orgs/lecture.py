@@ -1,5 +1,5 @@
-
 from flask import jsonify, json
+from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint, auth
 
 from herovii.libs.helper import success_json
@@ -7,9 +7,8 @@ from herovii.models.base import db
 
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
-from herovii.models.user.user_csu import UserCSU
 
-from herovii.service.org import  get_org_teachers_by_group
+from herovii.service.org import get_org_teachers_by_group, search_lecture
 from herovii.validator.forms import TeacherGroupForm, LectureJoinForm
 
 __author__ = 'bliss'
@@ -59,7 +58,7 @@ def quit_from_teacher_group(uid, gid):
     count = TeacherGroupRelation.query.filter(
         TeacherGroupRelation.uid == uid, TeacherGroupRelation.teacher_group_id == gid) \
         .delete()
-    msg = count + 'teacher identity has been removed'
+    msg = str(count) + ' teacher identity has been removed'
     return success_json(msg=msg), 202
 
 
@@ -72,8 +71,12 @@ def get_teachers_in_org(oid):
     return t, 200, headers
 
 
-@api.route('/lecture/<int:lid>')
-def get_lecture(lid):
-    lecture = UserCSU.query.get(lid)
-    return jsonify(lecture), 200
+@api.route('/lecture')
+@auth.login_required
+def get_lecture():
+    args = request.args
+    lecture = search_lecture(args)
+    headers = {'Content-Type': 'application/json'}
+    return lecture, 200, headers
+
 

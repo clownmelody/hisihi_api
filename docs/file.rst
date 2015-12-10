@@ -114,7 +114,7 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
 
 **URL**::
 
-    /<int:oid>/qrcode/sign-in/today
+    POST        org/<int:oid>/qrcode/sign-in/today
 
 
 **Parameters**:
@@ -128,7 +128,7 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
     [
         {
             "id" ：2
-            "qrcode_url" : "v1/1/student/0/sign-in/2015-12-3",
+            "qrcode_url" : "v1/1/student/0/sign-in/2015-12-03",
             "date" : "2015-12-3"
             "organization_id": 1
             "oss_url" : "http://pic.hisihi.com/2015-2-3/23942374294.jpg"
@@ -142,3 +142,34 @@ oss_url 是二维码图片的资源地址。qrcode_url是二维码指向的访�
 
 1. 在qrcode_url前面加上Host地址，如http://dev.api.hisihi.com或者http://api.hisihi.com
 #. 将qrcode_url的student/0/中的0替换为需要签到的用户的id号
+
+
+获取二维码（通用）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    POST        file/qrcode
+
+**POST Sample**：
+
+.. sourcecode:: json
+
+    {
+        "url": "http://sina.com"
+    }
+
+**Parameters**:
+
+* url: 需要嵌入到二维码中的Url路径或者其他信息
+
+
+**Response** `201`:
+
+.. sourcecode:: json
+
+    {
+        'qrcode_url': "http://pic.hisihi.com/2015-2-3/23942374294.png"
+    }
+
+qrcode_url 生成二维码的路径

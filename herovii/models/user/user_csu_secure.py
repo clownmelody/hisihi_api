@@ -2,8 +2,7 @@ from herovii.libs.helper import check_md5_password
 
 __author__ = 'bliss'
 
-import hashlib
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String
 from herovii.models.base import BaseNoCreateTime
 
 

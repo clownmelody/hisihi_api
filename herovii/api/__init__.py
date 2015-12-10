@@ -5,7 +5,7 @@ import re
 from flask import Blueprint
 from herovii.api import user, token, sms, online, pk, test, mall, news, file, tag
 from herovii.api.orgs import lecture, admin, course, enroll, info, news, resource, stats, student,\
-    team
+    team, info
 
 __author__ = 'Whispers'
 
