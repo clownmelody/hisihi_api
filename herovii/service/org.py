@@ -1,4 +1,4 @@
-from _operator import or_
+from _operator import or_, and_
 import re
 from flask import json
 from sqlalchemy.sql.expression import text
@@ -14,7 +14,9 @@ from herovii.models.org.classmate import Classmate
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
+from herovii.models.org.org_config import OrgConfig
 from herovii.models.org.sign_in import StudentSignIn
+from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.video import Video
@@ -32,7 +34,6 @@ def create_org_info(org):
 
 
 def get_org_teachers_by_group(oid):
-
     # collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
     #                               TeacherGroup.title).\
     #     outerjoin(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
@@ -41,13 +42,13 @@ def get_org_teachers_by_group(oid):
 
     # relation = aliased
     # 这里需要使用子查询 subquery
-    sub_query = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id).\
+    sub_query = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id). \
         filter(TeacherGroupRelation.status != -1).subquery()
 
     # 需要使用subquery的.c 属性来引用字段
-    collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid).\
-        filter(TeacherGroup.organization_id == oid, TeacherGroup.status != -1).\
-        outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id).\
+    collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid). \
+        filter(TeacherGroup.organization_id == oid, TeacherGroup.status != -1). \
+        outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id). \
         order_by(TeacherGroup.id)
 
     # collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, TeacherGroupRelation.uid).filter(
@@ -65,7 +66,7 @@ def get_org_teachers_by_group(oid):
 
     # 下面的group_by 是为了去重，部分用户在avatar表有2个以上的头像
     teachers = db.session.query(UserCSU, Avatar.path). \
-        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1).\
+        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1). \
         group_by(UserCSU.uid).all()
 
     return dto_teachers_group_1(oid, collection, teachers)
@@ -138,9 +139,9 @@ def dto_org_courses_paginate(oid, page, count):
     c_l = []
     for c, category in courses_categories:
         course = {
-                'course': c,
-                'category': category
-            }
+            'course': c,
+            'category': category
+        }
 
         for t in teachers:
             if t.uid == c.lecturer:
@@ -196,10 +197,10 @@ def create_org_pics(pics):
 
 def view_student_count(oid):
     """查找status=1（正在审核的学生）和status=2已经审核过的学生数量"""
-    counts = db.session.query(func.count('*')).\
-        filter(Enroll.organization_id == oid, Enroll.status != -1).\
-        group_by(Enroll.status).\
-        having(or_(Enroll.status == 1, Enroll.status == 2)).\
+    counts = db.session.query(func.count('*')). \
+        filter(Enroll.organization_id == oid, Enroll.status != -1). \
+        group_by(Enroll.status). \
+        having(or_(Enroll.status == 1, Enroll.status == 2)). \
         all()
     return counts
 
@@ -210,8 +211,8 @@ def view_sign_in_count(oid, form):
     end = form.end.data
     page = int(form.page.data)
     per_page = int(form.per_page.data)
-    start = (page-1) * per_page
-    stop = start+per_page
+    start = (page - 1) * per_page
+    stop = start + per_page
     time_line = ''
     if since and end:
         time_line = 'create_time >=' + since + ' and create_time <=' + end
@@ -220,17 +221,17 @@ def view_sign_in_count(oid, form):
     if not since and end:
         time_line = 'create_time <=' + end
     # 按时间轴统计签到人数
-    counts = db.session.query(StudentSignIn.date, func.count('*')).\
-        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1).\
-        order_by(StudentSignIn.date.desc()).\
-        group_by(StudentSignIn.date).\
+    counts = db.session.query(StudentSignIn.date, func.count('*')). \
+        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1). \
+        order_by(StudentSignIn.date.desc()). \
+        group_by(StudentSignIn.date). \
         slice(start, stop).all()
 
     # 根据日期获取当日的总人数
     m = map(lambda x: x[0], counts)
     dates = list(m)
-    total = db.session.query(ClassMirror.date, func.group_concat(ClassMirror.classmates)).\
-        filter(ClassMirror.date.in_(dates)).\
+    total = db.session.query(ClassMirror.date, func.group_concat(ClassMirror.classmates)). \
+        filter(ClassMirror.date.in_(dates)). \
         group_by(ClassMirror.date).slice(start, stop).all()
 
     m = map(lambda x: (x[0], len(re.split(',|#', x[1]))), total)
@@ -251,13 +252,14 @@ def view_sign_in_count(oid, form):
 
 def view_sign_in_count_single(oid, date):
     # 查询某一天的签到情况
-    count = db.session.query(func.count('*')).select_from(StudentSignIn).\
-        filter(StudentSignIn.organization_id == oid, StudentSignIn.status != -1, StudentSignIn.date == date).\
+    count = db.session.query(func.count('*')).select_from(StudentSignIn). \
+        filter(StudentSignIn.organization_id == oid, StudentSignIn.status != -1, StudentSignIn.date == date). \
         scalar()
     if not count:
         raise NotFound()
 
-    total = db.session.query(ClassMirror.class_id, func.group_concat(ClassMirror.classmates)).filter(ClassMirror.date == date).\
+    total = db.session.query(ClassMirror.class_id, func.group_concat(ClassMirror.classmates)).filter(
+        ClassMirror.date == date). \
         group_by(ClassMirror.class_id).all()
 
     count_by_class = map(lambda x: len(re.split(',|#', x[1])), total)
@@ -268,6 +270,12 @@ def view_sign_in_count_single(oid, date):
         'total_count': total_count
     }
     return data
+
+
+def get_uid_sign_in_total_count_by_now(uid):
+    count = db.session.query(func.count('*')).select_from(StudentSignIn). \
+        filter(and_(StudentSignIn.uid == uid, StudentSignIn.status != -1)).scalar()
+    return count
 
 
 def get_org_by_id(oid):
@@ -291,13 +299,13 @@ def dto_get_blzs_paginate(page, count, oid):
     blzs_query = db.session.query(
         Enroll, UserCSU.nickname, Course.title,
         get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
-    ).filter(Enroll.organization_id == oid, Enroll.status != -1).\
-        join(UserCSU, Enroll.student_uid == UserCSU.uid).\
-        join(Avatar, Enroll.student_uid == Avatar.uid).\
-        outerjoin(Course, Enroll.course_id == Course.id).\
+    ).filter(Enroll.organization_id == oid, Enroll.status != -1). \
+        join(UserCSU, Enroll.student_uid == UserCSU.uid). \
+        join(Avatar, Enroll.student_uid == Avatar.uid). \
+        outerjoin(Course, Enroll.course_id == Course.id). \
         order_by(Enroll.create_time.desc())
 
-    blzs_query = blzs_query.offset((page-1) * count)
+    blzs_query = blzs_query.offset((page - 1) * count)
     blzs_query = blzs_query.limit(count)
     blzs = blzs_query.all()
     dto_blzs = __assign_blzs(blzs)
@@ -346,7 +354,7 @@ def init_classmate_mirror(oid, date):
         # 如果镜像已经初始化则什么都不做
         return
 
-    classes_uids = db.session.query(Classmate.class_id, Classmate.uid).\
+    classes_uids = db.session.query(Classmate.class_id, Classmate.uid). \
         order_by(Classmate.class_id).all()
 
     dicts = MultiDict(classes_uids)
@@ -387,17 +395,17 @@ def search_lecture(args):
     lid = args.get('lid')
     if lid:
         lecture = db.session.query(
-            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
-            filter(UserCSU.uid == lid, UserCSU.status != -1).\
+            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')). \
+            filter(UserCSU.uid == lid, UserCSU.status != -1). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
         return _filter_lecture_dto(lecture)
 
     mobile = args.get('mobile')
     if mobile:
         lecture = db.session.query(
-            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')).\
-            join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid).\
-            filter(UserCSUSecure.mobile == mobile).\
+            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')). \
+            join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid). \
+            filter(UserCSUSecure.mobile == mobile). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
         return _filter_lecture_dto(lecture)
 
@@ -415,3 +423,49 @@ def _filter_lecture_dto(lecture):
     }
     return json.dumps(data)
 
+
+def get_org_student_profile_by_uid(uid):
+    u = db.session.query(Enroll).filter(Enroll.student_uid == uid).first()
+    if u is not None:
+        stu_course = db.session.query(OrgConfig).filter(OrgConfig.id == u.course_id).first()
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        stu_classmate = db.session.query(Classmate).filter(Classmate.uid == uid).first()
+        stu_sign_in_count = get_uid_sign_in_total_count_by_now(uid)
+        if stu_classmate is None:
+            class_group = None
+        else:
+            class_info = db.session.query(StudentClass).filter(StudentClass.id == stu_classmate.class_id).first()
+            if class_info is not None:
+                class_group = class_info.title
+        if stu_course is None:
+            course_name = None
+        else:
+            course_name = stu_course.value
+        data = {
+            'uid': u.student_uid,
+            'avatar': stu_avatar_full_path,
+            'student_name': u.student_name,
+            'status': u.status,
+            'course_name': course_name,
+            'class_group': class_group,
+            'sign_in_count': stu_sign_in_count
+        }
+    else:
+        return None
+    return data
+
+
+def get_org_student_sign_in_history_by_uid(uid):
+    sign_in_list = db.session.query(StudentSignIn.uid, StudentSignIn.organization_id, StudentSignIn.date)\
+        .filter(and_(StudentSignIn.uid == uid, StudentSignIn.status != -1)).order_by(StudentSignIn.sign_in_time.desc())\
+        .all()
+    sign_in_dto = []
+    for uid, oid, time in sign_in_list:
+        data = {
+            'uid': uid,
+            'organization_id': oid,
+            'sign_in_time': time
+        }
+        sign_in_dto.append(data)
+    return sign_in_dto

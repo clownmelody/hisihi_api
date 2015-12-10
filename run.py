@@ -64,5 +64,5 @@ def page_not_found(e):
     return ServerError()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
