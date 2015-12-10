@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 # just for web application. web application need server to help receive the verify sms
 # for mobile, it  doesn't need the server to receive sms.
 
@@ -17,7 +17,7 @@ api = ApiBlueprint('sms')
 
 
 @api.route('/verify', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def send_sms_code():
     """ 发送验证码短信
     发送一条验证码短信，默认使用bmob服务发送
@@ -28,7 +28,7 @@ def send_sms_code():
     """
     bmob = BMOB()
     form = PhoneNumberForm.create_api_form()
-    phone_number = form.phone_number.data
+    phone_number = form.mobile.data
     status, body = bmob.send_sms_code(phone_number)
     if status == 200:
         return success_json(), 201

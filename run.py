@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import sys
 import logging
 from logging.handlers import SMTPHandler
@@ -62,5 +64,5 @@ def page_not_found(e):
     return ServerError()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 

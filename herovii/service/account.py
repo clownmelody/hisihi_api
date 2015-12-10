@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'bliss'
 
 
@@ -25,11 +26,8 @@ def reset_password_by_mobile(mobile, password):
     user = OrgAdmin.query.filter_by(mobile=mobile).first()
     if user is not None:
         with db.auto_commit():
-            user.update(
-                {
-                    OrgAdmin.password: password
-                }
-            )
+            user.password = password
+            db.session.add(user)
     else:
         raise NotFound(error='user not found', error_code=2000)
     return user

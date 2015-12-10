@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'bliss'
 
 from urllib import request as httpreq

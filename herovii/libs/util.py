@@ -227,4 +227,15 @@ def get_today_string():
     return today
 
 
+def convert_paginate(page, per_page):
+    start = (page-1) * per_page
+    stop = start+per_page
+    return start, stop
+
+
+def validate_int_arguments(value):
+    if isinstance(value, int) and value != 0:
+        return True
+    else:
+        return False
 

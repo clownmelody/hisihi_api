@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from herovii.settings import PAGE_DEFAULT, PER_PAGE_DEFAULT
 
 __author__ = 'bliss'
@@ -151,6 +152,10 @@ class TeacherGroupForm(Form):
 
 class OrgTeacherQuery(Form):
     group = StringField(default='*')
+
+
+# class OrgLectureQuery(Form):
+#     lid = StringField()
 
 
 class OrgCourseForm(Form):

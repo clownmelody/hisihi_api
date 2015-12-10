@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'bliss'
 
 from werkzeug._compat import text_type
@@ -54,6 +55,12 @@ class ServerError(APIException):
     code = 500
     error = 'sorry, we made a mistake O__O...'
     error_code = 1007
+
+
+class UpdateDBError(APIException):
+    code = 500
+    error = 'sorry, we made a mistake O__O...'
+    error_code = 1009
 
 
 class AuthFailed(APIException):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.service.user_csu import db_change_indentity
 from flask import jsonify, request
