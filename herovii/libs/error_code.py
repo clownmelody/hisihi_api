@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'bliss'
 
 from werkzeug._compat import text_type

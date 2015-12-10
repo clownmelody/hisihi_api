@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'bliss'
 
 from flask import jsonify, request, g, make_response

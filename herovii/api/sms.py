@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 # just for web application. web application need server to help receive the verify sms
 # for mobile, it  doesn't need the server to receive sms.
 

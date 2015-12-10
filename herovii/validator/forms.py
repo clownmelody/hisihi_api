@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from herovii.settings import PAGE_DEFAULT, PER_PAGE_DEFAULT
 
 __author__ = 'bliss'
