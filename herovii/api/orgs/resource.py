@@ -43,7 +43,7 @@ def upload_pic(oid):
 
 
 @api.route('/<int:oid>/qrcode/sign-in/today', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def get_qrcode_sign_in_today(oid):
     today = datetime.datetime.now()
     date_str = today.strftime('%Y-%m-%d')

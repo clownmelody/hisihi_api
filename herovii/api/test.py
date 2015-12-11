@@ -1,5 +1,6 @@
 from flask import request, redirect
 from flask import current_app, g
+from flask.helpers import url_for
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
@@ -37,8 +38,9 @@ def test_client_ip():
     return r, 200
 
 
-@api.route('/dev')
-def test_new_dev():
+@api.route('/dev/<int:uid>')
+def test_new_dev(uid):
+    s = url_for('test_new_dev', uid=3)
     a = 1/0
     return 'dev is ok', 200
 
