@@ -85,7 +85,7 @@ Response Status `202` ::
 
 **URL**::
 
-    GET     /org/<int:oid>/enroll/stats/count
+    GET     /org/<int:oid>/student/enroll/stats/count
 
 
 **Parameters**:
