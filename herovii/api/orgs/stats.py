@@ -18,8 +18,8 @@ def get_student_stats_count(oid):
     if not counts:
         raise NotFound(error='no student in organization')
     data = {
-        'in_count': counts[1],
-        'standby_count': counts[0]
+        'in_count': counts[1][0],
+        'standby_count': counts[0][0]
     }
     headers = {'Content-Type': 'application/json'}
     return jsonify(data), 200, headers
