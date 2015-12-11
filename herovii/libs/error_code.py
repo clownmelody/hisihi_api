@@ -57,6 +57,12 @@ class ServerError(APIException):
     error_code = 1007
 
 
+class UpdateDBError(APIException):
+    code = 500
+    error = 'sorry, we made a mistake O__O...'
+    error_code = 1009
+
+
 class AuthFailed(APIException):
     code = 401
     error_code = 1005

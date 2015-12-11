@@ -1,12 +1,14 @@
 import datetime
+import json
 from flask import jsonify
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import IllegalOperation
-from herovii.libs.util import is_today
+from herovii.libs.error_code import IllegalOperation, ParamException
+from herovii.libs.util import is_today, validate_int_arguments
 from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
-from herovii.service.org import create_student_sign_in
+from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
+    get_org_student_sign_in_history_by_uid
 from herovii.validator.forms import StudentClassForm, StudentJoinForm
 
 __author__ = 'bliss'
@@ -59,28 +61,33 @@ def move_student_to_class():
     return jsonify(s_c_relation), 201
 
 
-@api.route('/student/<int:uid>/profile')
+@api.route('/student/<int:uid>/profile', methods=['GET'])
+@auth.login_required
 def get_student_profile(uid):
     """获取学生资料
        uid: 学生id号
-       请完成接口并测试后在方法上添加@auth.login_required
-       最后在docs/student 里编写文档
     """
     # Todo: @杨楚杰
-    pass
+    if not validate_int_arguments(uid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    student = get_org_student_profile_by_uid(uid)
+    headers = {'Content-Type': 'application/json'}
+    student_json = jsonify(student)
+    return student_json, 200, headers
 
 
-@api.route('/student/<int:uid>/sign-in/history')
+@api.route('/student/<int:uid>/sign-in/history', methods=['GET'])
+@auth.login_required
 def get_student_sign_in_history(uid):
     """获取学生历史签到记录
        uid: 学生id号
-       请完成接口并测试后在方法上添加@auth.login_required
-       最后在docs/student 里编写文档
     """
     # Todo: @杨楚杰
-    pass
-
-
-
-
-
+    if not validate_int_arguments(uid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    sign_in_history = get_org_student_sign_in_history_by_uid(uid)
+    headers = {'Content-Type': 'application/json'}
+    sign_in_history_json = json.dumps(sign_in_history)
+    return sign_in_history_json, 200, headers

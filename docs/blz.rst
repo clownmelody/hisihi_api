@@ -63,3 +63,48 @@
 **Memo**:
 
 * 查询结果将按照status状态来排序。status=1 表示待审核，status=2表示已通过, status=-2表示已拒绝
+
+
+获取订单详情
+~~~~~~~~~~~
+
+**URL**::
+
+    GET      /enroll/blz/<int:blz_id>
+
+**Parameters**:
+
+* blz_id: 订单号
+
+**Response** `200` ::
+
+  {
+      "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-13/5645b325d2dd7-05505543.jpg",
+      "blz_id":"234523452345",
+      "course_name":"UI设计",
+      "create_time":1448961147,
+      "status":2,
+      "student_name":"赵虎",
+      "uid":566
+  }
+** end **:
+
+
+更新订单数据
+~~~~~~~~~~~
+
+**URL**::
+
+    PUT      /enroll/blz/<int:blz_id>
+
+**Parameters**:
+
+* blz_id: 订单号
+* status: 订单状态 2或-2
+
+**Response** `201` ::
+
+  {
+      "status": 2
+  }
+** end **:
