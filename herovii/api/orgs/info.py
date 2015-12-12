@@ -60,7 +60,7 @@ def get_org():
     uid = g.user[0]
     org_info = get_org_by_uid(uid)
     if not org_info:
-        raise NotFound('organization not found')
+        raise NotFound('organization not found', error_code=5000)
     if org_info.uid != g.user[0]:
         raise IllegalOperation()
     return jsonify(org_info), 200

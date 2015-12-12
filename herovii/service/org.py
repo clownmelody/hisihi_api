@@ -62,7 +62,7 @@ def get_org_teachers_by_group(oid):
     m = map(lambda x: x[2], collection)
     l = list(m)
     if not l:
-        raise NotFound(error='organization not found')
+        raise NotFound(error='organization not found', error_code=5004)
 
     # 下面的group_by 是为了去重，部分用户在avatar表有2个以上的头像
     teachers = db.session.query(UserCSU, Avatar.path). \
@@ -132,7 +132,7 @@ def dto_teachers_group_1(oid, l, teachers):
 def dto_org_courses_paginate(oid, page, count):
     courses_categories, total_count = get_org_courses_paging(oid, int(page), int(count))
     if not courses_categories:
-        raise NotFound(error='courses not found')
+        raise NotFound(error='courses not found', error_code=5002)
     m = map(lambda x: x[0].lecturer, courses_categories)
     l = list(m)
     teachers = UserCSU.query.filter(UserCSU.uid.in_(l)).all()

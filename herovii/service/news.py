@@ -13,7 +13,7 @@ def get_news_org_by_paging(page, count):
 def get_news_dto_paginate(page, count):
     total_count, news = get_news_org_by_paging(page, count)
     if news is None:
-        raise NotFound(error='news not found')
+        raise NotFound(error='news not found', error_code=3000)
 
     dto_paginate = {
         'news': news,
