@@ -197,7 +197,7 @@ def create_org_pics(pics):
 
 def view_student_count(oid):
     """查找status=1（正在审核的学生）和status=2已经审核过的学生数量"""
-    counts = db.session.query(func.count('*')). \
+    counts = db.session.query(Enroll.status, func.count('*')). \
         filter(Enroll.organization_id == oid, Enroll.status != -1). \
         group_by(Enroll.status). \
         having(or_(Enroll.status == 1, Enroll.status == 2)). \

@@ -1,5 +1,6 @@
 from flask import jsonify, json
 from flask.globals import request
+from werkzeug.datastructures import MultiDict
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import NotFound
 from herovii.service.org import view_student_count, view_sign_in_count, view_sign_in_count_single
@@ -17,9 +18,12 @@ def get_student_stats_count(oid):
     counts = view_student_count(oid)
     if not counts:
         raise NotFound(error='no student in organization')
+    count_dict = dict(counts)
+
     data = {
-        'in_count': counts[1][0],
-        'standby_count': counts[0][0]
+        # 2表示已经报名成功的学生，1表示待审核的学生
+        'in_count': count_dict.get(2, 0),
+        'standby_count': count_dict.get(1, 0)
     }
     headers = {'Content-Type': 'application/json'}
     return jsonify(data), 200, headers
