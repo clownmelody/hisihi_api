@@ -19,7 +19,7 @@ def list_blzs(oid):
     form = PagingForm.create_api_form(**args)
     blzs = dto_get_blzs_paginate(int(form.page.data), int(form.per_page.data), oid)
     if not blzs:
-        raise NotFound()
+        raise NotFound(error='blzs not found', error_code=5003)
     blzs_json = json.dumps(blzs)
     headers = {'Content-Type': 'application/json'}
     return blzs_json, 200, headers

@@ -37,7 +37,7 @@ class QrcodeSignIn(Base):
             'uid': 0,
             'date': self.date
         }
-        self.qrcode_url = url_for('.student_sign_in', **param)
+        self.qrcode_url = url_for('.org+student_sign_in', **param)
         self.oss_url = self.__create_qrcode()
         return self.oss_url
 

@@ -62,7 +62,7 @@ def get_org_teachers_by_group(oid):
     m = map(lambda x: x[2], collection)
     l = list(m)
     if not l:
-        raise NotFound(error='organization not found')
+        raise NotFound(error='organization not found', error_code=5004)
 
     # 下面的group_by 是为了去重，部分用户在avatar表有2个以上的头像
     teachers = db.session.query(UserCSU, Avatar.path). \
@@ -132,7 +132,7 @@ def dto_teachers_group_1(oid, l, teachers):
 def dto_org_courses_paginate(oid, page, count):
     courses_categories, total_count = get_org_courses_paging(oid, int(page), int(count))
     if not courses_categories:
-        raise NotFound(error='courses not found')
+        raise NotFound(error='courses not found', error_code=5002)
     m = map(lambda x: x[0].lecturer, courses_categories)
     l = list(m)
     teachers = UserCSU.query.filter(UserCSU.uid.in_(l)).all()
@@ -197,7 +197,7 @@ def create_org_pics(pics):
 
 def view_student_count(oid):
     """查找status=1（正在审核的学生）和status=2已经审核过的学生数量"""
-    counts = db.session.query(func.count('*')). \
+    counts = db.session.query(Enroll.status, func.count('*')). \
         filter(Enroll.organization_id == oid, Enroll.status != -1). \
         group_by(Enroll.status). \
         having(or_(Enroll.status == 1, Enroll.status == 2)). \
@@ -312,6 +312,11 @@ def dto_get_blzs_paginate(page, count, oid):
     return dto_blzs
 
 
+def get_blzs_total_count():
+    total_count = db.session.query(func.count('*')).filter(Enroll.status != -1).scalar()
+    return total_count
+
+
 def __assign_blzs(blzs):
     dto_blz = []
     for blz in blzs:
@@ -323,7 +328,11 @@ def __assign_blzs(blzs):
             'avatar': blz[3]
         }
         dto_blz.append(data)
-    return dto_blz
+    data = {
+        'blzs': dto_blz,
+        'total_count': get_blzs_total_count()
+    }
+    return data
 
 
 def create_student_sign_in(oid, uid, date):
