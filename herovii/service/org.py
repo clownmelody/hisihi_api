@@ -312,6 +312,11 @@ def dto_get_blzs_paginate(page, count, oid):
     return dto_blzs
 
 
+def get_blzs_total_count():
+    total_count = db.session.query(func.count('*')).filter(Enroll.status != -1).scalar()
+    return total_count
+
+
 def __assign_blzs(blzs):
     dto_blz = []
     for blz in blzs:
@@ -323,7 +328,11 @@ def __assign_blzs(blzs):
             'avatar': blz[3]
         }
         dto_blz.append(data)
-    return dto_blz
+    data = {
+        'blzs': dto_blz,
+        'total_count': get_blzs_total_count()
+    }
+    return data
 
 
 def create_student_sign_in(oid, uid, date):
