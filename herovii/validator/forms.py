@@ -206,3 +206,4 @@ class RegisterForm(UserForm, EmailForm):
             'password': self.password.data,
             'email': self.email.data
         }
+

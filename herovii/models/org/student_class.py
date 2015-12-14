@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, SmallInteger
 from herovii.models.base import Base
 
 __author__ = 'bliss'
@@ -12,8 +12,9 @@ class StudentClass(Base):
 
     organization_id = Column(Integer)
     title = Column(String(300), nullable=False)
+    status = Column(SmallInteger, nullable=True)
 
     def keys(self):
         return (
-            'id', 'organization_id', 'title'
+            'id', 'organization_id', 'title', 'status'
         )

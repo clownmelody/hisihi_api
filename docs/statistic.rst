@@ -180,3 +180,48 @@ Response Status `200` :
       "total_count": 4
     }
 
+
+机构所有班级单天的签到情况
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    GET     /org/<int:oid>/class/sign-in/<date>/stats/count
+
+**GET Sample**:
+
+    http://dev.api.hisihi.com/v1/org/2/class/sign-in/2015-12-08/stats/count
+
+**Parameters**:
+
+* oid: 机构的id号 （必选）
+* date: 需要查询的日期，如'2015-12-08'.注意，月和日如果不足两位数必须使用‘0’来补位。'2015-3-8'这样的日期
+        一定不会查询到结果
+
+**Response** `200` :
+
+.. sourcecode:: json
+    {
+    "data":[
+        {
+            "class_id":1,
+            "class_name":"UI设计三班",
+            "sign_total_count":0,
+            "stu_total_count":1
+        },
+        {
+            "class_id":2,
+            "class_name":"Python培训一班",
+            "sign_total_count":1,
+            "stu_total_count":2
+        },
+        {
+            "class_id":3,
+            "class_name":"PHP培训二班",
+            "sign_total_count":0,
+            "stu_total_count":1
+        }
+    ],
+    "total_count":3
+}
+

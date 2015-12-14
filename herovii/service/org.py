@@ -4,7 +4,7 @@ from flask import json
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
-from herovii.libs.error_code import NotFound
+from herovii.libs.error_code import NotFound, DataArgumentsException
 from herovii.libs.helper import get_full_oss_url
 from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.base import db
@@ -457,8 +457,8 @@ def get_org_student_profile_by_uid(uid):
 
 
 def get_org_student_sign_in_history_by_uid(uid):
-    sign_in_list = db.session.query(StudentSignIn.uid, StudentSignIn.organization_id, StudentSignIn.date)\
-        .filter(and_(StudentSignIn.uid == uid, StudentSignIn.status != -1)).order_by(StudentSignIn.sign_in_time.desc())\
+    sign_in_list = db.session.query(StudentSignIn.uid, StudentSignIn.organization_id, StudentSignIn.date) \
+        .filter(and_(StudentSignIn.uid == uid, StudentSignIn.status != -1)).order_by(StudentSignIn.sign_in_time.desc()) \
         .all()
     sign_in_dto = []
     for uid, oid, time in sign_in_list:
@@ -469,3 +469,75 @@ def get_org_student_sign_in_history_by_uid(uid):
         }
         sign_in_dto.append(data)
     return sign_in_dto
+
+
+def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
+    exist_class_in_org = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
+                                                               StudentClass.status == 1,
+                                                               StudentClass.id == cid).first()
+    if exist_class_in_org:
+        start = (page - 1) * per_page
+        stop = start + per_page
+        total_count = db.session.query(Classmate.uid). \
+            filter(Classmate.status == 1, Classmate.class_id == cid). \
+            order_by(Classmate.uid.desc()). \
+            count()
+        stu_list = db.session.query(Classmate.uid). \
+            filter(Classmate.status == 1, Classmate.class_id == cid). \
+            order_by(Classmate.uid.desc()). \
+            slice(start, stop).all()
+        data_list = []
+        for stu in stu_list:
+            exist_sign_in = db.session.query(StudentSignIn.id).filter(StudentSignIn.organization_id == oid,
+                                                                      StudentSignIn.status == 1,
+                                                                      StudentSignIn.uid == stu.uid,
+                                                                      StudentSignIn.date == date).first()
+            user_info = db.session.query(UserCSU).filter(UserCSU.uid == stu.uid).first()
+            stu_avatar = db.session.query(Avatar).filter(Avatar.uid == stu.uid).first()
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+            user = {"uid": stu.uid, 'avatar': stu_avatar_full_path, 'nickname': user_info.nickname}
+            if exist_sign_in:
+                user['sign_in_status'] = True
+            else:
+                user['sign_in_status'] = False
+            data_list.append(user)
+    else:
+        raise DataArgumentsException()
+    return data_list, total_count
+
+
+def get_org_list_class_sign_in_count_stats(oid, date, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    # 分页获取机构的班级
+    class_total_count = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
+                                                              StudentClass.status == 1).count()
+    class_list = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
+                                                       StudentClass.status == 1). \
+        slice(start, stop). \
+        all()
+    data_list = []
+    for class_info in class_list:
+        # 获取班级学生总数
+        class_stu_total_count = db.session.query(Classmate).filter(Classmate.class_id == class_info.id,
+                                                                   Classmate.status == 1).count()
+        # 获取班级学生列表
+        class_stu_list = db.session.query(Classmate).filter(Classmate.class_id == class_info.id,
+                                                            Classmate.status == 1).all()
+        sign_total_count = 0
+        for stu in class_stu_list:
+            # 获取班级学生的签到状态
+            exist_sign_in = db.session.query(StudentSignIn.id).filter(StudentSignIn.organization_id == oid,
+                                                                      StudentSignIn.status == 1,
+                                                                      StudentSignIn.uid == stu.uid,
+                                                                      StudentSignIn.date == date).first()
+            if exist_sign_in:
+                sign_total_count += 1
+        data = {
+            'class_id': class_info.id,
+            'class_name': class_info.title,
+            'stu_total_count': class_stu_total_count,
+            'sign_total_count': sign_total_count
+        }
+        data_list.append(data)
+    return class_total_count, data_list
