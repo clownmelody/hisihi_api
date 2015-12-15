@@ -1,7 +1,7 @@
 from _operator import or_, and_
 import re
 from flask import json
-from sqlalchemy.sql.expression import text
+from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
 from herovii.libs.error_code import NotFound, DataArgumentsException
@@ -227,6 +227,12 @@ def view_sign_in_count(oid, form):
         group_by(StudentSignIn.date). \
         slice(start, stop).all()
 
+    # 获取符合条件的记录的总条数
+    record_total_count = db.session.query(func.count(distinct(StudentSignIn.date))).\
+        select_from(StudentSignIn). \
+        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1).\
+        scalar()
+
     # 根据日期获取当日的总人数
     m = map(lambda x: x[0], counts)
     dates = list(m)
@@ -236,17 +242,21 @@ def view_sign_in_count(oid, form):
 
     m = map(lambda x: (x[0], len(re.split(',|#', x[1]))), total)
     total = dict(m)
-    dto = []
+    data = []
     for date, count in counts:
         total_count = total.get(date)
         if not total_count:
             total_count = 0
-        data = {
+        sign_in_stats = {
             'date': date,
             'sign_in_count': count,
-            'total_count': total_count
+            'total_count': total_count,
         }
-        dto.append(data)
+        data.append(sign_in_stats)
+    dto = {
+        'record_total_count': record_total_count,
+        'sign_in_stats': data
+    }
     return dto
 
 

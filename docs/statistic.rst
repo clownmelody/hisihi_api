@@ -132,18 +132,26 @@ Response Status `200` :
 
 .. sourcecode:: json
 
-    [
       {
-        "date": "2015-12-09",
-        "sign_in_count": 1,
-        "total_count": 4
-      },
-      {
-        "date": "2015-12-08",
-        "sign_in_count": 1,
-        "total_count": 4
-      }
-    ]
+          "record_total_count": 6,
+          "sign_in_stats": [
+            {
+              "date": "2015-12-09",
+              "sign_in_count": 1,
+              "total_count": 4
+            },
+            {
+              "date": "2015-12-08",
+              "sign_in_count": 1,
+              "total_count": 4
+            },
+            {
+              "date": "2015-12-07",
+              "sign_in_count": 1,
+              "total_count": 0
+            }
+          ]
+        }
 
 **Memo**:
 
