@@ -4,6 +4,7 @@ import os
 import base64
 from hashlib import sha1 as sha
 import random
+import re
 import time
 
 __author__ = 'bliss'
@@ -238,4 +239,11 @@ def validate_int_arguments(value):
         return True
     else:
         return False
+
+
+def validate_date_arguments(value):
+    match = re.match(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$', value)
+    if match:
+        return match.group()
+    return False
 

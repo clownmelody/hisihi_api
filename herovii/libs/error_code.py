@@ -37,6 +37,12 @@ class ParamException(APIException):
     #     super().__init__(error, error_code, code, response)
 
 
+class DataArgumentsException(APIException):
+    code = 200
+    error = 'data arguments logic exception'
+    error_code = 2001
+
+
 class JSONStyleError(APIException):
     code = 400
     error = ('the input json data is invalid,caution: '
@@ -102,5 +108,4 @@ class UnknownError(APIException):
     code = 400
     error_code = 999
     error = 'sorry, there is a unknown error,suck!'
-
 

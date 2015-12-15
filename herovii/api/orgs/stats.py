@@ -1,9 +1,12 @@
 from flask import jsonify, json
 from flask.globals import request
+from werkzeug.datastructures import MultiDict
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import NotFound
-from herovii.service.org import view_student_count, view_sign_in_count, view_sign_in_count_single
-from herovii.validator.forms import StatsSignInCountForm
+from herovii.libs.error_code import NotFound, ParamException
+from herovii.libs.util import validate_int_arguments, validate_date_arguments
+from herovii.service.org import view_student_count, view_sign_in_count, view_sign_in_count_single, \
+    get_org_list_class_sign_in_count_stats
+from herovii.validator.forms import StatsSignInCountForm, PagingForm
 
 __author__ = 'bliss'
 
@@ -17,9 +20,12 @@ def get_student_stats_count(oid):
     counts = view_student_count(oid)
     if not counts:
         raise NotFound(error='no student in organization')
+    count_dict = dict(counts)
+
     data = {
-        'in_count': counts[1][0],
-        'standby_count': counts[0][0]
+        # 2表示已经报名成功的学生，1表示待审核的学生
+        'in_count': count_dict.get(2, 0),
+        'standby_count': count_dict.get(1, 0)
     }
     headers = {'Content-Type': 'application/json'}
     return jsonify(data), 200, headers
@@ -45,12 +51,26 @@ def get_sign_in_count_status_single(oid, date):
 @api.route('/<int:oid>/class/sign-in/<date>/stats/count')
 def get_list_class_sign_in_count_stats(oid, date):
     """获取签到情况，按班级分类
-       分页参数：page， per_page (可选)， 参见get_sin_in_count_stats 处理方式
        oid : 机构id号
        date: 日期 2015-12-10
-       请完成接口并测试后在方法上添加@auth.login_required
-       最后在docs/stats 里编写文档
     """
     # Todo: @楚杰
-    pass
+    if not validate_int_arguments(oid):
+        raise ParamException(error='organization id arguments is empty',
+                             error_code=1001, code=200)
+    date = validate_date_arguments(date)
+    if not date:
+        raise ParamException(error='date arguments exception',
+                             error_code=1001, code=200)
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    page = (1 if form.page.data else form.page.data)
+    per_page = (20 if form.per_page.data else form.per_page.data)
+    total_count, data = get_org_list_class_sign_in_count_stats(oid, date, page, per_page)
+    headers = {'Content-Type': 'application/json'}
+    result = {
+        'total_count': total_count,
+        'data': data
+    }
+    return json.dumps(result), 200, headers
 

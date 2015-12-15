@@ -66,7 +66,7 @@ def update_blz(blz_id):
     res = update_stu_enroll_info(data)
     if res:
         headers = {'Content-Type': 'application/json'}
-        return jsonify(res), 201, headers
+        return jsonify(res), 202, headers
     else:
         raise UpdateDBError()
 
