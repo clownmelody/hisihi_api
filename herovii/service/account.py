@@ -42,7 +42,7 @@ def reset_password_by_mobile(mobile, password):
 
 
 def verify_in_heroapi(key, secret):
-    app = App.query.filter_by(app_id=key, app_secret=secret).first()
+    app = App.query.filter_by(app_key=key, app_secret=secret).first()
     if app is not None:
         return [app.app_key, app.scope]
     else:
