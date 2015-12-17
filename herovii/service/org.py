@@ -1,6 +1,7 @@
 from _operator import or_, and_
 import re
 from flask import json
+from flask.globals import current_app
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
@@ -302,13 +303,17 @@ def get_org_by_uid(uid):
     return org_info
 
 
+# def test(url):
+#     if url.startswith('http//')
+#     return url
+
 def dto_get_blzs_paginate(page, count, oid):
     # 可能会造成性能低下，尽量将筛选条件在第一次join时应用，以减少记录数
     # query里用到outerjoin是因为不希望在course为null的情况下造成没有查询结果
     # 使用outerjoin将保证即使没有课程，也可以筛选报名结果
     blzs_query = db.session.query(
         Enroll, UserCSU.nickname, Course.title,
-        get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        Avatar.path
     ).filter(Enroll.organization_id == oid, Enroll.status != -1). \
         join(UserCSU, Enroll.student_uid == UserCSU.uid). \
         join(Avatar, Enroll.student_uid == Avatar.uid). \
@@ -335,7 +340,7 @@ def __assign_blzs(blzs):
             'blz': blz[0],
             'name': blz[1],
             'course': blz[2],
-            'avatar': blz[3]
+            'avatar': get_full_oss_url(blz[3], bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
         }
         dto_blz.append(data)
     data = {
