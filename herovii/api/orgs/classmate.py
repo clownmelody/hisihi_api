@@ -1,6 +1,5 @@
 import json
 from flask.globals import request
-from flask.json import jsonify
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import ParamException
 from herovii.libs.util import validate_int_arguments, validate_date_arguments
