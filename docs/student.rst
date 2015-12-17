@@ -67,19 +67,14 @@
 
     [
         {
-            "organization_id":2,
-            "sign_in_time":"2015-12-09",
-            "uid":2
+            "date":"2015-12-08",
+            "is_sign_in":true,
+            "uid":565
         },
         {
-            "organization_id":2,
-            "sign_in_time":"2015-12-07",
-            "uid":2
-        },
-        {
-            "organization_id":2,
-            "sign_in_time":"2015-12-03",
-            "uid":2
+            "date":"2015-12-09",
+            "is_sign_in":false,
+            "uid":565
         }
     ]
 
