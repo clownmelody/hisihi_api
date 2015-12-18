@@ -102,7 +102,6 @@ def get_student_sign_in_history(uid):
 
 
 @api.route('/student/<int:uid>/class/<int:oid>/in', methods=['GET'])
-@auth.login_required
 def get_student_class_in(uid, oid):
     """获取学生所在分组
        uid: 学生id号
@@ -113,7 +112,11 @@ def get_student_class_in(uid, oid):
     if not validate_int_arguments(oid):
         raise ParamException(error='arguments is empty',
                              error_code=1001, code=200)
-    class_in = get_org_student_class_in(uid, oid)
+    class_in, class_total_count = get_org_student_class_in(uid, oid)
     headers = {'Content-Type': 'application/json'}
-    class_in_json = json.dumps(class_in)
+    result = {
+        'class_list': class_in,
+        'total_count': class_total_count
+    }
+    class_in_json = json.dumps(result)
     return class_in_json, 200, headers

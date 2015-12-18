@@ -587,6 +587,8 @@ def get_org_list_class_sign_in_count_stats(oid, date, page, per_page):
 
 
 def get_org_student_class_in(uid, oid):
+    class_total_count = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
+                                                              StudentClass.status == 1).count()
     all_class = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
                                                       StudentClass.status == 1).all()
     my_class = db.session.query(Classmate.class_id).filter(Classmate.uid == uid, Classmate.status == 1).first()
@@ -601,5 +603,5 @@ def get_org_student_class_in(uid, oid):
         else:
             data['in_this_class'] = False
         data_list.append(data)
-    return data_list
+    return data_list, class_total_count
 

@@ -100,22 +100,25 @@
 
 **Response** `200` ::
 
-    [
-        {
-            "class_id":1,
-            "class_name":"UI设计三班",
-            "in_this_class":true
-        },
-        {
-            "class_id":2,
-            "class_name":"Python培训一班",
-            "in_this_class":false
-        },
-        {
-            "class_id":3,
-            "class_name":"PHP培训二班",
-            "in_this_class":false
-        }
-    ]
+    {
+        "class_list":[
+            {
+                "class_id":1,
+                "in_this_class":true,
+                "class_name":"UI设计三班"
+            },
+            {
+                "class_id":2,
+                "in_this_class":false,
+                "class_name":"Python培训一班"
+            },
+            {
+                "class_id":3,
+                "in_this_class":false,
+                "class_name":"PHP培训二班"
+            }
+        ],
+        "total_count":3
+    }
 
 ** end *
