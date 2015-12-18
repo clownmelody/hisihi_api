@@ -8,7 +8,7 @@
 
 **URL**::
 
-    GET      /<int:oid>/class/<int:cid>/sign-in/<date>/detail
+    GET      org/<int:oid>/class/<int:cid>/sign-in/<date>/detail
 
 **Parameters**:
 

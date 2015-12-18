@@ -40,7 +40,7 @@ class ParamException(APIException):
 class DataArgumentsException(APIException):
     code = 200
     error = 'data arguments logic exception'
-    error_code = 2001
+    error_code = 5005
 
 
 class JSONStyleError(APIException):
@@ -66,7 +66,7 @@ class ServerError(APIException):
 class UpdateDBError(APIException):
     code = 500
     error = 'sorry, we made a mistake O__O...'
-    error_code = 1009
+    error_code = 6000
 
 
 class AuthFailed(APIException):
@@ -102,6 +102,12 @@ class OrgNotFound(APIException):
     code = 404
     error_code = 5000
     error = 'org not found'
+
+
+class StuClassNotFound(APIException):
+    code = 404
+    error_code = 5006
+    error = 'class not found according to uid'
 
 
 class UnknownError(APIException):
