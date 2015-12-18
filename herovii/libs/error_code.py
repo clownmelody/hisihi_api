@@ -115,3 +115,38 @@ class UnknownError(APIException):
     error_code = 999
     error = 'sorry, there is a unknown error,suck!'
 
+
+class CreateImGroupFailture(APIException):
+    code = 200
+    error_code = 7000
+    error = 'create im group failture'
+
+
+class UpdateImGroupFailture(APIException):
+    code = 200
+    error_code = 7001
+    error = 'update im group name failture'
+
+
+class DeleteImGroupFailture(APIException):
+    code = 200
+    error_code = 7002
+    error = 'delete im group failture'
+
+
+class ImGroupNotFound(APIException):
+    code = 200
+    error_code = 7003
+    error = 'im group not found according to group_id'
+
+
+class AddGroupMemberFailture(APIException):
+    code = 200
+    error_code = 7004
+    error = 'add member to group failture'
+
+
+class DeleteImGroupMemberFailture(APIException):
+    code = 200
+    error_code = 7005
+    error = 'delete im group member failture'

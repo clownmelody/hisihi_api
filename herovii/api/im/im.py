@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import current_app
-from herovii.libs.bpbase import ApiBlueprint
-from herovii.service.im import sign, get_timestamp, get_nonce
+from flask import current_app, request
+from herovii.libs.bpbase import ApiBlueprint, auth
+from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
+    DeleteImGroupMemberFailture
+from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
+    delete_im_group_service, add_im_group_members_service, delete_im_group_members_service
 
 __author__ = 'yangchujie'
 
@@ -10,6 +13,7 @@ api = ApiBlueprint('im')
 
 
 @api.route('/signature/login/<string:app_id>/<string:client_id>', methods=['GET'])
+@auth.login_required
 # 登陆签名
 def get_im_login_signature(app_id, client_id):
     master_key = current_app.config['LEANCLOUD_SECRET_KEY']
@@ -31,6 +35,7 @@ def get_im_login_signature(app_id, client_id):
 
 
 @api.route('/signature/conversion/<string:app_id>/<string:client_id>/<string:sorted_member_ids>', methods=['GET'])
+@auth.login_required
 # 开启会话签名
 def get_im_start_conversion_signature(app_id, client_id, sorted_member_ids):
     master_key = current_app.config['LEANCLOUD_SECRET_KEY']
@@ -54,6 +59,7 @@ def get_im_start_conversion_signature(app_id, client_id, sorted_member_ids):
 
 @api.route('/signature/invite/<string:app_id>/<string:client_id>/<string:conversion_id>/<string:sorted_member_ids>',
            methods=['GET'])
+@auth.login_required
 # 群组加人操作签名
 def get_im_invite_signature(app_id, client_id, conversion_id, sorted_member_ids):
     master_key = current_app.config['LEANCLOUD_SECRET_KEY']
@@ -79,6 +85,7 @@ def get_im_invite_signature(app_id, client_id, conversion_id, sorted_member_ids)
 
 @api.route('/signature/kick/<string:app_id>/<string:client_id>/<string:conversion_id>/<string:sorted_member_ids>',
            methods=['GET'])
+@auth.login_required
 # 群组删人签名
 def get_im_kick_signature(app_id, client_id, conversion_id, sorted_member_ids):
     master_key = current_app.config['LEANCLOUD_SECRET_KEY']
@@ -126,3 +133,84 @@ def get_im_kick_signature(app_id, client_id, conversion_id, sorted_member_ids):
 #     }
 #     headers = {'Content-Type': 'application/json'}
 #     return json.dumps(result), 200, headers
+
+
+@api.route('/group', methods=['POST'])
+# @auth.login_required
+# 创建群组
+def create_im_group():
+    group_name = request.form.get('group_name', '群聊')
+    member_client_ids = request.form.get('member_client_ids', None)
+    group_id, result = create_im_group_service(group_name, member_client_ids)
+    if result:
+        result = {
+            'group_id': group_id,
+            'group_name': group_name,
+            'member_client_ids': member_client_ids
+        }
+    else:
+        raise CreateImGroupFailture()
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 201, headers
+
+
+@api.route('/group/<int:group_id>', methods=['PUT'])
+# @auth.login_required
+# 修改群组信息
+def update_im_group(group_id=0):
+    if group_id == 0:
+        raise ParamException()
+    group_name = request.form.get('group_name', '群聊')
+    result = update_im_group_service(group_id, group_name)
+    if result:
+        result = {
+            'group_name': group_name,
+        }
+    else:
+        raise UpdateImGroupFailture()
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+
+
+@api.route('/group/<int:group_id>', methods=['DELETE'])
+# @auth.login_required
+# 删除群组
+def delete_im_group(group_id=0):
+    if group_id == 0:
+        raise ParamException()
+    result = delete_im_group_service(group_id)
+    if not result:
+        raise DeleteImGroupFailture()
+    return '', 204
+
+
+@api.route('/group/<int:group_id>/member', methods=['POST'])
+# @auth.login_required
+# 添加群成员
+def add_im_group_members(group_id=0):
+    if group_id == 0:
+        raise ParamException()
+    member_client_ids = request.form.get('member_client_ids', None)
+    result = add_im_group_members_service(group_id, member_client_ids)
+    if result:
+        result = {
+            'group_id': group_id,
+            'member_client_ids': member_client_ids
+        }
+    else:
+        raise CreateImGroupFailture()
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 201, headers
+
+
+@api.route('/group/<int:group_id>/member', methods=['DELETE'])
+# @auth.login_required
+# 删除群成员
+def delete_im_group_members(group_id=0):
+    if group_id == 0:
+        raise ParamException()
+    member_client_ids = request.form.get('member_client_ids', None)
+    result = delete_im_group_members_service(group_id, member_client_ids)
+    if not result:
+        raise DeleteImGroupMemberFailture()
+    return '', 204

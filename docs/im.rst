@@ -109,3 +109,93 @@ IM
     }
 
 -- end
+
+
+创建群组
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /im/group
+
+**Parameters**:
+
+* group_name: 群组名称
+* member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
+
+**Response** `201` ::
+
+    {
+        "group_id": 13,
+        "group_name":"666",
+        "member_client_ids":"o12:u232:p23"
+    }
+
+-- end
+
+
+更新群组信息
+~~~~~~~~~~~~~~~
+**URL**::
+
+    PUT     /im/group/<int:group_id>
+
+**Parameters**:
+
+* group_name: 群组名称
+
+**Response** `200` ::
+
+    {
+        "group_name":"g123"
+    }
+-- end
+
+
+删除群组
+~~~~~~~~~~~~~~~
+**URL**::
+
+    DELETE     /im/group/<int:group_id>
+
+**Parameters**:
+
+* N/A
+
+**Response** `204`::
+-- end
+
+
+添加群成员
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /im/group/<int:group_id>/member
+
+**Parameters**:
+
+* group_id: 群组id
+* member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
+
+**Response** `201` ::
+
+    {
+        "group_id":12,
+        "member_client_ids":"667:775"
+    }
+-- end
+
+
+删除群成员
+~~~~~~~~~~~~~~~
+**URL**::
+
+    DELETE     /im/group/<int:group_id>/member
+
+**Parameters**:
+
+* group_id: 群组id
+* member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
+
+**Response** `204` ::
+-- end
+
