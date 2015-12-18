@@ -480,11 +480,16 @@ def get_org_student_profile_by_uid(uid):
     return data
 
 
-def get_org_student_sign_in_history_by_uid(uid):
+def get_org_student_sign_in_history_by_uid(uid, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
     student_class = db.session.query(Classmate).filter(Classmate.uid == uid, Classmate.status == 1).first()
     if student_class is None:
         raise StuClassNotFound
-    class_mirror_list = db.session.query(ClassMirror).filter(ClassMirror.class_id == student_class.class_id).all()
+    class_mirror_total_count = db.session.query(ClassMirror).filter(ClassMirror.class_id == student_class.class_id).count()
+    class_mirror_list = db.session.query(ClassMirror).filter(ClassMirror.class_id == student_class.class_id)\
+        .slice(start, stop)\
+        .all()
     if class_mirror_list is None:
         return None
     sign_in_dto = []
@@ -506,7 +511,7 @@ def get_org_student_sign_in_history_by_uid(uid):
                 'date': class_mirror.date
             }
         sign_in_dto.append(data)
-    return sign_in_dto
+    return class_mirror_total_count, sign_in_dto
 
 
 def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):

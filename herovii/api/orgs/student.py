@@ -1,6 +1,6 @@
 import datetime
 import json
-from flask import jsonify
+from flask import jsonify, request
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import IllegalOperation, ParamException
 from herovii.libs.util import is_today, validate_int_arguments
@@ -9,7 +9,7 @@ from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
 from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
     get_org_student_sign_in_history_by_uid, get_org_student_class_in
-from herovii.validator.forms import StudentClassForm, StudentJoinForm
+from herovii.validator.forms import StudentClassForm, StudentJoinForm, PagingForm
 
 __author__ = 'bliss'
 
@@ -87,9 +87,17 @@ def get_student_sign_in_history(uid):
     if not validate_int_arguments(uid):
         raise ParamException(error='arguments is empty',
                              error_code=1001, code=200)
-    sign_in_history = get_org_student_sign_in_history_by_uid(uid)
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    page = (1 if form.page.data else form.page.data)
+    per_page = (20 if form.per_page.data else form.per_page.data)
+    total_count, sign_in_history = get_org_student_sign_in_history_by_uid(uid, page, per_page)
     headers = {'Content-Type': 'application/json'}
-    sign_in_history_json = json.dumps(sign_in_history)
+    result = {
+        'sign_in_history': sign_in_history,
+        'total_count': total_count
+    }
+    sign_in_history_json = json.dumps(result)
     return sign_in_history_json, 200, headers
 
 

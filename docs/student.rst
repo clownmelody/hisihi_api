@@ -63,21 +63,26 @@
 **Parameters**:
 
 * uid: 学生id号
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
 
 **Response** `200` ::
 
-    [
-        {
-            "date":"2015-12-08",
-            "is_sign_in":true,
-            "uid":565
-        },
-        {
-            "date":"2015-12-09",
-            "is_sign_in":false,
-            "uid":565
-        }
-    ]
+    {
+        "sign_in_history":[
+            {
+                "is_sign_in":true,
+                "date":"2015-12-08",
+                "uid":565
+            },
+            {
+                "is_sign_in":false,
+                "date":"2015-12-09",
+                "uid":565
+            }
+        ],
+        "total_count":2
+    }
 
 ** end **
 
