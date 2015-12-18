@@ -50,6 +50,7 @@
           "student_name": "\u674e\u4e8c\u72d7",
           "uid": 565
     }
+
 ** end **
 
 
@@ -79,3 +80,37 @@
     ]
 
 ** end **
+
+
+获取学生所属分组列表
+~~~~~~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /student/<int:uid>/class/<int:oid>/in
+
+**Parameters**:
+
+* uid: 学生id号
+* oid: 机构id号
+
+**Response** `200` ::
+
+    [
+        {
+            "class_id":1,
+            "class_name":"UI设计三班",
+            "in_this_class":true
+        },
+        {
+            "class_id":2,
+            "class_name":"Python培训一班",
+            "in_this_class":false
+        },
+        {
+            "class_id":3,
+            "class_name":"PHP培训二班",
+            "in_this_class":false
+        }
+    ]
+
+** end *
