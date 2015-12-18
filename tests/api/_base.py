@@ -11,6 +11,8 @@ from flask_oauthlib.utils import to_unicode, to_bytes
 from herovii.models.base import db
 from herovii import create_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from herovii.models.org.enroll import Enroll
+from herovii.models.org.sign_in import StudentSignIn
 
 __author__ = 'bliss'
 
@@ -210,4 +212,44 @@ def prepare_org_data():
         org.logo = org_info[14]
         db.session.add(org)
     db.session.commit()
+
+    enrolls = [
+        ('1', '5', '张三', '18765862122', '南望山男子技术学院', '3', '2'),
+        ('1', '7', '嘿嘿', '18765862122', '挖掘机技术学院', '3', '2'),
+        ('1', '23', 'ss', '18765862122', '哈尔滨佛学院', '3', '2'),
+        ('1', '44', 'ss', '18765862122', '港沟镇建筑施工学院', '3', '1'),
+        ('1', '55', 'ww', '18765862122', '南望山男子技术学院', '3', '1'),
+        ('1', '66', 'rr', '18765862122', '南望山男子技术学院', '3', '-2'),
+    ]
+
+    for enroll_info in enrolls:
+        enroll = Enroll()
+        enroll.organization_id = enroll_info[0]
+        enroll.student_uid = enroll_info[1]
+        enroll.student_name = enroll_info[2]
+        enroll.phone_num = enroll_info[3]
+        enroll.student_university = enroll_info[4]
+        enroll.course_id = enroll_info[5]
+        enroll.status = enroll_info[6]
+        db.session.add(enroll)
+    db.session.commit()
+
+    sign = [
+        ('1', '1', '2015-12-01'),
+        ('1', '1', '2015-12-03'),
+        ('1', '1', '2015-12-05'),
+        ('1', '1', '2015-12-07'),
+        ('1', '1', '2015-12-09'),
+    ]
+
+    for signin in sign:
+        ssign = StudentSignIn()
+        ssign.uid = signin[0]
+        ssign.organization_id = signin[1]
+        ssign.date = signin[2]
+        db.session.add(ssign)
+    db.session.commit()
+
+
+
 
