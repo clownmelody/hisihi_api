@@ -43,19 +43,19 @@ class TestLecture(TestOrgCase):
 
       org_info = [
             {
-                'organization_id':1000010,
-                'title':'两条一起插入',
+                'organization_id': 1000010,
+                'title': '两条一起插入',
             },
             {
-                'organization_id':10000009,
-                'title':'两条一起插入',
+                'organization_id': 10000009,
+                'title': '两条一起插入',
             }
         ]
 
       json_data = json.dumps(org_info)
 
-      rv3 = self.client.post('v1/org/lecture/group',data = json_data,headers = headers)
-      self.assertEqual(rv3.status_code,201)
+      rv3 = self.client.post('v1/org/lecture/group', data=json_data, headers=headers)
+      self.assertEqual(rv3.status_code, 400)
 
 
 
