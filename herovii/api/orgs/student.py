@@ -102,6 +102,7 @@ def get_student_sign_in_history(uid):
 
 
 @api.route('/student/<int:uid>/class/<int:oid>/in', methods=['GET'])
+@auth.login_required
 def get_student_class_in(uid, oid):
     """获取学生所在分组
        uid: 学生id号
