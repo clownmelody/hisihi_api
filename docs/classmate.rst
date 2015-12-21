@@ -35,5 +35,7 @@
                 "uid":565
             }
         ],
+        "sign_in_count": 1,
+        "unsign_in_count": 1,
         "total_count":2
     }

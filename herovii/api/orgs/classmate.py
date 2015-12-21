@@ -34,10 +34,12 @@ def get_org_class_sign_in_detail_by_data(oid, cid, date):
     form = PagingForm.create_api_form(**args)
     page = (1 if form.page.data else form.page.data)
     per_page = (20 if form.per_page.data else form.per_page.data)
-    data, total_count = get_class_sign_in_detail_by_date(oid, cid, date, page, per_page)
+    data, total_count, sign_in_count, unsign_in_count = get_class_sign_in_detail_by_date(oid, cid, date, page, per_page)
     result = {
         "data": data,
-        "total_count": total_count
+        "total_count": total_count,
+        "sign_in_count": sign_in_count,
+        "unsign_in_count": unsign_in_count
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers
