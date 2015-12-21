@@ -230,9 +230,9 @@ def view_sign_in_count(oid, form):
         slice(start, stop).all()
 
     # 获取符合条件的记录的总条数
-    record_total_count = db.session.query(func.count(distinct(StudentSignIn.date))).\
+    record_total_count = db.session.query(func.count(distinct(StudentSignIn.date))). \
         select_from(StudentSignIn). \
-        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1).\
+        filter(StudentSignIn.organization_id == oid, text(time_line), StudentSignIn.status != -1). \
         scalar()
 
     # 根据日期获取当日的总人数
@@ -487,16 +487,17 @@ def get_org_student_sign_in_history_by_uid(uid, page, per_page):
     student_class = db.session.query(Classmate).filter(Classmate.uid == uid, Classmate.status == 1).first()
     if student_class is None:
         raise StuClassNotFound
-    class_mirror_total_count = db.session.query(ClassMirror).filter(ClassMirror.class_id == student_class.class_id).count()
-    class_mirror_list = db.session.query(ClassMirror).filter(ClassMirror.class_id == student_class.class_id)\
-        .slice(start, stop)\
+    class_mirror_total_count = db.session.query(ClassMirror).filter(
+        ClassMirror.class_id == student_class.class_id).count()
+    class_mirror_list = db.session.query(ClassMirror).filter(ClassMirror.class_id == student_class.class_id) \
+        .slice(start, stop) \
         .all()
     if class_mirror_list is None:
         return None
     sign_in_dto = []
     for class_mirror in class_mirror_list:
         sign_in = db.session.query(StudentSignIn.uid, StudentSignIn.organization_id, StudentSignIn.date) \
-            .filter(StudentSignIn.uid == uid, StudentSignIn.status != -1, StudentSignIn.date == class_mirror.date)\
+            .filter(StudentSignIn.uid == uid, StudentSignIn.status != -1, StudentSignIn.date == class_mirror.date) \
             .order_by(StudentSignIn.sign_in_time.desc()) \
             .first()
         if sign_in is not None:
@@ -516,16 +517,29 @@ def get_org_student_sign_in_history_by_uid(uid, page, per_page):
 
 
 def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
+    # 检查班级是否存在
     exist_class_in_org = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
                                                                StudentClass.status == 1,
                                                                StudentClass.id == cid).first()
     if exist_class_in_org:
         start = (page - 1) * per_page
         stop = start + per_page
+        # 班级学生总数
         total_count = db.session.query(Classmate.uid). \
             filter(Classmate.status == 1, Classmate.class_id == cid). \
             order_by(Classmate.uid.desc()). \
             count()
+        all_stu_list = db.session.query(Classmate.uid). \
+            filter(Classmate.status == 1, Classmate.class_id == cid). \
+            order_by(Classmate.uid.desc()).all()
+        sign_in_count = 0
+        for _stu in all_stu_list:
+            is_sign_in = db.session.query(StudentSignIn.id).filter(StudentSignIn.organization_id == oid,
+                                                                   StudentSignIn.status == 1,
+                                                                   StudentSignIn.uid == _stu.uid,
+                                                                   StudentSignIn.date == date).first()
+            if is_sign_in:
+                sign_in_count += 1
         stu_list = db.session.query(Classmate.uid). \
             filter(Classmate.status == 1, Classmate.class_id == cid). \
             order_by(Classmate.uid.desc()). \
@@ -547,7 +561,8 @@ def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
             data_list.append(user)
     else:
         raise DataArgumentsException()
-    return data_list, total_count
+    unsign_in_count = total_count - sign_in_count
+    return data_list, total_count, sign_in_count, unsign_in_count
 
 
 def get_org_list_class_sign_in_count_stats(oid, date, page, per_page):
