@@ -61,6 +61,14 @@ def move_student_to_class():
     return jsonify(s_c_relation), 201
 
 
+@api.route('/student/class/move', methods=['PUT'])
+def move_student_from_to():
+    """
+    """
+    #TODO:@杨少雷
+    pass
+
+
 @api.route('/student/<int:uid>/profile', methods=['GET'])
 @auth.login_required
 def get_student_profile(uid):
