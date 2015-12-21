@@ -14,6 +14,7 @@ from herovii.models.org.class_mirror import ClassMirror
 from herovii.models.org.classmate import Classmate
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
+from herovii.models.org.feedback import Feedback
 from herovii.models.org.info import Info
 from herovii.models.org.org_config import OrgConfig
 from herovii.models.org.sign_in import StudentSignIn
@@ -605,3 +606,15 @@ def get_org_student_class_in(uid, oid):
         data_list.append(data)
     return data_list, class_total_count
 
+
+def move_student_to(uid, class_id):
+    count = db.session.query(Classmate).filter(Classmate.uid == uid).count()
+    if not count:
+        raise NotFound()
+    res = db.session.query(Classmate).filter(Classmate.uid == uid).update({Classmate.class_id: class_id})
+    if res:
+        data = {
+            "uid": uid,
+            "class_id": class_id
+        }
+    return data

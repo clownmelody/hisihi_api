@@ -207,3 +207,9 @@ class RegisterForm(UserForm, EmailForm):
             'email': self.email.data
         }
 
+
+class FeedbackForm(Form):
+    organization_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    admin_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    qq = StringField(validators=[DataRequired()])
+    content = StringField(validators=[DataRequired()])

@@ -7,7 +7,7 @@ from flask import Blueprint
 from herovii.api import user, token, sms, online, pk, test, mall, news, file
 from herovii.api.im import im
 from herovii.api.orgs import lecture, admin, course, enroll, info, news, resource, stats, student,\
-    team, info, tag, classmate
+    team, info, tag, classmate, feedback
 
 __author__ = 'Whispers'
 
@@ -82,7 +82,7 @@ def reg_v1_bp(app):
     classmate.api.register(bp_v1)
     im.api.register(bp_v1)
     # team.api.register(bp_v1)
-
+    feedback.api.register(bp_v1)
     # info.api.register(bp_v1)
     # stats.api.register(bp_v1)
     # enroll.api.register(bp_v1)
