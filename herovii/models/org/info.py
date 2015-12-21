@@ -13,8 +13,10 @@ class Info(Base):
     __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
-    uid = Column(Integer)
+    uid = Column(Integer, nullable=False)
     name = Column(String(80), nullable=False)
+    city = Column(String(80), nullable=False)
+
 
     # 宣传语
     slogan = Column(String(80))
@@ -23,11 +25,12 @@ class Info(Base):
     latitude = Column(String(40))
 
     # 机构类型，使用#号分隔，内容为Tag表的记录id
-    type = Column(String(80))
+    type = Column(String(80), nullable=False)
 
     # 机构审核进度
     application_status = Column(SmallInteger, default=0)
-    phone_num = Column(String(80))
+    light_authentication = Column(SmallInteger, default=0)
+    phone_num = Column(String(80), nullable=False)
     chat_id = Column(Integer)
     logo = Column(String(255))
     video = Column(String(255))

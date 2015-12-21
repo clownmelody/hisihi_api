@@ -8,7 +8,7 @@ from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
 from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
-    get_org_student_sign_in_history_by_uid
+    get_org_student_sign_in_history_by_uid, get_org_student_class_in
 from herovii.validator.forms import StudentClassForm, StudentJoinForm, PagingForm
 
 __author__ = 'bliss'
@@ -99,3 +99,25 @@ def get_student_sign_in_history(uid):
     }
     sign_in_history_json = json.dumps(result)
     return sign_in_history_json, 200, headers
+
+
+@api.route('/student/<int:uid>/class/<int:oid>/in', methods=['GET'])
+@auth.login_required
+def get_student_class_in(uid, oid):
+    """获取学生所在分组
+       uid: 学生id号
+    """
+    if not validate_int_arguments(uid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    if not validate_int_arguments(oid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    class_in, class_total_count = get_org_student_class_in(uid, oid)
+    headers = {'Content-Type': 'application/json'}
+    result = {
+        'class_list': class_in,
+        'total_count': class_total_count
+    }
+    class_in_json = json.dumps(result)
+    return class_in_json, 200, headers

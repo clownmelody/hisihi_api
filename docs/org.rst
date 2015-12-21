@@ -18,15 +18,19 @@
 
 .. sourcecode:: json
 
-    {
+   {
        "name": "我是培训机构",
-       "slogan": "培训好！"
-       "logo": "img_url"
+       "slogan": "培训好！",
+       "logo": "img_url",
+       "uid": 555,
+       "type": "1#2",
+       "phone_num":"18698978786",
+       "city": "武汉"
     }
 
 **Parameters**:
 
-参数均为顶部OrgInfo类中的属性字段。"name"为必填字段，其余均为选填。
+参数均为顶部OrgInfo类中的属性字段。出现在示例中字段信息为必填信息。
 如果需要上传　** logo ** ，请先调用 :ref:`File API <file>`
 
 **Response** `201`:
