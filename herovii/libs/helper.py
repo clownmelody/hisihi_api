@@ -116,6 +116,8 @@ def is_first_party_cms():
 
 
 def get_full_oss_url(object_url, cdn=False, bucket_config='ALI_OSS_ORG_BUCKET_NAME'):
+    if not object_url:
+        return None
     if object_url.startswith('http://'):
         return object_url
     if cdn:

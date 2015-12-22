@@ -26,5 +26,3 @@ URL::
 * qq：QQ号
 * content: 反馈内容
 Response Status `201` :
-
-** end *
