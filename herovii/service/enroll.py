@@ -16,7 +16,9 @@ def get_stu_enroll_detail_info(blz_id):
     if u is not None:
         stu_course = db.session.query(OrgConfig).filter(OrgConfig.id == u.course_id).first()
         stu_avatar = db.session.query(Avatar).filter(Avatar.uid == u.student_uid).first()
-        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        stu_avatar_full_path = None
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
         if stu_course is None:
             course_name = None
         else:
