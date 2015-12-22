@@ -5,7 +5,7 @@ from flask.globals import current_app
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
-from herovii.libs.error_code import NotFound, DataArgumentsException, StuClassNotFound
+from herovii.libs.error_code import NotFound, DataArgumentsException, StuClassNotFound, DirtyDataError, UpdateDBError
 from herovii.libs.helper import get_full_oss_url
 from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.base import db
@@ -632,4 +632,22 @@ def move_student_to(uid, class_id):
             "uid": uid,
             "class_id": class_id
         }
+    return data
+
+
+def update_stu_graduation_status(uid, class_id, status):
+    pre_status = db.session.query(Classmate.status).filter(Classmate.uid == uid,
+                                                           Classmate.class_id == class_id).first()
+    if int(pre_status.status) < 1:
+        raise DirtyDataError()
+    res = db.session.query(Classmate).filter(Classmate.uid == uid, Classmate.class_id == class_id)\
+        .update({Classmate.status: status})
+    if res:
+        data = {
+            "uid": uid,
+            "class_id": class_id,
+            "status": status
+        }
+    else:
+        raise UpdateDBError()
     return data

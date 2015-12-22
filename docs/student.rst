@@ -149,20 +149,20 @@
 ~~~~~~~~~~~~~~~~~~~~
 **URL**::
 
-    PUT     org/student/<int:uid>/graduation/<int:oid>/status/<int:status>
+    PUT     org/student/<int:uid>/graduation/<int:class_id>/status/<int:status>
 
 **Parameters**:
 
 * uid: 学生id号
-* oid: 所属机构id
-* status: 毕业状态值，2-未毕业，3-已毕业
+* class_id: 所属班级id
+* status: 毕业状态值，1-未毕业，2-已毕业
 
 **Response** `202` ::
 
     {
-      "organization_id": 2,
+      "class_id": 2,
       "status": 3,
-      "student_uid": 190
+      "uid": 190
     }
 
 ** end *
