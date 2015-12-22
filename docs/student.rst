@@ -47,7 +47,6 @@
       "course_name": "UI\u8bbe\u8ba1",
       "graduation_status": 2,
       "sign_in_count": 0,
-      "status": -2,
       "student_name": "\u8d75\u864e",
       "uid": 566
     }

@@ -473,7 +473,6 @@ def get_org_student_profile_by_uid(uid):
             'uid': u.student_uid,
             'avatar': stu_avatar_full_path,
             'student_name': u.student_name,
-            'status': u.status,
             'course_name': course_name,
             'class_group': class_group,
             'sign_in_count': stu_sign_in_count,
