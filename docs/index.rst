@@ -45,4 +45,5 @@ Api V1 说明
    classmate
    blz
    feedback
+   tag
 

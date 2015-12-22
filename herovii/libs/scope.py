@@ -42,7 +42,7 @@ class UserCSUScope(ScopeBase):
 class OrgBaseScope(ScopeBase):
     """第一方Org应用程序的权限域"""
     allow_api = ['v1.sms+send_sms_code', 'v1.tag+get_tags']
-    allow_module =['v1.org']
+    allow_module =['v1.org', 'v1.tag']
 
 
 class OrgAdminScope(ScopeBase):
