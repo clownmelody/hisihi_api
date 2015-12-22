@@ -44,6 +44,7 @@
     {
       "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-13/5645b325d2dd7-05505543.jpg",
       "class_group": "Python\u57f9\u8bad\u4e00\u73ed",
+      "class_id": 2,
       "course_name": "UI\u8bbe\u8ba1",
       "graduation_status": 2,
       "sign_in_count": 0,
