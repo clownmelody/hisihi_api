@@ -26,7 +26,7 @@ def list_blzs(oid):
 
 
 @api.route('/enroll/blz/<int:blz_id>', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def view_blz(blz_id):
     """查看订单详情
        blz_id: 订单号
