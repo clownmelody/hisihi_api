@@ -8,7 +8,7 @@
 ~~~~~~~~~~~~~~~~~~~~
 URL::
 
-    POST     feedback/post
+    POST     org/feedback/post
 
 **POST Sample**：
 
