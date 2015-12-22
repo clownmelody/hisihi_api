@@ -159,7 +159,7 @@ def get_org_courses_paging(oid, page, count):
     # courses = q.paginate(page, count).items
     q = db.session.query(Course, Issue).filter(
         Course.status != -1, Issue.status != -1, Course.organization_id == oid
-    ).join(Issue, Course.category_id == Issue.id)
+    ).join(Issue, Course.category_id == Issue.id).group_by(Course.create_time.desc())
     total_count = q.count()
     start, stop = convert_paginate(page, count)
     courses = q.slice(start, stop).all()
