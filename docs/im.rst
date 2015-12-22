@@ -199,3 +199,72 @@ IM
 **Response** `204` ::
 -- end
 
+
+获取机构下所有群组
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /im/org/<int:organization_id>/groups
+
+**Parameters**:
+
+* organization_id: 机构id
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
+
+**Response** `200` ::
+
+    {
+        "total_count":2,
+        "data":[
+            {
+                "id":12,
+                "group_name":"g123"
+            },
+            {
+                "id":13,
+                "group_name":"676"
+            }
+        ]
+    }
+
+-- end
+
+
+获取所有联系人
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /im/org/<int:organization_id>/contacts
+
+**Parameters**:
+
+* organization_id: 机构id
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":12,
+                "avatar":"0",
+                "name":"g123",
+                "type":"group"
+            },
+            {
+                "id":13,
+                "avatar":"0",
+                "name":"676",
+                "type":"group"
+            },
+            {
+                "id":529,
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-15/55a62d15b9fc4-05505543.jpg",
+                "name":"LEE",
+                "type":"user"
+            }
+        ]
+    }
+
+-- end
+

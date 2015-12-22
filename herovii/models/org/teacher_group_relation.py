@@ -12,6 +12,10 @@ class TeacherGroupRelation(Base):
     id = Column(Integer, primary_key=True)
     uid = Column(Integer)
     teacher_group_id = Column(Integer)
+    group = Column(Integer)
+    organization_id = Column(Integer)
+    status = Column(Integer)
+
 
     def keys(self):
         return (

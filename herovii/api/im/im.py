@@ -5,7 +5,9 @@ from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
     DeleteImGroupMemberFailture
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
-    delete_im_group_service, add_im_group_members_service, delete_im_group_members_service
+    delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
+    get_organization_im_groups_service, get_organization_im_contacts_service
+from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
 
@@ -214,3 +216,36 @@ def delete_im_group_members(group_id=0):
     if not result:
         raise DeleteImGroupMemberFailture()
     return '', 204
+
+
+@api.route('/org/<int:organization_id>/groups', methods=['GET'])
+# @auth.login_required
+# 获取机构下所有群组
+def get_organization_im_groups(organization_id=0):
+    if organization_id == 0:
+        raise ParamException()
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    page = (1 if form.page.data else form.page.data)
+    per_page = (20 if form.per_page.data else form.per_page.data)
+    total_count, data = get_organization_im_groups_service(organization_id, page, per_page)
+    result = {
+        "total_count": total_count,
+        "data": data
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+
+
+@api.route('/org/<int:organization_id>/contacts', methods=['GET'])
+# @auth.login_required
+# 获取机构下所有联系人
+def get_organization_im_contacts(organization_id=0):
+    if organization_id == 0:
+        raise ParamException()
+    data = get_organization_im_contacts_service(organization_id)
+    result = {
+        "data": data
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers

@@ -33,8 +33,7 @@ def view_blz(blz_id):
     """
     # Todo: @杨楚杰
     if not validate_int_arguments(blz_id):
-        raise ParamException(error='arguments is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='arguments is empty')
     student = get_stu_enroll_detail_info(blz_id)
     headers = {'Content-Type': 'application/json'}
     student_json = jsonify(student)
@@ -50,15 +49,12 @@ def update_blz(blz_id):
     # Todo: @杨楚杰
     req = request.get_json(silent=True, force=True)
     if not validate_int_arguments(blz_id):
-        raise ParamException(error='arguments is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='arguments is empty')
     if not req['status']:
-        raise ParamException(error='the data to update is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='the data to update is empty')
     status = req['status']
     if status != 2 and status != -2:
-        raise ParamException(error='the status is limited to be 2 or -2',
-                             error_code=1001, code=200)
+        raise ParamException(error='the status is limited to be 2 or -2')
     data = {
         "blz_id": blz_id,
         "status": status

@@ -73,6 +73,34 @@ def get_org_teachers_by_group(oid):
     return dto_teachers_group_1(oid, collection, teachers)
 
 
+def get_org_teachers(oid, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    total_count = db.session.query(TeacherGroupRelation).filter(TeacherGroupRelation.group == 6,
+                                                                TeacherGroupRelation.status == 1,
+                                                                TeacherGroupRelation.organization_id == oid).count()
+    teacher_list = db.session.query(TeacherGroupRelation).filter(TeacherGroupRelation.group == 6,
+                                                                 TeacherGroupRelation.status == 1,
+                                                                 TeacherGroupRelation.organization_id == oid).slice(
+        start,
+        stop) \
+        .all()
+    data = []
+    for teacher in teacher_list:
+        uid = teacher.uid
+        user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        tea_object = {
+            'uid': teacher.uid,
+            'teacher_group_id': teacher.teacher_group_id,
+            'nickname': user.nickname,
+            'avatar': stu_avatar_full_path
+        }
+        data.append(tea_object)
+    return total_count, data
+
+
 def dto_teachers_group(oid, l, teachers):
     # groups = []
     group_keys = {}
@@ -528,10 +556,13 @@ def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
             filter(Classmate.status == 1, Classmate.class_id == cid). \
             order_by(Classmate.uid.desc()). \
             count()
+        # 班级所有学生列表
         all_stu_list = db.session.query(Classmate.uid). \
             filter(Classmate.status == 1, Classmate.class_id == cid). \
             order_by(Classmate.uid.desc()).all()
         sign_in_count = 0
+        sign_in_uid_list = []
+        unsign_in_uid_list = []
         for _stu in all_stu_list:
             is_sign_in = db.session.query(StudentSignIn.id).filter(StudentSignIn.organization_id == oid,
                                                                    StudentSignIn.status == 1,
@@ -539,20 +570,21 @@ def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
                                                                    StudentSignIn.date == date).first()
             if is_sign_in:
                 sign_in_count += 1
-        stu_list = db.session.query(Classmate.uid). \
-            filter(Classmate.status == 1, Classmate.class_id == cid). \
-            order_by(Classmate.uid.desc()). \
-            slice(start, stop).all()
+                sign_in_uid_list.append(_stu.uid)
+            else:
+                unsign_in_uid_list.append(_stu.uid)
+        stu_list = unsign_in_uid_list + sign_in_uid_list
+        stu_list = stu_list[start:stop]
         data_list = []
-        for stu in stu_list:
+        for _uid in stu_list:
             exist_sign_in = db.session.query(StudentSignIn.id).filter(StudentSignIn.organization_id == oid,
                                                                       StudentSignIn.status == 1,
-                                                                      StudentSignIn.uid == stu.uid,
+                                                                      StudentSignIn.uid == _uid,
                                                                       StudentSignIn.date == date).first()
-            user_info = db.session.query(UserCSU).filter(UserCSU.uid == stu.uid).first()
-            stu_avatar = db.session.query(Avatar).filter(Avatar.uid == stu.uid).first()
+            user_info = db.session.query(UserCSU).filter(UserCSU.uid == _uid).first()
+            stu_avatar = db.session.query(Avatar).filter(Avatar.uid == _uid).first()
             stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
-            user = {"uid": stu.uid, 'avatar': stu_avatar_full_path, 'nickname': user_info.nickname}
+            user = {"uid": _uid, 'avatar': stu_avatar_full_path, 'nickname': user_info.nickname}
             if exist_sign_in:
                 user['sign_in_status'] = True
             else:
@@ -560,6 +592,7 @@ def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
             data_list.append(user)
     else:
         raise DataArgumentsException()
+    # 计算未签到数量
     unsign_in_count = total_count - sign_in_count
     return data_list, total_count, sign_in_count, unsign_in_count
 
@@ -620,3 +653,28 @@ def get_org_student_class_in(uid, oid):
         data_list.append(data)
     return data_list, class_total_count
 
+
+def get_graduated_student_service(oid, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    student_total_count = db.session.query(Classmate.uid).join(StudentClass, Classmate.class_id == StudentClass.id)\
+        .filter(StudentClass.organization_id == oid, StudentClass.status == 1, Classmate.status == 2)\
+        .count()
+    student_list = db.session.query(Classmate.uid).join(StudentClass, Classmate.class_id == StudentClass.id)\
+        .filter(StudentClass.organization_id == oid, StudentClass.status == 1, Classmate.status == 2)\
+        .slice(start, stop)\
+        .all()
+    data_list = []
+    for student in student_list:
+        uid = student.uid
+        user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        stu_profile = {
+            'uid': uid,
+            'nickname': user.nickname,
+            'avatar': stu_avatar_full_path
+        }
+        data_list.append(stu_profile)
+    return data_list, student_total_count

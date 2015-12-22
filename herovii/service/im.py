@@ -5,8 +5,14 @@ from random import Random
 import time
 from herovii import db
 from herovii.libs.error_code import ImGroupNotFound
+from herovii.libs.helper import get_full_oss_url
 from herovii.models.im.im_group import ImGroup
 from herovii.models.im.im_group_member import ImGroupMember
+from herovii.models.org.classmate import Classmate
+from herovii.models.org.student_class import StudentClass
+from herovii.models.org.teacher_group_relation import TeacherGroupRelation
+from herovii.models.user.avatar import Avatar
+from herovii.models.user.user_csu import UserCSU
 
 __author__ = 'yangchujie'
 
@@ -100,3 +106,72 @@ def delete_im_group_members_service(group_id, member_client_ids):
         return False
     return True
 
+
+def get_organization_im_groups_service(organization_id, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    group_total_count = db.session.query(ImGroup).filter(
+        ImGroup.organization_id == organization_id,
+        ImGroup.status == 1) \
+        .count()
+    group_list = db.session.query(ImGroup.id, ImGroup.group_name).filter(
+        ImGroup.organization_id == organization_id,
+        ImGroup.status == 1) \
+        .slice(start, stop) \
+        .all()
+    result_list = []
+    for group in group_list:
+        g = {
+            "id": group.id,
+            "group_name": group.group_name
+        }
+        result_list.append(g)
+    return group_total_count, result_list
+
+
+def get_organization_im_contacts_service(organization_id):
+    group_list = db.session.query(ImGroup.id, ImGroup.group_name, ImGroup.group_avatar).filter(
+        ImGroup.organization_id == organization_id,
+        ImGroup.status == 1) \
+        .all()
+    result_list = []
+    for group in group_list:
+        g = {
+            "id": group.id,
+            "name": group.group_name,
+            "avatar": group.group_avatar,
+            "type": "group"
+        }
+        result_list.append(g)
+    teacher_list = db.session.query(TeacherGroupRelation).filter(TeacherGroupRelation.group == 6,
+                                                                 TeacherGroupRelation.status == 1,
+                                                                 TeacherGroupRelation.organization_id == organization_id)\
+        .all()
+    for teacher in teacher_list:
+        uid = teacher.uid
+        user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        tea_object = {
+            "id": teacher.uid,
+            "name": user.nickname,
+            "avatar": stu_avatar_full_path,
+            "type": "user"
+        }
+        result_list.append(tea_object)
+    student_list = db.session.query(Classmate.uid).join(StudentClass, Classmate.class_id == StudentClass.id)\
+        .filter(StudentClass.organization_id == organization_id, StudentClass.status == 1, Classmate.status != -1)\
+        .all()
+    for student in student_list:
+        user = db.session.query(UserCSU).filter(UserCSU.uid == student.uid).first()
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == student.uid).first()
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        tea_object = {
+            "id": teacher.uid,
+            "name": user.nickname,
+            "avatar": stu_avatar_full_path,
+            "type": "user"
+        }
+        result_list.append(tea_object)
+    return result_list

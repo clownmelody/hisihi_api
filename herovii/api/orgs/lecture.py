@@ -1,6 +1,7 @@
 from flask import jsonify, json
 from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint, auth
+from herovii.libs.error_code import ParamException
 
 from herovii.libs.helper import success_json
 from herovii.models.base import db
@@ -8,8 +9,8 @@ from herovii.models.base import db
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 
-from herovii.service.org import get_org_teachers_by_group, search_lecture
-from herovii.validator.forms import TeacherGroupForm, LectureJoinForm
+from herovii.service.org import get_org_teachers_by_group, search_lecture, get_org_teachers
+from herovii.validator.forms import TeacherGroupForm, LectureJoinForm, PagingForm
 
 __author__ = 'bliss'
 
@@ -68,6 +69,25 @@ def get_teachers_in_org(oid):
     teachers = get_org_teachers_by_group(oid)
     headers = {'Content-Type': 'application/json'}
     t = json.dumps(teachers)
+    return t, 200, headers
+
+
+@api.route('/<int:oid>/lectures', methods=['GET'])
+#@auth.login_required
+def get_all_teachers_in_org(oid=0):
+    if oid==0:
+        raise ParamException()
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    page = (1 if form.page.data else form.page.data)
+    per_page = (20 if form.per_page.data else form.per_page.data)
+    total_count, teachers = get_org_teachers(oid, page, per_page)
+    headers = {'Content-Type': 'application/json'}
+    result = {
+        'total_count': total_count,
+        'data': teachers
+    }
+    t = json.dumps(result)
     return t, 200, headers
 
 

@@ -95,4 +95,31 @@
 2. uid与oid为互斥参数，且oid的优先级高于uid.如果同时传递uid和oid，以oid为判断条件
 
 
+获取已毕业学生
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /<int:oid>/graduated_student
+
+**Parameters**:
+
+* oid: 机构id号
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
+
+**Response** `200` ::
+
+    {
+        "total_count":1,
+        "data":[
+            {
+                "nickname":"13535462008",
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-05-14/5554bdb720f29-05505543.jpg",
+                "uid":86
+            }
+        ]
+    }
+** end **
+
+
 
