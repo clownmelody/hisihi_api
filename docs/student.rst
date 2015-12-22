@@ -42,13 +42,14 @@
 **Response** `200` ::
 
     {
-          "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-13/5645b11e133f0-05505543.jpg",
-          "class_group": "Python\u57f9\u8bad\u4e00\u73ed",
-          "course_name": "\u4e0a\u5e02\u5927\u516c\u53f8",
-          "sign_in_count": 1,
-          "status": 1,
-          "student_name": "\u674e\u4e8c\u72d7",
-          "uid": 565
+      "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-13/5645b325d2dd7-05505543.jpg",
+      "class_group": "Python\u57f9\u8bad\u4e00\u73ed",
+      "course_name": "UI\u8bbe\u8ba1",
+      "graduation_status": 2,
+      "sign_in_count": 0,
+      "status": -2,
+      "student_name": "\u8d75\u864e",
+      "uid": 566
     }
 
 ** end **
