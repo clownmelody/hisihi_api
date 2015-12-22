@@ -9,6 +9,8 @@ from herovii.api.im import im
 from herovii.api.orgs import lecture, admin, course, enroll, info, news, resource, stats, student,\
     team, info, tag, classmate, feedback
 
+from herovii.api import tags
+
 __author__ = 'Whispers'
 
 
@@ -67,6 +69,7 @@ def reg_v1_bp(app):
     mall.api.register(bp_v1)
     news.api.register(bp_v1)
     file.api.register(bp_v1)
+    tags.api.register(bp_v1)
 
 
     lecture.api.register(bp_v1)
