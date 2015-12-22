@@ -12,7 +12,6 @@ class Feedback(Base):
 
     id = Column(Integer, primary_key=True)
     organization_id = Column(Integer, nullable=False)
-    admin_id = Column(Integer, nullable=False)
     qq = Column(String(15), nullable=False)
     content = Column(String(500), nullable=False)
     create_time = Column(Integer, nullable=False)
@@ -24,7 +23,7 @@ class Feedback(Base):
         
     def keys(self):
         return (
-            'id', 'organization_id', 'admin_id', 'qq',
+            'id', 'organization_id', 'qq',
             'content', 'create_time', 'status'
         )
 

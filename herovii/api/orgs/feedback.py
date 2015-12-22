@@ -16,7 +16,6 @@ def create_feedback():
     with db.auto_commit():
         feedback = Feedback()
         feedback.organization_id = form.organization_id.data
-        feedback.admin_id = form.admin_id.data
         feedback.qq = form.qq.data
         feedback.content = form.content.data
         db.session.add(feedback)

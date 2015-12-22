@@ -216,6 +216,5 @@ class RegisterForm(UserForm, EmailForm):
 
 class FeedbackForm(Form):
     organization_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    admin_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
     qq = StringField(validators=[DataRequired()])
     content = StringField(validators=[DataRequired()])
