@@ -122,3 +122,24 @@
     }
 
 ** end *
+
+
+修改学生所属分组
+~~~~~~~~~~~~~~~~~~~~
+**URL**::
+
+    PUT     /student/<int:uid>/class/<int:class_id>/move
+
+**Parameters**:
+
+* uid: 学生id号
+* class_id: 新分组id
+
+**Response** `202` ::
+
+    {
+        "class_id": 2,
+        "uid": 565
+    }
+
+** end *

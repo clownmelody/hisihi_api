@@ -8,7 +8,7 @@ from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
 from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
-    get_org_student_sign_in_history_by_uid, get_org_student_class_in
+    get_org_student_sign_in_history_by_uid, get_org_student_class_in, move_student_to
 from herovii.validator.forms import StudentClassForm, StudentJoinForm, PagingForm
 
 __author__ = 'bliss'
@@ -61,12 +61,23 @@ def move_student_to_class():
     return jsonify(s_c_relation), 201
 
 
-@api.route('/student/class/move', methods=['PUT'])
-def move_student_from_to():
+@api.route('/student/<int:uid>/class/<int:class_id>/move', methods=['PUT'])
+def move_student_from_to(uid, class_id):
     """
+    修改学生所属分组
+    :param uid:学生id
+    :param class_id:新分组id
+    :return:
     """
-    #TODO:@杨少雷
-    pass
+    if not validate_int_arguments(uid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    if not validate_int_arguments(class_id):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    res = move_student_to(uid, class_id)
+    headers = {'Content-Type': 'application/json'}
+    return jsonify(res), 202, headers
 
 
 @api.route('/student/<int:uid>/profile', methods=['GET'])
