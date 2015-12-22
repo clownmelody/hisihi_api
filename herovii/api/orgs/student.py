@@ -2,13 +2,14 @@ import datetime
 import json
 from flask import jsonify, request
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import IllegalOperation, ParamException
+from herovii.libs.error_code import IllegalOperation, ParamException, UpdateDBError
 from herovii.libs.util import is_today, validate_int_arguments
 from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
+from herovii.service.org import update_stu_graduation_status
 from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
-    get_org_student_sign_in_history_by_uid, get_org_student_class_in, get_graduated_student_service
+    get_org_student_sign_in_history_by_uid, get_org_student_class_in, get_graduated_student_service, move_student_to
 from herovii.validator.forms import StudentClassForm, StudentJoinForm, PagingForm
 
 __author__ = 'bliss'
@@ -59,6 +60,25 @@ def move_student_to_class():
     with db.auto_commit():
         db.session.add(s_c_relation)
     return jsonify(s_c_relation), 201
+
+
+@api.route('/student/<int:uid>/class/<int:class_id>/move', methods=['PUT'])
+def move_student_from_to(uid, class_id):
+    """
+    修改学生所属分组
+    :param uid:学生id
+    :param class_id:新分组id
+    :return:
+    """
+    if not validate_int_arguments(uid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    if not validate_int_arguments(class_id):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    res = move_student_to(uid, class_id)
+    headers = {'Content-Type': 'application/json'}
+    return jsonify(res), 202, headers
 
 
 @api.route('/student/<int:uid>/profile', methods=['GET'])
@@ -137,3 +157,26 @@ def get_graduated_student(oid):
     }
     class_in_json = json.dumps(result)
     return class_in_json, 200, headers
+
+
+@api.route('/student/<int:uid>/graduation/<int:class_id>/status/<int:status>', methods=['PUT'])
+@auth.login_required
+def update_graduation(uid, class_id, status):
+    if not validate_int_arguments(uid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    if not validate_int_arguments(class_id):
+        raise ParamException(error='the data to update is empty',
+                             error_code=1001, code=200)
+    if not validate_int_arguments(status):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    if status != 1 and status != 2:
+        raise ParamException(error='the status is limited to be 1 or 2',
+                             error_code=1001, code=200)
+    res = update_stu_graduation_status(uid, class_id, status)
+    if res:
+        headers = {'Content-Type': 'application/json'}
+        return jsonify(res), 202, headers
+    else:
+        raise UpdateDBError()

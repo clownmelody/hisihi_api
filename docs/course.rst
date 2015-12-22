@@ -3,11 +3,33 @@
 课程
 ==========
 
+创建课程
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     org/course
+
+**Parameters**:
+
+.. sourcecode:: python
+
+    organization_id = Column(Integer)
+    title = Column(String(300), nullable=False)
+    content = Column(String(500))
+    img_str = Column(String(300))
+    category_id = Column(Integer)
+    lecturer = Column(Integer)
+    auth = Column(SmallInteger, default=1)
+    view_count = Column(Integer, default=0)
+    update_time = Column(Integer, default=int(time.time()))
+
+
+
 获取机构课程列表
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /<int:oid>/courses
+    GET     org/<int:oid>/courses
 
 
 **Parameters**:

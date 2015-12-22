@@ -150,3 +150,9 @@ class DeleteImGroupMemberFailture(APIException):
     code = 200
     error_code = 7005
     error = 'delete im group member failture'
+
+
+class DirtyDataError(APIException):
+    code = 200
+    error_code = 1009
+    error = 'some dirty data in the database'

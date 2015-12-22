@@ -13,6 +13,7 @@ class Enroll(Base):
     STATUS_ENROLL_SUCCESS = 2
     STATUS_ENROLL_WAITING = 1
     STATUS_ENROLL_REJECT = -2
+    STATUS_ENROLL_GRADUATED = 3
 
     id = Column(Integer, primary_key=True)
 

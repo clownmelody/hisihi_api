@@ -1,11 +1,10 @@
 from _operator import or_, and_
 import re
 from flask import json
-from flask.globals import current_app
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
-from herovii.libs.error_code import NotFound, DataArgumentsException, StuClassNotFound
+from herovii.libs.error_code import NotFound, DataArgumentsException, StuClassNotFound, DirtyDataError, UpdateDBError
 from herovii.libs.helper import get_full_oss_url
 from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.base import db
@@ -188,7 +187,7 @@ def get_org_courses_paging(oid, page, count):
     # courses = q.paginate(page, count).items
     q = db.session.query(Course, Issue).filter(
         Course.status != -1, Issue.status != -1, Course.organization_id == oid
-    ).join(Issue, Course.category_id == Issue.id)
+    ).join(Issue, Course.category_id == Issue.id).group_by(Course.create_time.desc())
     total_count = q.count()
     start, stop = convert_paginate(page, count)
     courses = q.slice(start, stop).all()
@@ -339,14 +338,16 @@ def dto_get_blzs_paginate(page, count, oid):
     # 可能会造成性能低下，尽量将筛选条件在第一次join时应用，以减少记录数
     # query里用到outerjoin是因为不希望在course为null的情况下造成没有查询结果
     # 使用outerjoin将保证即使没有课程，也可以筛选报名结果
+    # 使用Enroll的blz_id订单号分组是为了去除重复（有些用户在avatar表里有2个以上的头像）
     blzs_query = db.session.query(
         Enroll, UserCSU.nickname, Course.title,
         Avatar.path
     ).filter(Enroll.organization_id == oid, Enroll.status != -1). \
-        join(UserCSU, Enroll.student_uid == UserCSU.uid). \
-        join(Avatar, Enroll.student_uid == Avatar.uid). \
+        outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid). \
+        outerjoin(Avatar, Enroll.student_uid == Avatar.uid). \
         outerjoin(Course, Enroll.course_id == Course.id). \
-        order_by(Enroll.create_time.desc())
+        order_by(Enroll.create_time.desc()).group_by(Enroll.blz_id)
+    s = blzs_query.statement
 
     blzs_query = blzs_query.offset((page - 1) * count)
     blzs_query = blzs_query.limit(count)
@@ -362,6 +363,8 @@ def get_blzs_total_count():
 
 def __assign_blzs(blzs):
     dto_blz = []
+    # func = lambda x, y: x if x[0]['blz_id'] == y[0]['blz_id'] else x+[y]
+    # (func, [[], ] + blzs)
     for blz in blzs:
         # for blz_base, nickname, avatar in blz:
         data = {
@@ -407,7 +410,7 @@ def init_classmate_mirror(oid, date):
         return
 
     classes_uids = db.session.query(Classmate.class_id, Classmate.uid). \
-        order_by(Classmate.class_id).all()
+        filter(Classmate.status == 1).order_by(Classmate.class_id).all()
 
     dicts = MultiDict(classes_uids)
     class_mirrors = []
@@ -498,10 +501,10 @@ def get_org_student_profile_by_uid(uid):
             'uid': u.student_uid,
             'avatar': stu_avatar_full_path,
             'student_name': u.student_name,
-            'status': u.status,
             'course_name': course_name,
             'class_group': class_group,
-            'sign_in_count': stu_sign_in_count
+            'sign_in_count': stu_sign_in_count,
+            'graduation_status': stu_classmate.status
         }
     else:
         return None
@@ -678,3 +681,35 @@ def get_graduated_student_service(oid, page, per_page):
         }
         data_list.append(stu_profile)
     return data_list, student_total_count
+
+
+def move_student_to(uid, class_id):
+    count = db.session.query(Classmate).filter(Classmate.uid == uid).count()
+    if not count:
+        raise NotFound()
+    res = db.session.query(Classmate).filter(Classmate.uid == uid).update({Classmate.class_id: class_id})
+    if res:
+        data = {
+            "uid": uid,
+            "class_id": class_id
+        }
+    return data
+
+
+def update_stu_graduation_status(uid, class_id, status):
+    pre_status = db.session.query(Classmate.status).filter(Classmate.uid == uid,
+                                                           Classmate.class_id == class_id).first()
+    if int(pre_status.status) < 1:
+        raise DirtyDataError()
+    res = db.session.query(Classmate).filter(Classmate.uid == uid, Classmate.class_id == class_id)\
+        .update({Classmate.status: status})
+    if res:
+        data = {
+            "uid": uid,
+            "class_id": class_id,
+            "status": status
+        }
+    else:
+        raise UpdateDBError()
+    return data
+

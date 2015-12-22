@@ -44,4 +44,5 @@ Api V1 说明
    student
    classmate
    blz
+   feedback
 
