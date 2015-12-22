@@ -2,13 +2,13 @@
 
 反馈
 =============
-    表示商城类资源
+    提交机构APP反馈信息
 
-进入商城
+提交机构APP反馈信息
 ~~~~~~~~~~~~~~~~~~~~
 URL::
 
-    POST     feedback/post
+    POST     org/feedback/advice
 
 **POST Sample**：
 

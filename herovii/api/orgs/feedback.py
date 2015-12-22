@@ -9,7 +9,7 @@ __author__ = 'shaolei'
 api = ApiBlueprint('org')
 
 
-@api.route('/feedback/post', methods=['POST'])
+@api.route('/feedback/advice', methods=['POST'])
 @auth.login_required
 def create_feedback():
     form = FeedbackForm.create_api_form()

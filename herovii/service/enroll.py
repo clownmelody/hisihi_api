@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
+
+from herovii.libs.error_code import DirtyDataError, UpdateDBError
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.base import db
 from herovii.models.org.enroll import Enroll
@@ -40,4 +42,21 @@ def update_stu_enroll_info(data):
         data = {
             "status": data['status']
         }
+    return data
+
+
+def update_stu_graduation_status(uid, oid, status):
+    pre_status = db.session.query(Enroll.status).filter(Enroll.student_uid == uid, Enroll.organization_id == oid).first()
+    if int(pre_status.status) < 2:
+        raise DirtyDataError()
+    res = db.session.query(Enroll).filter(Enroll.student_uid == uid, Enroll.organization_id == oid)\
+        .update({Enroll.status: status})
+    if res:
+        data = {
+            "student_uid": uid,
+            "organization_id": oid,
+            "status": status
+        }
+    else:
+        raise UpdateDBError()
     return data
