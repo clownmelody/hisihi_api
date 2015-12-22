@@ -10,6 +10,7 @@ api = ApiBlueprint('org')
 
 
 @api.route('/feedback/post', methods=['POST'])
+@auth.login_required
 def create_feedback():
     form = FeedbackForm.create_api_form()
     with db.auto_commit():
