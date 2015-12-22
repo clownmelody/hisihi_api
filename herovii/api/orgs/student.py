@@ -7,9 +7,9 @@ from herovii.libs.util import is_today, validate_int_arguments
 from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
-from herovii.service.enroll import update_stu_graduation_status
+from herovii.service.org import update_stu_graduation_status
 from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
-    get_org_student_sign_in_history_by_uid, get_org_student_class_in, move_student_to
+    get_org_student_sign_in_history_by_uid, get_org_student_class_in, get_graduated_student_service, move_student_to
 from herovii.validator.forms import StudentClassForm, StudentJoinForm, PagingForm
 
 __author__ = 'bliss'
@@ -89,8 +89,7 @@ def get_student_profile(uid):
     """
     # Todo: @杨楚杰
     if not validate_int_arguments(uid):
-        raise ParamException(error='arguments is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='arguments is empty')
     student = get_org_student_profile_by_uid(uid)
     headers = {'Content-Type': 'application/json'}
     student_json = jsonify(student)
@@ -105,8 +104,7 @@ def get_student_sign_in_history(uid):
     """
     # Todo: @杨楚杰
     if not validate_int_arguments(uid):
-        raise ParamException(error='arguments is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='arguments is empty')
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
     page = (1 if form.page.data else form.page.data)
@@ -128,11 +126,9 @@ def get_student_class_in(uid, oid):
        uid: 学生id号
     """
     if not validate_int_arguments(uid):
-        raise ParamException(error='arguments is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='uid arguments is empty')
     if not validate_int_arguments(oid):
-        raise ParamException(error='arguments is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='class id arguments is empty')
     class_in, class_total_count = get_org_student_class_in(uid, oid)
     headers = {'Content-Type': 'application/json'}
     result = {
@@ -143,22 +139,42 @@ def get_student_class_in(uid, oid):
     return class_in_json, 200, headers
 
 
-@api.route('/student/<int:uid>/graduation/<int:oid>/status/<int:status>', methods=['PUT'])
+@api.route('/<int:oid>/graduated_student', methods=['GET'])
+# @auth.login_required
+# 获取机构已经毕业的学生
+def get_graduated_student(oid):
+    if not validate_int_arguments(oid):
+        raise ParamException(error='arguments is empty')
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    page = (1 if form.page.data else form.page.data)
+    per_page = (20 if form.per_page.data else form.per_page.data)
+    student_list, student_total_count = get_graduated_student_service(oid, page, per_page)
+    headers = {'Content-Type': 'application/json'}
+    result = {
+        'data': student_list,
+        'total_count': student_total_count
+    }
+    class_in_json = json.dumps(result)
+    return class_in_json, 200, headers
+
+
+@api.route('/student/<int:uid>/graduation/<int:class_id>/status/<int:status>', methods=['PUT'])
 @auth.login_required
-def update_graduation(uid, oid, status):
+def update_graduation(uid, class_id, status):
     if not validate_int_arguments(uid):
         raise ParamException(error='arguments is empty',
                              error_code=1001, code=200)
-    if not validate_int_arguments(oid):
+    if not validate_int_arguments(class_id):
         raise ParamException(error='the data to update is empty',
                              error_code=1001, code=200)
     if not validate_int_arguments(status):
         raise ParamException(error='arguments is empty',
                              error_code=1001, code=200)
-    if status != 2 and status != 3:
-        raise ParamException(error='the status is limited to be 2 or 3',
+    if status != 1 and status != 2:
+        raise ParamException(error='the status is limited to be 1 or 2',
                              error_code=1001, code=200)
-    res = update_stu_graduation_status(uid, oid, status)
+    res = update_stu_graduation_status(uid, class_id, status)
     if res:
         headers = {'Content-Type': 'application/json'}
         return jsonify(res), 202, headers

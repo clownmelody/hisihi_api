@@ -56,12 +56,10 @@ def get_list_class_sign_in_count_stats(oid, date):
     """
     # Todo: @楚杰
     if not validate_int_arguments(oid):
-        raise ParamException(error='organization id arguments is empty',
-                             error_code=1001, code=200)
+        raise ParamException(error='organization id arguments is empty')
     date = validate_date_arguments(date)
     if not date:
-        raise ParamException(error='date arguments exception',
-                             error_code=1001, code=200)
+        raise ParamException(error='date arguments exception')
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
     page = (1 if form.page.data else form.page.data)

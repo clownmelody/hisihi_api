@@ -194,3 +194,45 @@
 
 **Memo**：
    需要OrgAdminScope权限
+
+
+获取机构下所有讲师（不按分组）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    GET  org/<int:oid>/lectures
+
+**Parameters**:
+
+* oid：机构id号
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
+
+**Response** `200`::
+
+    {
+        "data":[
+            {
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-15/55a62d15b9fc4-05505543.jpg",
+                "nickname":"LEE",
+                "teacher_group_id":5,
+                "uid":529
+            },
+            {
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-15/55a63ecfafbfb-05505543.jpg",
+                "nickname":"Use",
+                "teacher_group_id":7,
+                "uid":543
+            },
+            {
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-03-26/551369fe8358c-05505543.jpg",
+                "nickname":"Rfly",
+                "teacher_group_id":7,
+                "uid":69
+            }
+        ],
+        "total_count":3
+    }
+
+-- end
