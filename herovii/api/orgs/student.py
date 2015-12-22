@@ -2,11 +2,12 @@ import datetime
 import json
 from flask import jsonify, request
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import IllegalOperation, ParamException
+from herovii.libs.error_code import IllegalOperation, ParamException, UpdateDBError
 from herovii.libs.util import is_today, validate_int_arguments
 from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
+from herovii.service.enroll import update_stu_graduation_status
 from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
     get_org_student_sign_in_history_by_uid, get_org_student_class_in, move_student_to
 from herovii.validator.forms import StudentClassForm, StudentJoinForm, PagingForm
@@ -140,3 +141,26 @@ def get_student_class_in(uid, oid):
     }
     class_in_json = json.dumps(result)
     return class_in_json, 200, headers
+
+
+@api.route('/student/<int:uid>/graduation/<int:oid>/status/<int:status>', methods=['PUT'])
+@auth.login_required
+def update_graduation(uid, oid, status):
+    if not validate_int_arguments(uid):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    if not validate_int_arguments(oid):
+        raise ParamException(error='the data to update is empty',
+                             error_code=1001, code=200)
+    if not validate_int_arguments(status):
+        raise ParamException(error='arguments is empty',
+                             error_code=1001, code=200)
+    if status != 2 and status != 3:
+        raise ParamException(error='the status is limited to be 2 or 3',
+                             error_code=1001, code=200)
+    res = update_stu_graduation_status(uid, oid, status)
+    if res:
+        headers = {'Content-Type': 'application/json'}
+        return jsonify(res), 202, headers
+    else:
+        raise UpdateDBError()
