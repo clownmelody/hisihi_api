@@ -314,7 +314,7 @@ def dto_get_blzs_paginate(page, count, oid):
     blzs_query = db.session.query(
         Enroll, UserCSU.nickname, Course.title,
         Avatar.path
-    ).filter(Enroll.organization_id == oid, Enroll.status != -1). \
+    ).filter(Enroll.organization_id == oid, Enroll.status == 1).\
         join(UserCSU, Enroll.student_uid == UserCSU.uid). \
         join(Avatar, Enroll.student_uid == Avatar.uid). \
         outerjoin(Course, Enroll.course_id == Course.id). \
