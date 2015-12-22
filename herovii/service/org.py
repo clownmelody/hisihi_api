@@ -504,7 +504,8 @@ def get_org_student_profile_by_uid(uid):
             'course_name': course_name,
             'class_group': class_group,
             'sign_in_count': stu_sign_in_count,
-            'graduation_status': stu_classmate.status
+            'graduation_status': stu_classmate.status,
+            'class_id': stu_classmate.class_id
         }
     else:
         return None
