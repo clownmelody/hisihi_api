@@ -83,7 +83,9 @@
                 "uid":565
             }
         ],
-        "total_count":2
+        "total_count":2,
+        "completion_rate": "70%",
+        "total_class": 90
     }
 
 ** end **
