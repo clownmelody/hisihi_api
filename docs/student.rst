@@ -49,6 +49,7 @@
       "graduation_status": 2,
       "sign_in_count": 0,
       "student_name": "\u8d75\u864e",
+      "total_class": 90,
       "uid": 566
     }
 

@@ -505,7 +505,8 @@ def get_org_student_profile_by_uid(uid):
             'class_group': class_group,
             'sign_in_count': stu_sign_in_count,
             'graduation_status': stu_classmate.status,
-            'class_id': stu_classmate.class_id
+            'class_id': stu_classmate.class_id,
+            'total_class': 90
         }
     else:
         return None
