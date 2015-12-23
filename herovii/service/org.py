@@ -340,12 +340,12 @@ def dto_get_blzs_paginate(page, count, oid):
     # 使用outerjoin将保证即使没有课程，也可以筛选报名结果
     # 使用Enroll的blz_id订单号分组是为了去除重复（有些用户在avatar表里有2个以上的头像）
     blzs_query = db.session.query(
-        Enroll, UserCSU.nickname, Course.title,
+        Enroll, UserCSU.nickname, OrgConfig.value,
         Avatar.path
     ).filter(Enroll.organization_id == oid, Enroll.status != -1). \
         outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid). \
         outerjoin(Avatar, Enroll.student_uid == Avatar.uid). \
-        outerjoin(Course, Enroll.course_id == Course.id). \
+        outerjoin(OrgConfig, Enroll.course_id == OrgConfig.id). \
         order_by(Enroll.create_time.desc()).group_by(Enroll.blz_id)
     s = blzs_query.statement
 
