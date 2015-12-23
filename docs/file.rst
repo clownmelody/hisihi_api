@@ -69,7 +69,7 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
 
 **URL**::
 
-    POST      org/pics
+    POST      org/<int:oid>/pics
 
 **POST Sample**：
 

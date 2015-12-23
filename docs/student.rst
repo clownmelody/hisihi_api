@@ -49,6 +49,7 @@
       "graduation_status": 2,
       "sign_in_count": 0,
       "student_name": "\u8d75\u864e",
+      "total_class": 90,
       "uid": 566
     }
 
@@ -82,7 +83,9 @@
                 "uid":565
             }
         ],
-        "total_count":2
+        "total_count":2,
+        "completion_rate": "70%",
+        "total_class": 90
     }
 
 ** end **
