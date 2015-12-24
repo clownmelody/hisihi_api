@@ -15,6 +15,7 @@ from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
 from herovii.models.org.org_config import OrgConfig
+from herovii.models.org.pic import Pic
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
@@ -713,5 +714,33 @@ def update_stu_graduation_status(uid, class_id, status):
         }
     else:
         raise UpdateDBError()
+    return data
+
+
+def get_org_pics(type_c, page, per_page, oid):
+    page = int(page)
+    per_page = int(per_page)
+    start = (page - 1) * per_page
+    stop = start + per_page
+
+    if type_c != '0':
+        type_str = 'type = ' + type_c
+    else:
+        type_str = ''
+
+    pics = db.session.query(Pic).filter(Pic.organization_id == oid,
+        Pic.status != -1, text(type_str)).order_by(Pic.create_time.desc()).\
+        slice(start, stop).all()
+
+    if not pics:
+        raise NotFound(error_code=5007, error='the pics of this org are not found')
+
+    total_count = db.session.query(func.count('*')).select_from(Pic).\
+        filter(Pic.organization_id == oid, Pic.status != -1, text(type_str)).scalar()
+
+    data = {
+        'pics': pics,
+        'total_count': total_count
+    }
     return data
 
