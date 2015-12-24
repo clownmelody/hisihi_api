@@ -27,3 +27,7 @@ PAGE_DEFAULT = 1
 
 # 上传文件的最大限制为1MB
 MAX_CONTENT_LENGTH = 6 * 1024 * 1024
+
+# LeanCloud App 配置
+LEAN_CLOUD_X_LC_Id = 'tjt1cu4FpyT77H0FzxkQpXlH-gzGzoHsz'
+LEAN_CLOUD_X_LC_Key = 'EJ0aCBygEPMzvoPc61WL6jMf'
