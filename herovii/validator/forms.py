@@ -186,6 +186,10 @@ class OrgCourseUpdateForm(OrgCourseForm):
     )
 
 
+class OrgPicsGetForm(PagingForm):
+    type = StringField(default='0')
+
+
 class OrgPicForm(Form):
     # organization_id = IntegerField(
     #     validators=[NumberRange(1), DataRequired()]

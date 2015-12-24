@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
 from flask import current_app, request
+from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
     DeleteImGroupMemberFailture
+from herovii.service.file import FilePiper
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service
@@ -143,12 +145,18 @@ def get_im_kick_signature(app_id, client_id, conversion_id, sorted_member_ids):
 def create_im_group():
     group_name = request.form.get('group_name', '群聊')
     member_client_ids = request.form.get('member_client_ids', None)
-    group_id, result = create_im_group_service(group_name, member_client_ids)
+    organization_id = request.form.get('organization_id', 0)
+    conversion_id = request.form.get('conversion_id', 0)
+    group_avatar = request.form.get('group_avatar', '')
+    group_id, result = create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar)
     if result:
         result = {
             'group_id': group_id,
             'group_name': group_name,
-            'member_client_ids': member_client_ids
+            'member_client_ids': member_client_ids,
+            'organization_id': organization_id,
+            'conversion_id': conversion_id,
+            'group_avatar': group_avatar
         }
     else:
         raise CreateImGroupFailture()

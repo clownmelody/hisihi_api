@@ -10,4 +10,5 @@ Werkzeug == 0.10.4
 WTForms == 2.0.2
 flask-httpauth == 2.7.0
 qrcode == 5.1
+pycurl == 7.19.5.3
 pillow

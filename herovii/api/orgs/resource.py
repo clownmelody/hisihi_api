@@ -7,8 +7,8 @@ from herovii.models.base import db
 from herovii.models.org.info import Info
 from herovii.models.org.pic import Pic
 from herovii.models.org.qrcode import QrcodeSignIn
-from herovii.service.org import create_org_pics
-from herovii.validator.forms import OrgPicForm
+from herovii.service.org import create_org_pics, get_org_pics
+from herovii.validator.forms import OrgPicForm, OrgPicsGetForm
 
 __author__ = 'bliss'
 
@@ -40,6 +40,17 @@ def upload_pic(oid):
     str_data = json.dumps(r_pics)
     headers = {'Content-Type': 'application/json'}
     return str_data, 201, headers
+
+
+@api.route('/<int:oid>/pics')
+def get_pic(oid):
+    args = request.args.to_dict()
+    pic_form = OrgPicsGetForm.create_api_form(**args)
+    pics = get_org_pics(pic_form.type.data, pic_form.page.data,
+                        pic_form.per_page.data, oid)
+    rlt = json.dumps(pics)
+    headers = {'Content-Type': 'application/json'}
+    return rlt, 200, headers
 
 
 @api.route('/<int:oid>/qrcode/sign-in/today', methods=['POST'])
