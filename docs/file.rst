@@ -69,7 +69,7 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
 
 **URL**::
 
-    POST      org/pics
+    POST      org/<int:oid>/pics
 
 **POST Sample**：
 
@@ -108,6 +108,56 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
    需要OrgAdminScope权限.支持一次上传多张图片信息
 
 
+获取机构图片
+~~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    GET      org/<int:oid>/pics?type=:type&page=:page&per_page=:per_page
+
+**Parameters**:
+
+* oid：机构id号
+* type: 图片用途; 0 全部 , 1 学生作品  2 机构环境(可选，默认是0)
+* page,per_page 分页
+
+**Response** `201`:
+
+.. sourcecode:: json
+
+    {
+      [
+        {
+          "description": "放飞梦想-",
+          "id": 18,
+          "organization_id": 2,
+          "type": 1,
+          "url": "http://pic.hisihi.com/2015-12-02/565dcbd5049cb.jpg"
+        },
+        {
+          "description": "VIP卡1",
+          "id": 17,
+          "organization_id": 2,
+          "type": 1,
+          "url": "http://pic.hisihi.com/2015-12-02/565dcb467f114.jpg"
+        },
+        {
+          "description": "花好月圆",
+          "id": 16,
+          "organization_id": 2,
+          "type": 1,
+          "url": "http://pic.hisihi.com/2015-11-12/56440a5ccd24e.jpg"
+        },
+        {
+          "description": "抗战胜利海报",
+          "id": 15,
+          "organization_id": 2,
+          "type": 1,
+          "url": "http://pic.hisihi.com/2015-12-02/565dcb1f89843.jpg"
+        }
+      ],
+      "total_count": 16
+    }
 
 获取每日签到二维码
 ~~~~~~~~~~~~~~~~~~~~

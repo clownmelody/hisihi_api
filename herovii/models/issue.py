@@ -12,6 +12,9 @@ class Issue(Base):
     id = Column(Integer, primary_key=True)
     title = Column(Integer, nullable=True)
     allow_post = Column(String(50), nullable=True)
+    pid = Column(Integer)
+    sort = Column(Integer, default=0)
+    update_time = Column(Integer)
 
     def keys(self):
         return (

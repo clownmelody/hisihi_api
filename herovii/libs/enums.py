@@ -60,6 +60,7 @@ class OrgAuditStatus(Enum):
 
 class OrgPicType(Enum):
     """机构图片类型"""
+    all = 0
     student = 1
     environment = 2
 

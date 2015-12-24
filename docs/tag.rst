@@ -3,11 +3,11 @@
 标签、分类服务
 ==========
 
-视频分类标签（ISSUES）
+获取第一级分类标签（ISSUES）
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     tag/issues
+    GET     tag/issues/lv1
 
 
 **Response** `200` ::

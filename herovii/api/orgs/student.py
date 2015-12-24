@@ -113,7 +113,9 @@ def get_student_sign_in_history(uid):
     headers = {'Content-Type': 'application/json'}
     result = {
         'sign_in_history': sign_in_history,
-        'total_count': total_count
+        'total_count': total_count,
+        'total_class': 90,
+        'completion_rate': '70%'
     }
     sign_in_history_json = json.dumps(result)
     return sign_in_history_json, 200, headers

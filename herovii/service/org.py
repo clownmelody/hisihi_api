@@ -15,6 +15,7 @@ from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
 from herovii.models.org.org_config import OrgConfig
+from herovii.models.org.pic import Pic
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
@@ -340,12 +341,12 @@ def dto_get_blzs_paginate(page, count, oid):
     # 使用outerjoin将保证即使没有课程，也可以筛选报名结果
     # 使用Enroll的blz_id订单号分组是为了去除重复（有些用户在avatar表里有2个以上的头像）
     blzs_query = db.session.query(
-        Enroll, UserCSU.nickname, Course.title,
+        Enroll, UserCSU.nickname, OrgConfig.value,
         Avatar.path
     ).filter(Enroll.organization_id == oid, Enroll.status != -1). \
         outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid). \
         outerjoin(Avatar, Enroll.student_uid == Avatar.uid). \
-        outerjoin(Course, Enroll.course_id == Course.id). \
+        outerjoin(OrgConfig, Enroll.course_id == OrgConfig.id). \
         order_by(Enroll.create_time.desc()).group_by(Enroll.blz_id)
     s = blzs_query.statement
 
@@ -504,7 +505,9 @@ def get_org_student_profile_by_uid(uid):
             'course_name': course_name,
             'class_group': class_group,
             'sign_in_count': stu_sign_in_count,
-            'graduation_status': stu_classmate.status
+            'graduation_status': stu_classmate.status,
+            'class_id': stu_classmate.class_id,
+            'total_class': 90
         }
     else:
         return None
@@ -711,5 +714,33 @@ def update_stu_graduation_status(uid, class_id, status):
         }
     else:
         raise UpdateDBError()
+    return data
+
+
+def get_org_pics(type_c, page, per_page, oid):
+    page = int(page)
+    per_page = int(per_page)
+    start = (page - 1) * per_page
+    stop = start + per_page
+
+    if type_c != '0':
+        type_str = 'type = ' + type_c
+    else:
+        type_str = ''
+
+    pics = db.session.query(Pic).filter(Pic.organization_id == oid,
+        Pic.status != -1, text(type_str)).order_by(Pic.create_time.desc()).\
+        slice(start, stop).all()
+
+    if not pics:
+        raise NotFound(error_code=5007, error='the pics of this org are not found')
+
+    total_count = db.session.query(func.count('*')).select_from(Pic).\
+        filter(Pic.organization_id == oid, Pic.status != -1, text(type_str)).scalar()
+
+    data = {
+        'pics': pics,
+        'total_count': total_count
+    }
     return data
 
