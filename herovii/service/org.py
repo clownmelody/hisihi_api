@@ -1,5 +1,7 @@
 from _operator import or_, and_
 import re
+
+import time
 from flask import json
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
@@ -21,7 +23,9 @@ from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.video import Video
+from herovii.models.user.field import Field
 from herovii.models.user.avatar import Avatar
+from herovii.models.user.id_realeation import IdRelation
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
 
@@ -744,3 +748,27 @@ def get_org_pics(type_c, page, per_page, oid):
     }
     return data
 
+
+def set_lecturer_extend_info(uid, oid):
+    res = db.session.query(IdRelation).filter(IdRelation.uid == uid)\
+        .update({IdRelation.group_id: 6})
+    org_name = db.session.query(Info.name).filter(Info.id == oid, Info.status == 1).first()
+    count = db.session.query(Field).filter(Field.uid == uid, Field.field_id == 39).count()
+    result = 0
+    field = None
+    if not count:
+        field = Field()
+        field.uid = uid
+        field.field_id = 39
+        field.field_data = org_name.name
+        field.createTime = int(time.time())
+        field.changeTime = int(time.time())
+        with db.auto_commit():
+            db.session.add(field)
+    else:
+        result = db.session.query(Field).filter(Field.uid == uid, Field.field_id == 39)\
+            .update({Field.field_data: org_name.name})
+    if res and (result or field.id):
+        return True
+    else:
+        raise UpdateDBError()
