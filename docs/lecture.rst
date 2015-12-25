@@ -75,12 +75,14 @@
 
     {
         "uid":3,
+        "oid":2,
         "teacher_group_id":5
     }
 
 **Parameters**:
 
 * uid：教师id
+* oid：机构id
 * teacher_group_id: 教师分组id
 
 **Response** `201`:

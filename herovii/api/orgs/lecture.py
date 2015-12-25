@@ -9,7 +9,7 @@ from herovii.models.base import db
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 
-from herovii.service.org import get_org_teachers_by_group, search_lecture, get_org_teachers
+from herovii.service.org import get_org_teachers_by_group, search_lecture, get_org_teachers, set_lecturer_extend_info
 from herovii.validator.forms import TeacherGroupForm, LectureJoinForm, PagingForm
 
 __author__ = 'bliss'
@@ -45,12 +45,15 @@ def delete_teacher_group(gid):
 @auth.login_required
 def join_teacher_group():
     form = LectureJoinForm.create_api_form()
-    t_g_realation = TeacherGroupRelation()
-    t_g_realation.teacher_group_id = form.teacher_group_id.data
-    t_g_realation.uid = form.uid.data
+    t_g_relation = TeacherGroupRelation()
+    t_g_relation.teacher_group_id = form.teacher_group_id.data
+    t_g_relation.uid = form.uid.data
+    t_g_relation.organization_id = form.oid.data
+    t_g_relation.group = 6
+    set_lecturer_extend_info(t_g_relation.uid, t_g_relation.organization_id)
     with db.auto_commit():
-        db.session.add(t_g_realation)
-    return jsonify(t_g_realation), 201
+        db.session.add(t_g_relation)
+    return jsonify(t_g_relation), 201
 
 
 @api.route('/lecture/<int:uid>/group/<int:gid>/quite', methods=['DELETE'])

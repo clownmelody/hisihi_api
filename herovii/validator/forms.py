@@ -202,6 +202,7 @@ class OrgPicForm(Form):
 class LectureJoinForm(Form):
     uid = IntegerField(validators=[DataRequired(), NumberRange(1)])
     teacher_group_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    oid = IntegerField(validators=[DataRequired(), NumberRange(1)])
 
 
 class StudentJoinForm(Form):
