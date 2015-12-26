@@ -8,7 +8,7 @@ from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture
 from herovii.service.file import FilePiper
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
-    get_organization_im_groups_service, get_organization_im_contacts_service
+    get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -20,7 +20,7 @@ api = ApiBlueprint('im')
 @auth.login_required
 # 登陆签名
 def get_im_login_signature(app_id, client_id):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id]
@@ -42,7 +42,7 @@ def get_im_login_signature(app_id, client_id):
 @auth.login_required
 # 开启会话签名
 def get_im_start_conversion_signature(app_id, client_id, sorted_member_ids):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id, sorted_member_ids, timestamp, nonce]
@@ -66,7 +66,7 @@ def get_im_start_conversion_signature(app_id, client_id, sorted_member_ids):
 @auth.login_required
 # 群组加人操作签名
 def get_im_invite_signature(app_id, client_id, conversion_id, sorted_member_ids):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id, conversion_id, sorted_member_ids, timestamp, nonce, 'invite']
@@ -92,7 +92,7 @@ def get_im_invite_signature(app_id, client_id, conversion_id, sorted_member_ids)
 @auth.login_required
 # 群组删人签名
 def get_im_kick_signature(app_id, client_id, conversion_id, sorted_member_ids):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id, conversion_id, sorted_member_ids, timestamp, nonce, 'kick']
@@ -257,3 +257,24 @@ def get_organization_im_contacts(organization_id=0):
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers
+
+
+@api.route('/org/<int:class_id>/message', methods=['POST'])
+# @auth.login_required
+# 向班级学生群发通知
+def push_message_to_all_classmates(class_id=0):
+    # message = request.form.get('message', None)
+    # if class_id == 0 or message is None:
+    #     raise ParamException()
+    if class_id == 0:
+        raise ParamException()
+    history_id = push_message_to_all_classmates_service(class_id)
+    result = {
+        "class_id": class_id,
+        "push_history_record_id": history_id
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 201, headers
+
+
+

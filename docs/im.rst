@@ -274,3 +274,22 @@ IM
 
 -- end
 
+
+向班级群发消息(实际只是做标记)
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /im/org/<int:class_id>/message
+
+**Parameters**:
+
+* class_id: 班级id
+
+**Response** `201` ::
+
+    {
+        "class_id": 2,
+        "push_history_record_id": 123
+    }
+
+-- end

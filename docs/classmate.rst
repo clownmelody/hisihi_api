@@ -39,3 +39,40 @@
         "unsign_in_count": 1,
         "total_count":2
     }
+
+-- end
+
+
+获取指定班级所有学生uid
+~~~~~~~~~~~
+
+**URL**::
+
+    GET      org/<int:oid>/class/<int:cid>/students
+
+**Parameters**:
+
+* oid: 机构id号
+* cid: 班级号
+* page: 页数，默认值为1
+* per_page: 每页记录数, 默认值为20
+
+**Response** `200` ::
+
+    {
+        "total_count":2,
+        "data":[
+            {
+                "uid":567,
+                "nickname":"哈哈",
+                "avatar":null
+            },
+            {
+                "uid":103,
+                "nickname":"皮卡Q",
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-17/55a8aef4d0f65-05505543.jpg"
+            }
+        ]
+    }
+-- end
+
