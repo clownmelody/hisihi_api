@@ -57,6 +57,18 @@ class TestLecture(TestOrgCase):
       rv3 = self.client.post('v1/org/lecture/group', data=json_data, headers=headers)
       self.assertEqual(rv3.status_code, 400)
 
+      lecturer_info = {
+                'oid': 2,
+                'uid': 530,
+                'teacher_group_id': 3
+      }
+
+
+      json_data = json.dumps(lecturer_info)
+
+      rv4 = self.client.post('v1/org/lecture/group/join', data=json_data, headers=headers)
+      self.assertEqual(rv4.status_code, 201)
+
 
 
 
