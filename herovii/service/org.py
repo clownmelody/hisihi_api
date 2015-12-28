@@ -201,13 +201,17 @@ def get_org_courses_paging(oid, page, count):
 
 
 def get_course_by_id(cid):
-    course = Course.query.get(cid).first_or_404
-    teacher = UserCSU.query.get(course.lecture).first()
+    course = Course.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5002, error='课程信息不存在')
+    teacher = UserCSU.query.filter_by(uid=course.lecturer).first()
     videos = get_video_by_course_id(cid)
+    issue = Issue.query.filter_by(id=course.category_id).first()
     return {
         'course': course,
         'teacher': teacher,
-        'videos': videos
+        'videos': videos,
+        'category': issue
     }
 
 
