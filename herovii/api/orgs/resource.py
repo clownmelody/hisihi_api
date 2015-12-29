@@ -8,7 +8,7 @@ from herovii.models.org.info import Info
 from herovii.models.org.pic import Pic
 from herovii.models.org.qrcode import QrcodeSignIn
 from herovii.service.org import create_org_pics, get_org_pics
-from herovii.validator.forms import OrgPicForm, OrgPicsGetForm
+from herovii.validator.forms import OrgPicForm, OrgPicsGetForm, OrgPicUpdateForm
 
 __author__ = 'bliss'
 
@@ -42,7 +42,18 @@ def upload_pic(oid):
     return str_data, 201, headers
 
 
+@api.route('/pic')
+def update_pic():
+    form = OrgPicUpdateForm.create_api_form()
+    course = Pic.query.filter_by(id=form.id.data).first_or_404()
+    with db.auto_commit():
+        for key, value in form.body_data.items():
+            setattr(course, key, value)
+    return jsonify(course), 202
+
+
 @api.route('/<int:oid>/pics')
+@auth.login_required
 def get_pic(oid):
     args = request.args.to_dict()
     pic_form = OrgPicsGetForm.create_api_form(**args)

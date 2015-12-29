@@ -199,6 +199,18 @@ class OrgPicForm(Form):
     )
 
 
+class OrgPicUpdateForm(Form):
+    id = IntegerField(
+        validators=[NumberRange(1), DataRequired()]
+    )
+
+
+class VideoUpdateForm(Form):
+    id = IntegerField(
+        validators=[NumberRange(1), DataRequired()]
+    )
+
+
 class LectureJoinForm(Form):
     uid = IntegerField(validators=[DataRequired(), NumberRange(1)])
     teacher_group_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
