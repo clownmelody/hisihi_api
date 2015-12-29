@@ -180,7 +180,7 @@ class StudentClassForm(Form):
     )
 
 
-class OrgCourseUpdateForm(OrgCourseForm):
+class OrgCourseUpdateForm(Form):
     id = IntegerField(
         validators=[NumberRange(1), DataRequired()]
     )
