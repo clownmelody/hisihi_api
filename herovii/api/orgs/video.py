@@ -9,7 +9,7 @@ __author__ = 'bliss'
 api = ApiBlueprint('org')
 
 
-@api.route('/pic')
+@api.route('/video')
 def update_video():
     form = VideoUpdateForm.create_api_form()
     course = Video.query.filter_by(id=form.id.data).first_or_404()
