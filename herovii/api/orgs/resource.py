@@ -42,7 +42,8 @@ def upload_pic(oid):
     return str_data, 201, headers
 
 
-@api.route('/pic')
+@api.route('/pic', methods=['PUT'])
+@auth.login_required
 def update_pic():
     form = OrgPicUpdateForm.create_api_form()
     course = Pic.query.filter_by(id=form.id.data).first_or_404()

@@ -159,6 +159,10 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
       "total_count": 16
     }
 
+
+更新机构图片资源
+~~~~~~~~~~~~~~~~~~~~~~~
+
 获取每日签到二维码
 ~~~~~~~~~~~~~~~~~~~~
 
