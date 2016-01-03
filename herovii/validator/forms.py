@@ -180,7 +180,7 @@ class StudentClassForm(Form):
     )
 
 
-class OrgCourseUpdateForm(OrgCourseForm):
+class OrgCourseUpdateForm(Form):
     id = IntegerField(
         validators=[NumberRange(1), DataRequired()]
     )
@@ -196,6 +196,18 @@ class OrgPicForm(Form):
     # )
     url = StringField(
         validators=[DataRequired()]
+    )
+
+
+class OrgPicUpdateForm(Form):
+    id = IntegerField(
+        validators=[NumberRange(1), DataRequired()]
+    )
+
+
+class VideoUpdateForm(Form):
+    id = IntegerField(
+        validators=[NumberRange(1), DataRequired()]
     )
 
 

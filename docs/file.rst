@@ -159,6 +159,24 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
       "total_count": 16
     }
 
+
+更新机构图片资源
+~~~~~~~~~~~~~~~~~~~~~~~
+**URL**::
+
+    PUT        org/pic
+
+
+**Parameters**:
+
+完整的机构资源类的字段
+
+**Response** `202`:
+
+.. sourcecode:: json
+
+
+
 获取每日签到二维码
 ~~~~~~~~~~~~~~~~~~~~
 
