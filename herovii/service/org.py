@@ -6,7 +6,8 @@ from flask import json
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
-from herovii.libs.error_code import NotFound, DataArgumentsException, StuClassNotFound, DirtyDataError, UpdateDBError
+from herovii.libs.error_code import NotFound, DataArgumentsException, StuClassNotFound, DirtyDataError, UpdateDBError, \
+    ParamException
 from herovii.libs.helper import get_full_oss_url
 from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.base import db
@@ -200,13 +201,17 @@ def get_org_courses_paging(oid, page, count):
 
 
 def get_course_by_id(cid):
-    course = Course.query.get(cid).first_or_404
-    teacher = UserCSU.query.get(course.lecture).first()
+    course = Course.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5002, error='课程信息不存在')
+    teacher = UserCSU.query.filter_by(uid=course.lecturer).first()
     videos = get_video_by_course_id(cid)
+    issue = Issue.query.filter_by(id=course.category_id).first()
     return {
         'course': course,
         'teacher': teacher,
-        'videos': videos
+        'videos': videos,
+        'category': issue
     }
 
 
@@ -489,7 +494,10 @@ def get_org_student_profile_by_uid(uid):
     if u is not None:
         stu_course = db.session.query(OrgConfig).filter(OrgConfig.id == u.course_id).first()
         stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
-        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        else:
+            stu_avatar_full_path = None
         stu_classmate = db.session.query(Classmate).filter(Classmate.uid == uid).first()
         stu_sign_in_count = get_uid_sign_in_total_count_by_now(uid)
         if stu_classmate is None:
@@ -516,6 +524,24 @@ def get_org_student_profile_by_uid(uid):
     else:
         return None
     return data
+
+
+def get_user_profile_by_uid(uid):
+    user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+    if user:
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        else:
+            stu_avatar_full_path = None
+        data = {
+            'uid': user.uid,
+            'avatar': stu_avatar_full_path,
+            'nickname': user.nickname,
+        }
+        return data
+    else:
+        return None
 
 
 def get_org_student_sign_in_history_by_uid(uid, page, per_page):
@@ -607,6 +633,32 @@ def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
     return data_list, total_count, sign_in_count, unsign_in_count
 
 
+def get_org_class_all_students_service(oid, cid, page, per_page):
+    is_exist = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
+                                                     StudentClass.id == cid,
+                                                     StudentClass.status == 1)\
+        .count()
+    if not is_exist:
+        raise ParamException()
+    start = (page - 1) * per_page
+    stop = start + per_page
+    class_stu_total_count = db.session.query(Classmate).filter(Classmate.class_id == cid,
+                                                               Classmate.status == 1) \
+        .count()
+    class_stu_list = db.session.query(Classmate.uid).filter(Classmate.class_id == cid,
+                                                            Classmate.status == 1) \
+        .slice(start, stop) \
+        .all()
+    data = []
+    for stu in class_stu_list:
+        user_info = db.session.query(UserCSU).filter(UserCSU.uid == stu.uid).first()
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == stu.uid).first()
+        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        user = {"uid": stu.uid, 'avatar': stu_avatar_full_path, 'nickname': user_info.nickname}
+        data.append(user)
+    return data, class_stu_total_count
+
+
 def get_org_list_class_sign_in_count_stats(oid, date, page, per_page):
     start = (page - 1) * per_page
     stop = start + per_page
@@ -667,12 +719,12 @@ def get_org_student_class_in(uid, oid):
 def get_graduated_student_service(oid, page, per_page):
     start = (page - 1) * per_page
     stop = start + per_page
-    student_total_count = db.session.query(Classmate.uid).join(StudentClass, Classmate.class_id == StudentClass.id)\
-        .filter(StudentClass.organization_id == oid, StudentClass.status == 1, Classmate.status == 2)\
+    student_total_count = db.session.query(Classmate.uid).join(StudentClass, Classmate.class_id == StudentClass.id) \
+        .filter(StudentClass.organization_id == oid, StudentClass.status == 1, Classmate.status == 2) \
         .count()
-    student_list = db.session.query(Classmate.uid).join(StudentClass, Classmate.class_id == StudentClass.id)\
-        .filter(StudentClass.organization_id == oid, StudentClass.status == 1, Classmate.status == 2)\
-        .slice(start, stop)\
+    student_list = db.session.query(Classmate.uid).join(StudentClass, Classmate.class_id == StudentClass.id) \
+        .filter(StudentClass.organization_id == oid, StudentClass.status == 1, Classmate.status == 2) \
+        .slice(start, stop) \
         .all()
     data_list = []
     for student in student_list:
@@ -708,7 +760,7 @@ def update_stu_graduation_status(uid, class_id, status):
                                                            Classmate.class_id == class_id).first()
     if int(pre_status.status) < 1:
         raise DirtyDataError()
-    res = db.session.query(Classmate).filter(Classmate.uid == uid, Classmate.class_id == class_id)\
+    res = db.session.query(Classmate).filter(Classmate.uid == uid, Classmate.class_id == class_id) \
         .update({Classmate.status: status})
     if res:
         data = {
@@ -733,13 +785,13 @@ def get_org_pics(type_c, page, per_page, oid):
         type_str = ''
 
     pics = db.session.query(Pic).filter(Pic.organization_id == oid,
-        Pic.status != -1, text(type_str)).order_by(Pic.create_time.desc()).\
+                                        Pic.status != -1, text(type_str)).order_by(Pic.create_time.desc()). \
         slice(start, stop).all()
 
     if not pics:
         raise NotFound(error_code=5007, error='the pics of this org are not found')
 
-    total_count = db.session.query(func.count('*')).select_from(Pic).\
+    total_count = db.session.query(func.count('*')).select_from(Pic). \
         filter(Pic.organization_id == oid, Pic.status != -1, text(type_str)).scalar()
 
     data = {
@@ -772,3 +824,4 @@ def set_lecturer_extend_info(uid, oid):
         return True
     else:
         raise UpdateDBError()
+

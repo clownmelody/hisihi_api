@@ -16,6 +16,7 @@ class UserCSU(BaseNoCreateTime):
     birthday = Column(Date)
     qq = Column(CHAR(20))
     score = Column(Integer, default=0)
+    reg_id = Column(String(32))
 
     def keys(self):
         return (

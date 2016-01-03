@@ -15,11 +15,13 @@ class ImGroupMember(Base):
     member_id = Column(String(45), nullable=False)
     create_time = Column(Integer)
     status = Column(SmallInteger, default=1)
+    is_admin = Column(SmallInteger, default=0)
 
-    def __init__(self, group_id, member_id, create_time):
+    def __init__(self, group_id, member_id, create_time, is_admin=0):
         self.group_id = group_id
         self.member_id = member_id
         self.create_time = create_time
+        self.is_admin = is_admin
 
     def keys(self):
         return (

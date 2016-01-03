@@ -8,7 +8,8 @@ from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture
 from herovii.service.file import FilePiper
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
-    get_organization_im_groups_service, get_organization_im_contacts_service
+    get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
+    get_reg_id_by_client_id, get_group_member_reg_ids_by_group_id, dismiss_im_group_service
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -20,7 +21,7 @@ api = ApiBlueprint('im')
 @auth.login_required
 # 登陆签名
 def get_im_login_signature(app_id, client_id):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id]
@@ -42,7 +43,7 @@ def get_im_login_signature(app_id, client_id):
 @auth.login_required
 # 开启会话签名
 def get_im_start_conversion_signature(app_id, client_id, sorted_member_ids):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id, sorted_member_ids, timestamp, nonce]
@@ -66,7 +67,7 @@ def get_im_start_conversion_signature(app_id, client_id, sorted_member_ids):
 @auth.login_required
 # 群组加人操作签名
 def get_im_invite_signature(app_id, client_id, conversion_id, sorted_member_ids):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id, conversion_id, sorted_member_ids, timestamp, nonce, 'invite']
@@ -92,7 +93,7 @@ def get_im_invite_signature(app_id, client_id, conversion_id, sorted_member_ids)
 @auth.login_required
 # 群组删人签名
 def get_im_kick_signature(app_id, client_id, conversion_id, sorted_member_ids):
-    master_key = current_app.config['LEANCLOUD_SECRET_KEY']
+    master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
     var_list = [app_id, client_id, conversion_id, sorted_member_ids, timestamp, nonce, 'kick']
@@ -147,8 +148,13 @@ def create_im_group():
     member_client_ids = request.form.get('member_client_ids', None)
     organization_id = request.form.get('organization_id', 0)
     conversion_id = request.form.get('conversion_id', 0)
-    group_avatar = request.form.get('group_avatar', '')
-    group_id, result = create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar)
+    group_avatar = request.form.get('group_avatar', None)
+    admin_uid = request.form.get('admin_uid', None)
+    if organization_id == 0 or conversion_id == 0 \
+            or group_avatar is None or admin_uid is None:
+        raise ParamException()
+    group_id, result = create_im_group_service(group_name, member_client_ids, organization_id,
+                                               conversion_id, group_avatar, admin_uid)
     if result:
         result = {
             'group_id': group_id,
@@ -156,7 +162,8 @@ def create_im_group():
             'member_client_ids': member_client_ids,
             'organization_id': organization_id,
             'conversion_id': conversion_id,
-            'group_avatar': group_avatar
+            'group_avatar': group_avatar,
+            'admin_uid': admin_uid
         }
     else:
         raise CreateImGroupFailture()
@@ -194,8 +201,20 @@ def delete_im_group(group_id=0):
     return '', 204
 
 
+@api.route('/user/<int:uid>/group/<int:group_id>', methods=['DELETE'])
+@auth.login_required
+# 管理员解散群组
+def delete_im_group(uid=0, group_id=0):
+    if uid == 0 or group_id == 0:
+        raise ParamException()
+    result = dismiss_im_group_service(uid, group_id)
+    if not result:
+        raise DeleteImGroupFailture()
+    return '', 204
+
+
 @api.route('/group/<int:group_id>/member', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 # 添加群成员
 def add_im_group_members(group_id=0):
     if group_id == 0:
@@ -257,3 +276,21 @@ def get_organization_im_contacts(organization_id=0):
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers
+
+
+@api.route('/org/<int:class_id>/message', methods=['POST'])
+# @auth.login_required
+# 向班级学生群发通知
+def push_message_to_all_classmates(class_id=0):
+    # message = request.form.get('message', None)
+    # if class_id == 0 or message is None:
+    #     raise ParamException()
+    if class_id == 0:
+        raise ParamException()
+    history_id = push_message_to_all_classmates_service(class_id)
+    result = {
+        "class_id": class_id,
+        "push_history_record_id": history_id
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 201, headers

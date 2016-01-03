@@ -156,3 +156,9 @@ class DirtyDataError(APIException):
     code = 200
     error_code = 1009
     error = 'some dirty data in the database'
+
+
+class PushToClassFailture(APIException):
+    code = 200
+    error_code = 7007
+    error = 'you have send message today'
