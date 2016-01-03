@@ -1,4 +1,4 @@
-.. _im_push_service:
+.. _imPushService:
 
 IM 相关操作 Push 通知定义
 ========

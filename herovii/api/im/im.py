@@ -9,7 +9,7 @@ from herovii.service.file import FilePiper
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
-    get_reg_id_by_client_id
+    get_reg_id_by_client_id, get_group_member_reg_ids_by_group_id
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -276,6 +276,4 @@ def push_message_to_all_classmates(class_id=0):
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 201, headers
-
-
 

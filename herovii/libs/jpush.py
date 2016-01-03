@@ -20,7 +20,7 @@ class JPushService(object):
     @staticmethod
     def push_removed_from_group_message(reg_id=None, uid=None, gid=None):
         """
-        成员被移除群聊，发送push通知
+        成员被移除群聊，向所有群成员发push通知
         """
         if reg_id is None:
             raise ParamException()

@@ -348,7 +348,10 @@ def get_reg_id_by_client_id(client_id=None):
     else:
         uid = client_id
     user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
-    return user.reg_id
+    if user:
+        return user.reg_id
+    else:
+        return None
 
 
 # 根据 group_id 获取群信息
@@ -360,3 +363,24 @@ def get_group_info_by_group_id(group_id=None):
     return group
 
 
+# 根据 group_id 获取所有群成员的 reg_id 列表
+def get_group_member_reg_ids_by_group_id(group_id=None):
+    reg_id_list = []
+    if group_id is None:
+        return None
+    group_member_list = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                               ImGroupMember.status == 1).all()
+    if group_member_list:
+        for group_member in group_member_list:
+            member_uid = group_member.member_id
+            if member_uid.startswith('c') or member_uid.startswith('o'):
+                length = len(member_uid)
+                member_uid = member_uid[1:length]
+            else:
+                member_uid = member_uid
+            reg_id = get_reg_id_by_client_id(member_uid)
+            if reg_id:
+                reg_id_list.append(reg_id)
+    else:
+        return None
+    return reg_id_list

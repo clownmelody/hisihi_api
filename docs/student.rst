@@ -64,27 +64,24 @@
 
 **Parameters**:
 
-* uids: 学生id号拼接字符串，示例：69:70:71
+* uids: 学生id号拼接字符串，示例：69:71
 
 **Response** `200` ::
 
-    [
-        {
-            "nickname":"Rfly",
-            "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-03-26/551369fe8358c-05505543.jpg",
-            "uid":69
-        },
-        {
-            "nickname":"qwert123",
-            "avatar":null,
-            "uid":70
-        },
-        {
-            "nickname":"Leslie",
-            "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg",
-            "uid":72
-        }
-    ]
+    {
+        "data":[
+            {
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-03-26/551369fe8358c-05505543.jpg",
+                "uid":69,
+                "nickname":"Rfly"
+            },
+            {
+                "avatar":null,
+                "uid":71,
+                "nickname":"poi0987"
+            }
+        ]
+    }
 ** end **
 
 

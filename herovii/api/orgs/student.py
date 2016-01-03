@@ -108,8 +108,10 @@ def get_users_profiles(uids):
         student = get_user_profile_by_uid(uid)
         student_list.append(student)
     headers = {'Content-Type': 'application/json'}
-    students_json = json.dumps(student_list)
-    return students_json, 200, headers
+    result = {
+        'data': student_list
+    }
+    return json.dumps(result), 200, headers
 
 
 @api.route('/student/<int:uid>/sign-in/history', methods=['GET'])
