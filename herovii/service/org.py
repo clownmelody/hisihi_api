@@ -490,7 +490,10 @@ def get_org_student_profile_by_uid(uid):
     if u is not None:
         stu_course = db.session.query(OrgConfig).filter(OrgConfig.id == u.course_id).first()
         stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
-        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        else:
+            stu_avatar_full_path = None
         stu_classmate = db.session.query(Classmate).filter(Classmate.uid == uid).first()
         stu_sign_in_count = get_uid_sign_in_total_count_by_now(uid)
         if stu_classmate is None:
@@ -517,6 +520,24 @@ def get_org_student_profile_by_uid(uid):
     else:
         return None
     return data
+
+
+def get_user_profile_by_uid(uid):
+    user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+    if user:
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        else:
+            stu_avatar_full_path = None
+        data = {
+            'uid': user.uid,
+            'avatar': stu_avatar_full_path,
+            'nickname': user.nickname,
+        }
+        return data
+    else:
+        return None
 
 
 def get_org_student_sign_in_history_by_uid(uid, page, per_page):

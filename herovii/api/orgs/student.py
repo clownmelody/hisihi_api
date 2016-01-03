@@ -7,7 +7,7 @@ from herovii.libs.util import is_today, validate_int_arguments
 from herovii.models.base import db
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.classmate import Classmate
-from herovii.service.org import update_stu_graduation_status
+from herovii.service.org import update_stu_graduation_status, get_user_profile_by_uid
 from herovii.service.org import create_student_sign_in, get_org_student_profile_by_uid, \
     get_org_student_sign_in_history_by_uid, get_org_student_class_in, get_graduated_student_service, move_student_to
 from herovii.validator.forms import StudentClassForm, StudentJoinForm, PagingForm
@@ -94,6 +94,22 @@ def get_student_profile(uid):
     headers = {'Content-Type': 'application/json'}
     student_json = jsonify(student)
     return student_json, 200, headers
+
+
+@api.route('/student/<uids>/profiles', methods=['GET'])
+@auth.login_required
+def get_users_profiles(uids):
+    """批量获取学生资料
+       uids: 学生id号
+    """
+    uids_list = uids.split(':')
+    student_list = []
+    for uid in uids_list:
+        student = get_user_profile_by_uid(uid)
+        student_list.append(student)
+    headers = {'Content-Type': 'application/json'}
+    students_json = json.dumps(student_list)
+    return students_json, 200, headers
 
 
 @api.route('/student/<int:uid>/sign-in/history', methods=['GET'])

@@ -47,4 +47,5 @@ Api V1 说明
    feedback
    tag
    im
+   im_push_service
 

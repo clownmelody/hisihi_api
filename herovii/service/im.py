@@ -335,3 +335,28 @@ def check_is_enable_to_push(class_id):
         .count()
     return not count
 
+
+# 根据 client_id 获取用户 reg_id
+def get_reg_id_by_client_id(client_id=None):
+    if client_id is None:
+        return None
+    if client_id.startswith('c'):  # 普通用户
+        length = len(client_id)
+        uid = client_id[1:length]
+    elif client_id.startswith('o'):
+        return None
+    else:
+        uid = client_id
+    user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+    return user.reg_id
+
+
+# 根据 group_id 获取群信息
+def get_group_info_by_group_id(group_id=None):
+    if group_id is None:
+        return None
+    group = db.session.query(ImGroup).filter(
+        ImGroup.id == group_id, ImGroup.status == 1).first()
+    return group
+
+
