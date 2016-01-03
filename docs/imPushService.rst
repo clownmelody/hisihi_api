@@ -43,3 +43,17 @@ IM 相关操作 Push 通知定义
         'uid': uid,
         'gid': gid
     }
+
+
+群主解散群
+~~~~~~~~~~~~~~~
+
+** Push Extra Data **
+
+.. sourcecode:: json
+
+    {
+        'type': 'group_been_dismissed',
+        'uid': uid,
+        'gid': gid
+    }

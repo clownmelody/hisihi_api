@@ -85,3 +85,27 @@ class JPushService(object):
                                      "apns_production": JPushService.apns_production}
         JPushService.push.platform = jpush.all_
         JPushService.push.send()
+
+    @staticmethod
+    def push_admin_dismiss_group_message(reg_id=None, uid=None, gid=None):
+        """
+        群组被群管理员解散，向所有群成员发送push通知
+        """
+        if reg_id is None:
+            raise ParamException()
+        JPushService.push.audience = jpush.audience(
+            jpush.registration_id(reg_id)
+        )
+        extras = {
+            'type': 'group_been_dismissed',
+            'uid': uid,
+            'gid': gid
+        }
+        ios_msg = jpush.ios(alert="群主解散了该群", badge="+0", sound="default", extras=extras)
+        android_msg = jpush.android(alert="群主解散了该群", extras=extras)
+        JPushService.push.notification = jpush.notification(android=android_msg, ios=ios_msg)
+        JPushService.push.options = {"time_to_live": 0, "sendno": 12345,
+                                     "apns_production": JPushService.apns_production}
+        JPushService.push.platform = jpush.all_
+        JPushService.push.send()
+

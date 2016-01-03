@@ -124,6 +124,7 @@ IM
 * organization_id: 机构 id
 * conversion_id:   会话 id
 * group_avatar:    群组头像（上传文件后获取的完整路径）
+* admin_uid:       管理员uid
 
 **Response** `201` ::
 
@@ -133,7 +134,8 @@ IM
         "member_client_ids":"o12:u232:p23",
         "organization_id": 2,
         "conversion_id": "dasjfr4529sadfh",
-        "group_avatar": "http://pic.hisihi.com/232rwfrqw.jpg"
+        "group_avatar": "http://pic.hisihi.com/232rwfrqw.jpg",
+        "admin_uid": "o12"
     }
 
 -- end
@@ -162,6 +164,20 @@ IM
 **URL**::
 
     DELETE     /im/group/<int:group_id>
+
+**Parameters**:
+
+* N/A
+
+**Response** `204`::
+-- end
+
+
+群主解散群
+~~~~~~~~~~~~~~~
+**URL**::
+
+    DELETE     /im/user/<int:uid>/group/<int:group_id>
 
 **Parameters**:
 

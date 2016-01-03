@@ -4,7 +4,7 @@ import json
 from random import Random
 import time
 from herovii import db
-from herovii.libs.error_code import ImGroupNotFound, ServerError, NotFound, PushToClassFailture
+from herovii.libs.error_code import ImGroupNotFound, ServerError, NotFound, PushToClassFailture, IllegalOperation
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.im.im_group import ImGroup
 from herovii.models.im.im_group_member import ImGroupMember
@@ -43,7 +43,7 @@ def get_nonce(nonce_length=8):
     return nonce
 
 
-def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar):
+def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar, admin_uid):
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
                     organization_id=organization_id, conversion_id=conversion_id,
                     group_avatar=group_avatar)
@@ -58,6 +58,7 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
             group_member = ImGroupMember(group_id=group.id, member_id=client_id, create_time=int(time.time()))
             with db.auto_commit():
                 db.session.add(group_member)
+    update_im_group_admin_uid(group.id, admin_uid)  # 修改群管理员
     return group.id, True
 
 
@@ -75,6 +76,21 @@ def delete_im_group_service(group_id):
     except:
         return False
     return True
+
+
+def dismiss_im_group_service(uid, group_id):
+    is_group_admin = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                            ImGroupMember.member_id == uid,
+                                                            ImGroupMember.is_admin == 1,
+                                                            ImGroupMember.status == 1)
+    if is_group_admin:
+        try:
+            db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'status': -1})
+        except:
+            return False
+        return True
+    else:
+        raise IllegalOperation(error='you are not the administrator of the group')
 
 
 def add_im_group_members_service(group_id, member_client_ids):
@@ -114,6 +130,13 @@ def delete_im_group_members_service(group_id, member_client_ids):
     if not group:
         raise ImGroupNotFound()
     client_id_list = member_client_ids.split(':')
+    # 检查待删除成员中是否包含该群组管理员
+    admin_member = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                          ImGroupMember.is_admin == 1,
+                                                          ImGroupMember.status == 1) \
+        .first()
+    if admin_member.member_id in client_id_list:
+        raise IllegalOperation(error='the member list you want delete contains the administrator of the group')
     try:
         for client_id in client_id_list:
             member_list.append(client_id)
@@ -384,3 +407,16 @@ def get_group_member_reg_ids_by_group_id(group_id=None):
     else:
         return None
     return reg_id_list
+
+
+# 修改群组的管理员
+def update_im_group_admin_uid(group_id=None, admin_uid=None):
+    exist_in_group = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                            ImGroupMember.member_id == admin_uid,
+                                                            ImGroupMember.status == 1)
+    if exist_in_group:
+        db.session.query(ImGroupMember).filter(ImGroupMember.id == exist_in_group.id).update({'is_admin': 1})
+    else:
+        group_member = ImGroupMember(group_id=group_id, member_id=admin_uid, create_time=int(time.time()), is_admin=1)
+        with db.auto_commit():
+            db.session.add(group_member)
