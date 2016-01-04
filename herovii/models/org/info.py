@@ -15,7 +15,7 @@ class Info(Base):
     id = Column(Integer, primary_key=True)
     uid = Column(Integer, nullable=False)
     name = Column(String(80), nullable=False)
-    city = Column(String(80), nullable=False)
+    city = Column(String(80))
 
 
     # 宣传语
@@ -25,7 +25,7 @@ class Info(Base):
     latitude = Column(String(40))
 
     # 机构类型，使用#号分隔，内容为Tag表的记录id
-    type = Column(String(80), nullable=False)
+    type = Column(String(80))
 
     # 机构审核进度
     application_status = Column(SmallInteger, default=0)
