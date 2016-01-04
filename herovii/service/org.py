@@ -36,11 +36,11 @@ __author__ = 'bliss'
 def create_org_info(org):
     with db.auto_commit():
         db.session.add(org)
-    return True
+    return org
 
 
 def get_org_teachers_by_group(oid):
-    # collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
+    # collection = db.session.query(o.uid, TeacherGroupRelation.teacher_group_id,
     #                               TeacherGroup.title).\
     #     outerjoin(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
     #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
