@@ -204,7 +204,7 @@ def delete_im_group(group_id=0):
 @api.route('/user/<int:uid>/group/<int:group_id>', methods=['DELETE'])
 @auth.login_required
 # 管理员解散群组
-def delete_im_group(uid=0, group_id=0):
+def dismiss_im_group(uid=0, group_id=0):
     if uid == 0 or group_id == 0:
         raise ParamException()
     result = dismiss_im_group_service(uid, group_id)
