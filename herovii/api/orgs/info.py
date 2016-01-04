@@ -25,8 +25,8 @@ def create_org():
         raise IllegalOperation(error="token identity is invalid to create org")
     post_data['uid'] = uid
     org = Info(**post_data)
-    create_org_info(org)
-    return jsonify(org), 201
+    rlt = create_org_info(org)
+    return jsonify(rlt), 201
 
 
 @api.route('', methods=['PUT'])
