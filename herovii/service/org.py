@@ -35,8 +35,8 @@ __author__ = 'bliss'
 
 def create_org_info(org):
     with db.auto_commit():
-        rlt = db.session.add(org)
-    return rlt
+        db.session.add(org)
+    return True
 
 
 def get_org_teachers_by_group(oid):
