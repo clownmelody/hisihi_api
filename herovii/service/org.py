@@ -40,7 +40,7 @@ def create_org_info(org):
 
 
 def get_org_teachers_by_group(oid):
-    # collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
+    # collection = db.session.query(o.uid, TeacherGroupRelation.teacher_group_id,
     #                               TeacherGroup.title).\
     #     outerjoin(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
     #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
@@ -216,7 +216,7 @@ def get_course_by_id(cid):
 
 
 def get_video_by_course_id(cid):
-    videos = Video.query.filter_by(course_id=cid).all()
+    videos = Video.query.filter_by(course_id=cid, status=1).all()
     return videos
 
 

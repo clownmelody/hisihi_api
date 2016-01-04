@@ -19,8 +19,13 @@ api = ApiBlueprint('org')
 def create_org():
     form = OrgForm.create_api_form()
     post_data = form.body_data
+
+    uid = g.user[0]
+    if not uid:
+        raise IllegalOperation(error="token identity is invalid to create org")
+    post_data['uid'] = uid
     org = Info(**post_data)
-    create_org_info(org)
+    org = create_org_info(org)
     return jsonify(org), 201
 
 
