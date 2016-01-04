@@ -130,7 +130,7 @@ class StatsSignInCountForm(PagingForm):
 
 class OrgForm(Form):
     name = StringField(validators=[DataRequired()])
-    uid = IntegerField(validators=[DataRequired()])
+    # uid = IntegerField(validators=[DataRequired()])
     # city = StringField(validators=[DataRequired()])
     #
     # type = StringField(validators=[DataRequired()])
