@@ -3,8 +3,10 @@ import hmac, hashlib
 import json
 from random import Random
 import time
+from flask import current_app
 from herovii import db
-from herovii.libs.error_code import ImGroupNotFound, ServerError, NotFound, PushToClassFailture, IllegalOperation
+from herovii.libs.error_code import ImGroupNotFound, ServerError, NotFound, PushToClassFailture, IllegalOperation, \
+    CreateImGroupFailture
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.im.im_group import ImGroup
 from herovii.models.im.im_group_member import ImGroupMember
@@ -16,8 +18,8 @@ from herovii.models.user.avatar import Avatar
 from herovii.models.user.user_csu import UserCSU
 from io import BytesIO
 import pycurl
-from flask import current_app
 from herovii.libs.error_code import ParamException
+from herovii.secure import LEAN_CLOUD_X_LC_Id, LEAN_CLOUD_X_LC_Key
 
 __author__ = 'yangchujie'
 
@@ -44,6 +46,17 @@ def get_nonce(nonce_length=8):
 
 
 def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar, admin_uid):
+    client_id_list = member_client_ids.split(':')
+    # 未传入会话id
+    if conversion_id == 0:
+        body = {
+            "name": group_name,
+            "m": client_id_list
+        }
+        code, res = create_conversion_to_lean_cloud(json.dumps(body))
+        if code != 201:
+            raise CreateImGroupFailture()
+        conversion_id = res.objectId
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
                     organization_id=organization_id, conversion_id=conversion_id,
                     group_avatar=group_avatar)
@@ -53,13 +66,12 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
             db.session.commit()
         except:
             return 0, False
-        client_id_list = member_client_ids.split(':')
         for client_id in client_id_list:
             group_member = ImGroupMember(group_id=group.id, member_id=client_id, create_time=int(time.time()))
             with db.auto_commit():
                 db.session.add(group_member)
     update_im_group_admin_uid(group.id, admin_uid)  # 修改群管理员
-    return group.id, True
+    return group.id, conversion_id, True
 
 
 def update_im_group_service(group_id, group_name):
@@ -244,8 +256,8 @@ def create_conversion_to_lean_cloud(body_data=None):
     if body_data is None:
         raise ParamException()
     head = [
-        "X-LC-Id: " + current_app.config['LEAN_CLOUD_X_LC_Id'],
-        "X-LC-Key: " + current_app.config['LEAN_CLOUD_X_LC_Key'],
+        "X-LC-Id: " + LEAN_CLOUD_X_LC_Id,
+        "X-LC-Key: " + LEAN_CLOUD_X_LC_Key,
         "Content-Type: application/json"
     ]
     try:
@@ -278,8 +290,8 @@ def curl_service_to_lean_cloud(action=None, conversion_id=None, body_data=None):
     if action is None or conversion_id is None or body_data is None:
         raise ParamException()
     head = [
-        "X-LC-Id: " + current_app.config['LEAN_CLOUD_X_LC_Id'],
-        "X-LC-Key: " + current_app.config['LEAN_CLOUD_X_LC_Key'],
+        "X-LC-Id: " + LEAN_CLOUD_X_LC_Id,
+        "X-LC-Key: " + LEAN_CLOUD_X_LC_Key,
         "Content-Type: application/json"
     ]
     body_data = {
@@ -383,6 +395,13 @@ def get_group_info_by_group_id(group_id=None):
         return None
     group = db.session.query(ImGroup).filter(
         ImGroup.id == group_id, ImGroup.status == 1).first()
+    group = {
+        "id": group.id,
+        "group_name": group.group_name,
+        "organization_id": group.organization_id,
+        "conversion_id":  group.conversion_id,
+        "group_avatar": group.group_avatar
+    }
     return group
 
 
@@ -409,14 +428,42 @@ def get_group_member_reg_ids_by_group_id(group_id=None):
     return reg_id_list
 
 
+# 根据 group_id 获取所有群成员的 client_ids 列表
+def get_group_member_client_ids_by_group_id(group_id=None):
+    client_id_list = []
+    if group_id is None:
+        return None
+    group_member_list = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                               ImGroupMember.status == 1).all()
+    if group_member_list:
+        for group_member in group_member_list:
+            member_client_id = group_member.member_id
+            client_id_list.append(member_client_id)
+    else:
+        return None
+    return client_id_list
+
+
 # 修改群组的管理员
 def update_im_group_admin_uid(group_id=None, admin_uid=None):
     exist_in_group = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
                                                             ImGroupMember.member_id == admin_uid,
-                                                            ImGroupMember.status == 1)
+                                                            ImGroupMember.status == 1).count()
     if exist_in_group:
         db.session.query(ImGroupMember).filter(ImGroupMember.id == exist_in_group.id).update({'is_admin': 1})
     else:
         group_member = ImGroupMember(group_id=group_id, member_id=admin_uid, create_time=int(time.time()), is_admin=1)
         with db.auto_commit():
             db.session.add(group_member)
+
+
+# 获取用户的所有群组
+def get_im_user_groups_service(client_id=None):
+    group_member_list = db.session.query(ImGroupMember).filter(ImGroupMember.member_id == client_id,
+                                                               ImGroupMember.status == 1).all()
+    group_info_list = []
+    for group_member in group_member_list:
+        group_id = group_member.group_id
+        group_info = get_group_info_by_group_id(group_id)
+        group_info_list.append(group_info)
+    return group_info_list
