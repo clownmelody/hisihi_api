@@ -130,9 +130,11 @@ leancloud client-id 约定
 * group_name: 群组名称
 * member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
 * organization_id: 机构 id
-* conversion_id:   会话 id
+* conversion_id:   会话 id (会话id为空时，后台会创建新的会话并分配到群组)
 * group_avatar:    群组头像（上传文件后获取的完整路径）
 * admin_uid:       管理员uid
+
+备注：member_client_ids 和 admin_uid 中用户id采用 client_id, 即带字母前缀
 
 **Response** `201` ::
 
@@ -189,7 +191,7 @@ leancloud client-id 约定
 
 **Parameters**:
 
-* N/A
+备注: uid 为 client_id, 即带字母前缀
 
 **Response** `204`::
 -- end
@@ -206,11 +208,13 @@ leancloud client-id 约定
 * group_id: 群组id
 * member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
 
+备注: member_client_ids 中为 client_id, 即带字母前缀
+
 **Response** `201` ::
 
     {
         "group_id":12,
-        "member_client_ids":"667:775"
+        "member_client_ids":"c667:c775"
     }
 -- end
 
@@ -225,6 +229,8 @@ leancloud client-id 约定
 
 * group_id: 群组id
 * member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
+
+备注: member_client_ids 中为 client_id, 即带字母前缀
 
 **Response** `204` ::
 -- end
@@ -314,6 +320,40 @@ leancloud client-id 约定
     {
         "class_id": 2,
         "push_history_record_id": 123
+    }
+
+-- end
+
+
+获取用户的群组
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /im/user/<string:client_id>/groups
+
+**Parameters**:
+
+* client_id: 用户的 client_id, 带前缀
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":11,
+                "group_avatar":"0",
+                "conversion_id":"",
+                "group_name":"123",
+                "organization_id":1
+            },
+            {
+                "id":12,
+                "group_avatar":"0",
+                "conversion_id":"5673c5ef60b27f7a2627062f",
+                "group_name":"g123",
+                "organization_id":2
+            }
+        ]
     }
 
 -- end

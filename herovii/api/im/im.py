@@ -7,7 +7,7 @@ from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
-    dismiss_im_group_service
+    dismiss_im_group_service, create_conversion_to_lean_cloud, get_im_user_groups_service
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -151,8 +151,8 @@ def create_im_group():
     if organization_id == 0 or conversion_id == 0 \
             or group_avatar is None or admin_uid is None:
         raise ParamException()
-    group_id, result = create_im_group_service(group_name, member_client_ids, organization_id,
-                                               conversion_id, group_avatar, admin_uid)
+    group_id, conversion_id, result = create_im_group_service(group_name, member_client_ids, organization_id,
+                                                              conversion_id, group_avatar, admin_uid)
     if result:
         result = {
             'group_id': group_id,
@@ -292,3 +292,17 @@ def push_message_to_all_classmates(class_id=0):
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 201, headers
+
+
+@api.route('/user/<string:client_id>/groups', methods=['GET'])
+# @auth.login_required
+# 获取用户的所有群组
+def get_im_user_groups(client_id=0):
+    if client_id == 0:
+        raise ParamException()
+    data = get_im_user_groups_service(client_id)
+    result = {
+        "data": data
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers

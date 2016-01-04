@@ -47,5 +47,5 @@ Api V1 说明
    feedback
    tag
    im
-   imPushService
+   leanCloudImSystemMessage
 
