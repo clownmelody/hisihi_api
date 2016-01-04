@@ -216,7 +216,7 @@ def get_course_by_id(cid):
 
 
 def get_video_by_course_id(cid):
-    videos = Video.query.filter_by(course_id=cid).all()
+    videos = Video.query.filter_by(course_id=cid, status=1).all()
     return videos
 
 
