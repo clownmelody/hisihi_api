@@ -5,7 +5,7 @@ import logging
 from logging.handlers import SMTPHandler
 from flask_cors import CORS
 from herovii import create_app
-from herovii.libs.error_code import ParamException, NotFound, ServerError
+from herovii.libs.error_code import NotFound, ServerError
 from herovii.models import db
 from flask.ext.sqlalchemy import get_debug_queries
 from herovii.secure import DATABASE_QUERY_TIMEOUT
