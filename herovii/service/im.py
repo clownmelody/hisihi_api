@@ -120,9 +120,10 @@ def add_im_group_members_service(group_id, member_client_ids):
                                                                     ImGroupMember.member_id == client_id) \
                 .first()
             if not exist_in_group:
-                group_member = ImGroupMember(group_id=group.id, member_id=client_id, create_time=int(time.time()))
-                with db.auto_commit():
-                    db.session.add(group_member)
+                if is_group_available_to_add_member(group.id):  # 群成员数量未达到上限
+                    group_member = ImGroupMember(group_id=group.id, member_id=client_id, create_time=int(time.time()))
+                    with db.auto_commit():
+                        db.session.add(group_member)
     except:
         return False
     # 在 leancloud 中添加群成员
@@ -136,6 +137,21 @@ def add_im_group_members_service(group_id, member_client_ids):
         db.session.rollback()
         return False
     return True
+
+
+# 检查群组成员是否已达上限
+def is_group_available_to_add_member(group_id=None):
+    group = db.session.query(ImGroup).filter(ImGroup.id == group_id, ImGroup.status == 1).first()
+    if group:
+        member_count = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                              ImGroupMember.status == 1) \
+            .count()
+        if group.level > member_count:
+            return True
+        else:
+            return False
+    else:
+        raise ImGroupNotFound()
 
 
 def delete_im_group_members_service(group_id, member_client_ids):
@@ -182,7 +198,7 @@ def get_organization_im_groups_service(organization_id, page, per_page):
         ImGroup.organization_id == organization_id,
         ImGroup.status == 1) \
         .count()
-    group_list = db.session.query(ImGroup.id, ImGroup.group_name).filter(
+    group_list = db.session.query(ImGroup).filter(
         ImGroup.organization_id == organization_id,
         ImGroup.status == 1) \
         .slice(start, stop) \
@@ -191,7 +207,11 @@ def get_organization_im_groups_service(organization_id, page, per_page):
     for group in group_list:
         g = {
             "id": group.id,
-            "group_name": group.group_name
+            "group_name": group.group_name,
+            "group_avatar": group.group_avatar,
+            "description": group.description,
+            "create_time": group.create_time,
+            "level": group.level
         }
         result_list.append(g)
     return group_total_count, result_list

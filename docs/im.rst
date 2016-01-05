@@ -253,17 +253,25 @@ leancloud client-id 约定
 **Response** `200` ::
 
     {
-        "total_count":2,
         "data":[
             {
                 "id":12,
-                "group_name":"g123"
+                "group_avatar":"0",
+                "group_name":"g123",
+                "description":"",
+                "level":1000,
+                "create_time":1450423535
             },
             {
                 "id":13,
-                "group_name":"676"
+                "group_avatar":"0",
+                "group_name":"676",
+                "description":"",
+                "level":1000,
+                "create_time":1450423856
             }
-        ]
+        ],
+        "total_count":2
     }
 
 -- end
