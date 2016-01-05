@@ -133,6 +133,7 @@ leancloud client-id 约定
 * conversion_id:   会话 id (会话id为空时，后台会创建新的会话并分配到群组)
 * group_avatar:    群组头像（上传文件后获取的完整路径）
 * admin_uid:       管理员uid
+* description:     群描述信息
 
 备注：member_client_ids 和 admin_uid 中用户id采用 client_id, 即带字母前缀
 
@@ -145,7 +146,8 @@ leancloud client-id 约定
         "organization_id": 2,
         "conversion_id": "dasjfr4529sadfh",
         "group_avatar": "http://pic.hisihi.com/232rwfrqw.jpg",
-        "admin_uid": "o12"
+        "admin_uid": "o12",
+        "description": "群描述信息"
     }
 
 -- end
@@ -251,17 +253,25 @@ leancloud client-id 约定
 **Response** `200` ::
 
     {
-        "total_count":2,
         "data":[
             {
                 "id":12,
-                "group_name":"g123"
+                "group_avatar":"0",
+                "group_name":"g123",
+                "description":"",
+                "level":1000,
+                "create_time":1450423535
             },
             {
                 "id":13,
-                "group_name":"676"
+                "group_avatar":"0",
+                "group_name":"676",
+                "description":"",
+                "level":1000,
+                "create_time":1450423856
             }
-        ]
+        ],
+        "total_count":2
     }
 
 -- end
@@ -344,16 +354,65 @@ leancloud client-id 约定
                 "group_avatar":"0",
                 "conversion_id":"",
                 "group_name":"123",
-                "organization_id":1
+                "organization_id":1,
+                "description": "群组描述",
+                "create_time": "创建时间戳",
+                "level": 1000
             },
             {
                 "id":12,
                 "group_avatar":"0",
                 "conversion_id":"5673c5ef60b27f7a2627062f",
                 "group_name":"g123",
-                "organization_id":2
+                "organization_id":2,
+                "description": "群组描述",
+                "create_time": "创建时间戳"
+                "level": 1000
             }
         ]
+    }
+
+-- end
+
+
+获取群组详情
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /im/group/<int:group_id>
+
+**Parameters**:
+
+* group_id: 群组 id
+
+**Response** `200` ::
+
+    {
+        "data":{
+            "group_info":{
+                "group_name":"g123",
+                "description":"",
+                "create_time":1450423535,
+                "conversion_id":"5673c5ef60b27f7a2627062f",
+                "id":12,
+                "group_avatar":"0",
+                "organization_id":2
+            },
+            "group_member_info":[
+                {
+                    "client_id":"c72",
+                    "nickname":"Leslie",
+                    "is_admin":1,
+                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg"
+                },
+                {
+                    "client_id":"c69",
+                    "nickname":"Rfly",
+                    "is_admin":0,
+                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-03-26/551369fe8358c-05505543.jpg"
+                }
+            ]
+        }
     }
 
 -- end
