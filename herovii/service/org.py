@@ -460,7 +460,7 @@ def search_lecture(args):
     lid = args.get('lid')
     if lid:
         lecture = db.session.query(
-            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')). \
+            UserCSU, Avatar.path). \
             filter(UserCSU.uid == lid, UserCSU.status != -1). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
         return _filter_lecture_dto(lecture)
@@ -468,7 +468,7 @@ def search_lecture(args):
     mobile = args.get('mobile')
     if mobile:
         lecture = db.session.query(
-            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')). \
+            UserCSU, Avatar.path). \
             join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid). \
             filter(UserCSUSecure.mobile == mobile). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
@@ -484,7 +484,7 @@ def _filter_lecture_dto(lecture):
     avatar = lecture[1]
     data = {
         'lecture': lecture_temp,
-        'avatar': avatar
+        'avatar': get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
     }
     return json.dumps(data)
 

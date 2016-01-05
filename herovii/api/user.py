@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.service.user_csu import db_change_indentity
 from flask import jsonify, request
@@ -30,13 +31,16 @@ def change_identity():
 
 
 @api.route('/csu', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def get_csu():
     s = request.args
     form = PhoneNumberForm.create_api_form(**request.args.to_dict())
     mobile = form.mobile.data
-    user = UserCSUSecure.query.filter_by(mobile=mobile).first_or_404()
-    return jsonify(user), 200
+    if mobile:
+        user = UserCSU.query.filter_by(mobile=mobile).first_or_404()
+        return jsonify(user), 200
+    else:
+        raise NotFound(error_code=2000, error='user not found')
 
 
 @api.route('/csu', methods=['PUT'])
