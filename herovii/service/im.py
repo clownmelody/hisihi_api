@@ -8,6 +8,7 @@ from herovii import db
 from herovii.libs.error_code import ImGroupNotFound, ServerError, NotFound, PushToClassFailture, IllegalOperation, \
     CreateImGroupFailture
 from herovii.libs.helper import get_full_oss_url
+from herovii.models import OrgAdmin
 from herovii.models.im.im_group import ImGroup
 from herovii.models.im.im_group_member import ImGroupMember
 from herovii.models.org.class_push_history import ClassPushHistory
@@ -45,7 +46,8 @@ def get_nonce(nonce_length=8):
     return nonce
 
 
-def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar, admin_uid):
+def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar, admin_uid,
+                            description):
     client_id_list = member_client_ids.split(':')
     # 未传入会话id
     if conversion_id == 0:
@@ -59,7 +61,7 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
         conversion_id = res.objectId
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
                     organization_id=organization_id, conversion_id=conversion_id,
-                    group_avatar=group_avatar)
+                    group_avatar=group_avatar, description=description)
     with db.auto_commit():
         try:
             db.session.add(group)
@@ -389,6 +391,41 @@ def get_reg_id_by_client_id(client_id=None):
         return None
 
 
+# 根据 client_id 获取用户基本信息
+def get_user_profile_by_client_id(client_id=None):
+    if client_id is None:
+        return None
+    if client_id.startswith('c'):  # 普通用户
+        length = len(client_id)
+        uid = client_id[1:length]
+        user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+    elif client_id.startswith('o'):  # 机构管理员
+        length = len(client_id)
+        uid = client_id[1:length]
+        user = db.session.query(OrgAdmin).filter(OrgAdmin.id == uid).first()
+    else:
+        uid = client_id
+        user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+    if user:
+        avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        if avatar:
+            avatar_full_path = get_full_oss_url(avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        else:
+            avatar_full_path = None
+        if user.nickname:
+            nickname = user.nickname
+        else:
+            nickname = user.username
+        user_detail = {
+            'client_id': client_id,
+            'nickname': nickname,
+            'avatar': avatar_full_path
+        }
+        return user_detail
+    else:
+        return None
+
+
 # 根据 group_id 获取群信息
 def get_group_info_by_group_id(group_id=None):
     if group_id is None:
@@ -399,8 +436,11 @@ def get_group_info_by_group_id(group_id=None):
         "id": group.id,
         "group_name": group.group_name,
         "organization_id": group.organization_id,
-        "conversion_id":  group.conversion_id,
-        "group_avatar": group.group_avatar
+        "conversion_id": group.conversion_id,
+        "group_avatar": group.group_avatar,
+        "description": group.description,
+        "create_time": group.create_time,
+        "level": group.level
     }
     return group
 
@@ -467,3 +507,25 @@ def get_im_user_groups_service(client_id=None):
         group_info = get_group_info_by_group_id(group_id)
         group_info_list.append(group_info)
     return group_info_list
+
+
+# 获取群组详情(包括群组信息和群成员的信息)
+def get_im_group_detail_service(group_id):
+    group = get_group_info_by_group_id(group_id)
+    if group:
+        # 获取群成员和群主
+        group_member_list = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                                   ImGroupMember.status == 1).all()
+        member_info_list = []
+        for group_member in group_member_list:
+            user_detail = get_user_profile_by_client_id(group_member.member_id)
+            if user_detail:
+                user_detail['is_admin'] = group_member.is_admin
+                member_info_list.append(user_detail)
+        group_detail = {
+            "group_info": group,
+            "group_member_info": member_info_list
+        }
+        return group_detail
+    else:
+        return None
