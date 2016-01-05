@@ -68,7 +68,7 @@ class EmailForm(Form):
 
 class PhoneNumberForm(Form):
     mobile = StringField(validators=[
-        DataRequired(),
+        # DataRequired(),
         Length(11),
         Regexp(r'^\d{11}$')
     ])

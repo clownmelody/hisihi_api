@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'bliss'
 
-from flask import jsonify, request, g, make_response
+from flask import jsonify, request, g
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature
 from flask import current_app

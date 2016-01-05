@@ -1,13 +1,12 @@
-from flask import current_app
 from herovii.models.base import db
+from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_org import OrgAdmin
-from herovii.models.user.user import User
 
 __author__ = 'bliss'
 
 
 def get_user_by_uid(uid):
-    user = User.query.filter_by(id=uid).first()
+    user = UserCSU.query.filter_by(uid=uid).first()
     if user:
         return user
     else:

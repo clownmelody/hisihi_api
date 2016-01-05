@@ -1,16 +1,12 @@
 __author__ = 'bliss'
 
-import time
-import uuid
 import datetime
-from flask import request, session, current_app
+from flask import current_app
 from werkzeug.utils import cached_property
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import event
 from sqlalchemy import Column
 from sqlalchemy import String, Unicode, DateTime
 from sqlalchemy import SmallInteger, Integer
-from sqlalchemy.orm.attributes import get_history
 from herovii.models.base import db, Base
 
 
