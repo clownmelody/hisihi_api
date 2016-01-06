@@ -76,9 +76,9 @@ def get_teachers_in_org(oid):
 
 
 @api.route('/<int:oid>/lectures', methods=['GET'])
-#@auth.login_required
+@auth.login_required
 def get_all_teachers_in_org(oid=0):
-    if oid==0:
+    if oid == 0:
         raise ParamException()
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)

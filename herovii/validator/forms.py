@@ -68,7 +68,7 @@ class EmailForm(Form):
 
 class PhoneNumberForm(Form):
     mobile = StringField(validators=[
-        DataRequired(),
+        # DataRequired(),
         Length(11),
         Regexp(r'^\d{11}$')
     ])
@@ -130,10 +130,10 @@ class StatsSignInCountForm(PagingForm):
 
 class OrgForm(Form):
     name = StringField(validators=[DataRequired()])
-    uid = IntegerField(validators=[DataRequired()])
-    city = StringField(validators=[DataRequired()])
-
-    type = StringField(validators=[DataRequired()])
+    # uid = IntegerField(validators=[DataRequired()])
+    # city = StringField(validators=[DataRequired()])
+    #
+    # type = StringField(validators=[DataRequired()])
 
     phone_num = StringField(validators=[DataRequired()])
 

@@ -56,6 +56,35 @@
 ** end **
 
 
+批量获取用户信息
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /student/<uids>/profiles
+
+**Parameters**:
+
+* uids: 学生id号拼接字符串，示例：69:71
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-03-26/551369fe8358c-05505543.jpg",
+                "uid":69,
+                "nickname":"Rfly"
+            },
+            {
+                "avatar":null,
+                "uid":71,
+                "nickname":"poi0987"
+            }
+        ]
+    }
+** end **
+
+
 获取学生历史签到记录
 ~~~~~~~~~~~~~~~
 **URL**::

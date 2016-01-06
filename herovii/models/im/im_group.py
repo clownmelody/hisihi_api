@@ -15,15 +15,18 @@ class ImGroup(Base):
     organization_id = Column(Integer, nullable=True)
     conversion_id = Column(Integer, nullable=True)
     group_avatar = Column(String(120))
+    description = Column(String(300))
     create_time = Column(Integer)
+    level = Column(Integer)
     status = Column(SmallInteger, default=1)
 
-    def __init__(self, group_name, create_time, organization_id, conversion_id, group_avatar):
+    def __init__(self, group_name, create_time, organization_id, conversion_id, group_avatar, description):
         self.group_name = group_name
         self.create_time = create_time
         self.organization_id = organization_id
         self.conversion_id = conversion_id
         self.group_avatar = group_avatar
+        self.description = description
 
 
     def keys(self):

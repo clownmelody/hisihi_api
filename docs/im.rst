@@ -3,6 +3,14 @@
 IM
 ==========
 
+leancloud client-id 约定
+~~~~~~~~~~~~~~~~~~~~
+约定任意用户的client-id 命名规则为:
+
+用户（包括老师、学生等）使用 'c' 作为前缀并附加其uid号，如，c565
+
+机构（特指机构管理员）实用 'o' 作为前缀并附件其id号，如，o3
+
 获取登陆操作签名
 ~~~~~~~~~~~~~~~
 **URL**::
@@ -122,8 +130,12 @@ IM
 * group_name: 群组名称
 * member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
 * organization_id: 机构 id
-* conversion_id:   会话 id
+* conversion_id:   会话 id (会话id为空时，后台会创建新的会话并分配到群组)
 * group_avatar:    群组头像（上传文件后获取的完整路径）
+* admin_uid:       管理员uid
+* description:     群描述信息
+
+备注：member_client_ids 和 admin_uid 中用户id采用 client_id, 即带字母前缀
 
 **Response** `201` ::
 
@@ -133,7 +145,9 @@ IM
         "member_client_ids":"o12:u232:p23",
         "organization_id": 2,
         "conversion_id": "dasjfr4529sadfh",
-        "group_avatar": "http://pic.hisihi.com/232rwfrqw.jpg"
+        "group_avatar": "http://pic.hisihi.com/232rwfrqw.jpg",
+        "admin_uid": "o12",
+        "description": "群描述信息"
     }
 
 -- end
@@ -171,6 +185,20 @@ IM
 -- end
 
 
+群主解散群
+~~~~~~~~~~~~~~~
+**URL**::
+
+    DELETE     /im/user/<int:uid>/group/<int:group_id>
+
+**Parameters**:
+
+备注: uid 为 client_id, 即带字母前缀
+
+**Response** `204`::
+-- end
+
+
 添加群成员
 ~~~~~~~~~~~~~~~
 **URL**::
@@ -182,11 +210,13 @@ IM
 * group_id: 群组id
 * member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
 
+备注: member_client_ids 中为 client_id, 即带字母前缀
+
 **Response** `201` ::
 
     {
         "group_id":12,
-        "member_client_ids":"667:775"
+        "member_client_ids":"c667:c775"
     }
 -- end
 
@@ -201,6 +231,8 @@ IM
 
 * group_id: 群组id
 * member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
+
+备注: member_client_ids 中为 client_id, 即带字母前缀
 
 **Response** `204` ::
 -- end
@@ -221,17 +253,25 @@ IM
 **Response** `200` ::
 
     {
-        "total_count":2,
         "data":[
             {
                 "id":12,
-                "group_name":"g123"
+                "group_avatar":"0",
+                "group_name":"g123",
+                "description":"",
+                "level":1000,
+                "create_time":1450423535
             },
             {
                 "id":13,
-                "group_name":"676"
+                "group_avatar":"0",
+                "group_name":"676",
+                "description":"",
+                "level":1000,
+                "create_time":1450423856
             }
-        ]
+        ],
+        "total_count":2
     }
 
 -- end
@@ -290,6 +330,84 @@ IM
     {
         "class_id": 2,
         "push_history_record_id": 123
+    }
+
+-- end
+
+
+获取用户的群组
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /im/user/<string:client_id>/groups
+
+**Parameters**:
+
+* client_id: 用户的 client_id, 带前缀
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":11,
+                "group_avatar":"0",
+                "conversion_id":"",
+                "group_name":"123",
+                "organization_id":1,
+                "description": "群组描述",
+                "create_time": "创建时间戳",
+                "level": 1000
+            },
+            {
+                "id":12,
+                "group_avatar":"0",
+                "conversion_id":"5673c5ef60b27f7a2627062f",
+                "group_name":"g123",
+                "organization_id":2,
+                "description": "群组描述",
+                "create_time": "创建时间戳"
+                "level": 1000
+            }
+        ]
+    }
+
+-- end
+
+
+获取群组详情
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /im/group/<int:group_id>
+
+**Parameters**:
+
+* group_id: 群组 id
+
+**Response** `200` ::
+
+    {
+        "data":{
+            "group_member_info":[
+                {
+                    "is_admin":0,
+                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg",
+                    "nickname":"Leslie",
+                    "client_id":"c72"
+                }
+            ],
+            "group_info":{
+                "create_time":1450423535,
+                "description":"",
+                "organization_id":2,
+                "conversion_id":"5673c5ef60b27f7a2627062f",
+                "id":12,
+                "group_avatar":"0",
+                "group_name":"g123",
+                "level":1000
+            }
+        }
     }
 
 -- end

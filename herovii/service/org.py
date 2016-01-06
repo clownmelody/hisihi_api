@@ -40,7 +40,7 @@ def create_org_info(org):
 
 
 def get_org_teachers_by_group(oid):
-    # collection = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id,
+    # collection = db.session.query(o.uid, TeacherGroupRelation.teacher_group_id,
     #                               TeacherGroup.title).\
     #     outerjoin(TeacherGroup, TeacherGroup.id == TeacherGroupRelation.teacher_group_id).filter(
     #     TeacherGroup.organization_id == oid, TeacherGroup.status != -1, TeacherGroupRelation.status != -1).\
@@ -216,7 +216,7 @@ def get_course_by_id(cid):
 
 
 def get_video_by_course_id(cid):
-    videos = Video.query.filter_by(course_id=cid).all()
+    videos = Video.query.filter_by(course_id=cid, status=1).all()
     return videos
 
 
@@ -460,7 +460,7 @@ def search_lecture(args):
     lid = args.get('lid')
     if lid:
         lecture = db.session.query(
-            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')). \
+            UserCSU, Avatar.path). \
             filter(UserCSU.uid == lid, UserCSU.status != -1). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
         return _filter_lecture_dto(lecture)
@@ -468,7 +468,7 @@ def search_lecture(args):
     mobile = args.get('mobile')
     if mobile:
         lecture = db.session.query(
-            UserCSU, get_full_oss_url(Avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')). \
+            UserCSU, Avatar.path). \
             join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid). \
             filter(UserCSUSecure.mobile == mobile). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
@@ -484,7 +484,7 @@ def _filter_lecture_dto(lecture):
     avatar = lecture[1]
     data = {
         'lecture': lecture_temp,
-        'avatar': avatar
+        'avatar': get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
     }
     return json.dumps(data)
 
@@ -494,7 +494,10 @@ def get_org_student_profile_by_uid(uid):
     if u is not None:
         stu_course = db.session.query(OrgConfig).filter(OrgConfig.id == u.course_id).first()
         stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
-        stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        else:
+            stu_avatar_full_path = None
         stu_classmate = db.session.query(Classmate).filter(Classmate.uid == uid).first()
         stu_sign_in_count = get_uid_sign_in_total_count_by_now(uid)
         if stu_classmate is None:
@@ -521,6 +524,24 @@ def get_org_student_profile_by_uid(uid):
     else:
         return None
     return data
+
+
+def get_user_profile_by_uid(uid):
+    user = db.session.query(UserCSU).filter(UserCSU.uid == uid).first()
+    if user:
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == uid).first()
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        else:
+            stu_avatar_full_path = None
+        data = {
+            'uid': user.uid,
+            'avatar': stu_avatar_full_path,
+            'nickname': user.nickname,
+        }
+        return data
+    else:
+        return None
 
 
 def get_org_student_sign_in_history_by_uid(uid, page, per_page):

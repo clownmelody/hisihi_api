@@ -1,3 +1,4 @@
+jpush == 3.1.2
 cymysql == 0.8.5
 Flask == 0.10.1
 Flask_Cors == 2.1.0
@@ -11,4 +12,4 @@ WTForms == 2.0.2
 flask-httpauth == 2.7.0
 qrcode == 5.1
 pycurl == 7.19.5.3
-pillow
+pillow == 3.0.0
