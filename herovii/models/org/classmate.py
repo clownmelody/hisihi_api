@@ -12,6 +12,7 @@ class Classmate(Base):
     id = Column(Integer, primary_key=True)
     uid = Column(Integer)
     class_id = Column(Integer)
+    status = Column(Integer, default=1)
 
     def keys(self):
         return (
