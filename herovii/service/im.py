@@ -49,16 +49,6 @@ def get_nonce(nonce_length=8):
 def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar, admin_uid,
                             description):
     client_id_list = member_client_ids.split(':')
-    # 未传入会话id
-    if conversion_id == 0:
-        body = {
-            "name": group_name,
-            "m": client_id_list
-        }
-        code, res = create_conversion_to_lean_cloud(json.dumps(body))
-        if code != 201:
-            raise CreateImGroupFailture()
-        conversion_id = res.objectId
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
                     organization_id=organization_id, conversion_id=conversion_id,
                     group_avatar=group_avatar, description=description)
@@ -73,6 +63,21 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
             with db.auto_commit():
                 db.session.add(group_member)
     update_im_group_admin_uid(group.id, admin_uid)  # 修改群管理员
+    # 未传入会话id
+    if conversion_id == 0:
+        body = {
+            "name": group_name,
+            "m": client_id_list,
+            "attr": {
+                "type": "group",
+                "group_id": group.id
+            }
+        }
+        code, res = create_conversion_to_lean_cloud(json.dumps(body))
+        if code != 201:
+            raise CreateImGroupFailture()
+        conversion_id = res.objectId
+        db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversion_id': conversion_id})
     return group.id, conversion_id, True
 
 
@@ -452,17 +457,20 @@ def get_group_info_by_group_id(group_id=None):
         return None
     group = db.session.query(ImGroup).filter(
         ImGroup.id == group_id, ImGroup.status == 1).first()
-    group = {
-        "id": group.id,
-        "group_name": group.group_name,
-        "organization_id": group.organization_id,
-        "conversion_id": group.conversion_id,
-        "group_avatar": group.group_avatar,
-        "description": group.description,
-        "create_time": group.create_time,
-        "level": group.level
-    }
-    return group
+    if group:
+        group = {
+            "id": group.id,
+            "group_name": group.group_name,
+            "organization_id": group.organization_id,
+            "conversion_id": group.conversion_id,
+            "group_avatar": group.group_avatar,
+            "description": group.description,
+            "create_time": group.create_time,
+            "level": group.level
+        }
+        return group
+    else:
+        raise ImGroupNotFound()
 
 
 # 根据 group_id 获取所有群成员的 reg_id 列表

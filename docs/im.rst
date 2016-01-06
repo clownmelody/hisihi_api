@@ -389,29 +389,24 @@ leancloud client-id 约定
 
     {
         "data":{
+            "group_member_info":[
+                {
+                    "is_admin":0,
+                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg",
+                    "nickname":"Leslie",
+                    "client_id":"c72"
+                }
+            ],
             "group_info":{
-                "group_name":"g123",
-                "description":"",
                 "create_time":1450423535,
+                "description":"",
+                "organization_id":2,
                 "conversion_id":"5673c5ef60b27f7a2627062f",
                 "id":12,
                 "group_avatar":"0",
-                "organization_id":2
-            },
-            "group_member_info":[
-                {
-                    "client_id":"c72",
-                    "nickname":"Leslie",
-                    "is_admin":1,
-                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg"
-                },
-                {
-                    "client_id":"c69",
-                    "nickname":"Rfly",
-                    "is_admin":0,
-                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-03-26/551369fe8358c-05505543.jpg"
-                }
-            ]
+                "group_name":"g123",
+                "level":1000
+            }
         }
     }
 
