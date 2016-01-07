@@ -470,7 +470,7 @@ def search_lecture(args):
         lecture = db.session.query(
             UserCSU, Avatar.path). \
             join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid). \
-            filter(UserCSUSecure.mobile == mobile). \
+            filter(UserCSUSecure.mobile == mobile, UserCSU.status != -1). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
         return _filter_lecture_dto(lecture)
 

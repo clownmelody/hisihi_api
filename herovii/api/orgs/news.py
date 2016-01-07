@@ -10,7 +10,7 @@ api = ApiBlueprint('org')
 
 
 @api.route('/news', methods=['GET'])
-# @auth.login_required
+@auth.login_required
 def list_news():
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
