@@ -1,14 +1,15 @@
+from herovii.libs.helper import secret_password, check_md5_password
+
 __author__ = 'bliss'
 
 from sqlalchemy import Column, Integer, String, Boolean
-from werkzeug.security import generate_password_hash, check_password_hash
 from herovii.models.base import Base
 
 
-class UserOrg(Base):
+class OrgAdmin(Base):
 
-    __tablename__ = 'user_org'
-    __bind_key__ = 'org'
+    __tablename__ = 'hisihi_organization_admin'
+    __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
     username = Column(String(45), unique=True)
@@ -16,7 +17,7 @@ class UserOrg(Base):
     mobile = Column(String(15), unique=True, nullable=False)
 
     _password = Column('password', String(100))
-    organization_id = Column(Integer, unique=True)
+    # organization_id = Column(Integer, unique=True)
 
     def keys(self):
         return (
@@ -30,9 +31,9 @@ class UserOrg(Base):
 
     @password.setter
     def password(self, raw):
-        self._password = generate_password_hash(raw)
+        self._password = secret_password(raw)
 
     def check_password(self, raw):
         if not self._password:
             return False
-        return check_password_hash(self._password, raw)
+        return check_md5_password(self._password, raw)

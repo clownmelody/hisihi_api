@@ -32,8 +32,20 @@ Api V1 说明
    enums
    token
    pk
+   news
+   sms
+   user
    online
    mall
-   test
-   md
+   file
+   lecture
+   statistic
+   org
+   student
+   classmate
+   blz
+   feedback
+   tag
+   im
+   leanCloudImSystemMessage
 

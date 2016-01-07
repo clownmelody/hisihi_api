@@ -1,14 +1,24 @@
-__author__ = 'Whispers'
+# -*- coding: utf-8 -*-
 
 import re
 
 from flask import Blueprint
-from herovii.api import user, token, sms, online, pk, test, mall
+
+from herovii.api import user, token, sms, online, pk, test, mall, news, file
+from herovii.api.im import im
+from herovii.api.orgs import lecture, admin, course, enroll, info, news, resource, stats, student,\
+    team, info, tag, classmate, feedback, video
+
+from herovii.api import tags
+
+__author__ = 'Whispers'
+
 
 VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
 CURRENT_VERSION = '1'
 bp_v1 = Blueprint('v1', __name__)
+# bp_org = Blueprint('org', __name__)
 # bp_consumer = Blueprint('consumer', __name__)
 # bp_auth = Blueprint('auth', __name__)
 
@@ -57,7 +67,30 @@ def reg_v1_bp(app):
     test.api.register(bp_v1)
     token.api.register(bp_v1)
     mall.api.register(bp_v1)
+    news.api.register(bp_v1)
+    file.api.register(bp_v1)
+    tags.api.register(bp_v1)
+
+    lecture.api.register(bp_v1)
+    admin.api.register(bp_v1)
+    course.api.register(bp_v1)
+    enroll.api.register(bp_v1)
+    info.api.register(bp_v1)
+    news.api.register(bp_v1)
+    resource.api.register(bp_v1)
+    stats.api.register(bp_v1)
+    student.api.register(bp_v1)
+    tag.api.register(bp_v1)
+    classmate.api.register(bp_v1)
+    im.api.register(bp_v1)
+    video.api.register(bp_v1)
+    # team.api.register(bp_v1)
+    feedback.api.register(bp_v1)
+    # info.api.register(bp_v1)
+    # stats.api.register(bp_v1)
+    # enroll.api.register(bp_v1)
     app.register_blueprint(bp_v1, url_prefix='/v1')
+    # app.register_blueprint(bp_org, url_prefix='/v1/org')
 
 # # register consumer type blue print
 # def reg_consumer_bp(app):

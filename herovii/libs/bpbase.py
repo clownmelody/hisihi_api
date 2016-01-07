@@ -1,3 +1,5 @@
+from flask.helpers import url_for
+
 __author__ = 'bliss'
 
 from flask.ext.httpauth import HTTPBasicAuth
@@ -18,8 +20,11 @@ class ApiBlueprint(object):
 
     def register(self, bp, url_prefix=None):
         if url_prefix is None:
+            # url_prefix = '/' + self.name
             url_prefix = '/' + self.name
 
         for f, rule, options in self.deferred:
             endpoint = self.name+'+'+options.pop("endpoint", f.__name__)
+            # endpoint = options.pop("endpoint", f.__name__)
+            # print(url_for(endpoint))
             bp.add_url_rule(url_prefix + rule, endpoint, f, **options)

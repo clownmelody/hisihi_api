@@ -1,16 +1,12 @@
 __author__ = 'bliss'
 
-import time
-import uuid
 import datetime
-from flask import request, session, current_app
+from flask import current_app
 from werkzeug.utils import cached_property
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import event
 from sqlalchemy import Column
 from sqlalchemy import String, Unicode, DateTime
 from sqlalchemy import SmallInteger, Integer
-from sqlalchemy.orm.attributes import get_history
 from herovii.models.base import db, Base
 
 
@@ -37,7 +33,6 @@ class User(Base):
 
     name = Column(Unicode(40))
     description = Column(Unicode(280))
-    test = Column(Integer, default=0)
 
     role = Column(SmallInteger, default=0)
     reputation = Column(Integer, default=0)
@@ -55,7 +50,7 @@ class User(Base):
         return (
             'id', 'username', 'name', 'avatar_url', 'description',
             'label', 'reputation', 'is_active',
-            'created_at', 'updated_at',
+            'created_at', 'updated_at', 'avatar'
         )
 
     @cached_property

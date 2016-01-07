@@ -1,6 +1,6 @@
-
+# -*- coding: utf-8 -*-
 from flask import json
-from flask import request,url_for
+from flask import request
 from flask import current_app
 from werkzeug.exceptions import HTTPException
 from werkzeug._compat import text_type
