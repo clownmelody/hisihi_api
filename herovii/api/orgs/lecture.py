@@ -59,9 +59,10 @@ def join_teacher_group():
 @api.route('/lecture/<int:uid>/group/<int:gid>/quite', methods=['DELETE'])
 @auth.login_required
 def quit_from_teacher_group(uid, gid):
-    count = TeacherGroupRelation.query.filter(
-        TeacherGroupRelation.uid == uid, TeacherGroupRelation.teacher_group_id == gid) \
-        .delete()
+    with db.auto_commit():
+        count = TeacherGroupRelation.query.filter(
+            TeacherGroupRelation.uid == uid, TeacherGroupRelation.teacher_group_id == gid) \
+            .delete()
     msg = str(count) + ' teacher identity has been removed'
     return success_json(msg=msg), 202
 
