@@ -825,3 +825,123 @@ def set_lecturer_extend_info(uid, oid):
     else:
         raise UpdateDBError()
 
+
+def get_org_all_class_service(oid, page, per_page):
+    class_total_count = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
+                                                              StudentClass.status == 1).count()
+    start = (page - 1) * per_page
+    stop = start + per_page
+    class_list = db.session.query(StudentClass.id, StudentClass.title, StudentClass.monday, StudentClass.tuesday,
+                                  StudentClass.wednesday, StudentClass.thursday, StudentClass.friday,
+                                  StudentClass.saturday, StudentClass.sunday)\
+        .filter(StudentClass.organization_id == oid, StudentClass.status == 1) \
+        .slice(start, stop) \
+        .all()
+    data = []
+    for org_class in class_list:
+        class_stu_total_count = db.session.query(Classmate).filter(Classmate.class_id == org_class.id,
+                                                                   Classmate.status == 1).count()
+        class_time = '周一' + parse_class_time(org_class.monday) + '、周二' + parse_class_time(org_class.tuesday)\
+                     + '、周三' + parse_class_time(org_class.wednesday) + '、周四' + parse_class_time(org_class.thursday)\
+                     + '、周五' + parse_class_time(org_class.friday) + '、周六' + parse_class_time(org_class.saturday)\
+                     + '、周日' + parse_class_time(org_class.sunday)
+        _org_class = {"id": org_class.id, "name": org_class.title, "student_count": class_stu_total_count,
+                      "class_time": class_time}
+        data.append(_org_class)
+    return data, class_total_count
+
+
+def parse_class_time(day):
+    class_time = ''
+    if day is None:
+        day = ''
+    if day.find('1') >= 0:
+        class_time += '上'
+    if day.find('2') >= 0:
+        class_time += '下'
+    if day.find('3') >= 0:
+        class_time += '晚'
+    if class_time is '':
+        class_time += '无'
+    return class_time
+
+
+def get_org_enroll_student_service(oid, name):
+    if name is None:
+        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path)\
+            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid)\
+            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid)\
+            .filter(Enroll.organization_id == oid, Enroll.status == 2)\
+            .all()
+        total_count = len(enroll_students)
+    else:
+        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path)\
+            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid)\
+            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid)\
+            .outerjoin(UserCSUSecure, Enroll.student_uid == UserCSUSecure.id)\
+            .filter(Enroll.organization_id == oid, Enroll.status == 2, or_(UserCSU.nickname.like('%' + name + '%'),
+                                                                           UserCSUSecure.mobile.like('%' + name + '%')))\
+            .all()
+        total_count = len(enroll_students)
+    data = []
+    for student in enroll_students:
+        avatar = get_full_oss_url(student.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        org_student = {"uid": student.student_uid, "nickname": student.nickname, "avatar": avatar}
+        data.append(org_student)
+    return data, total_count
+
+
+def get_org_class_info_service(cid):
+    class_info = db.session.query(StudentClass.id, StudentClass.title, StudentClass.class_start_date,
+                                  StudentClass.class_end_date, StudentClass.monday, StudentClass.tuesday,
+                                  StudentClass.wednesday, StudentClass.thursday, StudentClass.friday,
+                                  StudentClass.saturday, StudentClass.sunday)\
+            .filter(StudentClass.id == cid, StudentClass.status == 1)\
+            .first()
+    if not class_info:
+        raise NotFound()
+    data = {
+        "id": class_info.id,
+        "title": class_info.title,
+        "class_start_date": class_info.class_start_date,
+        "class_end_date": class_info.class_end_date,
+        "monday": class_info.monday,
+        "tuesday": class_info.tuesday,
+        "wednesday": class_info.wednesday,
+        "thursday": class_info.thursday,
+        "friday": class_info.friday,
+        "saturday": class_info.saturday,
+        "sunday": class_info.sunday
+    }
+    return data
+
+
+def join_org_class_service(cid, uids):
+    ids = uids.split(':')
+    info = []
+    id_in_class = db.session.query(Classmate.uid)\
+        .filter(Classmate.class_id == cid, Classmate.uid.in_(ids))\
+        .all()
+    for id_in in id_in_class:
+        if str(id_in.uid) in ids:
+            ids.remove(str(id_in.uid))
+    for uid in ids:
+        stu = {
+            "uid": int(uid),
+            "class_id": cid,
+            "status": 1,
+            "create_time": int(time.time())
+        }
+        info.append(stu)
+    with db.auto_commit():
+        result = db.session.execute(Classmate.__table__.insert(), info)
+    msg = str(result.rowcount) + ' students has been joined'
+    return msg
+
+
+def quit_org_class_service(cid, uids):
+    ids = uids.split(':')
+    with db.auto_commit():
+        count = db.session.query(Classmate).filter(Classmate.class_id == cid, Classmate.uid.in_(ids))\
+            .delete(synchronize_session=False)
+    return count
