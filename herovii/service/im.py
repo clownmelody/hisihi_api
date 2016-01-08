@@ -46,11 +46,11 @@ def get_nonce(nonce_length=8):
     return nonce
 
 
-def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar, admin_uid,
+def create_im_group_service(group_name, member_client_ids, organization_id, conversation_id, group_avatar, admin_uid,
                             description):
     client_id_list = member_client_ids.split(':')
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
-                    organization_id=organization_id, conversion_id=conversion_id,
+                    organization_id=organization_id, conversation_id=conversation_id,
                     group_avatar=group_avatar, description=description)
     with db.auto_commit():
         try:
@@ -64,7 +64,7 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
                 db.session.add(group_member)
     update_im_group_admin_uid(group.id, admin_uid)  # 修改群管理员
     # 未传入会话id
-    if conversion_id == 0:
+    if conversation_id == 0:
         body = {
             "name": group_name,
             "m": client_id_list,
@@ -73,12 +73,12 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
                 "group_id": group.id
             }
         }
-        code, res = create_conversion_to_lean_cloud(json.dumps(body))
+        code, res = create_conversation_to_lean_cloud(json.dumps(body))
         if code != 201:
             raise CreateImGroupFailture()
-        conversion_id = res.objectId
-        db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversion_id': conversion_id})
-    return group.id, conversion_id, True
+        conversation_id = res.objectId
+        db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversation_id': conversation_id})
+    return group.id, conversation_id, True
 
 
 def update_im_group_service(group_id, group_name):
@@ -132,11 +132,11 @@ def add_im_group_members_service(group_id, member_client_ids):
     except:
         return False
     # 在 leancloud 中添加群成员
-    conversion_id = group.conversion_id
-    if conversion_id is None or conversion_id == 0:
+    conversation_id = group.conversation_id
+    if conversation_id is None or conversation_id == 0:
         db.session.rollback()
         return False
-    code, resp = curl_service_to_lean_cloud("AddUnique", conversion_id, member_list)
+    code, resp = curl_service_to_lean_cloud("AddUnique", conversation_id, member_list)
     # leancloud 操作异常
     if code // 100 != 2:
         db.session.rollback()
@@ -184,11 +184,11 @@ def delete_im_group_members_service(group_id, member_client_ids):
     except:
         return False
     # 在 leancloud 中添加群成员
-    conversion_id = group.conversion_id
-    if conversion_id is None or conversion_id == 0:
+    conversation_id = group.conversation_id
+    if conversation_id is None or conversation_id == 0:
         db.session.rollback()
         return False
-    code, resp = curl_service_to_lean_cloud("Remove", conversion_id, member_list)
+    code, resp = curl_service_to_lean_cloud("Remove", conversation_id, member_list)
     # leancloud 操作异常
     if code // 100 != 2:
         db.session.rollback()
@@ -271,7 +271,7 @@ def get_organization_im_contacts_service(organization_id):
 
 
 # 创建会话
-def create_conversion_to_lean_cloud(body_data=None):
+def create_conversation_to_lean_cloud(body_data=None):
     """
     curl -X POST \
       -H "X-LC-Id: tjt1cu4FpyT77H0FzxkQpXlH-gzGzoHsz" \
@@ -305,7 +305,7 @@ def create_conversion_to_lean_cloud(body_data=None):
 
 
 # 从会话中添加或删除成员
-def curl_service_to_lean_cloud(action=None, conversion_id=None, body_data=None):
+def curl_service_to_lean_cloud(action=None, conversation_id=None, body_data=None):
     """
     curl -X PUT \
       -H "X-LC-Id: tjt1cu4FpyT77H0FzxkQpXlH-gzGzoHsz" \
@@ -314,7 +314,7 @@ def curl_service_to_lean_cloud(action=None, conversion_id=None, body_data=None):
       -d '{"m": {"__op":"AddUnique","objects":["LarryPage"]}}' \
       https://api.leancloud.cn/1.1/classes/_Conversation/5552c0c6e4b0846760927d5a
     """
-    if action is None or conversion_id is None or body_data is None:
+    if action is None or conversation_id is None or body_data is None:
         raise ParamException()
     head = [
         "X-LC-Id: " + LEAN_CLOUD_X_LC_Id,
@@ -331,7 +331,7 @@ def curl_service_to_lean_cloud(action=None, conversion_id=None, body_data=None):
     try:
         buffer = BytesIO()
         c = pycurl.Curl()
-        c.setopt(c.URL, 'https://api.leancloud.cn/1.1/classes/_Conversation/' + conversion_id)
+        c.setopt(c.URL, 'https://api.leancloud.cn/1.1/classes/_Conversation/' + conversation_id)
         c.setopt(pycurl.CUSTOMREQUEST, 'PUT')
         c.setopt(c.HTTPHEADER, head)
         c.setopt(c.POSTFIELDS, body_data)
@@ -462,7 +462,7 @@ def get_group_info_by_group_id(group_id=None):
             "id": group.id,
             "group_name": group.group_name,
             "organization_id": group.organization_id,
-            "conversion_id": group.conversion_id,
+            "conversation_id": group.conversation_id,
             "group_avatar": group.group_avatar,
             "description": group.description,
             "create_time": group.create_time,

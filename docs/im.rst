@@ -39,7 +39,7 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /signature/conversion/<string:app_id>/<string:client_id>/<string:sorted_member_ids>
+    GET     /signature/conversation/<string:app_id>/<string:client_id>/<string:sorted_member_ids>
 
 **Parameters**:
 
@@ -65,13 +65,13 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /signature/invite/<string:app_id>/<string:client_id>/<string:conversion_id>/<string:sorted_member_ids>
+    GET     /signature/invite/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>
 
 **Parameters**:
 
 * app_id: 应用的 id
 * client_id: 登录时使用的 clientId
-* conversion_id: 此次行为关联的对话 id
+* conversation_id: 此次行为关联的对话 id
 * sorted_member_ids: sorted_member_ids 是以半角冒号（:）分隔、升序排序 的 user id，即邀请参与该对话的成员列表；对加入群的情况，这里 sorted_member_ids 是空字符串。
 
 **Response** `200` ::
@@ -79,7 +79,7 @@ leancloud client-id 约定
     {
       "action":"invite",
       "signature":"c2610b002a8a9e20692f18e62b671dd4df47d9f5",
-      "conversion_id":"3",
+      "conversation_id":"3",
       "app_id":"1",
       "nonce":"QDFIkEMB",
       "sorted_member_ids":"4:5:6",
@@ -94,13 +94,13 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /signature/kick/<string:app_id>/<string:client_id>/<string:conversion_id>/<string:sorted_member_ids>
+    GET     /signature/kick/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>
 
 **Parameters**:
 
 * app_id: 应用的 id
 * client_id: 登录时使用的 clientId
-* conversion_id: 此次行为关联的对话 id
+* conversation_id: 此次行为关联的对话 id
 * sorted_member_ids: sorted_member_ids 是以半角冒号（:）分隔、升序排序 的 user id，即邀请参与该对话的成员列表
 
 **Response** `200` ::
@@ -108,7 +108,7 @@ leancloud client-id 约定
     {
       "action":"kick",
       "signature":"b765a66edb0d574f6c5bdf390eb79ee83cefece1",
-      "conversion_id":"3",
+      "conversation_id":"3",
       "app_id":"1",
       "nonce":"co0eRCXR",
       "sorted_member_ids":"4:5:6",
@@ -130,7 +130,7 @@ leancloud client-id 约定
 * group_name: 群组名称
 * member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
 * organization_id: 机构 id
-* conversion_id:   会话 id (会话id为空时，后台会创建新的会话并分配到群组)
+* conversation_id:   会话 id (会话id为空时，后台会创建新的会话并分配到群组)
 * group_avatar:    群组头像（上传文件后获取的完整路径）
 * admin_uid:       管理员uid
 * description:     群描述信息
@@ -144,7 +144,7 @@ leancloud client-id 约定
         "group_name":"666",
         "member_client_ids":"o12:u232:p23",
         "organization_id": 2,
-        "conversion_id": "dasjfr4529sadfh",
+        "conversation_id": "dasjfr4529sadfh",
         "group_avatar": "http://pic.hisihi.com/232rwfrqw.jpg",
         "admin_uid": "o12",
         "description": "群描述信息"
@@ -352,7 +352,7 @@ leancloud client-id 约定
             {
                 "id":11,
                 "group_avatar":"0",
-                "conversion_id":"",
+                "conversation_id":"",
                 "group_name":"123",
                 "organization_id":1,
                 "description": "群组描述",
@@ -362,7 +362,7 @@ leancloud client-id 约定
             {
                 "id":12,
                 "group_avatar":"0",
-                "conversion_id":"5673c5ef60b27f7a2627062f",
+                "conversation_id":"5673c5ef60b27f7a2627062f",
                 "group_name":"g123",
                 "organization_id":2,
                 "description": "群组描述",
@@ -401,7 +401,7 @@ leancloud client-id 约定
                 "create_time":1450423535,
                 "description":"",
                 "organization_id":2,
-                "conversion_id":"5673c5ef60b27f7a2627062f",
+                "conversation_id":"5673c5ef60b27f7a2627062f",
                 "id":12,
                 "group_avatar":"0",
                 "group_name":"g123",

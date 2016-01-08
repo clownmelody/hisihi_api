@@ -2,7 +2,7 @@
 import json
 import pycurl
 from io import BytesIO
-from herovii.secure import LEAN_CLOUD_X_LC_Id, LEAN_CLOUD_X_LC_Key, LEAN_CLOUD_SYSTEM_CONVERSION_ID, \
+from herovii.secure import LEAN_CLOUD_X_LC_Id, LEAN_CLOUD_X_LC_Key, LEAN_CLOUD_SYSTEM_CONVERSATION_ID, \
     LEAN_CLOUD_X_LC_Key_SYS
 from herovii.service.im import get_group_member_client_ids_by_group_id
 
@@ -32,7 +32,7 @@ class LeanCloudSystemMessage(object):
             "from_peer": uid,
             "message": message_content,
             "to_peers": all_group_members,
-            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSION_ID,
+            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": True,
             "no_sync": True
         }
@@ -56,7 +56,7 @@ class LeanCloudSystemMessage(object):
             "from_peer": uid,
             "message": message_content,
             "to_peers": all_group_members,
-            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSION_ID,
+            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": True,
             "no_sync": True
         }
@@ -79,7 +79,7 @@ class LeanCloudSystemMessage(object):
             "from_peer": uid,
             "message": message_content,
             "to_peers": all_group_members,
-            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSION_ID,
+            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": True,
             "no_sync": True
         }
@@ -102,7 +102,7 @@ class LeanCloudSystemMessage(object):
             "from_peer": uid,
             "message": message_content,
             "to_peers": all_group_members,
-            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSION_ID,
+            "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": True,
             "no_sync": True
         }
