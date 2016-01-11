@@ -13,7 +13,7 @@ class TestCurlLeanCloud(unittest.TestCase):
     #     print(resp)
 
     def test_send_sys_message(self):
-        code, resp = LeanCloudSystemMessage.push_removed_from_group_message()
+        code, resp = LeanCloudSystemMessage.push_removed_from_group_message("Remove", '5552c0c6e4b0846760927d5a', ["LarryPage"])
         print(code)
         print(resp)
 

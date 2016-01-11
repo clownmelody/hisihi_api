@@ -411,3 +411,23 @@ leancloud client-id 约定
     }
 
 -- end
+
+
+用户加群申请
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /im/user/<string:client_id>/group/<int:group_id>/join_group_notification
+
+**Parameters**:
+
+* client_id: 用户 client_id
+* group_id:  群组 id
+
+**Response** `201` ::
+
+    {
+        "message": "已为您提交加群申请"
+    }
+
+-- end

@@ -49,6 +49,7 @@ def get_nonce(nonce_length=8):
 def create_im_group_service(group_name, member_client_ids, organization_id, conversation_id, group_avatar, admin_uid,
                             description):
     client_id_list = member_client_ids.split(':')
+    client_id_list.append(admin_uid)
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
                     organization_id=organization_id, conversation_id=conversation_id,
                     group_avatar=group_avatar, description=description)
@@ -555,5 +556,17 @@ def get_im_group_detail_service(group_id):
             "group_member_info": member_info_list
         }
         return group_detail
+    else:
+        return None
+
+
+# 根据群组id获取群管理员信息
+def get_group_admin_member_by_group_id(group_id):
+    group_admin = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                         ImGroupMember.is_admin == 1,
+                                                         ImGroupMember.status == 1).first()
+    if group_admin:
+        result_array = [group_admin.member_id]
+        return result_array
     else:
         return None
