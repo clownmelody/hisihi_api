@@ -72,7 +72,7 @@ def get_org_teachers_by_group(oid):
 
     # 下面的group_by 是为了去重，部分用户在avatar表有2个以上的头像
     teachers = db.session.query(UserCSU, Avatar.path). \
-        join(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1). \
+        outerjoin(Avatar, UserCSU.uid == Avatar.uid).filter(UserCSU.uid.in_(l), UserCSU.status != -1). \
         group_by(UserCSU.uid).all()
 
     return dto_teachers_group_1(oid, collection, teachers)
@@ -470,7 +470,7 @@ def search_lecture(args):
         lecture = db.session.query(
             UserCSU, Avatar.path). \
             join(UserCSUSecure, UserCSUSecure.id == UserCSU.uid). \
-            filter(UserCSUSecure.mobile == mobile). \
+            filter(UserCSUSecure.mobile == mobile, UserCSU.status != -1). \
             outerjoin(Avatar, UserCSU.uid == Avatar.uid).first()
         return _filter_lecture_dto(lecture)
 
