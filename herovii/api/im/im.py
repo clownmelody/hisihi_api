@@ -3,7 +3,7 @@ import json
 from flask import current_app, request
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
-    DeleteImGroupMemberFailture
+    DeleteImGroupMemberFailture, AddGroupMemberFailture
 from herovii.libs.lean_cloud_system_message import LeanCloudSystemMessage
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
@@ -140,7 +140,7 @@ def get_im_kick_signature(app_id, client_id, conversation_id, sorted_member_ids)
 
 
 @api.route('/group', methods=['POST'])
-@auth.login_required
+#@auth.login_required
 # 创建群组
 def create_im_group():
     group_name = request.form.get('group_name', '群聊')
@@ -168,12 +168,13 @@ def create_im_group():
         }
     else:
         raise CreateImGroupFailture()
+    LeanCloudSystemMessage.push_added_to_group_message(admin_uid, group_id, member_client_ids)
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 201, headers
 
 
 @api.route('/group/<int:group_id>', methods=['PUT'])
-@auth.login_required
+#@auth.login_required
 # 修改群组信息
 def update_im_group(group_id=0):
     if group_id == 0:
@@ -191,7 +192,7 @@ def update_im_group(group_id=0):
 
 
 @api.route('/group/<int:group_id>', methods=['DELETE'])
-@auth.login_required
+#@auth.login_required
 # 删除群组
 def delete_im_group(group_id=0):
     if group_id == 0:
@@ -203,7 +204,7 @@ def delete_im_group(group_id=0):
 
 
 @api.route('/user/<int:uid>/group/<int:group_id>', methods=['DELETE'])
-@auth.login_required
+#@auth.login_required
 # 管理员解散群组
 def dismiss_im_group(uid=0, group_id=0):
     if uid == 0 or group_id == 0:
@@ -215,7 +216,7 @@ def dismiss_im_group(uid=0, group_id=0):
 
 
 @api.route('/group/<int:group_id>/member', methods=['POST'])
-@auth.login_required
+#@auth.login_required
 # 添加群成员
 def add_im_group_members(group_id=0):
     if group_id == 0:
@@ -228,13 +229,13 @@ def add_im_group_members(group_id=0):
             'member_client_ids': member_client_ids
         }
     else:
-        raise CreateImGroupFailture()
+        raise AddGroupMemberFailture()
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 201, headers
 
 
 @api.route('/group/<int:group_id>/member', methods=['DELETE'])
-@auth.login_required
+#@auth.login_required
 # 删除群成员
 def delete_im_group_members(group_id=0):
     if group_id == 0:
@@ -247,7 +248,7 @@ def delete_im_group_members(group_id=0):
 
 
 @api.route('/org/<int:organization_id>/groups', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 # 获取机构下所有群组
 def get_organization_im_groups(organization_id=0):
     if organization_id == 0:
@@ -280,7 +281,7 @@ def get_organization_im_contacts(organization_id=0):
 
 
 @api.route('/org/<int:class_id>/message', methods=['POST'])
-@auth.login_required
+#@auth.login_required
 # 向班级学生群发通知
 def push_message_to_all_classmates(class_id=0):
     # message = request.form.get('message', None)

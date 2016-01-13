@@ -17,7 +17,7 @@ class ImGroup(Base):
     group_avatar = Column(String(120))
     description = Column(String(300))
     create_time = Column(Integer)
-    level = Column(Integer)
+    level = Column(Integer, default=1000)
     status = Column(SmallInteger, default=1)
 
     def __init__(self, group_name, create_time, organization_id, conversation_id, group_avatar, description):

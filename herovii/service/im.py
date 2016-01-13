@@ -128,8 +128,7 @@ def add_im_group_members_service(group_id, member_client_ids):
             if not exist_in_group:
                 if is_group_available_to_add_member(group.id):  # 群成员数量未达到上限
                     group_member = ImGroupMember(group_id=group.id, member_id=client_id, create_time=int(time.time()))
-                    with db.auto_commit():
-                        db.session.add(group_member)
+                    db.session.add(group_member)
     except:
         return False
     # 在 leancloud 中添加群成员
@@ -519,7 +518,7 @@ def update_im_group_admin_uid(group_id=None, admin_uid=None):
                                                             ImGroupMember.member_id == admin_uid,
                                                             ImGroupMember.status == 1).count()
     if exist_in_group:
-        db.session.query(ImGroupMember).filter(ImGroupMember.id == exist_in_group.id).update({'is_admin': 1})
+        db.session.query(ImGroupMember).filter(ImGroupMember.member_id == admin_uid).update({'is_admin': 1})
     else:
         group_member = ImGroupMember(group_id=group_id, member_id=admin_uid, create_time=int(time.time()), is_admin=1)
         with db.auto_commit():
