@@ -23,7 +23,7 @@ class LeanCloudSystemMessage(object):
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_content = {
-            "_lctype": -1,
+            "_lctype": 1,
             "_lctext": "XXX 被移出群聊",
             "_lcattrs": {
                 "message_info": "XXX 被移出群聊",
@@ -33,6 +33,7 @@ class LeanCloudSystemMessage(object):
                 "member_client_ids": member_client_ids
             }
         }
+        message_content = json.dumps(message_content)
         body_data = {
             "from_peer": uid,
             "message": message_content,
@@ -51,7 +52,7 @@ class LeanCloudSystemMessage(object):
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_content = {
-            "_lctype": -1,
+            "_lctype": 1,
             "_lctext": "XXX、XXX 加入群聊",
             "_lcattrs": {
                 "message_info": "XXX、XXX 加入群聊",
@@ -61,6 +62,7 @@ class LeanCloudSystemMessage(object):
                 "member_client_ids": member_client_ids
             }
         }
+        message_content = json.dumps(message_content)
         body_data = {
             "from_peer": uid,
             "message": message_content,
@@ -79,7 +81,7 @@ class LeanCloudSystemMessage(object):
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_content = {
-            "_lctype": -1,
+            "_lctype": 1,
             "_lctext": "XXX 修改了群信息",
             "_lcattrs": {
                 "message_info": "XXX 修改了群信息",
@@ -88,6 +90,7 @@ class LeanCloudSystemMessage(object):
                 "gid": gid,
             }
         }
+        message_content = json.dumps(message_content)
         body_data = {
             "from_peer": uid,
             "message": message_content,
@@ -106,7 +109,7 @@ class LeanCloudSystemMessage(object):
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_content = {
-            "_lctype": -1,
+            "_lctype": 1,
             "_lctext": "XXX 解散了该群",
             "_lcattrs": {
                 "message_info": "XXX 解散了该群",
@@ -115,6 +118,7 @@ class LeanCloudSystemMessage(object):
                 "gid": gid,
             }
         }
+        message_content = json.dumps(message_content)
         body_data = {
             "from_peer": uid,
             "message": message_content,
@@ -133,7 +137,7 @@ class LeanCloudSystemMessage(object):
         """
         group_admin_user = get_group_admin_member_by_group_id(gid)
         message_content = {
-            "_lctype": -1,
+            "_lctype": 1,
             "_lctext": "XXX 申请加入该群",
             "_lcattrs": {
                 "message_info": "XXX 申请加入该群",
@@ -142,6 +146,7 @@ class LeanCloudSystemMessage(object):
                 "gid": gid,
             }
         }
+        message_content = json.dumps(message_content)
         body_data = {
             "from_peer": uid,
             "message": message_content,
