@@ -6,7 +6,7 @@ from herovii.libs.error_code import ParamException
 from herovii.secure import LEAN_CLOUD_X_LC_Id, LEAN_CLOUD_X_LC_Key, LEAN_CLOUD_SYSTEM_CONVERSATION_ID, \
     LEAN_CLOUD_X_LC_Key_SYS
 from herovii.service.im import get_group_member_client_ids_by_group_id, get_group_admin_member_by_group_id, \
-    get_user_profile_by_client_id
+    get_user_profile_by_client_id, get_group_info_by_group_id
 
 __author__ = 'yangchujie'
 
@@ -30,6 +30,7 @@ class LeanCloudSystemMessage(object):
         nickname_list_str = "、".join(nickname_list)
         message_text = nickname_list_str + " 离开群聊"
         all_group_members = get_group_member_client_ids_by_group_id(gid)
+        group = get_group_info_by_group_id(gid)
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
@@ -38,6 +39,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "removed_from_group",
                 "uid": uid,
                 "gid": gid,
+                "conversation_id": group.conversation_id,
                 "member_client_ids": member_client_ids
             }
         }
@@ -66,6 +68,7 @@ class LeanCloudSystemMessage(object):
         nickname_list_str = "、".join(nickname_list)
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_text = nickname_list_str + " 加入群聊"
+        group = get_group_info_by_group_id(gid)
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
@@ -74,6 +77,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "added_to_group",
                 "uid": uid,
                 "gid": gid,
+                "conversation_id": group.conversation_id,
                 "member_client_ids": member_client_ids
             }
         }
@@ -96,6 +100,7 @@ class LeanCloudSystemMessage(object):
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_text = "XXX 修改了群名称为：" + group_name
+        group = get_group_info_by_group_id(gid)
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
@@ -104,6 +109,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "group_info_been_modified",
                 "uid": uid,
                 "gid": gid,
+                "conversation_id": group.conversation_id
             }
         }
         message_content = json.dumps(message_content)
@@ -125,6 +131,7 @@ class LeanCloudSystemMessage(object):
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_text = "XXX 解散了该群"
+        group = get_group_info_by_group_id(gid)
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
@@ -133,6 +140,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "group_been_dismissed",
                 "uid": uid,
                 "gid": gid,
+                "conversation_id": group.conversation_id
             }
         }
         message_content = json.dumps(message_content)
@@ -159,6 +167,7 @@ class LeanCloudSystemMessage(object):
             message_text = nickname + " 申请加入该群"
         else:
             message_text = uid + " 申请加入该群"
+        group = get_group_info_by_group_id(gid)
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
@@ -167,6 +176,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "user_join_group_apply",
                 "uid": uid,
                 "gid": gid,
+                "conversation_id": group.conversation_id
             }
         }
         message_content = json.dumps(message_content)
