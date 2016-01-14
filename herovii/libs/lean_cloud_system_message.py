@@ -39,6 +39,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "removed_from_group",
                 "uid": uid,
                 "gid": gid,
+                "type": "group",
                 "conversation_id": group.conversation_id,
                 "member_client_ids": member_client_ids
             }
@@ -77,6 +78,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "added_to_group",
                 "uid": uid,
                 "gid": gid,
+                "type": "group",
                 "conversation_id": group.conversation_id,
                 "member_client_ids": member_client_ids
             }
@@ -109,6 +111,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "group_info_been_modified",
                 "uid": uid,
                 "gid": gid,
+                "type": "group",
                 "conversation_id": group.conversation_id
             }
         }
@@ -140,6 +143,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "group_been_dismissed",
                 "uid": uid,
                 "gid": gid,
+                "type": "group",
                 "conversation_id": group.conversation_id
             }
         }
@@ -176,6 +180,7 @@ class LeanCloudSystemMessage(object):
                 "sys_message_type": "user_join_group_apply",
                 "uid": uid,
                 "gid": gid,
+                "type": "group",
                 "conversation_id": group.conversation_id
             }
         }

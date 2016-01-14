@@ -22,6 +22,7 @@ class Course(Base):
     auth = Column(SmallInteger, default=1)
     view_count = Column(Integer, default=0)
     update_time = Column(Integer, default=int(time.time()))
+    status = Column(Integer, default=0)  # 状态默认为0，需要审核
 
 
     def keys(self):
