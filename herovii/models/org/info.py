@@ -54,6 +54,6 @@ class Info(Base):
         return (
             'id', 'name', 'slogan', 'location', 'longitude', 'latitude',
             'phone_num', 'logo', 'video', 'video_img', 'advantage',
-            'introduce', 'view_count', 'guarantee_num'
+            'introduce', 'view_count', 'guarantee_num', 'city'
         )
 
