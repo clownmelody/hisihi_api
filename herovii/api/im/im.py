@@ -168,7 +168,6 @@ def create_im_group():
         }
     else:
         raise CreateImGroupFailture()
-    LeanCloudSystemMessage.push_added_to_group_message(admin_uid, group_id, member_client_ids)
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 201, headers
 

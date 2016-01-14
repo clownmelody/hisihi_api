@@ -5,7 +5,8 @@ from io import BytesIO
 from herovii.libs.error_code import ParamException
 from herovii.secure import LEAN_CLOUD_X_LC_Id, LEAN_CLOUD_X_LC_Key, LEAN_CLOUD_SYSTEM_CONVERSATION_ID, \
     LEAN_CLOUD_X_LC_Key_SYS
-from herovii.service.im import get_group_member_client_ids_by_group_id, get_group_admin_member_by_group_id
+from herovii.service.im import get_group_member_client_ids_by_group_id, get_group_admin_member_by_group_id, \
+    get_user_profile_by_client_id
 
 __author__ = 'yangchujie'
 
@@ -21,12 +22,19 @@ class LeanCloudSystemMessage(object):
         """
         成员被移除群聊，向所有群成员发系统消息
         """
+        nickname_list = []
+        for client_id in member_client_ids:
+            user_detail = get_user_profile_by_client_id(client_id)
+            if user_detail:
+                nickname_list.append(user_detail.nickname)
+        nickname_list_str = "、".join(nickname_list)
+        message_text = nickname_list_str + " 离开群聊"
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_content = {
             "_lctype": 1,
-            "_lctext": "XXX 被移出群聊",
+            "_lctext": message_text,
             "_lcattrs": {
-                "message_info": "XXX 被移出群聊",
+                "message_info": message_text,
                 "sys_message_type": "removed_from_group",
                 "uid": uid,
                 "gid": gid,
@@ -50,12 +58,19 @@ class LeanCloudSystemMessage(object):
         """
         成员被添加到群聊，向所有群成员发系统消息
         """
+        nickname_list = []
+        for client_id in member_client_ids:
+            user_detail = get_user_profile_by_client_id(client_id)
+            if user_detail:
+                nickname_list.append(user_detail.nickname)
+        nickname_list_str = "、".join(nickname_list)
         all_group_members = get_group_member_client_ids_by_group_id(gid)
+        message_text = nickname_list_str + " 加入群聊"
         message_content = {
             "_lctype": 1,
-            "_lctext": "XXX、XXX 加入群聊",
+            "_lctext": message_text,
             "_lcattrs": {
-                "message_info": "XXX、XXX 加入群聊",
+                "message_info": message_text,
                 "sys_message_type": "added_to_group",
                 "uid": uid,
                 "gid": gid,
@@ -75,16 +90,17 @@ class LeanCloudSystemMessage(object):
         return LeanCloudSystemMessage.send_system_message(body_data)
 
     @staticmethod
-    def push_group_info_been_modified_message(uid=None, gid=None):
+    def push_group_info_been_modified_message(uid=None, gid=None, group_name=None):
         """
         群组基本信息被修改，向所有群成员发系统消息
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
+        message_text = "XXX 修改了群名称为：" + group_name
         message_content = {
             "_lctype": 1,
-            "_lctext": "XXX 修改了群信息",
+            "_lctext": message_text,
             "_lcattrs": {
-                "message_info": "XXX 修改了群信息",
+                "message_info": message_text,
                 "sys_message_type": "group_info_been_modified",
                 "uid": uid,
                 "gid": gid,
@@ -108,11 +124,12 @@ class LeanCloudSystemMessage(object):
         群组被群管理员解散，向所有群成员发系统消息
         """
         all_group_members = get_group_member_client_ids_by_group_id(gid)
+        message_text = "XXX 解散了该群"
         message_content = {
             "_lctype": 1,
-            "_lctext": "XXX 解散了该群",
+            "_lctext": message_text,
             "_lcattrs": {
-                "message_info": "XXX 解散了该群",
+                "message_info": message_text,
                 "sys_message_type": "group_been_dismissed",
                 "uid": uid,
                 "gid": gid,
@@ -136,11 +153,17 @@ class LeanCloudSystemMessage(object):
         用户加群申请的消息
         """
         group_admin_user = get_group_admin_member_by_group_id(gid)
+        user_detail = get_user_profile_by_client_id(uid)
+        if user_detail:
+            nickname = user_detail.nickname
+            message_text = nickname + " 申请加入该群"
+        else:
+            message_text = uid + " 申请加入该群"
         message_content = {
             "_lctype": 1,
-            "_lctext": "XXX 申请加入该群",
+            "_lctext": message_text,
             "_lcattrs": {
-                "message_info": "XXX 申请加入该群",
+                "message_info": message_text,
                 "sys_message_type": "user_join_group_apply",
                 "uid": uid,
                 "gid": gid,

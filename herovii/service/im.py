@@ -8,6 +8,7 @@ from herovii import db
 from herovii.libs.error_code import ImGroupNotFound, ServerError, NotFound, PushToClassFailture, IllegalOperation, \
     CreateImGroupFailture
 from herovii.libs.helper import get_full_oss_url
+from herovii.libs.lean_cloud_system_message import LeanCloudSystemMessage
 from herovii.models import OrgAdmin
 from herovii.models.im.im_group import ImGroup
 from herovii.models.im.im_group_member import ImGroupMember
@@ -79,6 +80,8 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
             raise CreateImGroupFailture()
         conversation_id = res.objectId
         db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversation_id': conversation_id})
+    # 发送系统通知
+    LeanCloudSystemMessage.push_added_to_group_message(admin_uid, group.id, client_id_list)
     return group.id, conversation_id, True
 
 
@@ -87,6 +90,8 @@ def update_im_group_service(group_id, group_name):
         db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'group_name': group_name})
     except:
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_group_info_been_modified_message(0, group_id, group_name)
     return True
 
 
@@ -95,6 +100,8 @@ def delete_im_group_service(group_id):
         db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'status': -1})
     except:
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_admin_dismiss_group_message(0, group_id)
     return True
 
 
@@ -108,6 +115,8 @@ def dismiss_im_group_service(uid, group_id):
             db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'status': -1})
         except:
             return False
+        # 发送系统通知
+        LeanCloudSystemMessage.push_admin_dismiss_group_message(uid, group_id)
         return True
     else:
         raise IllegalOperation(error='you are not the administrator of the group')
@@ -141,6 +150,8 @@ def add_im_group_members_service(group_id, member_client_ids):
     if code // 100 != 2:
         db.session.rollback()
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_added_to_group_message(0, group_id, client_id_list)
     return True
 
 
@@ -183,7 +194,7 @@ def delete_im_group_members_service(group_id, member_client_ids):
                 db.session.query(ImGroupMember).filter(ImGroupMember.id == exist_in_group.id).update({'status': -1})
     except:
         return False
-    # 在 leancloud 中添加群成员
+    # 在 leancloud 中删除群成员
     conversation_id = group.conversation_id
     if conversation_id is None or conversation_id == 0:
         db.session.rollback()
@@ -193,6 +204,8 @@ def delete_im_group_members_service(group_id, member_client_ids):
     if code // 100 != 2:
         db.session.rollback()
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_removed_from_group_message(admin_member.member_id, group_id, client_id_list)
     return True
 
 
