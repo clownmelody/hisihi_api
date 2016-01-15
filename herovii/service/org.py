@@ -1,7 +1,10 @@
+import string
 from _operator import or_, and_
 import re
 
 import time
+from datetime import datetime
+
 from flask import json
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
@@ -506,6 +509,7 @@ def get_org_student_profile_by_uid(uid):
             class_info = db.session.query(StudentClass).filter(StudentClass.id == stu_classmate.class_id).first()
             if class_info is not None:
                 class_group = class_info.title
+                total_class_hour = get_student_class_hour(class_info)
         if stu_course is None:
             course_name = None
         else:
@@ -519,11 +523,42 @@ def get_org_student_profile_by_uid(uid):
             'sign_in_count': stu_sign_in_count,
             'graduation_status': stu_classmate.status,
             'class_id': stu_classmate.class_id,
-            'total_class': 90
+            'total_class': total_class_hour
         }
     else:
         return None
     return data
+
+
+def get_student_class_hour(class_info):
+    week = ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
+    week_class_hour_count = 7
+    class_start_date = datetime.strptime(class_info.class_start_date, '%Y-%m-%d')
+    class_end_date = datetime.strptime(class_info.class_end_date, '%Y-%m-%d')
+    total_days = class_end_date - class_start_date
+    total_days = total_days.days + 1
+    if 0 < total_days < 8:
+        end_day_in_week = -1
+    elif total_days > 7:
+        end_day_in_week = class_end_date.weekday()
+    else:
+        raise DirtyDataError()
+    start_day_in_week = class_start_date.weekday()
+    days_in_first_week = 7 - start_day_in_week
+    days_in_last_week = end_day_in_week + 1
+    class_days_in_first_week = days_in_first_week
+    class_days_in_last_week = days_in_last_week
+    for item in range(len(week)):
+        if (class_info.__getitem__(week[item]) is None) \
+                or (class_info.__getitem__(week[item]).strip() is ''):
+            week_class_hour_count -= 1
+            if start_day_in_week <= item < 7:
+                class_days_in_first_week -= 1
+            if 0 <= item <= end_day_in_week:
+                class_days_in_last_week -= 1
+    total_class_hour = ((total_days - days_in_first_week - days_in_last_week) / 7) * week_class_hour_count
+    total_class_hour = int(total_class_hour) + class_days_in_first_week + class_days_in_last_week
+    return total_class_hour
 
 
 def get_user_profile_by_uid(uid):
@@ -558,12 +593,14 @@ def get_org_student_sign_in_history_by_uid(uid, page, per_page):
     if class_mirror_list is None:
         return None
     sign_in_dto = []
+    sign_in_count = 0
     for class_mirror in class_mirror_list:
         sign_in = db.session.query(StudentSignIn.uid, StudentSignIn.organization_id, StudentSignIn.date) \
             .filter(StudentSignIn.uid == uid, StudentSignIn.status != -1, StudentSignIn.date == class_mirror.date) \
             .order_by(StudentSignIn.sign_in_time.desc()) \
             .first()
         if sign_in is not None:
+            sign_in_count += 1
             data = {
                 'uid': uid,
                 'is_sign_in': True,
@@ -576,7 +613,12 @@ def get_org_student_sign_in_history_by_uid(uid, page, per_page):
                 'date': class_mirror.date
             }
         sign_in_dto.append(data)
-    return class_mirror_total_count, sign_in_dto
+    class_info = db.session.query(StudentClass).filter(StudentClass.id == student_class.class_id,
+                                                       StudentClass.status == 1).first()
+    student_class_hour = get_student_class_hour(class_info)
+    completion_rate = int((sign_in_count / student_class_hour) * 100)
+    completion_rate = str(completion_rate) + '%'
+    return class_mirror_total_count, sign_in_dto, student_class_hour, completion_rate
 
 
 def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
