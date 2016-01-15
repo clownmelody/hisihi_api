@@ -14,7 +14,6 @@ class TeacherGroupRelation(Base):
     teacher_group_id = Column(Integer)
     group = Column(Integer)
     organization_id = Column(Integer)
-    status = Column(Integer)
 
 
     def keys(self):

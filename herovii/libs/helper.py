@@ -80,6 +80,7 @@ def make_an_bizid():
 
 
 def allowed_uploaded_file_type(filename):
+    filename = filename.lower()
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in current_app.config['ALLOWED_FILE_EXTENSIONS']
 

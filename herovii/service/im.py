@@ -8,6 +8,7 @@ from herovii import db
 from herovii.libs.error_code import ImGroupNotFound, ServerError, NotFound, PushToClassFailture, IllegalOperation, \
     CreateImGroupFailture
 from herovii.libs.helper import get_full_oss_url
+from herovii.libs.lean_cloud_system_message import LeanCloudSystemMessage
 from herovii.models import OrgAdmin
 from herovii.models.im.im_group import ImGroup
 from herovii.models.im.im_group_member import ImGroupMember
@@ -46,21 +47,12 @@ def get_nonce(nonce_length=8):
     return nonce
 
 
-def create_im_group_service(group_name, member_client_ids, organization_id, conversion_id, group_avatar, admin_uid,
+def create_im_group_service(group_name, member_client_ids, organization_id, conversation_id, group_avatar, admin_uid,
                             description):
     client_id_list = member_client_ids.split(':')
-    # 未传入会话id
-    if conversion_id == 0:
-        body = {
-            "name": group_name,
-            "m": client_id_list
-        }
-        code, res = create_conversion_to_lean_cloud(json.dumps(body))
-        if code != 201:
-            raise CreateImGroupFailture()
-        conversion_id = res.objectId
+    client_id_list.append(admin_uid)
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
-                    organization_id=organization_id, conversion_id=conversion_id,
+                    organization_id=organization_id, conversation_id=conversation_id,
                     group_avatar=group_avatar, description=description)
     with db.auto_commit():
         try:
@@ -73,7 +65,24 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
             with db.auto_commit():
                 db.session.add(group_member)
     update_im_group_admin_uid(group.id, admin_uid)  # 修改群管理员
-    return group.id, conversion_id, True
+    # 未传入会话id
+    if conversation_id == 0:
+        body = {
+            "name": group_name,
+            "m": client_id_list,
+            "attr": {
+                "type": "group",
+                "group_id": group.id
+            }
+        }
+        code, res = create_conversation_to_lean_cloud(json.dumps(body))
+        if code != 201:
+            raise CreateImGroupFailture()
+        conversation_id = res.objectId
+        db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversation_id': conversation_id})
+    # 发送系统通知
+    LeanCloudSystemMessage.push_added_to_group_message(admin_uid, group.id, client_id_list)
+    return group.id, conversation_id, True
 
 
 def update_im_group_service(group_id, group_name):
@@ -81,6 +90,8 @@ def update_im_group_service(group_id, group_name):
         db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'group_name': group_name})
     except:
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_group_info_been_modified_message(0, group_id, group_name)
     return True
 
 
@@ -89,6 +100,8 @@ def delete_im_group_service(group_id):
         db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'status': -1})
     except:
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_admin_dismiss_group_message(0, group_id)
     return True
 
 
@@ -102,6 +115,8 @@ def dismiss_im_group_service(uid, group_id):
             db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'status': -1})
         except:
             return False
+        # 发送系统通知
+        LeanCloudSystemMessage.push_admin_dismiss_group_message(uid, group_id)
         return True
     else:
         raise IllegalOperation(error='you are not the administrator of the group')
@@ -122,20 +137,21 @@ def add_im_group_members_service(group_id, member_client_ids):
             if not exist_in_group:
                 if is_group_available_to_add_member(group.id):  # 群成员数量未达到上限
                     group_member = ImGroupMember(group_id=group.id, member_id=client_id, create_time=int(time.time()))
-                    with db.auto_commit():
-                        db.session.add(group_member)
+                    db.session.add(group_member)
     except:
         return False
     # 在 leancloud 中添加群成员
-    conversion_id = group.conversion_id
-    if conversion_id is None or conversion_id == 0:
+    conversation_id = group.conversation_id
+    if conversation_id is None or conversation_id == 0:
         db.session.rollback()
         return False
-    code, resp = curl_service_to_lean_cloud("AddUnique", conversion_id, member_list)
+    code, resp = curl_service_to_lean_cloud("AddUnique", conversation_id, member_list)
     # leancloud 操作异常
     if code // 100 != 2:
         db.session.rollback()
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_added_to_group_message(0, group_id, client_id_list)
     return True
 
 
@@ -178,16 +194,18 @@ def delete_im_group_members_service(group_id, member_client_ids):
                 db.session.query(ImGroupMember).filter(ImGroupMember.id == exist_in_group.id).update({'status': -1})
     except:
         return False
-    # 在 leancloud 中添加群成员
-    conversion_id = group.conversion_id
-    if conversion_id is None or conversion_id == 0:
+    # 在 leancloud 中删除群成员
+    conversation_id = group.conversation_id
+    if conversation_id is None or conversation_id == 0:
         db.session.rollback()
         return False
-    code, resp = curl_service_to_lean_cloud("Remove", conversion_id, member_list)
+    code, resp = curl_service_to_lean_cloud("Remove", conversation_id, member_list)
     # leancloud 操作异常
     if code // 100 != 2:
         db.session.rollback()
         return False
+    # 发送系统通知
+    LeanCloudSystemMessage.push_removed_from_group_message(admin_member.member_id, group_id, client_id_list)
     return True
 
 
@@ -266,7 +284,7 @@ def get_organization_im_contacts_service(organization_id):
 
 
 # 创建会话
-def create_conversion_to_lean_cloud(body_data=None):
+def create_conversation_to_lean_cloud(body_data=None):
     """
     curl -X POST \
       -H "X-LC-Id: tjt1cu4FpyT77H0FzxkQpXlH-gzGzoHsz" \
@@ -300,7 +318,7 @@ def create_conversion_to_lean_cloud(body_data=None):
 
 
 # 从会话中添加或删除成员
-def curl_service_to_lean_cloud(action=None, conversion_id=None, body_data=None):
+def curl_service_to_lean_cloud(action=None, conversation_id=None, body_data=None):
     """
     curl -X PUT \
       -H "X-LC-Id: tjt1cu4FpyT77H0FzxkQpXlH-gzGzoHsz" \
@@ -309,7 +327,7 @@ def curl_service_to_lean_cloud(action=None, conversion_id=None, body_data=None):
       -d '{"m": {"__op":"AddUnique","objects":["LarryPage"]}}' \
       https://api.leancloud.cn/1.1/classes/_Conversation/5552c0c6e4b0846760927d5a
     """
-    if action is None or conversion_id is None or body_data is None:
+    if action is None or conversation_id is None or body_data is None:
         raise ParamException()
     head = [
         "X-LC-Id: " + LEAN_CLOUD_X_LC_Id,
@@ -326,7 +344,7 @@ def curl_service_to_lean_cloud(action=None, conversion_id=None, body_data=None):
     try:
         buffer = BytesIO()
         c = pycurl.Curl()
-        c.setopt(c.URL, 'https://api.leancloud.cn/1.1/classes/_Conversation/' + conversion_id)
+        c.setopt(c.URL, 'https://api.leancloud.cn/1.1/classes/_Conversation/' + conversation_id)
         c.setopt(pycurl.CUSTOMREQUEST, 'PUT')
         c.setopt(c.HTTPHEADER, head)
         c.setopt(c.POSTFIELDS, body_data)
@@ -452,17 +470,20 @@ def get_group_info_by_group_id(group_id=None):
         return None
     group = db.session.query(ImGroup).filter(
         ImGroup.id == group_id, ImGroup.status == 1).first()
-    group = {
-        "id": group.id,
-        "group_name": group.group_name,
-        "organization_id": group.organization_id,
-        "conversion_id": group.conversion_id,
-        "group_avatar": group.group_avatar,
-        "description": group.description,
-        "create_time": group.create_time,
-        "level": group.level
-    }
-    return group
+    if group:
+        group = {
+            "id": group.id,
+            "group_name": group.group_name,
+            "organization_id": group.organization_id,
+            "conversation_id": group.conversation_id,
+            "group_avatar": group.group_avatar,
+            "description": group.description,
+            "create_time": group.create_time,
+            "level": group.level
+        }
+        return group
+    else:
+        raise ImGroupNotFound()
 
 
 # 根据 group_id 获取所有群成员的 reg_id 列表
@@ -510,7 +531,7 @@ def update_im_group_admin_uid(group_id=None, admin_uid=None):
                                                             ImGroupMember.member_id == admin_uid,
                                                             ImGroupMember.status == 1).count()
     if exist_in_group:
-        db.session.query(ImGroupMember).filter(ImGroupMember.id == exist_in_group.id).update({'is_admin': 1})
+        db.session.query(ImGroupMember).filter(ImGroupMember.member_id == admin_uid).update({'is_admin': 1})
     else:
         group_member = ImGroupMember(group_id=group_id, member_id=admin_uid, create_time=int(time.time()), is_admin=1)
         with db.auto_commit():
@@ -549,3 +570,25 @@ def get_im_group_detail_service(group_id):
         return group_detail
     else:
         return None
+
+
+# 根据群组id获取群管理员信息
+def get_group_admin_member_by_group_id(group_id):
+    group_admin = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                         ImGroupMember.is_admin == 1,
+                                                         ImGroupMember.status == 1).first()
+    if group_admin:
+        result_array = [group_admin.member_id]
+        return result_array
+    else:
+        return None
+
+
+# 检查 client_id 是否是群成员
+def is_client_id_in_group_member(group_id, client_id):
+    is_exist = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                      ImGroupMember.member_id == client_id,
+                                                      ImGroupMember.status == 1).count()
+    if is_exist:
+        return True
+    return False
