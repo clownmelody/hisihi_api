@@ -115,7 +115,7 @@ def get_users_profiles(uids):
 
 
 @api.route('/student/<int:uid>/sign-in/history', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def get_student_sign_in_history(uid):
     """获取学生历史签到记录
        uid: 学生id号
@@ -127,13 +127,15 @@ def get_student_sign_in_history(uid):
     form = PagingForm.create_api_form(**args)
     page = (1 if form.page.data else form.page.data)
     per_page = (20 if form.per_page.data else form.per_page.data)
-    total_count, sign_in_history = get_org_student_sign_in_history_by_uid(uid, page, per_page)
+    total_count, sign_in_history, student_class_hour, completion_rate = get_org_student_sign_in_history_by_uid(uid,
+                                                                                                               page,
+                                                                                                               per_page)
     headers = {'Content-Type': 'application/json'}
     result = {
         'sign_in_history': sign_in_history,
         'total_count': total_count,
-        'total_class': 90,
-        'completion_rate': '70%'
+        'total_class': student_class_hour,
+        'completion_rate': completion_rate
     }
     sign_in_history_json = json.dumps(result)
     return sign_in_history_json, 200, headers
