@@ -585,8 +585,9 @@ def get_group_admin_member_by_group_id(group_id):
 
 
 # 检查 client_id 是否是群成员
-def is_client_id_in_group_member(client_id):
-    is_exist = db.session.query(ImGroupMember).filter(ImGroupMember.member_id == client_id,
+def is_client_id_in_group_member(group_id, client_id):
+    is_exist = db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                      ImGroupMember.member_id == client_id,
                                                       ImGroupMember.status == 1).count()
     if is_exist:
         return True

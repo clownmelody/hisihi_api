@@ -379,12 +379,12 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /im/group/<int:group_id>/<string:client_id>
+    GET     /im/group/<int:group_id>
 
 **Parameters**:
 
 * group_id: 群组 id
-* client_id: 用户 IM id。如果传入该参数会返回用户是否在该群中，否则不返回
+* client_id: 用户 IM id。如果传入该参数会返回用户是否在该群中，否则不返回  (该参数放在请求头中)
 
 **Response** `200` ::
 

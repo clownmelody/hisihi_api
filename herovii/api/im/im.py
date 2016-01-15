@@ -310,18 +310,19 @@ def get_im_user_groups(client_id=0):
     return json.dumps(result), 200, headers
 
 
-@api.route('/group/<int:group_id>/<string:client_id>', methods=['GET'])
+@api.route('/group/<int:group_id>', methods=['GET'])
 #@auth.login_required
 # 获取群组详情
-def get_im_group_detail(group_id=0, client_id=None):
+def get_im_group_detail(group_id=0):
     if group_id == 0:
         raise ParamException()
     data = get_im_group_detail_service(group_id)
     result = {
         "data": data
     }
+    client_id = request.headers.get('client_id')
     if client_id is not None:
-        is_exist_in_group = is_client_id_in_group_member(client_id)
+        is_exist_in_group = is_client_id_in_group_member(group_id,client_id)
         result['is_exist_in_group'] = is_exist_in_group
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers

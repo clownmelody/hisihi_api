@@ -247,6 +247,22 @@ class FeedbackForm(Form):
     content = StringField(validators=[DataRequired()])
 
 
+class YellowPagesForm(Form):
+    id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    web_name = StringField(validators=[DataRequired()])
+    url = StringField(validators=[DataRequired()])
+    icon_url = StringField(validators=[DataRequired()])
+    class_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    state = IntegerField(validators=[DataRequired()])
+    real_score = StringField(validators=[DataRequired()])
+    fake_score = StringField(validators=[DataRequired()])
+
+
+class CategoryForm(Form):
+    id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    category_name = StringField(validators=[DataRequired()])
+    icon_url = StringField(validators=[DataRequired()])
+
 class ClassmateJoinForm(Form):
     uids = StringField(validators=[DataRequired()])
     cid = IntegerField(validators=[DataRequired(), NumberRange(1)])
