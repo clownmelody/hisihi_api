@@ -51,7 +51,7 @@ def create_site_info():
     return jsonify(yellow), 201
 
 
-@api.route('/yellow_page', methods=['PUT'])
+@api.route('/yellow_page/<int:gid>', methods=['PUT'])
 def update_site_info(gid):
     # 更新和删除网址信息
     with db.auto_commit():
@@ -61,7 +61,7 @@ def update_site_info(gid):
     return success_json(msg=msg), 202
 
 
-@api.route('/category', method=['POST'])
+@api.route('/category', methods=['POST'])
 def create_category_info():
     # 创建类别信息
     form = CategoryForm.create_api_form()
@@ -74,11 +74,11 @@ def create_category_info():
     return jsonify(category), 201
 
 
-@api.route('/category', method=['PUT'])
-def update_site_info(gid):
+@api.route('/category/<int:cid>', methods=['PUT'])
+def update_category_info(cid):
     # 更新和删除类别信息
     with db.auto_commit():
         count = db.session.query(Category).\
-                        filter_by(id=gid).delete()
+                        filter_by(id=cid).delete()
     msg = str(count) + ' site has been deleted'
     return success_json(msg=msg), 202
