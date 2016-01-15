@@ -7,7 +7,7 @@ from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
-    dismiss_im_group_service, get_im_user_groups_service, get_im_group_detail_service
+    dismiss_im_group_service, get_im_user_groups_service, get_im_group_detail_service, is_client_id_in_group_member
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -310,16 +310,19 @@ def get_im_user_groups(client_id=0):
     return json.dumps(result), 200, headers
 
 
-@api.route('/group/<int:group_id>', methods=['GET'])
-@auth.login_required
+@api.route('/group/<int:group_id>/<string:client_id>', methods=['GET'])
+#@auth.login_required
 # 获取群组详情
-def get_im_group_detail(group_id=0):
+def get_im_group_detail(group_id=0, client_id=None):
     if group_id == 0:
         raise ParamException()
     data = get_im_group_detail_service(group_id)
     result = {
         "data": data
     }
+    if client_id is not None:
+        is_exist_in_group = is_client_id_in_group_member(client_id)
+        result['is_exist_in_group'] = is_exist_in_group
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers
 
