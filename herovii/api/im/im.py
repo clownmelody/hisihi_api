@@ -320,9 +320,10 @@ def get_im_group_detail(group_id=0):
     result = {
         "data": data
     }
-    client_id = request.headers.get('client_id')
+    client_id = request.args.get("client_id")
+    #client_id = request.headers.get('client_id')
     if client_id is not None:
-        is_exist_in_group = is_client_id_in_group_member(group_id,client_id)
+        is_exist_in_group = is_client_id_in_group_member(group_id, client_id)
         result['is_exist_in_group'] = is_exist_in_group
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers
