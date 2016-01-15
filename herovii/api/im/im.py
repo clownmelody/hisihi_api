@@ -4,11 +4,10 @@ from flask import current_app, request
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
     DeleteImGroupMemberFailture, AddGroupMemberFailture
-from herovii.libs.lean_cloud_system_message import LeanCloudSystemMessage
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
-    dismiss_im_group_service, create_conversation_to_lean_cloud, get_im_user_groups_service, get_im_group_detail_service
+    dismiss_im_group_service, get_im_user_groups_service, get_im_group_detail_service
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -331,6 +330,7 @@ def get_im_group_detail(group_id=0):
 def user_join_group_notification(client_id=None, group_id=0):
     if client_id is None or group_id == 0:
         raise ParamException()
+    from herovii.libs.lean_cloud_system_message import LeanCloudSystemMessage
     code, resp = LeanCloudSystemMessage.push_user_join_in_group_apply_message(client_id, group_id)
     if code//100 == 2:
         result = {

@@ -5,8 +5,6 @@ from io import BytesIO
 from herovii.libs.error_code import ParamException
 from herovii.secure import LEAN_CLOUD_X_LC_Id, LEAN_CLOUD_X_LC_Key, LEAN_CLOUD_SYSTEM_CONVERSATION_ID, \
     LEAN_CLOUD_X_LC_Key_SYS
-from herovii.service.im import get_group_member_client_ids_by_group_id, get_group_admin_member_by_group_id, \
-    get_user_profile_by_client_id, get_group_info_by_group_id
 
 __author__ = 'yangchujie'
 
@@ -16,12 +14,13 @@ IM 业务中的通知服务(采用 leancloud 的系统消息)
 
 
 class LeanCloudSystemMessage(object):
-
     @staticmethod
     def push_removed_from_group_message(uid=None, gid=None, member_client_ids=None):
         """
         成员被移除群聊，向所有群成员发系统消息
         """
+        from herovii.service.im import get_group_member_client_ids_by_group_id, get_user_profile_by_client_id, \
+            get_group_info_by_group_id
         nickname_list = []
         for client_id in member_client_ids:
             user_detail = get_user_profile_by_client_id(client_id)
@@ -61,6 +60,8 @@ class LeanCloudSystemMessage(object):
         """
         成员被添加到群聊，向所有群成员发系统消息
         """
+        from herovii.service.im import get_user_profile_by_client_id, get_group_info_by_group_id, \
+            get_group_member_client_ids_by_group_id
         nickname_list = []
         for client_id in member_client_ids:
             user_detail = get_user_profile_by_client_id(client_id)
@@ -100,6 +101,7 @@ class LeanCloudSystemMessage(object):
         """
         群组基本信息被修改，向所有群成员发系统消息
         """
+        from herovii.service.im import get_group_member_client_ids_by_group_id, get_group_info_by_group_id
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_text = "XXX 修改了群名称为：" + group_name
         group = get_group_info_by_group_id(gid)
@@ -132,6 +134,7 @@ class LeanCloudSystemMessage(object):
         """
         群组被群管理员解散，向所有群成员发系统消息
         """
+        from herovii.service.im import get_group_info_by_group_id, get_group_member_client_ids_by_group_id
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_text = "XXX 解散了该群"
         group = get_group_info_by_group_id(gid)
@@ -164,6 +167,9 @@ class LeanCloudSystemMessage(object):
         """
         用户加群申请的消息
         """
+        from herovii.service.im import get_group_admin_member_by_group_id
+        from herovii.service.im import get_user_profile_by_client_id
+        from herovii.service.im import get_group_info_by_group_id
         group_admin_user = get_group_admin_member_by_group_id(gid)
         user_detail = get_user_profile_by_client_id(uid)
         if user_detail:
@@ -203,7 +209,7 @@ class LeanCloudSystemMessage(object):
         request_body = json.loads(request_body)
         to_peers_list = request_body['to_peers']
         list_length = len(to_peers_list)
-        split_num = list_length//20 + 1  # 需要分割的段数
+        split_num = list_length // 20 + 1  # 需要分割的段数
         start_index = 0
 
         head = [
