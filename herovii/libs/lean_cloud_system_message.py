@@ -2,7 +2,7 @@
 import json
 import pycurl
 from io import BytesIO
-from herovii.libs.error_code import ParamException
+from herovii.libs.error_code import ParamException, SendSysMessageFailture
 from herovii.secure import LEAN_CLOUD_X_LC_Id, LEAN_CLOUD_X_LC_Key, LEAN_CLOUD_SYSTEM_CONVERSATION_ID, \
     LEAN_CLOUD_X_LC_Key_SYS
 
@@ -173,7 +173,7 @@ class LeanCloudSystemMessage(object):
         group_admin_user = get_group_admin_member_by_group_id(gid)
         user_detail = get_user_profile_by_client_id(uid)
         if user_detail:
-            nickname = user_detail.nickname
+            nickname = user_detail['nickname']
             message_text = nickname + " 申请加入该群"
         else:
             message_text = uid + " 申请加入该群"
@@ -208,35 +208,40 @@ class LeanCloudSystemMessage(object):
             raise ParamException()
         request_body = json.loads(request_body)
         to_peers_list = request_body['to_peers']
+        if to_peers_list is None:
+            SendSysMessageFailture()
         list_length = len(to_peers_list)
-        split_num = list_length // 20 + 1  # 需要分割的段数
-        start_index = 0
+        if list_length == 0:
+            SendSysMessageFailture()
+        else:
+            split_num = list_length // 20 + 1  # 需要分割的段数
+            start_index = 0
 
-        head = [
-            "X-LC-Id: " + LEAN_CLOUD_X_LC_Id,
-            "X-LC-Key: " + LEAN_CLOUD_X_LC_Key_SYS,
-            "Content-Type: application/json"
-        ]
-        try:
-            buffer = BytesIO()
-            c = pycurl.Curl()
-            c.setopt(c.URL, 'https://leancloud.cn/1.1/rtm/messages')
-            c.setopt(pycurl.CUSTOMREQUEST, 'POST')
-            c.setopt(c.HTTPHEADER, head)
-            # to_peers 太多，分批发送(由于受到lean_cloud的限制)
-            while split_num:
-                length = split_num * 20
-                current_to_peers_list = to_peers_list[start_index:length]
-                request_body['to_peers'] = current_to_peers_list
-                request_body = json.dumps(request_body)
-                split_num -= 1
-                start_index += 20
-                c.setopt(c.POSTFIELDS, request_body)
-                c.setopt(c.WRITEDATA, buffer)
-                c.perform()
-            code = c.getinfo(c.HTTP_CODE)
-            body = buffer.getvalue()
-            c.close()
-            return code, body.decode()
-        except:
-            return 500, None
+            head = [
+                "X-LC-Id: " + LEAN_CLOUD_X_LC_Id,
+                "X-LC-Key: " + LEAN_CLOUD_X_LC_Key_SYS,
+                "Content-Type: application/json"
+            ]
+            try:
+                buffer = BytesIO()
+                c = pycurl.Curl()
+                c.setopt(c.URL, 'https://leancloud.cn/1.1/rtm/messages')
+                c.setopt(pycurl.CUSTOMREQUEST, 'POST')
+                c.setopt(c.HTTPHEADER, head)
+                # to_peers 太多，分批发送(由于受到lean_cloud的限制)
+                while split_num:
+                    length = split_num * 20
+                    current_to_peers_list = to_peers_list[start_index:length]
+                    request_body['to_peers'] = current_to_peers_list
+                    request_body = json.dumps(request_body)
+                    split_num -= 1
+                    start_index += 20
+                    c.setopt(c.POSTFIELDS, request_body)
+                    c.setopt(c.WRITEDATA, buffer)
+                    c.perform()
+                code = c.getinfo(c.HTTP_CODE)
+                body = buffer.getvalue()
+                c.close()
+                return code, body.decode()
+            except:
+                return 500, None
