@@ -1,4 +1,3 @@
-from itertools import count
 from flask import jsonify, json
 from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint, auth
