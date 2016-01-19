@@ -176,7 +176,11 @@ def create_im_group():
 def update_im_group(group_id=0):
     if group_id == 0:
         raise ParamException()
-    group_name = request.form.get('group_name', '群聊')
+    request_json = request.get_json(force=True, silent=True)
+    group_name = request_json['group_name']
+    if group_name is None:
+        group_name = "群聊"
+    # group_name = request.form.get('group_name', '群聊')
     result = update_im_group_service(group_id, group_name)
     if result:
         result = {
@@ -218,7 +222,9 @@ def dismiss_im_group(uid=0, group_id=0):
 def add_im_group_members(group_id=0):
     if group_id == 0:
         raise ParamException()
-    member_client_ids = request.form.get('member_client_ids', None)
+    request_json = request.get_json(force=True, silent=True)
+    member_client_ids = request_json['member_client_ids']
+    # member_client_ids = request.form.get('member_client_ids', None)
     if member_client_ids is None:
         raise ParamException()
     result = add_im_group_members_service(group_id, member_client_ids)
@@ -239,7 +245,11 @@ def add_im_group_members(group_id=0):
 def delete_im_group_members(group_id=0):
     if group_id == 0:
         raise ParamException()
-    member_client_ids = request.form.get('member_client_ids', None)
+    request_json = request.get_json(force=True, silent=True)
+    member_client_ids = request_json['member_client_ids']
+    if member_client_ids is None:
+        raise ParamException()
+    # member_client_ids = request.form.get('member_client_ids', None)
     result = delete_im_group_members_service(group_id, member_client_ids)
     if not result:
         raise DeleteImGroupMemberFailture()

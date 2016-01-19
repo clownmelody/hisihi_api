@@ -260,6 +260,7 @@ leancloud client-id 约定
                 "group_name":"g123",
                 "description":"",
                 "level":1000,
+                "conversation_id": "234fwrw23",
                 "create_time":1450423535
             },
             {
@@ -268,6 +269,7 @@ leancloud client-id 约定
                 "group_name":"676",
                 "description":"",
                 "level":1000,
+                "conversation_id": "234fwrw23",
                 "create_time":1450423856
             }
         ],
