@@ -25,7 +25,7 @@ class LeanCloudSystemMessage(object):
         for client_id in member_client_ids:
             user_detail = get_user_profile_by_client_id(client_id)
             if user_detail:
-                nickname_list.append(user_detail.nickname)
+                nickname_list.append(user_detail['nickname'])
         nickname_list_str = "、".join(nickname_list)
         message_text = nickname_list_str + " 离开群聊"
         all_group_members = get_group_member_client_ids_by_group_id(gid)
@@ -39,7 +39,7 @@ class LeanCloudSystemMessage(object):
                 "uid": uid,
                 "gid": gid,
                 "type": "group",
-                "conversation_id": group.conversation_id,
+                "conversation_id": group['conversation_id'],
                 "member_client_ids": member_client_ids
             }
         }
@@ -66,7 +66,7 @@ class LeanCloudSystemMessage(object):
         for client_id in member_client_ids:
             user_detail = get_user_profile_by_client_id(client_id)
             if user_detail:
-                nickname_list.append(user_detail.nickname)
+                nickname_list.append(user_detail['nickname'])
         nickname_list_str = "、".join(nickname_list)
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_text = nickname_list_str + " 加入群聊"
@@ -80,7 +80,7 @@ class LeanCloudSystemMessage(object):
                 "uid": uid,
                 "gid": gid,
                 "type": "group",
-                "conversation_id": group.conversation_id,
+                "conversation_id": group['conversation_id'],
                 "member_client_ids": member_client_ids
             }
         }
@@ -114,7 +114,7 @@ class LeanCloudSystemMessage(object):
                 "uid": uid,
                 "gid": gid,
                 "type": "group",
-                "conversation_id": group.conversation_id
+                "conversation_id": group['conversation_id']
             }
         }
         message_content = json.dumps(message_content)
@@ -147,7 +147,7 @@ class LeanCloudSystemMessage(object):
                 "uid": uid,
                 "gid": gid,
                 "type": "group",
-                "conversation_id": group.conversation_id
+                "conversation_id": group['conversation_id']
             }
         }
         message_content = json.dumps(message_content)

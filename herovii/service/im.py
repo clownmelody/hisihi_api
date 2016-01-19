@@ -78,7 +78,8 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
         code, res = create_conversation_to_lean_cloud(json.dumps(body))
         if code != 201:
             raise CreateImGroupFailture()
-        conversation_id = res.objectId
+        res = json.loads(res)
+        conversation_id = res['objectId']
         db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversation_id': conversation_id})
     # 发送系统通知
     LeanCloudSystemMessage.push_added_to_group_message(admin_uid, group.id, client_id_list)

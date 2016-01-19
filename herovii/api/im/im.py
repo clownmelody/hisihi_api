@@ -149,8 +149,7 @@ def create_im_group():
     group_avatar = request.form.get('group_avatar', None)
     description = request.form.get('description', '暂无描述')
     admin_uid = request.form.get('admin_uid', None)
-    if organization_id == 0 or conversation_id == 0 \
-            or group_avatar is None or admin_uid is None:
+    if organization_id == 0 or group_avatar is None or admin_uid is None:
         raise ParamException()
     group_id, conversation_id, result = create_im_group_service(group_name, member_client_ids, organization_id,
                                                                 conversation_id, group_avatar, admin_uid, description)
