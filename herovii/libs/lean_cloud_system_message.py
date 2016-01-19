@@ -168,16 +168,17 @@ class LeanCloudSystemMessage(object):
         用户加群申请的消息
         """
         from herovii.service.im import get_group_admin_member_by_group_id
-        from herovii.service.im import get_user_profile_by_client_id
+        # from herovii.service.im import get_user_profile_by_client_id
         from herovii.service.im import get_group_info_by_group_id
         group_admin_user = get_group_admin_member_by_group_id(gid)
-        user_detail = get_user_profile_by_client_id(uid)
-        if user_detail:
-            nickname = user_detail['nickname']
-            message_text = nickname + " 申请加入该群"
-        else:
-            message_text = uid + " 申请加入该群"
+        # user_detail = get_user_profile_by_client_id(uid)
         group = get_group_info_by_group_id(gid)
+        message_text = "申请加入 " + group['group_name'] + " 群"
+        # if user_detail:
+        #     nickname = user_detail['nickname']
+        #     message_text = nickname + " 申请加入 "+ group['group_name'] +" 群"
+        # else:
+        #     message_text = uid + " 申请加入该群"
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
