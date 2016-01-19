@@ -18,7 +18,7 @@ class TestIm(unittest.TestCase):
     #         "description": '单元测试时创建的群',
     #         "admin_uid": 'c565'
     #     }
-    #     resp = requests.post('http://localhost:5000/v1/im/group', data=body_data)
+    #     resp = requests.post('http://localhost:5000/v1/im/group', data=json.dumps(body_data))
     #     print(resp.text)
     #     self.assertEqual(resp.status_code, 201)
     #
@@ -27,7 +27,7 @@ class TestIm(unittest.TestCase):
     #     body_data = {
     #         "group_name": '修改后的群名称'
     #     }
-    #     resp = requests.put('http://localhost:5000/v1/im/group/16', data=body_data)
+    #     resp = requests.put('http://localhost:5000/v1/im/group/16', data=json.dumps(body_data))
     #     print(resp.text)
     #     self.assertEqual(resp.status_code, 200)
     #
@@ -47,7 +47,7 @@ class TestIm(unittest.TestCase):
         body_data = {
             "member_client_ids": "c01:c02"
         }
-        resp = requests.post('http://localhost:5000/v1/im/group/27/member', data=body_data)
+        resp = requests.post('http://localhost:5000/v1/im/group/27/member', data=json.dumps(body_data))
         print(resp.text)
         self.assertEqual(resp.status_code, 201)
     #
@@ -56,7 +56,7 @@ class TestIm(unittest.TestCase):
     #     body_data = {
     #         "member_client_ids": "c21:c72"
     #     }
-    #     resp = requests.delete('http://localhost:5000/v1/im/group/16/member', data=body_data)
+    #     resp = requests.delete('http://localhost:5000/v1/im/group/16/member', data=json.dumps(body_data))
     #     print(resp.text)
     #     self.assertEqual(resp.status_code, 204)
     #

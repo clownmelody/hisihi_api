@@ -151,6 +151,7 @@ def add_im_group_members_service(group_id, member_client_ids):
     if code // 100 != 2:
         db.session.rollback()
         return False
+    db.session.commit()
     # 发送系统通知
     LeanCloudSystemMessage.push_added_to_group_message(0, group_id, client_id_list)
     return True
