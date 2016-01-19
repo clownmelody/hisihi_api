@@ -128,7 +128,9 @@ def add_im_group_members_service(group_id, member_client_ids):
     member_list = []
     if not group:
         raise ImGroupNotFound()
+    print("1: "+json.dumps(member_client_ids))
     client_id_list = member_client_ids.split(':')
+    print("2: "+json.dumps(client_id_list))
     try:
         for client_id in client_id_list:
             member_list.append(client_id)
@@ -230,7 +232,8 @@ def get_organization_im_groups_service(organization_id, page, per_page):
             "group_avatar": group.group_avatar,
             "description": group.description,
             "create_time": group.create_time,
-            "level": group.level
+            "level": group.level,
+            "conversation_id": group.conversation_id
         }
         result_list.append(g)
     return group_total_count, result_list

@@ -8,19 +8,19 @@ from herovii.libs.lean_cloud_system_message import LeanCloudSystemMessage
 class TestIm(unittest.TestCase):
 
     # 创建群组
-    def test_create_im_group(self):
-        body_data = {
-            "group_name": '测试群02',
-            "member_client_ids": ['c001'],
-            "organization_id": 2,
-            #"conversation_id": '000121',
-            "group_avatar": 'http://test.jpg',
-            "description": '单元测试时创建的群',
-            "admin_uid": 'c565'
-        }
-        resp = requests.post('http://localhost:5000/v1/im/group', data=body_data)
-        print(resp.text)
-        self.assertEqual(resp.status_code, 201)
+    # def test_create_im_group(self):
+    #     body_data = {
+    #         "group_name": '测试群02',
+    #         "member_client_ids": ['c001'],
+    #         "organization_id": 2,
+    #         #"conversation_id": '000121',
+    #         "group_avatar": 'http://test.jpg',
+    #         "description": '单元测试时创建的群',
+    #         "admin_uid": 'c565'
+    #     }
+    #     resp = requests.post('http://localhost:5000/v1/im/group', data=body_data)
+    #     print(resp.text)
+    #     self.assertEqual(resp.status_code, 201)
     #
     # # 修改群名称
     # def test_update_im_group_name(self):
@@ -43,13 +43,13 @@ class TestIm(unittest.TestCase):
     #     self.assertEqual(resp.status_code, 204)
     #
     # # 添加群成员
-    # def test_add_im_group_member(self):
-    #     body_data = {
-    #         "member_client_ids": "c21:c72"
-    #     }
-    #     resp = requests.post('http://localhost:5000/v1/im/group/16/member', data=body_data)
-    #     print(resp.text)
-    #     self.assertEqual(resp.status_code, 201)
+    def test_add_im_group_member(self):
+        body_data = {
+            "member_client_ids": "c01:c02"
+        }
+        resp = requests.post('http://localhost:5000/v1/im/group/27/member', data=body_data)
+        print(resp.text)
+        self.assertEqual(resp.status_code, 201)
     #
     # # 移除群成员
     # def test_delete_im_group_member(self):

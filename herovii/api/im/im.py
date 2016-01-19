@@ -219,6 +219,8 @@ def add_im_group_members(group_id=0):
     if group_id == 0:
         raise ParamException()
     member_client_ids = request.form.get('member_client_ids', None)
+    if member_client_ids is None:
+        raise ParamException()
     result = add_im_group_members_service(group_id, member_client_ids)
     if result:
         result = {
