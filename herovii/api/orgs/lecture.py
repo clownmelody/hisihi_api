@@ -63,6 +63,26 @@ def join_teacher_group():
     return jsonify(t_g_relation), 201
 
 
+@api.route('/lecture/groups/join', methods=['POST'])
+def join_teachers_group():
+    lectures = []
+    temp_lectures = request.get_json(silent=True, force=True)
+    for temp_lecture in temp_lectures:
+        LectureJoinForm.create_api_form(self_data=temp_lecture)
+        t_g_relation = TeacherGroupRelation()
+        for key, value in temp_lectures.items():
+            setattr(t_g_relation, key, value)
+            t_g_relation.group = 6
+            set_lecturer_extend_info(t_g_relation.uid, t_g_relation.organization_id)
+        lectures.append(t_g_relation)
+    with db.auto_commit():
+        for lecture in lectures:
+            db.session.add(lecture)
+    str_data = json.dumps(lectures)
+    headers = {'Content-Type': 'application/json'}
+    return str_data, 201, headers
+
+
 @api.route('/lecture/<int:uid>/group/<int:gid>/quite', methods=['DELETE'])
 @auth.login_required
 def quit_from_teacher_group(uid, gid):
