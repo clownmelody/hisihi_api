@@ -16,10 +16,7 @@ class Category(Base):
     category_name = Column(String(15))
 
     # 图标地址
-    icon_url = Column(String(100))
-
-    def __init__(self):
-        self.status = 1
+    icon_url = Column(String)
 
     def keys(self):
         return (
