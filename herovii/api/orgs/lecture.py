@@ -80,7 +80,8 @@ def join_teachers_group():
 
     organization_id = list(dict_counter.keys())[0]
     t_in_org_count = db.session.query(TeacherGroupRelation).\
-        filter_by(status=1, organization_id=organization_id).count()
+        filter_by(status=1, organization_id=organization_id).\
+        group_by(TeacherGroupRelation.uid).count()
     if t_in_org_count > 5:
         raise VolumeTooLarge(error='number of teachers is limited in 5')
 
