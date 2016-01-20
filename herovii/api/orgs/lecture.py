@@ -1,3 +1,4 @@
+from collections import Counter
 from flask import jsonify, json
 from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint, auth
@@ -67,13 +68,30 @@ def join_teacher_group():
 def join_teachers_group():
     lectures = []
     temp_lectures = request.get_json(silent=True, force=True)
+
+    # 检查所有的org_id是否相同
+    if not temp_lectures:
+        raise ParamException()
+    m = map(lambda x: x['oid'], temp_lectures)
+    l_m = list(m)
+    dict_counter = Counter(l_m)
+    if len(dict_counter) != 1:
+        raise ParamException(error='organization_id must be the same')
+
+    organization_id = list(dict_counter.keys())[0]
+    t_in_org_count = db.session.query(TeacherGroupRelation).\
+        filter_by(status=1, organization_id=organization_id).count()
+    if t_in_org_count > 5:
+        raise VolumeTooLarge(error='number of teachers is limited in 5')
+
     for temp_lecture in temp_lectures:
-        LectureJoinForm.create_api_form(self_data=temp_lecture)
+        form = LectureJoinForm.create_api_form(self_data=temp_lecture)
         t_g_relation = TeacherGroupRelation()
-        for key, value in temp_lectures.items():
-            setattr(t_g_relation, key, value)
-            t_g_relation.group = 6
-            set_lecturer_extend_info(t_g_relation.uid, t_g_relation.organization_id)
+        t_g_relation.teacher_group_id = form.teacher_group_id.data
+        t_g_relation.uid = form.uid.data
+        t_g_relation.organization_id = form.oid.data
+        t_g_relation.group = 6
+        set_lecturer_extend_info(t_g_relation.uid, t_g_relation.organization_id)
         lectures.append(t_g_relation)
     with db.auto_commit():
         for lecture in lectures:
