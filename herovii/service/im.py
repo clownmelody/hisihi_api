@@ -78,7 +78,8 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
         code, res = create_conversation_to_lean_cloud(json.dumps(body))
         if code != 201:
             raise CreateImGroupFailture()
-        conversation_id = res.objectId
+        res = json.loads(res)
+        conversation_id = res['objectId']
         db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversation_id': conversation_id})
     # 发送系统通知
     LeanCloudSystemMessage.push_added_to_group_message(admin_uid, group.id, client_id_list)
@@ -150,6 +151,7 @@ def add_im_group_members_service(group_id, member_client_ids):
     if code // 100 != 2:
         db.session.rollback()
         return False
+    db.session.commit()
     # 发送系统通知
     LeanCloudSystemMessage.push_added_to_group_message(0, group_id, client_id_list)
     return True
@@ -229,7 +231,8 @@ def get_organization_im_groups_service(organization_id, page, per_page):
             "group_avatar": group.group_avatar,
             "description": group.description,
             "create_time": group.create_time,
-            "level": group.level
+            "level": group.level,
+            "conversation_id": group.conversation_id
         }
         result_list.append(g)
     return group_total_count, result_list

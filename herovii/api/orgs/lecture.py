@@ -1,7 +1,8 @@
+from collections import Counter
 from flask import jsonify, json
 from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import ParamException
+from herovii.libs.error_code import ParamException, VolumeTooLarge
 
 from herovii.libs.helper import success_json
 from herovii.models.base import db
@@ -45,6 +46,13 @@ def delete_teacher_group(gid):
 @auth.login_required
 def join_teacher_group():
     form = LectureJoinForm.create_api_form()
+
+    # 限制每组最多只能有5个老师。这里没有考虑锁机制，有可能同时插入2条数据使数量超过5个
+    exit_teachers_count = db.session.query(TeacherGroupRelation).\
+        filter_by(status=1, teacher_group_id=form.teacher_group_id.data).count()
+    if exit_teachers_count >= 5:
+        raise VolumeTooLarge(error='number of teachers is limited in 5')
+
     t_g_relation = TeacherGroupRelation()
     t_g_relation.teacher_group_id = form.teacher_group_id.data
     t_g_relation.uid = form.uid.data
@@ -54,6 +62,44 @@ def join_teacher_group():
     with db.auto_commit():
         db.session.add(t_g_relation)
     return jsonify(t_g_relation), 201
+
+
+@api.route('/lecture/groups/join', methods=['POST'])
+def join_teachers_group():
+    lectures = []
+    temp_lectures = request.get_json(silent=True, force=True)
+
+    # 检查所有的org_id是否相同
+    if not temp_lectures:
+        raise ParamException()
+    m = map(lambda x: x['oid'], temp_lectures)
+    l_m = list(m)
+    dict_counter = Counter(l_m)
+    if len(dict_counter) != 1:
+        raise ParamException(error='organization_id must be the same')
+
+    organization_id = list(dict_counter.keys())[0]
+    t_in_org_count = db.session.query(TeacherGroupRelation).\
+        filter_by(status=1, organization_id=organization_id).\
+        group_by(TeacherGroupRelation.uid).count()
+    if t_in_org_count > 5:
+        raise VolumeTooLarge(error='number of teachers is limited in 5')
+
+    for temp_lecture in temp_lectures:
+        form = LectureJoinForm.create_api_form(self_data=temp_lecture)
+        t_g_relation = TeacherGroupRelation()
+        t_g_relation.teacher_group_id = form.teacher_group_id.data
+        t_g_relation.uid = form.uid.data
+        t_g_relation.organization_id = form.oid.data
+        t_g_relation.group = 6
+        set_lecturer_extend_info(t_g_relation.uid, t_g_relation.organization_id)
+        lectures.append(t_g_relation)
+    with db.auto_commit():
+        for lecture in lectures:
+            db.session.add(lecture)
+    str_data = json.dumps(lectures)
+    headers = {'Content-Type': 'application/json'}
+    return str_data, 201, headers
 
 
 @api.route('/lecture/<int:uid>/group/<int:gid>/quite', methods=['DELETE'])

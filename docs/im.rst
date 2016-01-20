@@ -260,6 +260,7 @@ leancloud client-id 约定
                 "group_name":"g123",
                 "description":"",
                 "level":1000,
+                "conversation_id": "234fwrw23",
                 "create_time":1450423535
             },
             {
@@ -268,6 +269,7 @@ leancloud client-id 约定
                 "group_name":"676",
                 "description":"",
                 "level":1000,
+                "conversation_id": "234fwrw23",
                 "create_time":1450423856
             }
         ],
@@ -379,12 +381,12 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /im/group/<int:group_id>
+    GET     /im/group/<int:group_id>?client_id=c001
 
 **Parameters**:
 
 * group_id: 群组 id
-* client_id: 用户 IM id。如果传入该参数会返回用户是否在该群中，否则不返回  (该参数放在请求头中)
+* client_id: 用户 IM id。如果传入该参数会返回用户是否在该群中，否则不返回
 
 **Response** `200` ::
 

@@ -13,7 +13,7 @@ class ImGroup(Base):
     id = Column(Integer, primary_key=True)
     group_name = Column(String(45), nullable=False)
     organization_id = Column(Integer, nullable=True)
-    conversation_id = Column(Integer, nullable=True)
+    conversation_id = Column(String(45), nullable=True)
     group_avatar = Column(String(120))
     description = Column(String(300))
     create_time = Column(Integer)
