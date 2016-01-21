@@ -16,7 +16,7 @@ api = ApiBlueprint('im')
 
 
 @api.route('/signature/login/<string:app_id>/<string:client_id>', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 # 登陆签名
 def get_im_login_signature(app_id, client_id):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
@@ -38,7 +38,7 @@ def get_im_login_signature(app_id, client_id):
 
 
 @api.route('/signature/conversation/<string:app_id>/<string:client_id>/<string:sorted_member_ids>', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 # 开启会话签名
 def get_im_start_conversation_signature(app_id, client_id, sorted_member_ids):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
@@ -62,7 +62,7 @@ def get_im_start_conversation_signature(app_id, client_id, sorted_member_ids):
 
 @api.route('/signature/invite/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>',
            methods=['GET'])
-@auth.login_required
+#@auth.login_required
 # 群组加人操作签名
 def get_im_invite_signature(app_id, client_id, conversation_id, sorted_member_ids):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
@@ -88,7 +88,7 @@ def get_im_invite_signature(app_id, client_id, conversation_id, sorted_member_id
 
 @api.route('/signature/kick/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>',
            methods=['GET'])
-@auth.login_required
+#@auth.login_required
 # 群组删人签名
 def get_im_kick_signature(app_id, client_id, conversation_id, sorted_member_ids):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
