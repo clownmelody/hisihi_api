@@ -33,6 +33,8 @@ class Yellow(Base):
 
     def __init__(self):
         self.state = 1
+        self.real_score = 0
+        self.fake_score = 0
 
     def keys(self):
         return (
