@@ -16,23 +16,23 @@ class Yellow(Base):
     web_name = Column(String(15))
 
     # 网址链接
-    url = Column(String(100))
+    url = Column(String)
 
     # 图标地址
-    icon_url = Column(String(100))
+    icon_url = Column(String)
 
     # 所属类别
     class_id = Column(Integer)
 
     # 推荐状态,默认值为1，表示不推荐
-    state = Column(SmallInteger)
+    state = Column(Integer)
 
     # 访问量:真实和虚假
     real_score = Column(Integer)
     fake_score = Column(Integer)
 
     def __init__(self):
-        self.status = 1
+        self.state = 1
 
     def keys(self):
         return (

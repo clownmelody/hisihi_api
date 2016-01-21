@@ -248,20 +248,39 @@ class FeedbackForm(Form):
 
 
 class YellowPagesForm(Form):
-    id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    # id = IntegerField(validators=[DataRequired(), NumberRange(1)])
     web_name = StringField(validators=[DataRequired()])
     url = StringField(validators=[DataRequired()])
     icon_url = StringField(validators=[DataRequired()])
     class_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    state = IntegerField(validators=[DataRequired()])
-    real_score = StringField(validators=[DataRequired()])
-    fake_score = StringField(validators=[DataRequired()])
+    state = IntegerField()
+    real_score = IntegerField()
+    fake_score = IntegerField()
+
+
+class UpdateYellowPagesForm(Form):
+    # id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    web_name = StringField()
+    url = StringField()
+    icon_url = StringField()
+    class_id = IntegerField(validators=[NumberRange(1)])
+    state = IntegerField()
+    status = IntegerField()
+    real_score = IntegerField()
+    fake_score = IntegerField()
 
 
 class CategoryForm(Form):
-    id = IntegerField(validators=[DataRequired(), NumberRange(1)])
     category_name = StringField(validators=[DataRequired()])
     icon_url = StringField(validators=[DataRequired()])
+
+
+class UpdateCategoryForm(Form):
+    # id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    category_name = StringField()
+    icon_url = StringField()
+    status = IntegerField()
+
 
 class ClassmateJoinForm(Form):
     uids = StringField(validators=[DataRequired()])
