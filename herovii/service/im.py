@@ -33,7 +33,7 @@ def sign(msg, k):
 
 # 获取当前时间戳
 def get_timestamp():
-    return str(time.time())
+    return int(time.time())
 
 
 # 生成随机字符串
