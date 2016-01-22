@@ -266,7 +266,6 @@ class UpdateYellowPagesForm(Form):
     class_id = IntegerField(validators=[NumberRange(1)])
     state = IntegerField()
     status = IntegerField()
-    real_score = IntegerField()
     fake_score = IntegerField()
 
 
