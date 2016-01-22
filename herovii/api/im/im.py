@@ -239,17 +239,17 @@ def add_im_group_members(group_id=0):
     return json.dumps(result), 201, headers
 
 
-@api.route('/group/<int:group_id>/member', methods=['DELETE'])
+@api.route('/group/<int:group_id>/member/<string:client_id>', methods=['DELETE'])
 #@auth.login_required
 # 删除群成员
-def delete_im_group_members(group_id=0):
-    if group_id == 0:
+def delete_im_group_members(group_id=0, client_id=None):
+    if group_id == 0 or client_id is None:
         raise ParamException()
-    request_json = request.get_json(force=True, silent=True)
-    member_client_ids = request_json['member_client_ids']
-    if member_client_ids is None:
-        raise ParamException()
-    result = delete_im_group_members_service(group_id, member_client_ids)
+    # request_json = request.get_json(force=True, silent=True)
+    # member_client_ids = request_json['member_client_ids']
+    # if member_client_ids is None:
+    #     raise ParamException()
+    result = delete_im_group_members_service(group_id, client_id)
     if not result:
         raise DeleteImGroupMemberFailture()
     return '', 204

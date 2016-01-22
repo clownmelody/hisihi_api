@@ -43,22 +43,22 @@ class TestIm(unittest.TestCase):
     #     self.assertEqual(resp.status_code, 204)
     #
     # # 添加群成员
-    def test_add_im_group_member(self):
-        body_data = {
-            "member_client_ids": "c01:c02"
-        }
-        resp = requests.post('http://localhost:5000/v1/im/group/27/member', data=json.dumps(body_data))
-        print(resp.text)
-        self.assertEqual(resp.status_code, 201)
+    # def test_add_im_group_member(self):
+    #     body_data = {
+    #         "member_client_ids": "c01:c02"
+    #     }
+    #     resp = requests.post('http://localhost:5000/v1/im/group/27/member', data=json.dumps(body_data))
+    #     print(resp.text)
+    #     self.assertEqual(resp.status_code, 201)
     #
     # # 移除群成员
-    # def test_delete_im_group_member(self):
-    #     body_data = {
-    #         "member_client_ids": "c21:c72"
-    #     }
-    #     resp = requests.delete('http://localhost:5000/v1/im/group/16/member', data=json.dumps(body_data))
-    #     print(resp.text)
-    #     self.assertEqual(resp.status_code, 204)
+    def test_delete_im_group_member(self):
+        body_data = {
+            "member_client_ids": "c01"
+        }
+        resp = requests.delete('http://localhost:5000/v1/im/group/27/member', data=json.dumps(body_data))
+        print(resp.text)
+        self.assertEqual(resp.status_code, 204)
     #
     # # 向班级群发通知
     # def test_send_message_to_class(self):
