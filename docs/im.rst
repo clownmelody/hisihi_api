@@ -225,14 +225,13 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    DELETE     /im/group/<int:group_id>/member
+    DELETE     /im/group/<int:group_id>/member/<string:client_id>
 
 **Parameters**:
 
 * group_id: 群组id
-* member_client_ids: member_client_ids 是以半角冒号（:）分隔的 client_id
+* client_id: IM 用户 client_id
 
-备注: member_client_ids 中为 client_id, 即带字母前缀
 
 **Response** `204` ::
 -- end
