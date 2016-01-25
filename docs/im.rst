@@ -15,7 +15,7 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /signature/login/<string:app_id>/<string:client_id>
+    GET     /im/signature/login/<string:app_id>/<string:client_id>
 
 **Parameters**:
 
@@ -39,7 +39,7 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /signature/conversation/<string:app_id>/<string:client_id>/<string:sorted_member_ids>
+    GET     /im/signature/conversation/<string:app_id>/<string:client_id>/<string:sorted_member_ids>
 
 **Parameters**:
 
@@ -65,7 +65,7 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /signature/invite/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>
+    GET     /im/signature/invite/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>
 
 **Parameters**:
 
@@ -94,7 +94,7 @@ leancloud client-id 约定
 ~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     /signature/kick/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>
+    GET     /im/signature/kick/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>
 
 **Parameters**:
 

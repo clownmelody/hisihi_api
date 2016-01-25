@@ -24,7 +24,7 @@ def get_im_login_signature(app_id, client_id):
     nonce = get_nonce()
     var_list = [app_id, client_id]
     split_symbol = ':'
-    msg = split_symbol.join(var_list) + '::' + timestamp + ':' + nonce
+    msg = split_symbol.join(var_list) + '::' + str(timestamp) + ':' + nonce
     signature = sign(msg, master_key)
     result = {
         'app_id': app_id,
