@@ -139,6 +139,11 @@ def add_im_group_members_service(group_id, member_client_ids):
                 if is_group_available_to_add_member(group.id):  # 群成员数量未达到上限
                     group_member = ImGroupMember(group_id=group.id, member_id=client_id, create_time=int(time.time()))
                     db.session.add(group_member)
+            else:
+                if exist_in_group.status == '-1':
+                    db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
+                                                           ImGroupMember.member_id == client_id)\
+                        .update({'status': 1})
     except:
         return False
     # 在 leancloud 中添加群成员

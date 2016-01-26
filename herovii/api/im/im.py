@@ -307,7 +307,6 @@ def push_message_to_all_classmates(class_id=0):
 
 
 @api.route('/user/<string:client_id>/groups', methods=['GET'])
-@auth.login_required
 # 获取用户的所有群组
 def get_im_user_groups(client_id=0):
     if client_id == 0:
@@ -321,7 +320,6 @@ def get_im_user_groups(client_id=0):
 
 
 @api.route('/group/<int:group_id>', methods=['GET'])
-#@auth.login_required
 # 获取群组详情
 def get_im_group_detail(group_id=0):
     if group_id == 0:
