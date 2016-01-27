@@ -44,7 +44,7 @@ def get_im_start_conversation_signature(app_id, client_id, sorted_member_ids):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
-    var_list = [app_id, client_id, sorted_member_ids, timestamp, nonce]
+    var_list = [app_id, client_id, sorted_member_ids, str(timestamp), nonce]
     split_symbol = ':'
     msg = split_symbol.join(var_list)
     signature = sign(msg, master_key)
@@ -68,7 +68,7 @@ def get_im_invite_signature(app_id, client_id, conversation_id, sorted_member_id
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
-    var_list = [app_id, client_id, conversation_id, sorted_member_ids, timestamp, nonce, 'invite']
+    var_list = [app_id, client_id, conversation_id, sorted_member_ids, str(timestamp), nonce, 'invite']
     split_symbol = ':'
     msg = split_symbol.join(var_list)
     signature = sign(msg, master_key)
@@ -94,7 +94,7 @@ def get_im_kick_signature(app_id, client_id, conversation_id, sorted_member_ids)
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
     timestamp = get_timestamp()
     nonce = get_nonce()
-    var_list = [app_id, client_id, conversation_id, sorted_member_ids, timestamp, nonce, 'kick']
+    var_list = [app_id, client_id, conversation_id, sorted_member_ids, str(timestamp), nonce, 'kick']
     split_symbol = ':'
     msg = split_symbol.join(var_list)
     signature = sign(msg, master_key)
