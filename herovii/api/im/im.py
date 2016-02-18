@@ -263,8 +263,8 @@ def get_organization_im_groups(organization_id=0):
         raise ParamException()
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
-    page = (1 if form.page.data else form.page.data)
-    per_page = (20 if form.per_page.data else form.per_page.data)
+    page = int(form.page.data if form.page.data else 1)
+    per_page = int(form.per_page.data if form.per_page.data else 2)
     total_count, data = get_organization_im_groups_service(organization_id, page, per_page)
     result = {
         "total_count": total_count,
