@@ -27,16 +27,17 @@ class LeanCloudSystemMessage(object):
             if user_detail:
                 nickname_list.append(user_detail['nickname'])
         nickname_list_str = "、".join(nickname_list)
-        message_text = nickname_list_str + " 离开群聊"
-        all_group_members = get_group_member_client_ids_by_group_id(gid)
+        # all_group_members = get_group_member_client_ids_by_group_id(gid)
         group = get_group_info_by_group_id(gid)
+        # message_text = nickname_list_str + " 离开群聊"
+        message_text = "已退出 " + group['group_name'] + " 群"
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
             "_lcattrs": {
                 "message_info": message_text,
                 "sys_message_type": "removed_from_group",
-                "uid": uid,
+                "uid": member_client_ids,
                 "gid": gid,
                 "type": "group",
                 "conversation_id": group['conversation_id'],
@@ -45,9 +46,9 @@ class LeanCloudSystemMessage(object):
         }
         message_content = json.dumps(message_content)
         body_data = {
-            "from_peer": uid,
+            "from_peer": member_client_ids,
             "message": message_content,
-            "to_peers": all_group_members,
+            "to_peers": uid,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": False,
             "no_sync": True
