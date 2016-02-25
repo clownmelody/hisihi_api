@@ -49,7 +49,7 @@ class LeanCloudSystemMessage(object):
             "message": message_content,
             "to_peers": all_group_members,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
-            "transient": True,
+            "transient": False,
             "no_sync": True
         }
         body_data = json.dumps(body_data)
@@ -90,7 +90,7 @@ class LeanCloudSystemMessage(object):
             "message": message_content,
             "to_peers": all_group_members,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
-            "transient": True,
+            "transient": False,
             "no_sync": True
         }
         body_data = json.dumps(body_data)
@@ -123,7 +123,7 @@ class LeanCloudSystemMessage(object):
             "message": message_content,
             "to_peers": all_group_members,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
-            "transient": True,
+            "transient": False,
             "no_sync": True
         }
         body_data = json.dumps(body_data)
@@ -156,7 +156,7 @@ class LeanCloudSystemMessage(object):
             "message": message_content,
             "to_peers": all_group_members,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
-            "transient": True,
+            "transient": False,
             "no_sync": True
         }
         body_data = json.dumps(body_data)
@@ -197,7 +197,7 @@ class LeanCloudSystemMessage(object):
             "message": message_content,
             "to_peers": group_admin_user,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
-            "transient": True,
+            "transient": False,
             "no_sync": True
         }
         body_data = json.dumps(body_data)
