@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 __author__ = 'bliss'
 
-from flask import jsonify, request, g, make_response
+from flask import jsonify, request, g
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature
 from flask import current_app
@@ -69,14 +70,14 @@ def verify_user(ac, secret, ac_type):
     promise = {
                 AccountTypeEnum.app: account.verify_in_heroapi,
                 AccountTypeEnum.use_csu_social: account.verify_in_csu_by_social,
-                AccountTypeEnum.user_csu_mobile: account.verify_in_csu_by_mobile
+                AccountTypeEnum.user_csu_mobile: account.verify_in_csu_by_mobile,
+                AccountTypeEnum.user_org_mobile: account.verify_in_org_by_mobile
         }
     return promise.get(ac_type)(ac, secret)
 
 
 @auth.verify_password
 def verify_password(token, password):
-    # Todo 开发时取消验证
     # password这里没有用，但是由于使用了http-auth库，所以占时保留
     if current_app.config['REMOVE_TOKEN_VERIFY']:
         return True

@@ -81,7 +81,6 @@
 #
 # @auth.verify_password
 # def verify_password(token, password):
-#     # Todo 开发时取消验证
 #     if current_app.config['REMOVE_TOKEN_VERIFY']:
 #         return True
 #     uid = verify_auth_token(token)

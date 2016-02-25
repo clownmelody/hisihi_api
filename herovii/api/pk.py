@@ -32,4 +32,3 @@ def downloads_plus_1():
         return success_json(), 202
     else:
         raise UnknownError()
-
