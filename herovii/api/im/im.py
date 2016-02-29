@@ -343,6 +343,14 @@ def user_join_group_notification(client_id=None, group_id=0):
     if client_id is None or group_id == 0:
         raise ParamException()
     from herovii.libs.lean_cloud_system_message import LeanCloudSystemMessage
+    is_exist_in_group = is_client_id_in_group_member(group_id, client_id)
+    if is_exist_in_group:  # 用户已在该群中
+        result = {
+            "code": 7009,
+            "message": "用户已在该群组中"
+        }
+        headers = {'Content-Type': 'application/json'}
+        return json.dumps(result), 400, headers
     code, resp = LeanCloudSystemMessage.push_user_join_in_group_apply_message(client_id, group_id)
     if code//100 == 2:
         result = {
