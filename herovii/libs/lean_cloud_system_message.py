@@ -19,7 +19,7 @@ class LeanCloudSystemMessage(object):
         """
         成员被移除群聊，向所有群成员发系统消息
         """
-        from herovii.service.im import get_group_member_client_ids_by_group_id, get_user_profile_by_client_id, \
+        from herovii.service.im import get_group_admin_member_by_group_id, get_user_profile_by_client_id, \
             get_group_info_by_group_id
         nickname_list = []
         for client_id in member_client_ids:
@@ -28,8 +28,8 @@ class LeanCloudSystemMessage(object):
                 nickname_list.append(user_detail['nickname'])
         nickname_list_str = "、".join(nickname_list)
         # all_group_members = get_group_member_client_ids_by_group_id(gid)
+        group_admin_user = get_group_admin_member_by_group_id(gid)
         group = get_group_info_by_group_id(gid)
-        # message_text = nickname_list_str + " 离开群聊"
         message_text = "已退出 " + group['group_name'] + " 群"
         message_content = {
             "_lctype": 1,
@@ -48,7 +48,7 @@ class LeanCloudSystemMessage(object):
         body_data = {
             "from_peer": member_client_ids[0],
             "message": message_content,
-            "to_peers": uid,
+            "to_peers": group_admin_user,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": False,
             "no_sync": True
