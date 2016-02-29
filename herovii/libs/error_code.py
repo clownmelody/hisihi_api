@@ -162,3 +162,9 @@ class PushToClassFailture(APIException):
     code = 200
     error_code = 7007
     error = 'you have send message today'
+
+
+class SendSysMessageFailture(APIException):
+    code = 200
+    error_code = 7008
+    error = 'send sys message failture, not found target'

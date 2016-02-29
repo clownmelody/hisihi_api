@@ -109,6 +109,7 @@ def quit_from_teacher_group(uid, gid):
         count = TeacherGroupRelation.query.filter(
             TeacherGroupRelation.uid == uid, TeacherGroupRelation.teacher_group_id == gid) \
             .delete()
+        set_lecturer_extend_info(uid, 5)  # 教师移除后身份被修改为学生
     msg = str(count) + ' teacher identity has been removed'
     return success_json(msg=msg), 202
 

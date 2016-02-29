@@ -1,7 +1,10 @@
+import string
 from _operator import or_, and_
 import re
 
 import time
+from datetime import datetime
+
 from flask import json
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
@@ -506,6 +509,7 @@ def get_org_student_profile_by_uid(uid):
             class_info = db.session.query(StudentClass).filter(StudentClass.id == stu_classmate.class_id).first()
             if class_info is not None:
                 class_group = class_info.title
+                total_class_hour = get_student_class_hour(class_info)
         if stu_course is None:
             course_name = None
         else:
@@ -519,11 +523,42 @@ def get_org_student_profile_by_uid(uid):
             'sign_in_count': stu_sign_in_count,
             'graduation_status': stu_classmate.status,
             'class_id': stu_classmate.class_id,
-            'total_class': 90
+            'total_class': total_class_hour
         }
     else:
         return None
     return data
+
+
+def get_student_class_hour(class_info):
+    week = ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
+    week_class_hour_count = 7
+    class_start_date = datetime.strptime(class_info.class_start_date, '%Y-%m-%d')
+    class_end_date = datetime.strptime(class_info.class_end_date, '%Y-%m-%d')
+    total_days = class_end_date - class_start_date
+    total_days = total_days.days + 1
+    if 0 < total_days < 8:
+        end_day_in_week = -1
+    elif total_days > 7:
+        end_day_in_week = class_end_date.weekday()
+    else:
+        raise DirtyDataError()
+    start_day_in_week = class_start_date.weekday()
+    days_in_first_week = 7 - start_day_in_week
+    days_in_last_week = end_day_in_week + 1
+    class_days_in_first_week = days_in_first_week
+    class_days_in_last_week = days_in_last_week
+    for item in range(len(week)):
+        if (class_info.__getitem__(week[item]) is None) \
+                or (class_info.__getitem__(week[item]).strip() is ''):
+            week_class_hour_count -= 1
+            if start_day_in_week <= item < 7:
+                class_days_in_first_week -= 1
+            if 0 <= item <= end_day_in_week:
+                class_days_in_last_week -= 1
+    total_class_hour = ((total_days - days_in_first_week - days_in_last_week) / 7) * week_class_hour_count
+    total_class_hour = int(total_class_hour) + class_days_in_first_week + class_days_in_last_week
+    return total_class_hour
 
 
 def get_user_profile_by_uid(uid):
@@ -558,12 +593,14 @@ def get_org_student_sign_in_history_by_uid(uid, page, per_page):
     if class_mirror_list is None:
         return None
     sign_in_dto = []
+    sign_in_count = 0
     for class_mirror in class_mirror_list:
         sign_in = db.session.query(StudentSignIn.uid, StudentSignIn.organization_id, StudentSignIn.date) \
             .filter(StudentSignIn.uid == uid, StudentSignIn.status != -1, StudentSignIn.date == class_mirror.date) \
             .order_by(StudentSignIn.sign_in_time.desc()) \
             .first()
         if sign_in is not None:
+            sign_in_count += 1
             data = {
                 'uid': uid,
                 'is_sign_in': True,
@@ -576,7 +613,12 @@ def get_org_student_sign_in_history_by_uid(uid, page, per_page):
                 'date': class_mirror.date
             }
         sign_in_dto.append(data)
-    return class_mirror_total_count, sign_in_dto
+    class_info = db.session.query(StudentClass).filter(StudentClass.id == student_class.class_id,
+                                                       StudentClass.status == 1).first()
+    student_class_hour = get_student_class_hour(class_info)
+    completion_rate = int((sign_in_count / student_class_hour) * 100)
+    completion_rate = str(completion_rate) + '%'
+    return class_mirror_total_count, sign_in_dto, student_class_hour, completion_rate
 
 
 def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
@@ -823,5 +865,141 @@ def set_lecturer_extend_info(uid, oid):
     if res and (result or field.id):
         return True
     else:
+        raise UpdateDBError()
+
+
+def get_org_all_class_service(oid, page, per_page):
+    class_total_count = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
+                                                              StudentClass.status == 1).count()
+    start = (page - 1) * per_page
+    stop = start + per_page
+    class_list = db.session.query(StudentClass.id, StudentClass.title, StudentClass.monday, StudentClass.tuesday,
+                                  StudentClass.wednesday, StudentClass.thursday, StudentClass.friday,
+                                  StudentClass.saturday, StudentClass.sunday)\
+        .filter(StudentClass.organization_id == oid, StudentClass.status == 1) \
+        .slice(start, stop) \
+        .all()
+    data = []
+    for org_class in class_list:
+        class_stu_total_count = db.session.query(Classmate).filter(Classmate.class_id == org_class.id,
+                                                                   Classmate.status == 1).count()
+        class_time = '周一' + parse_class_time(org_class.monday) + '、周二' + parse_class_time(org_class.tuesday)\
+                     + '、周三' + parse_class_time(org_class.wednesday) + '、周四' + parse_class_time(org_class.thursday)\
+                     + '、周五' + parse_class_time(org_class.friday) + '、周六' + parse_class_time(org_class.saturday)\
+                     + '、周日' + parse_class_time(org_class.sunday)
+        _org_class = {"id": org_class.id, "name": org_class.title, "student_count": class_stu_total_count,
+                      "class_time": class_time}
+        data.append(_org_class)
+    return data, class_total_count
+
+
+def parse_class_time(day):
+    class_time = ''
+    if day is None:
+        day = ''
+    if day.find('1') >= 0:
+        class_time += '上'
+    if day.find('2') >= 0:
+        class_time += '下'
+    if day.find('3') >= 0:
+        class_time += '晚'
+    if class_time is '':
+        class_time += '无'
+    return class_time
+
+
+def get_org_enroll_student_service(oid, name):
+    if name is None:
+        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path)\
+            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid)\
+            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid)\
+            .filter(Enroll.organization_id == oid, Enroll.status == 2)\
+            .all()
+        total_count = len(enroll_students)
+    else:
+        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path)\
+            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid)\
+            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid)\
+            .outerjoin(UserCSUSecure, Enroll.student_uid == UserCSUSecure.id)\
+            .filter(Enroll.organization_id == oid, Enroll.status == 2, or_(UserCSU.nickname.like('%' + name + '%'),
+                                                                           UserCSUSecure.mobile.like('%' + name + '%')))\
+            .all()
+        total_count = len(enroll_students)
+    data = []
+    for student in enroll_students:
+        avatar = get_full_oss_url(student.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+        org_student = {"uid": student.student_uid, "nickname": student.nickname, "avatar": avatar}
+        data.append(org_student)
+    return data, total_count
+
+
+def get_org_class_info_service(cid):
+    class_info = db.session.query(StudentClass.id, StudentClass.title, StudentClass.class_start_date,
+                                  StudentClass.class_end_date, StudentClass.monday, StudentClass.tuesday,
+                                  StudentClass.wednesday, StudentClass.thursday, StudentClass.friday,
+                                  StudentClass.saturday, StudentClass.sunday)\
+            .filter(StudentClass.id == cid, StudentClass.status == 1)\
+            .first()
+    if not class_info:
+        raise NotFound()
+    data = {
+        "id": class_info.id,
+        "title": class_info.title,
+        "class_start_date": class_info.class_start_date,
+        "class_end_date": class_info.class_end_date,
+        "monday": class_info.monday,
+        "tuesday": class_info.tuesday,
+        "wednesday": class_info.wednesday,
+        "thursday": class_info.thursday,
+        "friday": class_info.friday,
+        "saturday": class_info.saturday,
+        "sunday": class_info.sunday
+    }
+    return data
+
+
+def join_org_class_service(cid, uids):
+    ids = uids.split(':')
+    info = []
+    id_in_class = db.session.query(Classmate.uid)\
+        .filter(Classmate.class_id == cid, Classmate.uid.in_(ids))\
+        .all()
+    for id_in in id_in_class:
+        if str(id_in.uid) in ids:
+            ids.remove(str(id_in.uid))
+    for uid in ids:
+        stu = {
+            "uid": int(uid),
+            "class_id": cid,
+            "status": 1,
+            "create_time": int(time.time())
+        }
+        info.append(stu)
+    with db.auto_commit():
+        result = db.session.execute(Classmate.__table__.insert(), info)
+    msg = str(result.rowcount) + ' students has been joined'
+    return msg
+
+
+def quit_org_class_service(cid, uids):
+    ids = uids.split(':')
+    with db.auto_commit():
+        count = db.session.query(Classmate).filter(Classmate.class_id == cid, Classmate.uid.in_(ids))\
+            .delete(synchronize_session=False)
+    return count
+
+
+def update_teachers_field_info(oid, org_name):
+    teachers = db.session.query(TeacherGroupRelation.uid)\
+        .filter(TeacherGroupRelation.organization_id == oid, TeacherGroupRelation.group == 6,
+                TeacherGroupRelation.status > 0)\
+        .distinct()\
+        .all()
+    t_ids = []
+    for uid in teachers:
+        t_ids.append(uid.uid)
+    result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39)\
+        .update({Field.field_data: org_name}, synchronize_session=False)
+    if not result:
         raise UpdateDBError()
 

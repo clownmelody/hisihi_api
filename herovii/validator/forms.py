@@ -173,11 +173,21 @@ class OrgCourseForm(Form):
 
 
 class StudentClassForm(Form):
-    organization_id = IntegerField(
-        validators=[NumberRange(1), DataRequired()])
-    title = StringField(
-        validators=[DataRequired()]
-    )
+    organization_id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    title = StringField(validators=[DataRequired()])
+    class_start_date = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
+    class_end_date = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
+    monday = StringField(validators=[Regexp(r'^[1-3]{0,3}$')])
+    tuesday = StringField(validators=[Regexp(r'^[1-3]{0,3}$')])
+    wednesday = StringField(validators=[Regexp(r'^[1-3]{0,3}$')])
+    thursday = StringField(validators=[Regexp(r'^[1-3]{0,3}$')])
+    friday = StringField(validators=[Regexp(r'^[1-3]{0,3}$')])
+    saturday = StringField(validators=[Regexp(r'^[1-3]{0,3}$')])
+    sunday = StringField(validators=[Regexp(r'^[1-3]{0,3}$')])
+
+
+class StudentClassUpdateForm(Form):
+    id = IntegerField(validators=[NumberRange(1), DataRequired()])
 
 
 class OrgCourseUpdateForm(Form):
@@ -235,3 +245,42 @@ class FeedbackForm(Form):
     organization_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
     qq = StringField(validators=[DataRequired()])
     content = StringField(validators=[DataRequired()])
+
+
+class YellowPagesForm(Form):
+    # id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    web_name = StringField(validators=[DataRequired()])
+    url = StringField(validators=[DataRequired()])
+    icon_url = StringField(validators=[DataRequired()])
+    class_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    state = IntegerField()
+    real_score = IntegerField()
+    fake_score = IntegerField()
+
+
+class UpdateYellowPagesForm(Form):
+    # id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    web_name = StringField()
+    url = StringField()
+    icon_url = StringField()
+    class_id = IntegerField(validators=[NumberRange(1)])
+    state = IntegerField()
+    status = IntegerField()
+    fake_score = IntegerField()
+
+
+class CategoryForm(Form):
+    category_name = StringField(validators=[DataRequired()])
+    icon_url = StringField(validators=[DataRequired()])
+
+
+class UpdateCategoryForm(Form):
+    # id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    category_name = StringField()
+    icon_url = StringField()
+    status = IntegerField()
+
+
+class ClassmateJoinForm(Form):
+    uids = StringField(validators=[DataRequired()])
+    cid = IntegerField(validators=[DataRequired(), NumberRange(1)])
