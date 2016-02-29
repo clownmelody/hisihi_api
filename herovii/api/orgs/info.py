@@ -5,7 +5,7 @@ from herovii.libs.error_code import NotFound, IllegalOperation
 from herovii.libs.helper import is_first_party_cms
 from herovii.models.base import db
 from herovii.models.org.info import Info
-from herovii.service.org import create_org_info, get_org_by_id, get_org_by_uid
+from herovii.service.org import create_org_info, get_org_by_id, get_org_by_uid, update_teachers_field_info
 from herovii.validator.forms import OrgForm, OrgUpdateForm
 
 __author__ = 'bliss'
@@ -43,6 +43,8 @@ def update_org():
     with db.auto_commit():
         for key, value in form.body_data.items():
             setattr(org_info, key, value)
+            if key == 'name':
+                update_teachers_field_info(org_id, value)
     return jsonify(org_info), 202
 
 

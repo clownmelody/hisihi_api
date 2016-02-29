@@ -987,3 +987,19 @@ def quit_org_class_service(cid, uids):
         count = db.session.query(Classmate).filter(Classmate.class_id == cid, Classmate.uid.in_(ids))\
             .delete(synchronize_session=False)
     return count
+
+
+def update_teachers_field_info(oid, org_name):
+    teachers = db.session.query(TeacherGroupRelation.uid)\
+        .filter(TeacherGroupRelation.organization_id == oid, TeacherGroupRelation.group == 6,
+                TeacherGroupRelation.status > 0)\
+        .distinct()\
+        .all()
+    t_ids = []
+    for uid in teachers:
+        t_ids.append(uid.uid)
+    result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39)\
+        .update({Field.field_data: org_name}, synchronize_session=False)
+    if not result:
+        raise UpdateDBError()
+
