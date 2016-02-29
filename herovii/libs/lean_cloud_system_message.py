@@ -37,7 +37,7 @@ class LeanCloudSystemMessage(object):
             "_lcattrs": {
                 "message_info": message_text,
                 "sys_message_type": "removed_from_group",
-                "uid": member_client_ids,
+                "uid": member_client_ids[0],
                 "gid": gid,
                 "type": "group",
                 "conversation_id": group['conversation_id'],
@@ -46,7 +46,7 @@ class LeanCloudSystemMessage(object):
         }
         message_content = json.dumps(message_content)
         body_data = {
-            "from_peer": json.dumps(member_client_ids),
+            "from_peer": member_client_ids[0],
             "message": message_content,
             "to_peers": uid,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
