@@ -998,8 +998,9 @@ def update_teachers_field_info(oid, org_name):
     t_ids = []
     for uid in teachers:
         t_ids.append(uid.uid)
-    result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39)\
-        .update({Field.field_data: org_name}, synchronize_session=False)
-    if not result:
-        raise UpdateDBError()
+    if t_ids:
+        result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39)\
+            .update({Field.field_data: org_name}, synchronize_session=False)
+        if not result:
+            raise UpdateDBError()
 
