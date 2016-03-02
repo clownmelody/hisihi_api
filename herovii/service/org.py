@@ -1004,3 +1004,12 @@ def update_teachers_field_info(oid, org_name):
         if not result:
             raise UpdateDBError()
 
+
+def set_user_auth_group_access(uid, group_id):
+    res = db.session.query(IdRelation).filter(IdRelation.uid == uid)\
+        .update({IdRelation.group_id: group_id})
+    if res:
+        return True
+    else:
+        raise UpdateDBError()
+
