@@ -49,8 +49,11 @@ def get_nonce(nonce_length=8):
 
 def create_im_group_service(group_name, member_client_ids, organization_id, conversation_id, group_avatar, admin_uid,
                             description):
-    client_id_list = member_client_ids.split(':')
-    client_id_list.append(admin_uid)
+    if member_client_ids is None:
+        client_id_list = [admin_uid]
+    else:
+        client_id_list = member_client_ids.split(':')
+        client_id_list.append(admin_uid)
     group = ImGroup(group_name=group_name, create_time=int(time.time()),
                     organization_id=organization_id, conversation_id=conversation_id,
                     group_avatar=group_avatar, description=description)
