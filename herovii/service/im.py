@@ -461,7 +461,7 @@ def get_user_profile_by_client_id(client_id=None):
             avatar_full_path = get_full_oss_url(avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
         else:
             avatar_full_path = None
-        if user.nickname:
+        if hasattr(user, 'nickname'):
             nickname = user.nickname
         else:
             nickname = user.username
