@@ -48,4 +48,5 @@ Api V1 说明
    tag
    im
    leanCloudImSystemMessage
+   informationFlow
 

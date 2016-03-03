@@ -543,6 +543,7 @@ def update_im_group_admin_uid(group_id=None, admin_uid=None):
                                                             ImGroupMember.status == 1).count()
     if exist_in_group:
         db.session.query(ImGroupMember).filter(ImGroupMember.member_id == admin_uid).update({'is_admin': 1})
+        db.session.commit()
     else:
         group_member = ImGroupMember(group_id=group_id, member_id=admin_uid, create_time=int(time.time()), is_admin=1)
         with db.auto_commit():
