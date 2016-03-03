@@ -4,7 +4,7 @@ import re
 
 from flask import Blueprint
 
-from herovii.api import user, token, sms, online, pk, test, mall, news, file, link
+from herovii.api import user, token, sms, online, pk, test, mall, news, file, link, information_flow
 from herovii.api.im import im
 from herovii.api.orgs import lecture, admin, course, enroll, info, news, resource, stats, student,\
     team, info, tag, classmate, feedback, video
@@ -85,6 +85,7 @@ def reg_v1_bp(app):
     classmate.api.register(bp_v1)
     im.api.register(bp_v1)
     video.api.register(bp_v1)
+    information_flow.api.register(bp_v1)
     # team.api.register(bp_v1)
     feedback.api.register(bp_v1)
     # info.api.register(bp_v1)
