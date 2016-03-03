@@ -84,6 +84,7 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
         res = json.loads(res)
         conversation_id = res['objectId']
         db.session.query(ImGroup).filter(ImGroup.id == group.id).update({'conversation_id': conversation_id})
+        db.session.commit()
     # 发送系统通知
     LeanCloudSystemMessage.push_added_to_group_message(admin_uid, group.id, client_id_list)
     return group.id, conversation_id, True
