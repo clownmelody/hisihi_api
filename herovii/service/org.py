@@ -998,8 +998,18 @@ def update_teachers_field_info(oid, org_name):
     t_ids = []
     for uid in teachers:
         t_ids.append(uid.uid)
-    result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39)\
-        .update({Field.field_data: org_name}, synchronize_session=False)
-    if not result:
+    if t_ids:
+        result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39)\
+            .update({Field.field_data: org_name}, synchronize_session=False)
+        if not result:
+            raise UpdateDBError()
+
+
+def set_user_auth_group_access(uid, group_id):
+    res = db.session.query(IdRelation).filter(IdRelation.uid == uid)\
+        .update({IdRelation.group_id: group_id})
+    if res:
+        return True
+    else:
         raise UpdateDBError()
 
