@@ -93,6 +93,7 @@ def create_im_group_service(group_name, member_client_ids, organization_id, conv
 def update_im_group_service(group_id, group_name):
     try:
         db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'group_name': group_name})
+        db.session.commit()
     except:
         return False
     # 发送系统通知
@@ -103,6 +104,7 @@ def update_im_group_service(group_id, group_name):
 def delete_im_group_service(group_id):
     try:
         db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'status': -1})
+        db.session.commit()
     except:
         return False
     # 发送系统通知
@@ -118,6 +120,7 @@ def dismiss_im_group_service(uid, group_id):
     if is_group_admin:
         try:
             db.session.query(ImGroup).filter(ImGroup.id == group_id).update({'status': -1})
+            db.session.commit()
         except:
             return False
         # 发送系统通知
@@ -148,6 +151,7 @@ def add_im_group_members_service(group_id, member_client_ids):
                     db.session.query(ImGroupMember).filter(ImGroupMember.group_id == group_id,
                                                            ImGroupMember.member_id == client_id)\
                         .update({'status': 1})
+                    db.session.commit()
     except:
         return False
     # 在 leancloud 中添加群成员
@@ -203,6 +207,7 @@ def delete_im_group_members_service(group_id, member_client_ids):
                 .first()
             if exist_in_group:
                 db.session.query(ImGroupMember).filter(ImGroupMember.id == exist_in_group.id).update({'status': -1})
+                db.session.commit()
     except:
         return False
     # 在 leancloud 中删除群成员
