@@ -10,7 +10,8 @@ from herovii.models.base import db
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 
-from herovii.service.org import get_org_teachers_by_group, search_lecture, get_org_teachers, set_lecturer_extend_info
+from herovii.service.org import get_org_teachers_by_group, search_lecture, get_org_teachers, set_lecturer_extend_info,\
+    set_user_auth_group_access
 from herovii.validator.forms import TeacherGroupForm, LectureJoinForm, PagingForm
 
 __author__ = 'bliss'
@@ -106,9 +107,14 @@ def join_teachers_group():
 @auth.login_required
 def quit_from_teacher_group(uid, gid):
     with db.auto_commit():
+        _count = TeacherGroupRelation.query.filter(
+            TeacherGroupRelation.uid == uid, TeacherGroupRelation.status == 1) \
+            .count()
         count = TeacherGroupRelation.query.filter(
             TeacherGroupRelation.uid == uid, TeacherGroupRelation.teacher_group_id == gid) \
             .delete()
+        if _count < 2 and count > 0:
+            set_user_auth_group_access(uid, 5)  # 教师移除后身份被修改为学生
     msg = str(count) + ' teacher identity has been removed'
     return success_json(msg=msg), 202
 

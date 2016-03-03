@@ -28,7 +28,7 @@ class Info(Base):
     type = Column(String(80))
 
     # 机构审核进度
-    application_status = Column(SmallInteger, default=0)
+    application_status = Column(SmallInteger, default=1)
     light_authentication = Column(SmallInteger, default=0)
     phone_num = Column(String(80), nullable=False)
     chat_id = Column(Integer)
