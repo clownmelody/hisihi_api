@@ -1,78 +1,88 @@
+from sqlalchemy import func
+
 from herovii.libs.error_code import NotFound
 from herovii.models.yellowpages.pageclass import Category
 from herovii.models.yellowpages.yellowpages import Yellow
-
+from herovii.models.yellowpages.yellowpageslabel import YellowLabel
+from herovii.models.base import db
 __author__ = 'melody'
 
 
 def get_yellow_pages():
-    sites = Yellow.query.filter(Yellow.status != -1).all()
-    total_count = Yellow.query.count()
-    category = Category.query.filter(Category.status != -1).all()
-
-    return sites, total_count, category
+    count_by_category = db.session.query(func.count(Category.id).label('count'), Category.id)\
+        .join(Yellow, Yellow.class_id == Category.id)\
+        .filter(Yellow.status >= 1)\
+        .group_by(Category.id)\
+        .all()
+    sites = db.session.query(Category.id, Yellow.class_id, Yellow.website_name.label('site_name'),
+                             Yellow.icon_url.label('site_logo'),
+                             Yellow.url.label('site_url'), YellowLabel.url.label('icon'))\
+        .join(Yellow, Category.id == Yellow.class_id)\
+        .outerjoin(YellowLabel, Yellow.label == YellowLabel.id)\
+        .filter(Yellow.status >= 1)\
+        .all()
+    category = db.session.query(Category.id, Category.category_name, Category.icon_url.label('category_icon'))\
+        .filter(Category.status != -1).all()
+    category_count = Category.query.filter(Category.status != -1).count()
+    return sites, count_by_category, category, category_count
 
 
 def get_yellow_pages_list():
-    sites, total_count, category = get_yellow_pages()
+    sites, count_by_category, category, category_count = get_yellow_pages()
 
     if sites is None:
         raise NotFound(error='sites not found', error_code=3000)
     if category is None:
         raise NotFound(error='classes not found', error_code=3000)
-
-    class_oid = []
-    for i in range(0, len(sites)):
-        class_oid.append(sites[i].class_id)
-    class_oid = list(set(class_oid))
-
-    need_category = []
-    for i in range(0, len(category)):
-        for t in range(0, len(class_oid)):
-            if category[i].id == class_oid[t]:
-                need_category.append(category[i])
-
     json_sites = {
-        'total_count': total_count,
-        'content': []
+        'total_count': category_count,
+        'data': []
     }
-
-    for i in range(0, len(need_category)):
-        json_sites['content'].append(
+    for i in range(0, len(category)):
+        json_sites['data'].append(
             {
-                'name': need_category[i].category_name,
-                'icon_url': need_category[i].icon_url,
-                'yellow_pages': []
+                'category_name': category[i].category_name,
+                'category_icon': category[i].category_icon,
+                'count': 0,
+                'data': []
             }
         )
-
-    for i in range(0, len(need_category)):
-        for t in range(0, len(sites)):
-            if sites[t].class_id == need_category[i].id:
-                json_sites['content'][i]['yellow_pages'].append(
+        for category_count_item in count_by_category:
+            if category[i].id == category_count_item.id:
+                json_sites['data'][i]['count'] = category_count_item.count
+        for site_item in sites:
+            if site_item.class_id == category[i].id:
+                json_sites['data'][i]['data'].append(
                     {
-                        'web_name': sites[t].web_name,
-                        'url': sites[t].url,
-                        'icon_url': sites[t].icon_url
+                        'site_logo': site_item.site_logo,
+                        'site_name': site_item.site_name,
+                        'site_url': site_item.site_url,
+                        'icon': site_item.icon
                     }
                 )
-
     return json_sites
 
 
 def get_recommend_sites():
-    recommend = Yellow.query.filter(Yellow.status != -1, Yellow.state == 2).all()
+    recommend = db.session.query(Yellow.icon_url.label('site_logo'), Yellow.url.label('site_url'),
+                                 Yellow.website_name.label('site_name'), YellowLabel.url.label('icon'))\
+        .outerjoin(YellowLabel, Yellow.label == YellowLabel.id)\
+        .filter(Yellow.status == 2).all()
+    count = db.session.query(Yellow).filter(Yellow.status == 2).count()
     if recommend is None:
         raise NotFound(error='recommend_sites not found', error_code=3000)
 
-    json_recommend = []
+    json_recommend = {
+        'total_count': count,
+        'data': []
+    }
     for i in range(0, len(recommend)):
-        json_recommend.append(
+        json_recommend['data'].append(
             {
-                'web_name': recommend[i].web_name,
-                'url': recommend[i].url,
-                'icon_url': recommend[i].icon_url
+                'site_logo': recommend[i].site_logo,
+                'site_name': recommend[i].site_name,
+                'site_url': recommend[i].site_url,
+                'icon': recommend[i].icon
             }
         )
-
     return json_recommend
