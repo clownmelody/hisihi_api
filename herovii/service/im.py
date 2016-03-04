@@ -485,7 +485,7 @@ def get_group_info_by_group_id(group_id=None):
     if group_id is None:
         return None
     group = db.session.query(ImGroup).filter(
-        ImGroup.id == group_id, ImGroup.status == 1).first()
+        ImGroup.id == group_id).first()
     if group:
         group = {
             "id": group.id,

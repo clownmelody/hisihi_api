@@ -137,8 +137,8 @@ class LeanCloudSystemMessage(object):
         """
         from herovii.service.im import get_group_info_by_group_id, get_group_member_client_ids_by_group_id
         all_group_members = get_group_member_client_ids_by_group_id(gid)
-        message_text = "XXX 解散了该群"
         group = get_group_info_by_group_id(gid)
+        message_text = "你被移出群聊：" + group['group_name']
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
@@ -153,7 +153,7 @@ class LeanCloudSystemMessage(object):
         }
         message_content = json.dumps(message_content)
         body_data = {
-            "from_peer": uid,
+            "from_peer": "嘿设汇管理员",
             "message": message_content,
             "to_peers": all_group_members,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
