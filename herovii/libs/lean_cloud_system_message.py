@@ -89,7 +89,7 @@ class LeanCloudSystemMessage(object):
         body_data = {
             "from_peer": uid,
             "message": message_content,
-            "to_peers": all_group_members,
+            "to_peers": member_client_ids,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": False,
             "no_sync": True
