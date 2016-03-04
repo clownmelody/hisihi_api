@@ -15,9 +15,9 @@ IM 业务中的通知服务(采用 leancloud 的系统消息)
 
 class LeanCloudSystemMessage(object):
     @staticmethod
-    def push_removed_from_group_message(uid=None, gid=None, member_client_ids=None):
+    def push_removed_from_group_message(uid=None, gid=None, member_client_ids=None, is_auto_exit=True):
         """
-        成员被移除群聊，向所有群成员发系统消息
+        成员被移除群聊，发系统消息
         """
         from herovii.service.im import get_group_admin_member_by_group_id, get_user_profile_by_client_id, \
             get_group_info_by_group_id
@@ -47,10 +47,13 @@ class LeanCloudSystemMessage(object):
             }
         }
         message_content = json.dumps(message_content)
+        to_peers = member_client_ids
+        if is_auto_exit:
+            to_peers = group_admin_user
         body_data = {
             "from_peer": member_client_ids[0],
             "message": message_content,
-            "to_peers": group_admin_user,
+            "to_peers": to_peers,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": False,
             "no_sync": True
@@ -64,7 +67,7 @@ class LeanCloudSystemMessage(object):
         成员被添加到群聊，向所有群成员发系统消息
         """
         from herovii.service.im import get_user_profile_by_client_id, get_group_info_by_group_id, \
-            get_group_member_client_ids_by_group_id
+            get_group_member_client_ids_by_group_id, get_group_admin_member_by_group_id
         nickname_list = []
         for client_id in member_client_ids:
             user_detail = get_user_profile_by_client_id(client_id)
@@ -90,10 +93,11 @@ class LeanCloudSystemMessage(object):
             }
         }
         message_content = json.dumps(message_content)
+        from_peer = get_group_admin_member_by_group_id(gid)[0]
         body_data = {
-            "from_peer": uid,
+            "from_peer": from_peer,
             "message": message_content,
-            "to_peers": all_group_members,
+            "to_peers": member_client_ids,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
             "transient": False,
             "no_sync": True

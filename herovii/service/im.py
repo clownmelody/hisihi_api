@@ -184,7 +184,7 @@ def is_group_available_to_add_member(group_id=None):
         raise ImGroupNotFound()
 
 
-def delete_im_group_members_service(group_id, member_client_ids):
+def delete_im_group_members_service(group_id, member_client_ids, is_auto_exit):
     group = db.session.query(ImGroup).filter(ImGroup.id == group_id, ImGroup.status == 1).first()
     member_list = []
     if not group:
@@ -220,7 +220,8 @@ def delete_im_group_members_service(group_id, member_client_ids):
         db.session.rollback()
         return False
     # 发送系统通知
-    LeanCloudSystemMessage.push_removed_from_group_message(admin_member.member_id, group_id, client_id_list)
+    LeanCloudSystemMessage.push_removed_from_group_message(admin_member.member_id, group_id, client_id_list,
+                                                           is_auto_exit)
     return True
 
 
@@ -563,8 +564,8 @@ def get_im_user_groups_service(client_id=None):
     for group_member in group_member_list:
         group_id = group_member.group_id
         is_exist = db.session.query(ImGroup).filter(
-                    ImGroup.id == group_id,
-                    ImGroup.status == 1).count()
+            ImGroup.id == group_id,
+            ImGroup.status == 1).count()
         if is_exist:
             group_info = get_group_info_by_group_id(group_id)
             group_info_list.append(group_info)

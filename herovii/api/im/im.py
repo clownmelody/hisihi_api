@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import current_app, request
+from flask import current_app, request, g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
     DeleteImGroupMemberFailture, AddGroupMemberFailture
@@ -240,16 +240,18 @@ def add_im_group_members(group_id=0):
 
 
 @api.route('/group/<int:group_id>/member/<string:client_id>', methods=['DELETE'])
-#@auth.login_required
+@auth.login_required
 # 删除群成员
 def delete_im_group_members(group_id=0, client_id=None):
     if group_id == 0 or client_id is None:
         raise ParamException()
-    # request_json = request.get_json(force=True, silent=True)
-    # member_client_ids = request_json['member_client_ids']
-    # if member_client_ids is None:
-    #     raise ParamException()
-    result = delete_im_group_members_service(group_id, client_id)
+    user_info = g.user
+    uid = user_info[0]
+    token_client_id = 'c'+uid
+    if token_client_id == client_id:  # 用户主动退群
+        result = delete_im_group_members_service(group_id, client_id, True)
+    else:  #  群主移除用户
+        result = delete_im_group_members_service(group_id, client_id, False)
     if not result:
         raise DeleteImGroupMemberFailture()
     return '', 204
