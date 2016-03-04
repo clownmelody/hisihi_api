@@ -247,7 +247,7 @@ def delete_im_group_members(group_id=0, client_id=None):
         raise ParamException()
     user_info = g.user
     uid = user_info[0]
-    token_client_id = 'c'+uid
+    token_client_id = 'c' + str(uid)
     if token_client_id == client_id:  # 用户主动退群
         result = delete_im_group_members_service(group_id, client_id, True)
     else:  #  群主移除用户
