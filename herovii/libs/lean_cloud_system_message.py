@@ -67,7 +67,7 @@ class LeanCloudSystemMessage(object):
         成员被添加到群聊，向所有群成员发系统消息
         """
         from herovii.service.im import get_user_profile_by_client_id, get_group_info_by_group_id, \
-            get_group_member_client_ids_by_group_id
+            get_group_member_client_ids_by_group_id, get_group_admin_member_by_group_id
         nickname_list = []
         for client_id in member_client_ids:
             user_detail = get_user_profile_by_client_id(client_id)
@@ -93,8 +93,9 @@ class LeanCloudSystemMessage(object):
             }
         }
         message_content = json.dumps(message_content)
+        from_peer = get_group_admin_member_by_group_id(gid)[0]
         body_data = {
-            "from_peer": uid,
+            "from_peer": from_peer,
             "message": message_content,
             "to_peers": member_client_ids,
             "conv_id": LEAN_CLOUD_SYSTEM_CONVERSATION_ID,
