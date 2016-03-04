@@ -562,8 +562,12 @@ def get_im_user_groups_service(client_id=None):
     group_info_list = []
     for group_member in group_member_list:
         group_id = group_member.group_id
-        group_info = get_group_info_by_group_id(group_id)
-        group_info_list.append(group_info)
+        is_exist = db.session.query(ImGroup).filter(
+                    ImGroup.id == group_id,
+                    ImGroup.status == 1).count()
+        if is_exist:
+            group_info = get_group_info_by_group_id(group_id)
+            group_info_list.append(group_info)
     return group_info_list
 
 
