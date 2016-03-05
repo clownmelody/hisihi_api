@@ -77,13 +77,14 @@ class LeanCloudSystemMessage(object):
         all_group_members = get_group_member_client_ids_by_group_id(gid)
         message_text = nickname_list_str + " 加入群聊"
         group = get_group_info_by_group_id(gid)
+        from_peer = get_group_admin_member_by_group_id(gid)[0]
         message_content = {
             "_lctype": 1,
             "_lctext": message_text,
             "_lcattrs": {
                 "message_info": message_text,
                 "sys_message_type": "added_to_group",
-                "uid": uid,
+                "uid": from_peer,
                 "gid": gid,
                 "type": "group",
                 "username": nickname_list_str,
@@ -93,7 +94,6 @@ class LeanCloudSystemMessage(object):
             }
         }
         message_content = json.dumps(message_content)
-        from_peer = get_group_admin_member_by_group_id(gid)[0]
         body_data = {
             "from_peer": from_peer,
             "message": message_content,
