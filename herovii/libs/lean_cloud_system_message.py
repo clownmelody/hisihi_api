@@ -84,7 +84,7 @@ class LeanCloudSystemMessage(object):
             "_lcattrs": {
                 "message_info": message_text,
                 "sys_message_type": "added_to_group",
-                "uid": from_peer,
+                "uid": member_client_ids[0],
                 "gid": gid,
                 "type": "group",
                 "username": nickname_list_str,
