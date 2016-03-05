@@ -9,9 +9,8 @@
 
     GET link/yellow_pages
 
-**Response** `200` :
+**Response** `200` ::
 
-.. sourcecode:: json
     {
         "data":
         [
@@ -57,18 +56,14 @@
         "total_count": 2
     }
 
-
-
-
 获取首页推荐网址
 ~~~~~~~~~~~~~~~
 **URL**::
 
     GET link/yellow_pages/recommend
 
-**Response** `200` :
+**Response** `200` ::
 
-.. sourcecode:: json
     {
         "data":
         [
@@ -99,5 +94,4 @@
         ],
         "total_count": 4
     }
-
 
