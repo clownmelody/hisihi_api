@@ -28,7 +28,6 @@ class ImGroup(Base):
         self.group_avatar = group_avatar
         self.description = description
 
-
     def keys(self):
         return (
             'id', 'group_name', 'organization_id', 'conversation_id', 'group_avatar', 'create_time', 'status'

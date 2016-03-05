@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
 
-from herovii.libs.error_code import DirtyDataError, UpdateDBError
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.base import db
 from herovii.models.org.enroll import Enroll

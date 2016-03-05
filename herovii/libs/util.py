@@ -6,6 +6,8 @@ from hashlib import sha1 as sha
 import random
 import re
 import time
+from herovii.models.InformationFlow.picture import Picture
+from herovii.models.base import db
 
 __author__ = 'bliss'
 
@@ -246,4 +248,40 @@ def validate_date_arguments(value):
     if match:
         return match.group()
     return False
+
+
+def parse_page_args(request_json):
+    if request_json is None:
+        page = 1
+        per_page = 20
+    else:
+        if 'page' in request_json.keys():
+            page = request_json['page']
+        else:
+            page = 1
+        if 'per_page' in request_json.keys():
+            per_page = request_json['per_page']
+        else:
+            per_page = 20
+    return page, per_page
+
+
+# 根据图片 ID 获取阿里云 OSS 图片地址
+def get_oss_pic_path_by_pic_id(pid, bucket):
+    picture = db.session.query(Picture).filter(Picture.id == pid) \
+        .first()
+    if picture:
+        if not picture.path:
+            return None
+        if picture.path.startswith('http://'):
+            return picture.path
+        else:
+            length = len(picture.path)
+            path = picture.path
+            object_key = path[17:length]
+            full_oss_url = 'http://' + bucket + '.oss-cn-qingdao.aliyuncs.com' + '/' + object_key
+            return full_oss_url
+    else:
+        return None
+
 

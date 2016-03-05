@@ -4,6 +4,7 @@ from flask import current_app, request, g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
     DeleteImGroupMemberFailture, AddGroupMemberFailture
+from herovii.libs.util import parse_page_args
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
@@ -16,7 +17,7 @@ api = ApiBlueprint('im')
 
 
 @api.route('/signature/login/<string:app_id>/<string:client_id>', methods=['GET'])
-#@auth.login_required
+# @auth.login_required
 # 登陆签名
 def get_im_login_signature(app_id, client_id):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
@@ -38,7 +39,7 @@ def get_im_login_signature(app_id, client_id):
 
 
 @api.route('/signature/conversation/<string:app_id>/<string:client_id>/<string:sorted_member_ids>', methods=['GET'])
-#@auth.login_required
+# @auth.login_required
 # 开启会话签名
 def get_im_start_conversation_signature(app_id, client_id, sorted_member_ids):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
@@ -62,7 +63,7 @@ def get_im_start_conversation_signature(app_id, client_id, sorted_member_ids):
 
 @api.route('/signature/invite/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>',
            methods=['GET'])
-#@auth.login_required
+# @auth.login_required
 # 群组加人操作签名
 def get_im_invite_signature(app_id, client_id, conversation_id, sorted_member_ids):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
@@ -88,7 +89,7 @@ def get_im_invite_signature(app_id, client_id, conversation_id, sorted_member_id
 
 @api.route('/signature/kick/<string:app_id>/<string:client_id>/<string:conversation_id>/<string:sorted_member_ids>',
            methods=['GET'])
-#@auth.login_required
+# @auth.login_required
 # 群组删人签名
 def get_im_kick_signature(app_id, client_id, conversation_id, sorted_member_ids):
     master_key = current_app.config['LEAN_CLOUD_MASTER_KEY']
@@ -139,7 +140,7 @@ def get_im_kick_signature(app_id, client_id, conversation_id, sorted_member_ids)
 
 
 @api.route('/group', methods=['POST'])
-#@auth.login_required
+# @auth.login_required
 # 创建群组
 def create_im_group():
     request_json = request.get_json(force=True, silent=True)
@@ -150,7 +151,7 @@ def create_im_group():
     group_avatar = request_json['group_avatar']
     description = request_json['description']
     admin_uid = request_json['admin_uid']
-    if organization_id == 0 or group_avatar is None or admin_uid is None or group_name is None\
+    if organization_id == 0 or group_avatar is None or admin_uid is None or group_name is None \
             or description is None:
         raise ParamException()
     group_id, conversation_id, result = create_im_group_service(group_name, member_client_ids, organization_id,
@@ -173,7 +174,7 @@ def create_im_group():
 
 
 @api.route('/group/<int:group_id>', methods=['PUT'])
-#@auth.login_required
+# @auth.login_required
 # 修改群组信息
 def update_im_group(group_id=0):
     if group_id == 0:
@@ -194,7 +195,7 @@ def update_im_group(group_id=0):
 
 
 @api.route('/group/<int:group_id>', methods=['DELETE'])
-#@auth.login_required
+# @auth.login_required
 # 删除群组
 def delete_im_group(group_id=0):
     if group_id == 0:
@@ -206,7 +207,7 @@ def delete_im_group(group_id=0):
 
 
 @api.route('/user/<int:uid>/group/<int:group_id>', methods=['DELETE'])
-#@auth.login_required
+# @auth.login_required
 # 管理员解散群组
 def dismiss_im_group(uid=0, group_id=0):
     if uid == 0 or group_id == 0:
@@ -218,7 +219,7 @@ def dismiss_im_group(uid=0, group_id=0):
 
 
 @api.route('/group/<int:group_id>/member', methods=['POST'])
-#@auth.login_required
+# @auth.login_required
 # 添加群成员
 def add_im_group_members(group_id=0):
     if group_id == 0:
@@ -250,7 +251,7 @@ def delete_im_group_members(group_id=0, client_id=None):
     token_client_id = 'c' + str(uid)
     if token_client_id == client_id:  # 用户主动退群
         result = delete_im_group_members_service(group_id, client_id, True)
-    else:  #  群主移除用户
+    else:  # 群主移除用户
         result = delete_im_group_members_service(group_id, client_id, False)
     if not result:
         raise DeleteImGroupMemberFailture()
@@ -258,15 +259,13 @@ def delete_im_group_members(group_id=0, client_id=None):
 
 
 @api.route('/org/<int:organization_id>/groups', methods=['GET'])
-#@auth.login_required
+# @auth.login_required
 # 获取机构下所有群组
 def get_organization_im_groups(organization_id=0):
     if organization_id == 0:
         raise ParamException()
-    args = request.args.to_dict()
-    form = PagingForm.create_api_form(**args)
-    page = int(form.page.data if form.page.data else 1)
-    per_page = int(form.per_page.data if form.per_page.data else 2)
+    request_json = request.get_json(force=True, silent=True)
+    page, per_page = parse_page_args(request_json)
     total_count, data = get_organization_im_groups_service(organization_id, page, per_page)
     result = {
         "total_count": total_count,
@@ -291,7 +290,7 @@ def get_organization_im_contacts(organization_id=0):
 
 
 @api.route('/org/<int:class_id>/message', methods=['POST'])
-#@auth.login_required
+# @auth.login_required
 # 向班级学生群发通知
 def push_message_to_all_classmates(class_id=0):
     # message = request.form.get('message', None)
@@ -339,7 +338,7 @@ def get_im_group_detail(group_id=0):
 
 
 @api.route('/user/<string:client_id>/group/<int:group_id>/join_group_notification', methods=['POST'])
-#@auth.login_required
+# @auth.login_required
 # 用户加群通知
 def user_join_group_notification(client_id=None, group_id=0):
     if client_id is None or group_id == 0:
@@ -354,7 +353,7 @@ def user_join_group_notification(client_id=None, group_id=0):
         headers = {'Content-Type': 'application/json'}
         return json.dumps(result), 400, headers
     code, resp = LeanCloudSystemMessage.push_user_join_in_group_apply_message(client_id, group_id)
-    if code//100 == 2:
+    if code // 100 == 2:
         result = {
             "message": "已为您提交加群申请"
         }
