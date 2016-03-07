@@ -252,6 +252,31 @@ def get_organization_im_groups_service(organization_id, page, per_page):
     return group_total_count, result_list
 
 
+def get_all_im_groups_service(page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    group_total_count = db.session.query(ImGroup).filter(
+        ImGroup.status == 1) \
+        .count()
+    group_list = db.session.query(ImGroup).filter(
+        ImGroup.status == 1) \
+        .slice(start, stop) \
+        .all()
+    result_list = []
+    for group in group_list:
+        g = {
+            "id": group.id,
+            "group_name": group.group_name,
+            "group_avatar": group.group_avatar,
+            "description": group.description,
+            "create_time": group.create_time,
+            "level": group.level,
+            "conversation_id": group.conversation_id
+        }
+        result_list.append(g)
+    return group_total_count, result_list
+
+
 def get_organization_im_contacts_service(organization_id):
     group_list = db.session.query(ImGroup.id, ImGroup.group_name, ImGroup.group_avatar).filter(
         ImGroup.organization_id == organization_id,

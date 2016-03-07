@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import urllib
 from flask import current_app
 from herovii.libs.util import get_oss_pic_path_by_pic_id
 from herovii.models.InformationFlow.advs import Advs
@@ -132,11 +133,14 @@ def get_advs_pic_info_by_id(adv_id):
         }
         pic_path = get_oss_pic_path_by_pic_id(advs.advspic_640_960, current_app.config['ALI_OSS_ADV_BUCKET_NAME'])
         advs_info['pic'] = pic_path
-        # file = urllib2.urlopen(pic_path)
-        # tmpIm = cStringIO.StringIO(file.read())
-        # im = Image.open(tmpIm)
+        file = urllib.urlopen(pic_path)
+        # tmp_image = cStringIO.StringIO(file.read())
+        # from tkinter import Image
+        # image = Image.open(tmp_image)
+        # print(image.size)
         return advs_info
     return None
+
 
 def get_course_info_by_id(id):
     pass

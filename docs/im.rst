@@ -278,6 +278,46 @@ leancloud client-id 约定
 -- end
 
 
+获取所有机构的所有群组
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /im/groups
+
+**Parameters**:
+
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":12,
+                "group_avatar":"0",
+                "group_name":"g123",
+                "description":"",
+                "level":1000,
+                "conversation_id": "234fwrw23",
+                "create_time":1450423535
+            },
+            {
+                "id":13,
+                "group_avatar":"0",
+                "group_name":"676",
+                "description":"",
+                "level":1000,
+                "conversation_id": "234fwrw23",
+                "create_time":1450423856
+            }
+        ],
+        "total_count":2
+    }
+
+-- end
+
+
 获取所有联系人
 ~~~~~~~~~~~~~~~
 **URL**::

@@ -8,7 +8,8 @@ from herovii.libs.util import parse_page_args
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
-    dismiss_im_group_service, get_im_user_groups_service, get_im_group_detail_service, is_client_id_in_group_member
+    dismiss_im_group_service, get_im_user_groups_service, get_im_group_detail_service, is_client_id_in_group_member, \
+    get_all_im_groups_service
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -267,6 +268,21 @@ def get_organization_im_groups(organization_id=0):
     request_json = request.get_json(force=True, silent=True)
     page, per_page = parse_page_args(request_json)
     total_count, data = get_organization_im_groups_service(organization_id, page, per_page)
+    result = {
+        "total_count": total_count,
+        "data": data
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+
+
+@api.route('/groups', methods=['GET'])
+# @auth.login_required
+# 获取所有机构所有群组列表
+def get_all_im_groups():
+    request_json = request.get_json(force=True, silent=True)
+    page, per_page = parse_page_args(request_json)
+    total_count, data = get_all_im_groups_service(page, per_page)
     result = {
         "total_count": total_count,
         "data": data
