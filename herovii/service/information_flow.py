@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
-import urllib
+import urllib.request
 from flask import current_app
-from herovii.libs.util import get_oss_pic_path_by_pic_id
+from sqlalchemy import func
+from herovii.libs.util import get_oss_pic_path_by_pic_id, get_img_service_path_by_pic_id
 from herovii.models.InformationFlow.advs import Advs
 from herovii.models.InformationFlow.document import Document
 from herovii.models.InformationFlow.document_acticle import DocumentArticle
@@ -10,7 +11,11 @@ from herovii.models.InformationFlow.document_acticle import DocumentArticle
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
 from herovii.models.InformationFlow.information_flow_content import InformationFlowContent
 from herovii.models.base import db
+from herovii.models.issue import Issue
+from herovii.models.org.course import Course
+from herovii.models.org.video import Video
 from herovii.service.article import is_article_support, is_article_favorite, get_article_support_count
+from herovii.service.org import get_organization_info_by_organization_id, get_user_profile_by_uid
 
 __author__ = 'yangchujie'
 
@@ -65,7 +70,11 @@ def get_information_flow_content_service(uid, type, page, per_page):
 
 def get_top_content_info_by_id(uid, article_id):
     """
-    {
+    根据 id 获取头条信息
+    :param uid:   用户 id
+    :param article_id:  头条 id
+    :return:
+        {
             "id": "6280",
             "title": "【设计观】设计师为什么总加班？",
             "description": "",
@@ -93,8 +102,9 @@ def get_top_content_info_by_id(uid, article_id):
             'description': top_content.description,
             'img': get_oss_pic_path_by_pic_id(top_content.cover_id, current_app.config['ALI_OSS_FORUM_BUCKET_NAME']),
             'view': top_content.view,
-            "content_url": "http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/"+str(article_id),
-            "share_url": "http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/"+str(article_id),
+            "content_url": "http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id),
+            "share_url": "http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(
+                article_id),
             'create_time': top_content.create_time,
             'update_time': top_content.update_time,
             'isSupportd': is_article_support(uid, article_id),
@@ -112,16 +122,19 @@ def get_top_content_info_by_id(uid, article_id):
 
 def get_advs_pic_info_by_id(adv_id):
     """
-    {
-        "type": "advertisment",
-        "pic": "http://advs-pic.oss-cn-qingdao.aliyuncs.com/2016-03-05/56da99210138e.jpg",
-        "content_url": "http://hisihi.com/app.php?s=/public/v2contentforshare/version/2.0/type/view/id/6277",
-        "title": "如何20分钟白手起家造一个暗月",
-        "size": [
-            1024,
-            400
-        ]
-    }
+    根据 id 获取广告图片信息
+    :param adv_id: 广告 id
+    :return:
+        {
+            "type": "advertisment",
+            "pic": "http://advs-pic.oss-cn-qingdao.aliyuncs.com/2016-03-05/56da99210138e.jpg",
+            "content_url": "http://hisihi.com/app.php?s=/public/v2contentforshare/version/2.0/type/view/id/6277",
+            "title": "如何20分钟白手起家造一个暗月",
+            "size": [
+                1024,
+                400
+            ]
+        }
     """
     advs = db.session.query(Advs).filter(Advs.id == adv_id) \
         .first()
@@ -133,14 +146,83 @@ def get_advs_pic_info_by_id(adv_id):
         }
         pic_path = get_oss_pic_path_by_pic_id(advs.advspic_640_960, current_app.config['ALI_OSS_ADV_BUCKET_NAME'])
         advs_info['pic'] = pic_path
-        file = urllib.urlopen(pic_path)
-        # tmp_image = cStringIO.StringIO(file.read())
-        # from tkinter import Image
-        # image = Image.open(tmp_image)
-        # print(image.size)
+        img_service_path = get_img_service_path_by_pic_id(advs.advspic_640_960,
+                                                          current_app.config['ALI_OSS_ADV_BUCKET_NAME'])
+        resp = urllib.request.urlopen(img_service_path)
+        resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
+        advs_info['size'] = [resp_dict['width'], resp_dict['height']]
         return advs_info
     return None
 
 
-def get_course_info_by_id(id):
-    pass
+def get_course_info_by_id(course_id):
+    """
+    根据 course_id 获取视频课程信息
+    :param course_id: 课程 id
+    :return:
+        {
+            "id":"46",
+            "title":"钢铁侠教你如何制杖",
+            "lecturer":"103",
+            "ViewCount":"36377",
+            "type":"平面设计",
+            "lecturer_name":"皮卡Q",
+            "img":"http://pic.hisihi.com/2016-02-29/1456726581454771.jpg",
+            "organization_logo":"http://pic.hisihi.com/2016-02-29/1456727795774772.jpg@13-13-355-355a",
+            "duration":"235"
+        }
+    """
+    organization_course = db.session.query(Course).filter(Course.id == course_id) \
+        .first()
+    organization_info = get_organization_info_by_organization_id(organization_course.organization_id)
+    if organization_course:
+        lecturer_id = organization_course['lecturer']
+        user_profile = get_user_profile_by_uid(lecturer_id)
+        lecturer_nickname = user_profile['nickname']
+        type_str = get_course_type_name_by_type_id(organization_course['category_id'])
+        duration = get_course_video_duration(course_id)
+        course = {
+            'id': course_id,
+            'title': organization_course['title'],
+            'lecturer': lecturer_id,
+            'ViewCount': organization_course['view_count'],
+            'type': type_str,
+            'img': organization_course['img_str'],
+            'lecturer_name': lecturer_nickname,
+            'organization_logo': organization_info['logo'],
+            'duration': duration
+        }
+        return course
+    else:
+        return None
+
+
+def get_course_type_name_by_type_id(type_id):
+    """
+    通过类别 id 获取课程类型名字
+    :param type_id:
+    :return:
+    """
+    issue = db.session.query(Issue).filter(Issue.id == type_id) \
+        .first()
+    if issue:
+        return issue['title']
+    else:
+        return None
+
+
+def get_course_video_duration(course_id):
+    """
+    通过课程 id 获取课程时长
+    :param course_id:
+    :return:
+    """
+    data_list = db.session.query(Video) \
+        .filter(Video.course_id == course_id,
+                Video.status == 1) \
+        .all()
+    course_duration = 0
+    if data_list:
+        for content in data_list:
+            course_duration = course_duration + content.duration
+    return course_duration

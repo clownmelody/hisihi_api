@@ -1013,3 +1013,9 @@ def set_user_auth_group_access(uid, group_id):
     else:
         raise UpdateDBError()
 
+
+def get_organization_info_by_organization_id(organization_id):
+    organization = db.session.query(Info).filter(Info.id == organization_id) \
+        .first()
+    return organization
+

@@ -285,3 +285,22 @@ def get_oss_pic_path_by_pic_id(pid, bucket):
         return None
 
 
+# 根据图片 ID 获取阿里云 IMG 图片地址(用于获取图片基本信息)
+def get_img_service_path_by_pic_id(pid, bucket):
+    picture = db.session.query(Picture).filter(Picture.id == pid) \
+        .first()
+    if picture:
+        if not picture.path:
+            return None
+        if picture.path.startswith('http://'):
+            return picture.path
+        else:
+            length = len(picture.path)
+            path = picture.path
+            object_key = path[17:length]
+            full_oss_url = 'http://' + bucket + '.img-cn-qingdao.aliyuncs.com' + '/' + object_key + '@info'
+            return full_oss_url
+    else:
+        return None
+
+
