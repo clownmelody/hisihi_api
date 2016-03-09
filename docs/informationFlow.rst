@@ -53,7 +53,7 @@ banner列表
         {
             "content_type":1,
             "id":14,
-            "info":{
+            "top_content_info":{
                 "content_url":"http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/1768",
                 "create_time":1455605640,
                 "description":"",
@@ -64,7 +64,7 @@ banner列表
                 "logo_pic":"http://hisihi-other.oss-cn-qingdao.aliyuncs.com/2016-02-16/56c2c78ba212c.jpg",
                 "share_url":"http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/1768",
                 "source_name":"嘿设汇",
-                "supportCount":1808,
+                "supportCount":1891,
                 "title":"精益求精,彰显微小细节的5件设计",
                 "update_time":1456107041,
                 "view":62658
@@ -72,9 +72,8 @@ banner列表
         },
         {
             "content_type":2,
-            "id":12,
-            "info":{
-                "ViewCount":36377,
+            "course_info":{
+                "ViewCount":41137,
                 "duration":235,
                 "id":46,
                 "img":"http://pic.hisihi.com/2016-02-29/1456726581454771.jpg",
@@ -83,12 +82,11 @@ banner列表
                 "organization_logo":"http://pic.hisihi.com/2016-02-29/1456727795774772.jpg@13-13-355-355a",
                 "title":"钢铁侠教你如何制杖",
                 "type":"平面设计"
-            }
+            },
+            "id":12
         },
         {
-            "content_type":3,
-            "id":11,
-            "info":{
+            "adv_info":{
                 "content_url":"http://tencent.com",
                 "pic":"http://advs-pic.oss-cn-qingdao.aliyuncs.com/2015-12-07/5665064bcfefa.png",
                 "size":[
@@ -97,7 +95,9 @@ banner列表
                 ],
                 "title":"广告-02",
                 "type":"advertisment"
-            }
+            },
+            "content_type":3,
+            "id":11
         }
     ],
     "total_count":3

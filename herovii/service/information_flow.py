@@ -53,18 +53,20 @@ def get_information_flow_content_service(uid, type, page, per_page):
         .all()
     if data_list:
         for content in data_list:
+            info_content = {
+                'id': content.id,
+                'content_type': content.content_type
+            }
             if content.content_type == 1:  # 头条
                 info = get_top_content_info_by_id(uid, content.content_id)
+                info_content['top_content_info'] = info
             elif content.content_type == 2:  # 视频课程
                 info = get_course_info_by_id(content.content_id)
+                info_content['course_info'] = info
             else:  # 广告图片
                 info = get_advs_pic_info_by_id(content.content_id)
-            content = {
-                'id': content.id,
-                'content_type': content.content_type,
-                'info': info
-            }
-            content_list.append(content)
+                info_content['adv_info'] = info
+            content_list.append(info_content)
     return content_count, content_list
 
 
