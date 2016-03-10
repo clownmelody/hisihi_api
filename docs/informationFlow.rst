@@ -102,3 +102,22 @@ banner列表
     ],
     "total_count":3
 }
+
+
+配置类型列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+     GET    information_flow/type
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":1,
+                "title":"平面"
+            }
+        ],
+        "total_count":1
+    }
+--

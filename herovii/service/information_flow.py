@@ -9,6 +9,7 @@ from herovii.models.InformationFlow.document import Document
 from herovii.models.InformationFlow.document_acticle import DocumentArticle
 
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
+from herovii.models.InformationFlow.information_flow_config import InformationFlowConfig
 from herovii.models.InformationFlow.information_flow_content import InformationFlowContent
 from herovii.models.base import db
 from herovii.models.issue import Issue
@@ -228,3 +229,18 @@ def get_course_video_duration(course_id):
         for content in data_list:
             course_duration = course_duration + content.duration
     return course_duration
+
+
+def get_information_flow_content_type_service():
+    data_list = []
+    config_list = db.session.query(InformationFlowConfig) \
+        .filter(InformationFlowConfig.status == 1) \
+        .all()
+    if config_list:
+        for config in config_list:
+            config_object = {
+                'id': config.id,
+                'title': config.title
+            }
+            data_list.append(config_object)
+    return len(data_list), data_list

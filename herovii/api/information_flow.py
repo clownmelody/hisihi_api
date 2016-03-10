@@ -2,7 +2,8 @@
 from flask import json, request, g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.util import parse_page_args
-from herovii.service.information_flow import get_information_flow_banner_service, get_information_flow_content_service
+from herovii.service.information_flow import get_information_flow_banner_service, get_information_flow_content_service, \
+    get_information_flow_content_type_service
 
 __author__ = 'yangchujie'
 
@@ -36,6 +37,18 @@ def get_information_flow_content():
     #uid = user_info[0]
     uid = 110
     total_count, data_list = get_information_flow_content_service(uid, information_type, page, per_page)
+    result = {
+        'total_count': total_count,
+        'data': data_list
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+
+
+@api.route('/type', methods=['GET'])
+#@auth.login_required
+def get_information_flow_content_type():
+    total_count, data_list = get_information_flow_content_type_service()
     result = {
         'total_count': total_count,
         'data': data_list
