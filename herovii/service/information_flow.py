@@ -42,16 +42,27 @@ def get_information_flow_banner_service(page, per_page):
     return banner_count, data_list
 
 
-def get_information_flow_content_service(uid, type, page, per_page):
-    content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1).count()
+def get_information_flow_content_service(uid, config_type, page, per_page):
     start = (page - 1) * per_page
     stop = start + per_page
     content_list = []
-    data_list = db.session.query(InformationFlowContent) \
-        .filter(InformationFlowContent.status == 1) \
-        .order_by(InformationFlowContent.create_time.desc()) \
-        .slice(start, stop) \
-        .all()
+    if config_type == 0:
+        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1).count()
+        data_list = db.session.query(InformationFlowContent) \
+            .filter(InformationFlowContent.status == 1) \
+            .order_by(InformationFlowContent.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
+    else:
+        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1,
+                                                                        InformationFlowContent.config_type == config_type) \
+            .count()
+        data_list = db.session.query(InformationFlowContent) \
+            .filter(InformationFlowContent.status == 1,
+                    InformationFlowContent.config_type == config_type) \
+            .order_by(InformationFlowContent.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
     if data_list:
         for content in data_list:
             info_content = {

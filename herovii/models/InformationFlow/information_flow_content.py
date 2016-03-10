@@ -16,3 +16,4 @@ class InformationFlowContent(Base):
     content_name = Column(String(200), nullable=True)
     create_time = Column(Integer)
     status = Column(SmallInteger, default=1)
+    config_type = Column(Integer, nullable=True)
