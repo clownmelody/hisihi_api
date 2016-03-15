@@ -528,6 +528,18 @@ def get_group_info_by_group_id(group_id=None):
         raise ImGroupNotFound()
 
 
+# 根据 group_id 检查群是否存在
+def is_group_exist(group_id=None):
+    if group_id is None:
+        return None
+    group = db.session.query(ImGroup).filter(
+        ImGroup.id == group_id, ImGroup.status == 1).first()
+    if group:
+        return True
+    else:
+        return False
+
+
 # 根据 group_id 获取所有群成员的 reg_id 列表
 def get_group_member_reg_ids_by_group_id(group_id=None):
     reg_id_list = []

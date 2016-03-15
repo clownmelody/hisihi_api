@@ -3,13 +3,13 @@ import json
 from flask import current_app, request, g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.error_code import CreateImGroupFailture, UpdateImGroupFailture, ParamException, DeleteImGroupFailture, \
-    DeleteImGroupMemberFailture, AddGroupMemberFailture
+    DeleteImGroupMemberFailture, AddGroupMemberFailture, ImGroupNotFound
 from herovii.libs.util import parse_page_args
 from herovii.service.im import sign, get_timestamp, get_nonce, create_im_group_service, update_im_group_service, \
     delete_im_group_service, add_im_group_members_service, delete_im_group_members_service, \
     get_organization_im_groups_service, get_organization_im_contacts_service, push_message_to_all_classmates_service, \
     dismiss_im_group_service, get_im_user_groups_service, get_im_group_detail_service, is_client_id_in_group_member, \
-    get_all_im_groups_service
+    get_all_im_groups_service, is_group_exist
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -341,6 +341,8 @@ def get_im_user_groups(client_id=0):
 def get_im_group_detail(group_id=0):
     if group_id == 0:
         raise ParamException()
+    if not is_group_exist(group_id):
+        raise ImGroupNotFound()
     data = get_im_group_detail_service(group_id)
     result = {
         "data": data
