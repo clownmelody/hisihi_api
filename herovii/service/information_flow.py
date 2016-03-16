@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import json
 import urllib.request
 from flask import current_app
@@ -43,6 +44,7 @@ def get_information_flow_banner_service(page, per_page):
 
 
 def get_information_flow_content_service(uid, config_type, page, per_page):
+    starttime = datetime.datetime.now()
     start = (page - 1) * per_page
     stop = start + per_page
     content_list = []
@@ -79,6 +81,9 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
                 info = get_advs_pic_info_by_id(content.content_id)
                 info_content['adv_info'] = info
             content_list.append(info_content)
+    endtime = datetime.datetime.now()
+    print('running time: ')
+    print((endtime - starttime).seconds)
     return content_count, content_list
 
 
