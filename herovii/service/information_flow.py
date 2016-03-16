@@ -83,8 +83,8 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
                 info_content['adv_info'] = info
             content_list.append(info_content)
     endtime = datetime.datetime.now()
-    app.logger.warning('running time: ')
-    app.logger.warning((endtime - starttime).seconds)
+    # app.logger.warning('running time: ')
+    # app.logger.warning((endtime - starttime).seconds)
     return content_count, content_list
 
 
