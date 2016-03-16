@@ -6,6 +6,7 @@ from hashlib import sha1 as sha
 import random
 import re
 import time
+from flask import request
 from herovii.models.InformationFlow.picture import Picture
 from herovii.models.base import db
 
@@ -252,17 +253,29 @@ def validate_date_arguments(value):
 
 def parse_page_args(request_json):
     if request_json is None:
-        page = 1
-        per_page = 20
+        if 'page' in request.args:
+            page = int(request.args.get('page'))
+        else:
+            page = 1
+        if 'per_page' in request.args:
+            per_page = int(request.args.get('per_page'))
+        else:
+            per_page = 20
     else:
         if 'page' in request_json.keys():
             page = request_json['page']
         else:
-            page = 1
+            if 'page' in request.args:
+                page = int(request.args.get('page'))
+            else:
+                page = 1
         if 'per_page' in request_json.keys():
             per_page = request_json['per_page']
         else:
-            per_page = 20
+            if 'per_page' in request.args:
+                per_page = int(request.args.get('per_page'))
+            else:
+                per_page = 20
     return page, per_page
 
 

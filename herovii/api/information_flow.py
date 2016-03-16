@@ -36,6 +36,8 @@ def get_information_flow_content():
     #user_info = g.user
     #uid = user_info[0]
     uid = 110
+    if 'type' in request.args:
+        information_type = request.args.get('type')
     total_count, data_list = get_information_flow_content_service(uid, information_type, page, per_page)
     result = {
         'total_count': total_count,
