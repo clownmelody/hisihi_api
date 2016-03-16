@@ -192,7 +192,10 @@ def get_course_info_by_id(course_id):
     if organization_course:
         lecturer_id = organization_course['lecturer']
         user_profile = get_user_profile_by_uid(lecturer_id)
-        lecturer_nickname = user_profile['nickname']
+        if user_profile is not None:
+            lecturer_nickname = user_profile['nickname']
+        else:
+            lecturer_nickname = ''
         type_str = get_course_type_name_by_type_id(organization_course['category_id'])
         duration = get_course_video_duration(course_id)
         course = {
