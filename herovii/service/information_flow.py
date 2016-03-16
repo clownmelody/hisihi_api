@@ -18,7 +18,6 @@ from herovii.models.org.course import Course
 from herovii.models.org.video import Video
 from herovii.service.article import is_article_support, is_article_favorite, get_article_support_count
 from herovii.service.org import get_organization_info_by_organization_id, get_user_profile_by_uid
-from run import app
 
 __author__ = 'yangchujie'
 
@@ -45,7 +44,6 @@ def get_information_flow_banner_service(page, per_page):
 
 
 def get_information_flow_content_service(uid, config_type, page, per_page):
-    starttime = datetime.datetime.now()
     start = (page - 1) * per_page
     stop = start + per_page
     content_list = []
@@ -82,9 +80,6 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
                 info = get_advs_pic_info_by_id(content.content_id)
                 info_content['adv_info'] = info
             content_list.append(info_content)
-    endtime = datetime.datetime.now()
-    # app.logger.warning('running time: ')
-    # app.logger.warning((endtime - starttime).seconds)
     return content_count, content_list
 
 
