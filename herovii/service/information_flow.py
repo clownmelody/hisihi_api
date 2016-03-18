@@ -199,13 +199,14 @@ def get_course_info_by_id(course_id):
             lecturer_nickname = ''
         type_str = get_course_type_name_by_type_id(organization_course['category_id'])
         duration = get_course_video_duration(course_id)
+        img_str = parse_img_str(organization_course['img_str'])
         course = {
             'id': course_id,
             'title': organization_course['title'],
             'lecturer': lecturer_id,
             'ViewCount': organization_course['view_count'],
             'type': type_str,
-            'img': organization_course['img_str'],
+            'img': img_str,
             'lecturer_name': lecturer_nickname,
             'organization_logo': organization_info['logo'],
             'duration': duration
@@ -259,3 +260,11 @@ def get_information_flow_content_type_service():
             }
             data_list.append(config_object)
     return len(data_list), data_list
+
+
+def parse_img_str(img_str):
+    if img_str.startswith('http'):
+        return img_str
+    else:
+        url_prefix = 'http://game-pic.oss-cn-qingdao.aliyuncs.com/'
+        return url_prefix + img_str[4:]
