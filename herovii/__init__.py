@@ -1,9 +1,8 @@
 from herovii.cache import cache
-
-__author__ = 'bliss'
-
 from .models import db
 from herovii.cache import cache
+
+__author__ = 'bliss'
 
 
 def register_base(app):
@@ -28,25 +27,8 @@ def create_app(config=None):
     from .app import create_app
     app = create_app(config)
 
-    # config = {
-    # 'CACHE_TYPE': 'redis',
-    # 'CACHE_KEY_PREFIX': 'herovii_dev',
-    # 'CACHE_REDIS_HOST': '0144e112abe149ed.m.cnqda.kvstore.aliyuncs.com',
-    # 'CACHE_REDIS_PORT': 6379,
-    # 'CACHE_REDIS_PASSWORD': '027Xunniutech',
-    # 'CACHE_REDIS_DB': 6
-    # }
-
-    config = {
-    'CACHE_TYPE': 'redis',
-    'CACHE_KEY_PREFIX': 'herovii_dev',
-    'CACHE_REDIS_HOST': '115.29.32.161',
-    'CACHE_REDIS_PORT': 6379,
-    'CACHE_REDIS_PASSWORD': '027Xunniutech',
-    'CACHE_REDIS_DB': 6
-    }
-
-    cache.init_app(app, config=config)
+    config_redis = app.config['ALI_REDIS_CONFIG']
+    cache.init_app(app, config=config_redis)
 
     register_base(app)
     register_base_blueprints(app)

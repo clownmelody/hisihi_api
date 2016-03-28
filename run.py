@@ -11,7 +11,6 @@ from flask.ext.sqlalchemy import get_debug_queries
 from herovii.secure import DATABASE_QUERY_TIMEOUT
 
 
-
 __author__ = 'bliss'
 
 app = create_app()
