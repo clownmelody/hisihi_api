@@ -13,3 +13,4 @@ flask-httpauth == 2.7.0
 qrcode == 5.1
 pycurl == 7.19.5.3
 pillow == 3.0.0
+flask-cache == 0.13.1
