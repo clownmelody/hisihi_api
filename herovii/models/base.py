@@ -26,7 +26,6 @@ db = SQLAlchemy(session_options={
     'autoflush': False,
 })
 
-
 class BaseMixin(object):
     def __getitem__(self, key):
         return getattr(self, key)
