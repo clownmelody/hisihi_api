@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import json, request, g
-from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.util import parse_page_args
+from flask import json, request
+from herovii.cache import cache
+from herovii.libs.bpbase import ApiBlueprint
+from herovii.libs.util import parse_page_args, make_cache_key
 from herovii.service.information_flow import get_information_flow_banner_service, get_information_flow_content_service, \
     get_information_flow_content_type_service
 
@@ -11,6 +12,7 @@ api = ApiBlueprint('information_flow')
 
 
 @api.route('/banner', methods=['GET'])
+@cache.cached(timeout=120, key_prefix='information_banner')
 # @auth.login_required
 def get_information_banner():
     request_json = request.get_json(force=True, silent=True)
@@ -25,7 +27,7 @@ def get_information_banner():
 
 
 @api.route('/content', methods=['GET'])
-#@auth.login_required
+@cache.cached(timeout=120, key_prefix=make_cache_key)
 def get_information_flow_content():
     request_json = request.get_json(force=True, silent=True)
     page, per_page = parse_page_args(request_json)

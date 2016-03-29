@@ -317,3 +317,11 @@ def get_img_service_path_by_pic_id(pid, bucket):
         return None
 
 
+# 主要解决url 中 querystring 不同而缓存不变的问题
+def make_cache_key(*args, **kwargs):
+    path = request.path
+    args_items = request.args.items()
+    args = str(hash(frozenset(args_items)))
+    # lang = get_locale()
+    key = (path + args)
+    return key
