@@ -32,6 +32,13 @@ class Online0001Scope(ScopeBase):
     forbidden = ['v1.test+test_auth']
 
 
+class Online0002Scope(ScopeBase):
+    """"活动后台权限，添加文件上传接口权限"""
+    allow_api = ['v1.file+upload_object']
+    allow_module = ['v1.online', 'v1.pk', 'v1.test']
+    forbidden = ['v1.test+test_auth']
+
+
 class UserCSUScope(ScopeBase):
     """消费用户权限域"""
     allow_api = ['v1.mall+redirect_to_duiba', 'v1.org+get_users_profiles', 'v1.org+student_sign_in']
