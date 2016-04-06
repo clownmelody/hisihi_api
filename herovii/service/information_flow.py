@@ -117,8 +117,8 @@ def get_top_content_info_by_id(uid, article_id):
             'description': top_content.description,
             'img': get_oss_pic_path_by_pic_id(top_content.cover_id, current_app.config['ALI_OSS_FORUM_BUCKET_NAME']),
             'view': top_content.view,
-            "content_url": "http://dev.hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id),
-            "share_url": "http://dev.hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(
+            "content_url": "http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id),
+            "share_url": "http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(
                 article_id),
             'create_time': top_content.create_time,
             'update_time': top_content.update_time,
