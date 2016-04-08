@@ -81,7 +81,8 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
             else:  # 广告图片
                 info = get_advs_pic_info_by_id(content.content_id)
                 info_content['adv_info'] = info
-            content_list.append(info_content)
+            if info:
+                content_list.append(info_content)
     return content_count, content_list
 
 
