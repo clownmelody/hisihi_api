@@ -1,6 +1,7 @@
 from flask import request, redirect
 from flask import current_app, g
 from flask.helpers import url_for
+from flask.json import jsonify
 from werkzeug.exceptions import RequestEntityTooLarge
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.api.token import auth
@@ -8,6 +9,7 @@ from herovii.libs.error_code import ParamException, FileUploadFailed
 from herovii.libs.helper import allowed_uploaded_file_type, success_json
 from herovii.libs.oss import OssAPI
 from herovii.libs.util import get_timestamp_with_random, file_extension, year_month_day
+from herovii.cache import cache
 
 __author__ = 'bliss'
 
@@ -25,6 +27,11 @@ def test_javascript_http():
 #     a = current_app.config['ALI_OSS_HOST']
 #     s = current_app.config['ALI_OSS_CDN_HOST']
 #     return 'ok', 200
+
+@api.route('/redis', methods=['GET'])
+@cache.cached(timeout=60, key_prefix='test')
+def test_redis_cache():
+    return jsonify({'name': 'leilei'}), 200
 
 
 @api.route('', methods=['POST'])

@@ -55,6 +55,7 @@ def find_version(environ):
 def init_api(app):
     # app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
     reg_v1_bp(app)
+
     # reg_org_bp(app)
     # reg_auth_bp(app)
 

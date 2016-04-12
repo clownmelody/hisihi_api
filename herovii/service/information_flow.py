@@ -24,12 +24,14 @@ __author__ = 'yangchujie'
 
 # 分页获取资讯流 banner 列表
 def get_information_flow_banner_service(page, per_page):
-    banner_count = db.session.query(InformationFlowBanner).filter(InformationFlowBanner.status == 1).count()
+    banner_count = db.session.query(InformationFlowBanner).filter(InformationFlowBanner.status == 1,
+                                                                  InformationFlowBanner.show_pos == 1).count()
     data_list = []
     start = (page - 1) * per_page
     stop = start + per_page
     banner_list = db.session.query(InformationFlowBanner) \
-        .filter(InformationFlowBanner.status == 1) \
+        .filter(InformationFlowBanner.status == 1,
+                InformationFlowBanner.show_pos == 1) \
         .slice(start, stop) \
         .all()
     if banner_list:
@@ -79,7 +81,8 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
             else:  # 广告图片
                 info = get_advs_pic_info_by_id(content.content_id)
                 info_content['adv_info'] = info
-            content_list.append(info_content)
+            if info:
+                content_list.append(info_content)
     return content_count, content_list
 
 
@@ -190,12 +193,30 @@ def get_course_info_by_id(course_id):
     organization_course = db.session.query(Course).filter(Course.id == course_id) \
         .first()
     organization_info = get_organization_info_by_organization_id(organization_course.organization_id)
-    if organization_course:
-        lecturer_id = organization_course['lecturer']
-        user_profile = get_user_profile_by_uid(lecturer_id)
-        if user_profile is not None:
-            lecturer_nickname = user_profile['nickname']
+    if organization_info:
+        if organization_course:
+            lecturer_id = organization_course['lecturer']
+            user_profile = get_user_profile_by_uid(lecturer_id)
+            if user_profile is not None:
+                lecturer_nickname = user_profile['nickname']
+            else:
+                lecturer_nickname = ''
+            type_str = get_course_type_name_by_type_id(organization_course['category_id'])
+            duration = get_course_video_duration(course_id)
+            course = {
+                'id': course_id,
+                'title': organization_course['title'],
+                'lecturer': lecturer_id,
+                'ViewCount': organization_course['view_count'],
+                'type': type_str,
+                'img': organization_course['img_str'],
+                'lecturer_name': lecturer_nickname,
+                'organization_logo': organization_info['logo'],
+                'duration': duration
+            }
+            return course
         else:
+<<<<<<< HEAD
             lecturer_nickname = ''
         type_str = get_course_type_name_by_type_id(organization_course['category_id'])
         duration = get_course_video_duration(course_id)
@@ -212,6 +233,9 @@ def get_course_info_by_id(course_id):
             'duration': duration
         }
         return course
+=======
+            return None
+>>>>>>> release2.6
     else:
         return None
 

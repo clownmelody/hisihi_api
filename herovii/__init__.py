@@ -1,6 +1,8 @@
-__author__ = 'bliss'
-
+from herovii.cache import cache
 from .models import db
+from herovii.cache import cache
+
+__author__ = 'bliss'
 
 
 def register_base(app):
@@ -16,7 +18,7 @@ def register_base(app):
 
 def register_base_blueprints(app):
     from .api import init_api
-    from .handlers import init_handlers
+    # from .handlers import init_handlers
     init_api(app)
     # init_handlers(app)
 
@@ -24,8 +26,13 @@ def register_base_blueprints(app):
 def create_app(config=None):
     from .app import create_app
     app = create_app(config)
+
+    config_redis = app.config['ALI_REDIS_CONFIG']
+    cache.init_app(app, config=config_redis)
+
     register_base(app)
     register_base_blueprints(app)
+
     # register_app_blueprints(app)
     # register_not_found(app)
     return app
