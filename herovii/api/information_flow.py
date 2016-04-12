@@ -13,7 +13,6 @@ api = ApiBlueprint('information_flow')
 
 @api.route('/banner', methods=['GET'])
 @cache.cached(timeout=120, key_prefix='information_banner')
-# @auth.login_required
 def get_information_banner():
     request_json = request.get_json(force=True, silent=True)
     page, per_page = parse_page_args(request_json)
@@ -35,8 +34,6 @@ def get_information_flow_content():
         information_type = 0
     else:
         information_type = request_json['type']
-    #user_info = g.user
-    #uid = user_info[0]
     uid = 110
     if 'type' in request.args:
         information_type = int(request.args.get('type'))
@@ -50,7 +47,6 @@ def get_information_flow_content():
 
 
 @api.route('/type', methods=['GET'])
-#@auth.login_required
 def get_information_flow_content_type():
     total_count, data_list = get_information_flow_content_type_service()
     result = {
