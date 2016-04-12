@@ -14,3 +14,4 @@ qrcode == 5.1
 pycurl == 7.19.5.3
 pillow == 3.0.0
 flask-cache == 0.13.1
+reids == 2.10.3
