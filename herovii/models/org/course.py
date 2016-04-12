@@ -1,5 +1,6 @@
 from sqlalchemy.sql.sqltypes import SmallInteger
 import time
+import random
 
 __author__ = 'bliss'
 
@@ -20,10 +21,11 @@ class Course(Base):
     category_id = Column(Integer)
     lecturer = Column(Integer)
     auth = Column(SmallInteger, default=1)
-    view_count = Column(Integer, default=0)
+    view_count = Column(Integer, default=random.randint(3000, 4000))
     update_time = Column(Integer, default=int(time.time()))
     status = Column(Integer, default=0)  # 状态默认为0，需要审核
-
+    fake_support_count = Column(Integer, default=random.randint(100, 200))
+    fake_favorite_count = Column(Integer, default=random.randint(300, 400))
 
     def keys(self):
         return (
