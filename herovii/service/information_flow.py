@@ -167,9 +167,12 @@ def get_advs_pic_info_by_id(adv_id):
         advs_info['pic'] = pic_path
         img_service_path = get_img_service_path_by_pic_id(advs.advspic_640_960,
                                                           current_app.config['ALI_OSS_ADV_BUCKET_NAME'])
-        resp = urllib.request.urlopen(img_service_path)
-        resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
-        advs_info['size'] = [resp_dict['width'], resp_dict['height']]
+        try:
+            resp = urllib.request.urlopen(img_service_path)
+            resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
+            advs_info['size'] = [resp_dict['width'], resp_dict['height']]
+        except:
+            advs_info['size'] = None
         return advs_info
     return None
 
