@@ -175,6 +175,9 @@ def dto_org_courses_paginate(oid, page, count):
     teachers = UserCSU.query.filter(UserCSU.uid.in_(l)).all()
     c_l = []
     for c, category in courses_categories:
+        if c['img_str'].startswith('OSS-'):
+            c.img_str = c['img_str'].replace('OSS-', 'http://game-pic.oss-cn-qingdao.aliyuncs.com/')
+
         course = {
             'course': c,
             'category': category
