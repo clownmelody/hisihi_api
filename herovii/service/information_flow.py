@@ -113,6 +113,7 @@ def get_top_content_info_by_id(uid, article_id):
         .first()
     document_article = db.session.query(DocumentArticle).filter(DocumentArticle.id == article_id) \
         .first()
+    server_host_name = current_app.config['SERVER_HOST_NAME']
     if top_content:
         content = {
             'id': top_content.id,
@@ -120,8 +121,8 @@ def get_top_content_info_by_id(uid, article_id):
             'description': top_content.description,
             'img': get_oss_pic_path_by_pic_id(top_content.cover_id, current_app.config['ALI_OSS_FORUM_BUCKET_NAME']),
             'view': top_content.view,
-            "content_url": "http://dev.hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id),
-            "share_url": "http://dev.hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(
+            "content_url": server_host_name + "/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id),
+            "share_url": server_host_name + "/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(
                 article_id),
             'create_time': top_content.create_time,
             'update_time': top_content.update_time,
@@ -166,9 +167,12 @@ def get_advs_pic_info_by_id(adv_id):
         advs_info['pic'] = pic_path
         img_service_path = get_img_service_path_by_pic_id(advs.advspic_640_960,
                                                           current_app.config['ALI_OSS_ADV_BUCKET_NAME'])
-        resp = urllib.request.urlopen(img_service_path)
-        resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
-        advs_info['size'] = [resp_dict['width'], resp_dict['height']]
+        try:
+            resp = urllib.request.urlopen(img_service_path)
+            resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
+            advs_info['size'] = [resp_dict['width'], resp_dict['height']]
+        except:
+            advs_info['size'] = None
         return advs_info
     return None
 
