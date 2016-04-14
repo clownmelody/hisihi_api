@@ -207,13 +207,17 @@ def get_course_info_by_id(course_id):
                 lecturer_nickname = ''
             type_str = get_course_type_name_by_type_id(organization_course['category_id'])
             duration = get_course_video_duration(course_id)
+            if organization_course['img_str'].startswith('OSS-'):
+                img_url = organization_course['img_str'].replace('OSS-', 'http://game-pic.oss-cn-qingdao.aliyuncs.com/')
+            else:
+                img_url = organization_course['img_str']
             course = {
                 'id': course_id,
                 'title': organization_course['title'],
                 'lecturer': lecturer_id,
                 'ViewCount': organization_course['view_count'],
                 'type': type_str,
-                'img': organization_course['img_str'],
+                'img': img_url,
                 'lecturer_name': lecturer_nickname,
                 'organization_logo': organization_info['logo'],
                 'duration': duration
