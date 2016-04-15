@@ -18,9 +18,6 @@ VERSION_URL = re.compile(r'^/api/\d/')
 VERSION_ACCEPT = re.compile(r'application/vnd\.zerqu\+json;\s+version=(\d)')
 CURRENT_VERSION = '1'
 bp_v1 = Blueprint('v1', __name__)
-# bp_org = Blueprint('org', __name__)
-# bp_consumer = Blueprint('consumer', __name__)
-# bp_auth = Blueprint('auth', __name__)
 
 
 class ApiVersionMiddleware(object):
@@ -53,11 +50,8 @@ def find_version(environ):
 
 
 def init_api(app):
-    # app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
+    #app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
     reg_v1_bp(app)
-
-    # reg_org_bp(app)
-    # reg_auth_bp(app)
 
 
 def reg_v1_bp(app):
@@ -87,27 +81,9 @@ def reg_v1_bp(app):
     im.api.register(bp_v1)
     video.api.register(bp_v1)
     information_flow.api.register(bp_v1)
-    # team.api.register(bp_v1)
-    feedback.api.register(bp_v1)
-    # info.api.register(bp_v1)
-    # stats.api.register(bp_v1)
-    # enroll.api.register(bp_v1)
-    app.register_blueprint(bp_v1, url_prefix='/v1')
-    # app.register_blueprint(bp_org, url_prefix='/v1/org')
 
-# # register consumer type blue print
-# def reg_consumer_bp(app):
-#     user_csu.api.register(bp_consumer)
-#     app.register_blueprint(bp_consumer, url_prefix='/v1/csu')
-#
-#
-# # register organization type blue print
-# def reg_org_bp(app):
-#     user_org.api.register(bp_org)
-#     app.register_blueprint(bp_org, url_prefix='/v1/org')
-#
-#
-# def reg_auth_bp(app):
-#     token.api.register(bp_auth)
-#     app.register_blueprint(bp_auth, url_prefix='/v1/auth')
+    feedback.api.register(bp_v1)
+
+    app.register_blueprint(bp_v1, url_prefix='/v1')
+
 
