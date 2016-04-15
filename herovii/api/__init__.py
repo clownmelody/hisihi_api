@@ -20,23 +20,49 @@ CURRENT_VERSION = '1'
 bp_v1 = Blueprint('v1', __name__)
 
 
+# class ApiVersionMiddleware(object):
+#     def __init__(self, app):
+#         self.app = app
+#
+#     def __call__(self, environ, start_response):
+#         path = environ.get('PATH_INFO')
+#         if not path.startswith('/api/'):
+#             return self.app(environ, start_response)
+#         if VERSION_URL.match(path):
+#             return self.app(environ, start_response)
+#
+#         # 修改url，强行在其中加入版本号
+#         version = find_version(environ)
+#
+#         # environ['PATH_INFO'] 可以强制修改URL（修改的URL是没有匹配路由的URL，修改后才会同路由模板匹配
+#         environ['PATH_INFO'] = path.replace('/api/', '/api/%s/' % version)
+#         return self.app(environ, start_response)
+
 class ApiVersionMiddleware(object):
     def __init__(self, app):
         self.app = app
 
     def __call__(self, environ, start_response):
-        path = environ.get('PATH_INFO')
-        if not path.startswith('/api/'):
-            return self.app(environ, start_response)
-        if VERSION_URL.match(path):
+        version = environ.get('HTTP_VERSION')
+        if not version:
             return self.app(environ, start_response)
 
-        # 修改url，强行在其中加入版本号
-        version = find_version(environ)
+        # # 修改url，强行在其中加入版本号
+        # version = find_version(environ)
 
         # environ['PATH_INFO'] 可以强制修改URL（修改的URL是没有匹配路由的URL，修改后才会同路由模板匹配
-        environ['PATH_INFO'] = path.replace('/api/', '/api/%s/' % version)
+
+        path = environ.get('PATH_INFO')
+
+        environ['PATH_INFO'] = inject_version(path, version)
         return self.app(environ, start_response)
+
+
+def inject_version(path, version):
+    splits = path.split('/')
+    splits.insert(3, version)
+    path = '/'.join(splits)
+    return path
 
 
 def find_version(environ):
@@ -50,7 +76,7 @@ def find_version(environ):
 
 
 def init_api(app):
-    #app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
+    app.wsgi_app = ApiVersionMiddleware(app.wsgi_app)
     reg_v1_bp(app)
 
 
