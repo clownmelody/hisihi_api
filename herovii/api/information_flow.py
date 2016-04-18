@@ -16,7 +16,21 @@ api = ApiBlueprint('information_flow')
 def get_information_banner():
     request_json = request.get_json(force=True, silent=True)
     page, per_page = parse_page_args(request_json)
-    total_count, data_list = get_information_flow_banner_service(page, per_page)
+    total_count, data_list = get_information_flow_banner_service(page, per_page, 2.6)
+    result = {
+        'total_count': total_count,
+        'data': data_list
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+
+
+@api.route('/2.7/banner', methods=['GET'])
+@cache.cached(timeout=120, key_prefix='information_banner_v2.7')
+def get_information_banner_v2_7():
+    request_json = request.get_json(force=True, silent=True)
+    page, per_page = parse_page_args(request_json)
+    total_count, data_list = get_information_flow_banner_service(page, per_page, 2.7)
     result = {
         'total_count': total_count,
         'data': data_list
