@@ -284,3 +284,9 @@ class UpdateCategoryForm(Form):
 class ClassmateJoinForm(Form):
     uids = StringField(validators=[DataRequired()])
     cid = IntegerField(validators=[DataRequired(), NumberRange(1)])
+
+
+class FollowUserForm(Form):
+    uid = StringField(validators=[DataRequired()])
+    recommend_id = StringField(validators=[DataRequired()])
+    recommend_type = StringField(validators=[DataRequired()])
