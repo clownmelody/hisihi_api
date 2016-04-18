@@ -23,25 +23,50 @@ __author__ = 'yangchujie'
 
 
 # 分页获取资讯流 banner 列表
-def get_information_flow_banner_service(page, per_page):
+def get_information_flow_banner_service(page, per_page, client_version):
     banner_count = db.session.query(InformationFlowBanner).filter(InformationFlowBanner.status == 1,
                                                                   InformationFlowBanner.show_pos == 1).count()
     data_list = []
     start = (page - 1) * per_page
     stop = start + per_page
-    banner_list = db.session.query(InformationFlowBanner) \
-        .filter(InformationFlowBanner.status == 1,
-                InformationFlowBanner.show_pos == 1) \
-        .slice(start, stop) \
-        .all()
-    if banner_list:
-        for banner in banner_list:
-            banner_object = {
-                'id': banner.id,
-                'pic_url': banner.pic_url,
-                'url': banner.url
-            }
-            data_list.append(banner_object)
+    if client_version == 2.6:
+        banner_list = db.session.query(InformationFlowBanner) \
+            .filter(InformationFlowBanner.status == 1,
+                    InformationFlowBanner.show_pos == 1) \
+            .slice(start, stop) \
+            .all()
+        if banner_list:
+            for banner in banner_list:
+                banner_object = {
+                    'id': banner.id,
+                    'pic_url': banner.pic_url,
+                    'url': banner.url
+                }
+                data_list.append(banner_object)
+    elif client_version == 2.7:
+        banner_list = db.session.query(InformationFlowBanner) \
+            .filter(InformationFlowBanner.status == 1,
+                    InformationFlowBanner.show_pos == 1) \
+            .slice(start, stop) \
+            .all()
+        if banner_list:
+            for banner in banner_list:
+                jump_type = banner.jump_type
+                banner_object = {
+                    'id': banner.id,
+                    'pic_url': banner.pic_url,
+                    'jump_type': jump_type
+                }
+                if jump_type == 2:
+                    post_id = banner.url
+                    banner_object['url'] = 'hisihi://post/detailinfo?id=' + post_id
+                elif jump_type == 3:
+                    course_id = banner.url
+                    banner_object['url'] = 'hisihi://course/detailinfo?id=' + course_id
+                elif jump_type == 4:
+                    org_id = banner.url
+                    banner_object['url'] = 'hisihi://organization/detailinfo?id=' + org_id
+                data_list.append(banner_object)
     return banner_count, data_list
 
 
