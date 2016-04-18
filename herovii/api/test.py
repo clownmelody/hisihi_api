@@ -40,7 +40,15 @@ def nothing_1():
 
 
 @api.route('/client-ip', methods=['GET'])
+@cache.cached(timeout=120, key_prefix='client-ip')
 def test_client_ip():
+    r = request.remote_addr
+    return r, 200
+
+
+@api.route('/2.6/client-ip', methods=['GET'])
+@cache.cached(timeout=120, key_prefix='client-ip2.6')
+def test_client_ip_v26():
     r = request.remote_addr
     return r, 200
 
