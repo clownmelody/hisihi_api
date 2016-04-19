@@ -110,7 +110,7 @@ def search_information_flow_content():
     else:
         uid = g.user[0]
     if request_json is None or 'keywords' not in request_json.keys():
-        keywords = None
+        keywords = ''
     else:
         keywords = request_json['keywords']
     if 'keywords' in request.args:

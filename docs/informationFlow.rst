@@ -203,4 +203,68 @@ banner列表（version-2.7）
         ],
         "total_count":1
     }
+
+
+首页搜索列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+     GET    information_flow/search
+
+**Parameters**:
+
+* keywords  关键字
+
+
+**Response** `200` ::
+
+    {
+    "data":[
+        {
+            "content_type":1,
+            "id":1260,
+            "top_content_info":{
+                "content_url":"http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/1260",
+                "cover_type":1,
+                "create_time":1434726420,
+                "description":"",
+                "id":1260,
+                "img":"http://forum-pic.oss-cn-qingdao.aliyuncs.com/2015-06-19/5584302697419.jpg",
+                "isFavorited":false,
+                "isSupportd":false,
+                "logo_pic":null,
+                "share_url":"http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/1260",
+                "source_name":"",
+                "supportCount":11999,
+                "title":"请原谅你的设计师男友",
+                "update_time":1435629865,
+                "view":114983
+            }
+        },
+        {
+            "content_type":1,
+            "id":1261,
+            "top_content_info":{
+                "content_url":"http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/1261",
+                "cover_type":2,
+                "create_time":1434726840,
+                "description":"",
+                "id":1261,
+                "img":"http://forum-pic.oss-cn-qingdao.aliyuncs.com/2016-04-14/570f1936bfd9e.jpg",
+                "isFavorited":false,
+                "isSupportd":false,
+                "logo_pic":"http://hisihi-other.oss-cn-qingdao.aliyuncs.com/2016-04-14/570f1936bfd9e.jpg",
+                "share_url":"http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/1261",
+                "source_name":"heheh",
+                "supportCount":12287,
+                "title":"北京服装学院艺术设计学院 2015毕业设计",
+                "update_time":1460965528,
+                "view":117782
+            }
+        }
+    ],
+    "total_count":2
+}
+
+
 --
