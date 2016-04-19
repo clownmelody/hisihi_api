@@ -25,6 +25,7 @@ __author__ = 'yangchujie'
 # 分页获取资讯流 banner 列表
 def get_information_flow_banner_service(page, per_page, client_version):
     banner_count = db.session.query(InformationFlowBanner).filter(InformationFlowBanner.status == 1,
+                                                                  InformationFlowBanner.jump_type == 1,
                                                                   InformationFlowBanner.show_pos == 1).count()
     data_list = []
     start = (page - 1) * per_page
@@ -32,6 +33,7 @@ def get_information_flow_banner_service(page, per_page, client_version):
     if client_version == 2.6:
         banner_list = db.session.query(InformationFlowBanner) \
             .filter(InformationFlowBanner.status == 1,
+                    InformationFlowBanner.jump_type == 1,
                     InformationFlowBanner.show_pos == 1) \
             .slice(start, stop) \
             .all()
@@ -55,17 +57,18 @@ def get_information_flow_banner_service(page, per_page, client_version):
                 banner_object = {
                     'id': banner.id,
                     'pic_url': banner.pic_url,
-                    'jump_type': jump_type
+                    'jump_type': jump_type,
+                    'url': banner.url
                 }
                 if jump_type == 2:
                     post_id = banner.url
-                    banner_object['url'] = 'hisihi://post/detailinfo?id=' + post_id
+                    banner_object.url = 'hisihi://post/detailinfo?id=' + post_id
                 elif jump_type == 3:
                     course_id = banner.url
-                    banner_object['url'] = 'hisihi://course/detailinfo?id=' + course_id
+                    banner_object.url = 'hisihi://course/detailinfo?id=' + course_id
                 elif jump_type == 4:
                     org_id = banner.url
-                    banner_object['url'] = 'hisihi://organization/detailinfo?id=' + org_id
+                    banner_object.url = 'hisihi://organization/detailinfo?id=' + org_id
                 data_list.append(banner_object)
     return banner_count, data_list
 
@@ -104,6 +107,44 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
                 info = get_course_info_by_id(content.content_id)
                 info_content['course_info'] = info
             else:  # 广告图片
+                info = get_advs_pic_info_by_id(content.content_id)
+                info_content['adv_info'] = info
+            if info:
+                content_list.append(info_content)
+    return content_count, content_list
+
+
+def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    content_list = []
+    if config_type == 0:
+        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1).count()
+        data_list = db.session.query(InformationFlowContent) \
+            .filter(InformationFlowContent.status == 1) \
+            .order_by(InformationFlowContent.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
+    else:
+        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1,
+                                                                        InformationFlowContent.config_type == config_type) \
+            .count()
+        data_list = db.session.query(InformationFlowContent) \
+            .filter(InformationFlowContent.status == 1,
+                    InformationFlowContent.config_type == config_type) \
+            .order_by(InformationFlowContent.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
+    if data_list:
+        for content in data_list:
+            info_content = {
+                'id': content.id,
+                'content_type': content.content_type
+            }
+            if content.content_type == 1:  # 头条
+                info = get_top_content_info_by_id(uid, content.content_id)
+                info_content['top_content_info'] = info
+            elif content.content_type == 3:  # 广告
                 info = get_advs_pic_info_by_id(content.content_id)
                 info_content['adv_info'] = info
             if info:
@@ -153,7 +194,8 @@ def get_top_content_info_by_id(uid, article_id):
             'update_time': top_content.update_time,
             'isSupportd': is_article_support(uid, article_id),
             'isFavorited': is_article_favorite(uid, article_id),
-            'supportCount': get_article_support_count(article_id)
+            'supportCount': get_article_support_count(article_id),
+            'cover_type': top_content.cover_type
         }
         if document_article:
             content['source_name'] = document_article.source_name

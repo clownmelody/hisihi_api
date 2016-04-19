@@ -33,6 +33,32 @@ banner列表
     }
 --
 
+banner列表（version-2.7）
+~~~~~~~~~~~~~~~
+**URL**::
+
+     GET    information_flow/banner
+
+**Parameters**:
+
+* version  版本号
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":15,
+                "jump_type":1,
+                "pic_url":"http://pic.hisihi.com/2016-04-05/5703669815157.png",
+                "url":"http://www.runoob.com"
+            }
+        ],
+        "total_count":1
+    }
+--
 
 混排内容列表
 ~~~~~~~~~~~~~~~
@@ -101,6 +127,63 @@ banner列表
         }
     ],
     "total_count":3
+}
+
+
+混排内容列表(version-2.7)
+~~~~~~~~~~~~~~~
+**URL**::
+
+     GET    information_flow/content
+
+**Parameters**:
+
+* version  版本号
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
+* type:  内容类型
+
+**Response** `200` ::
+
+    {
+    "data":[
+        {
+            "content_type":1,
+            "id":14,
+            "top_content_info":{
+                "content_url":"http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/1768",
+                "create_time":1455605640,
+                "description":"",
+                "id":1768,
+                "cover_type":2,
+                "img":"http://forum-pic.oss-cn-qingdao.aliyuncs.com/2016-02-16/56c2c77d908be.jpg",
+                "isFavorited":false,
+                "isSupportd":false,
+                "logo_pic":"http://hisihi-other.oss-cn-qingdao.aliyuncs.com/2016-02-16/56c2c78ba212c.jpg",
+                "share_url":"http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/1768",
+                "source_name":"嘿设汇",
+                "supportCount":1891,
+                "title":"精益求精,彰显微小细节的5件设计",
+                "update_time":1456107041,
+                "view":62658
+            }
+        },
+        {
+            "adv_info":{
+                "content_url":"http://tencent.com",
+                "pic":"http://advs-pic.oss-cn-qingdao.aliyuncs.com/2015-12-07/5665064bcfefa.png",
+                "size":[
+                    560,
+                    347
+                ],
+                "title":"广告-02",
+                "type":"advertisment"
+            },
+            "content_type":3,
+            "id":11
+        }
+    ],
+    "total_count":2
 }
 
 

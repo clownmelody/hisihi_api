@@ -18,6 +18,7 @@ class Document(Base):
     cover_id = Column(Integer, nullable=True)
     view = Column(Integer, nullable=True)
     cover_id = Column(Integer, nullable=True)
+    cover_type = Column(Integer, nullable=True)
     create_time = Column(Integer)
     update_time = Column(Integer)
     status = Column(SmallInteger, default=1)
