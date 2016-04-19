@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask import json, request
+from flask.globals import g
+
 from herovii.cache import cache
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.util import parse_page_args, make_cache_key
 from herovii.service.information_flow import get_information_flow_banner_service, get_information_flow_content_service, \
-    get_information_flow_content_type_service, get_information_flow_content_service_v2_7
+    get_information_flow_content_type_service, get_information_flow_content_service_v2_7, \
+    search_information_flow_content_service
 
 __author__ = 'yangchujie'
 
@@ -48,7 +51,10 @@ def get_information_flow_content():
         information_type = 0
     else:
         information_type = request_json['type']
-    uid = 110
+    if not hasattr(g, 'user'):
+        uid = 0
+    else:
+        uid = g.user[0]
     if 'type' in request.args:
         information_type = int(request.args.get('type'))
     total_count, data_list = get_information_flow_content_service(uid, information_type, page, per_page)
@@ -69,7 +75,10 @@ def get_information_flow_content_v2_7():
         information_type = 0
     else:
         information_type = request_json['type']
-    uid = 110
+    if not hasattr(g, 'user'):
+        uid = 0
+    else:
+        uid = g.user[0]
     if 'type' in request.args:
         information_type = int(request.args.get('type'))
     total_count, data_list = get_information_flow_content_service_v2_7(uid, information_type, page, per_page)
@@ -90,3 +99,27 @@ def get_information_flow_content_type():
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers
+
+
+@api.route('/search', methods=['GET'])
+def search_information_flow_content():
+    request_json = request.get_json(force=True, silent=True)
+    page, per_page = parse_page_args(request_json)
+    if not hasattr(g, 'user'):
+        uid = 0
+    else:
+        uid = g.user[0]
+    if request_json is None or 'keywords' not in request_json.keys():
+        keywords = None
+    else:
+        keywords = request_json['keywords']
+    if 'keywords' in request.args:
+        keywords = request.args.get('keywords')
+    total_count, data_list = search_information_flow_content_service(uid, keywords, page, per_page)
+    result = {
+        'total_count': total_count,
+        'data': data_list
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+

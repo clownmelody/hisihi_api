@@ -340,3 +340,31 @@ def get_information_flow_content_type_service():
             }
             data_list.append(config_object)
     return len(data_list), data_list
+
+
+def search_information_flow_content_service(uid, keywords, page, per_page):
+    data_list = []
+    start = (page - 1) * per_page
+    stop = start + per_page
+    article_list = db.session.query(Document.id) \
+        .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
+                Document.title.like('%' + keywords + '%')) \
+        .slice(start, stop)\
+        .all()
+    total_count = db.session.query(Document) \
+        .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
+                Document.title.like('%' + keywords + '%')) \
+        .count()
+    if article_list:
+        for article in article_list:
+            info_content = {
+                'id': article.id,
+                'content_type': 1
+            }
+            info = get_top_content_info_by_id(uid, article.id)
+            info_content['top_content_info'] = info
+            data_list.append(info_content)
+    else:
+        total_count = 0
+        data_list = None
+    return total_count, data_list
