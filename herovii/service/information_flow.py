@@ -8,6 +8,8 @@ from herovii.libs.util import get_oss_pic_path_by_pic_id, get_img_service_path_b
 from herovii.models.InformationFlow.advs import Advs
 from herovii.models.InformationFlow.document import Document
 from herovii.models.InformationFlow.document_acticle import DocumentArticle
+from herovii.models.InformationFlow.front_page import FrontPage
+from herovii.models.InformationFlow.front_page_category import FrontPageCategory
 
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
 from herovii.models.InformationFlow.information_flow_config import InformationFlowConfig
@@ -118,37 +120,86 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
     start = (page - 1) * per_page
     stop = start + per_page
     content_list = []
-    if config_type == 0:
-        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1).count()
-        data_list = db.session.query(InformationFlowContent) \
-            .filter(InformationFlowContent.status == 1) \
-            .order_by(InformationFlowContent.create_time.desc()) \
-            .slice(start, stop) \
-            .all()
-    else:
-        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1,
-                                                                        InformationFlowContent.config_type == config_type) \
+    if config_type == -1:
+        content_count = db.session.query(InformationFlowContent)\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]))\
             .count()
         data_list = db.session.query(InformationFlowContent) \
-            .filter(InformationFlowContent.status == 1,
-                    InformationFlowContent.config_type == config_type) \
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3])) \
             .order_by(InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
-    if data_list:
-        for content in data_list:
-            info_content = {
-                'id': content.id,
-                'content_type': content.content_type
-            }
-            if content.content_type == 1:  # 头条
-                info = get_top_content_info_by_id(uid, content.content_id)
+        if data_list:
+            for content in data_list:
+                info_content = {
+                    'id': content.id,
+                    'content_type': content.content_type
+                }
+                if content.content_type == 1:  # 头条
+                    info = get_top_content_info_by_id(uid, content.content_id)
+                    info_content['top_content_info'] = info
+                elif content.content_type == 3:  # 广告
+                    info = get_advs_pic_info_by_id(content.content_id)
+                    info_content['adv_info'] = info
+                if info:
+                    content_list.append(info_content)
+    elif config_type == -2:
+        front_page = db.session.query(FrontPage.article_id).filter(FrontPage.status == 1) \
+            .group_by(FrontPage.article_id)\
+            .all()
+        pages = []
+        if front_page:
+            for page in front_page:
+                pages.append(page.article_id)
+        if len(pages) > 0:
+            content_count = db.session.query(Document)\
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
+                        ~Document.id.in_(pages)) \
+                .count()
+            data_list = db.session.query(Document.id) \
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
+                        ~Document.id.in_(pages)) \
+                .order_by(Document.create_time.desc()) \
+                .slice(start, stop) \
+                .all()
+        else:
+            content_count = db.session.query(Document)\
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5) \
+                .count()
+            data_list = db.session.query(Document.id) \
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5) \
+                .order_by(Document.create_time.desc()) \
+                .slice(start, stop) \
+                .all()
+        if data_list:
+            for content in data_list:
+                info_content = {
+                    'id': content.id,
+                    'content_type': 1
+                }
+                info = get_top_content_info_by_id(uid, content.id)
                 info_content['top_content_info'] = info
-            elif content.content_type == 3:  # 广告
-                info = get_advs_pic_info_by_id(content.content_id)
-                info_content['adv_info'] = info
-            if info:
-                content_list.append(info_content)
+                if info:
+                    content_list.append(info_content)
+    else:
+        content_count = db.session.query(FrontPage)\
+            .filter(FrontPage.status == 1, FrontPage.category == config_type) \
+            .count()
+        data_list = db.session.query(FrontPage.article_id) \
+            .filter(FrontPage.status == 1, FrontPage.category == config_type) \
+            .order_by(FrontPage.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
+        if data_list:
+            for content in data_list:
+                info_content = {
+                    'id': content.article_id,
+                    'content_type': 1
+                }
+                info = get_top_content_info_by_id(uid, content.article_id)
+                info_content['top_content_info'] = info
+                if info:
+                    content_list.append(info_content)
     return content_count, content_list
 
 
@@ -349,6 +400,7 @@ def search_information_flow_content_service(uid, keywords, page, per_page):
     article_list = db.session.query(Document.id) \
         .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
                 Document.title.like('%' + keywords + '%')) \
+        .order_by(Document.create_time.desc()) \
         .slice(start, stop)\
         .all()
     total_count = db.session.query(Document) \
@@ -368,3 +420,21 @@ def search_information_flow_content_service(uid, keywords, page, per_page):
         total_count = 0
         data_list = None
     return total_count, data_list
+
+
+def get_information_flow_column_service():
+    data_list = []
+    config_list = db.session.query(FrontPageCategory) \
+        .filter(FrontPageCategory.status == 1) \
+        .all()
+    if config_list:
+        for config in config_list:
+            config_object = {
+                'id': config.id,
+                'title': config.name
+            }
+            data_list.append(config_object)
+        return len(data_list), data_list
+    else:
+        return 0, None
+

@@ -141,7 +141,7 @@ banner列表（version-2.7）
 * version  版本号
 * page：页码，默认值为1
 * per_page: 每页条数，默认值为每页20条
-* type:  内容类型
+* type:  内容类型，默认-1，表示推荐，-2表示其他，栏目id
 
 **Response** `200` ::
 
@@ -214,7 +214,8 @@ banner列表（version-2.7）
 **Parameters**:
 
 * keywords  关键字
-
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
 
 **Response** `200` ::
 
@@ -266,5 +267,32 @@ banner列表（version-2.7）
     "total_count":2
 }
 
+首页栏目列表
+~~~~~~~~~~~~~~~
+**URL**::
 
+     GET    information_flow/column
+**Response** `200` ::
+
+    {
+      "data": [
+        {
+          "id": 1,
+          "title": "室内"
+        },
+        {
+          "id": 2,
+          "title": "平面"
+        },
+        {
+          "id": 3,
+          "title": "UI"
+        },
+        {
+          "id": 4,
+          "title": "网页"
+        }
+      ],
+      "total_count": 4
+    }
 --

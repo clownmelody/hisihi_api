@@ -13,6 +13,7 @@ api = ApiBlueprint('follow')
 
 
 @api.route('/recommend_users', methods=['GET'])
+@auth.login_required
 def get_recommend_users():
     # 返回推荐用户列表
     if not hasattr(g, 'user'):
