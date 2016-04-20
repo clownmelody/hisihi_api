@@ -23,7 +23,7 @@ class ScopeBase(object):
         self.allow_api = list(set(self.allow_api))
 
         # forbidden 需要进行相减操作。
-        self.forbidden_api = list(set(self.forbidden_api) - set(other.forbidden_api))
+        self.forbidden = list(set(self.forbidden) - set(other.forbidden))
         return self
 
 
@@ -47,12 +47,11 @@ class Online0002Scope(ScopeBase):
 class UserCSUScope(ScopeBase):
     """消费用户权限域"""
     allow_api = ['v1.mall+redirect_to_duiba', 'v1.org+get_users_profiles', 'v1.org+student_sign_in']
-                 # 'v1.follow+follow_user']
     allow_module = ['v1.user', 'v1.im']
     forbidden = ['v1.user+change_identity']
 
     def __init__(self):
-        self+CSUAppBaseScope
+        self+CSUAppBaseScope()
 
 
 class OrgBaseScope(ScopeBase):
@@ -69,7 +68,7 @@ class OrgAdminScope(ScopeBase):
 
 def is_in_scope(scope, api_endpoint):
     try:
-        scope_class = globals()[scope+'Scope']
+        scope_class = globals()[scope+'Scope']()
     except KeyError:
         raise AuthFailed(error='forbidden,not in scope', error_code=1004, code='403')
     index = str.find(api_endpoint, '+')
