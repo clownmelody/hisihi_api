@@ -19,11 +19,11 @@ class Relationship(object):
         获取已经关注的用户uid列表
         :return:
         """
-        users = db.session.query(Follow.who_follow).filter(Follow.follow_who == self.uid, Follow.type == 1).all()
+        users = db.session.query(Follow.follow_who).filter(Follow.who_follow == self.uid, Follow.type == 1).all()
         if users:
             follow = []
             for user in users:
-                follow.append(user.who_follow)
+                follow.append(user.follow_who)
             return follow
         else:
             return None
