@@ -18,6 +18,9 @@ def get_recommend_users():
     # 返回推荐用户列表
     if not hasattr(g, 'user'):
         rts = Relationship(0)
+    elif g.user[1] == 100:
+        # 未登陆调用
+        rts = Relationship(0)
     else:
         rts = Relationship(g.user[0])
     user_list = rts.merge_recommend_users()
