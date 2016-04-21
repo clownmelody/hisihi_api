@@ -1,5 +1,7 @@
 import random
 
+from flask.globals import current_app
+
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.base import db
 from herovii.models.user.avatar import Avatar
@@ -124,7 +126,10 @@ class Relationship(object):
                         .filter(Avatar.uid == user.uid, Avatar.is_temp == 0)\
                         .first()
                     if not path:
-                        path = None
+                        path = 'http://' + current_app.config['ALI_OSS_AVATAR_BUCKET_NAME']\
+                           + '.'\
+                           + current_app.config['ALI_OSS_HOST']\
+                           + '/default/default.jpg'
                     else:
                          path = get_full_oss_url(path[0], bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
                     u = {
@@ -146,7 +151,10 @@ class Relationship(object):
                         .filter(Avatar.uid == user.uid, Avatar.is_temp == 0)\
                         .first()
                     if not path:
-                        path = None
+                        path = 'http://' + current_app.config['ALI_OSS_AVATAR_BUCKET_NAME']\
+                           + '.'\
+                           + current_app.config['ALI_OSS_HOST']\
+                           + '/default/default.jpg'
                     else:
                          path = get_full_oss_url(path[0], bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
                     u = {
@@ -188,18 +196,21 @@ class Relationship(object):
         if uid:
             user = db.session.query(UserCSU.uid, UserCSU.nickname)\
                         .filter(UserCSU.uid == uid)\
-                        .all()
+                        .first()
             if user:
                 path = db.session.query(Avatar.path)\
                     .filter(Avatar.uid == user.uid, Avatar.is_temp == 0)\
                     .first()
                 if not path:
-                    path = None
+                    path = 'http://' + current_app.config['ALI_OSS_AVATAR_BUCKET_NAME']\
+                           + '.'\
+                           + current_app.config['ALI_OSS_HOST']\
+                           + '/default/default.jpg'
                 else:
                     path = get_full_oss_url(path[0], bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
                 u = {
-                        'uid': user[0].uid,
-                        'nickname': user[0].nickname,
+                        'uid': user.uid,
+                        'nickname': user.nickname,
                         'path': path,
                         'type': recommend_type
                     }
