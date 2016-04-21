@@ -52,7 +52,8 @@ class Relationship(object):
                     .all()
             else:
                 alumni = db.session.query(Field.uid).filter(Field.field_data.like('%' + school[0] + '%'),
-                                                            Field.field_id == 36)\
+                                                            Field.field_id == 36,
+                                                            Field.uid != self.uid)\
                     .join(UserCSU, Field.uid == UserCSU.uid)\
                     .all()
             if alumni:
