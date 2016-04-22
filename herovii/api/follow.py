@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import json
+from flask import json, request
 from flask.globals import g
 
 from herovii.libs.bpbase import ApiBlueprint
@@ -31,10 +31,15 @@ def get_recommend_users():
 @api.route('/follow_user', methods=['POST'])
 @auth.login_required
 def follow_user():
-    form = FollowUserForm().create_api_form()
-    follow_uid = form.uid.data
-    recommend_id = form.recommend_id.data
-    recommend_type = form.recommend_type.data
+    json_data = request.get_json(force=True, silent=True)
+    if not json_data:
+        follow_uid = request.values.get('uid')
+        recommend_id = request.values.get('recommend_id')
+        recommend_type = request.values.get('recommend_type')
+    else:
+        follow_uid = json_data['uid']
+        recommend_id = json_data['recommend_id']
+        recommend_type = json_data['recommend_type']
     rts = Relationship(g.user[0])
     is_follow = rts.follow_user(follow_uid)
     headers = {'Content-Type': 'application/json'}
