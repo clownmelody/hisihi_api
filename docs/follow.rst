@@ -67,7 +67,7 @@
 **Parameters**:
 
 * uid: 被关注人的ID
-* recommend_id: 推荐列表返回的recommend_id值
+* recommend_id: 由客户端取当前推荐列表里的uid拼成字符串
 * recommend_type: 推荐列表返回的用户信息中的type值
 
 **Response** `201` ::
