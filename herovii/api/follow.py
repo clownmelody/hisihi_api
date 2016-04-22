@@ -33,9 +33,10 @@ def get_recommend_users():
 def follow_user():
     json_data = request.get_json(force=True, silent=True)
     if not json_data:
-        follow_uid = request.values.get('uid')
-        recommend_id = request.values.get('recommend_id')
-        recommend_type = request.values.get('recommend_type')
+        pass
+        # follow_uid = request.values.get('uid')
+        # recommend_id = request.values.get('recommend_id')
+        # recommend_type = request.values.get('recommend_type')
     else:
         follow_uid = json_data['uid']
         recommend_id = json_data['recommend_id']
