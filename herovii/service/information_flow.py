@@ -177,7 +177,7 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
                     'id': content.id,
                     'content_type': 1
                 }
-                info = get_top_content_info_by_id(uid, content.id)
+                info = get_top_content_info_by_id(uid, content.id, 2.7)
                 info_content['top_content_info'] = info
                 if info:
                     content_list.append(info_content)
