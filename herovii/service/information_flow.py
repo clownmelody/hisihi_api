@@ -142,7 +142,7 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
                 'content_type': content.content_type
             }
             if content.content_type == 1:  # 头条
-                info = get_top_content_info_by_id(uid, content.content_id)
+                info = get_top_content_info_by_id(uid, content.content_id, 2.7)
                 info_content['top_content_info'] = info
             elif content.content_type == 3:  # 广告
                 info = get_advs_pic_info_by_id(content.content_id)
@@ -152,7 +152,7 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
     return content_count, content_list
 
 
-def get_top_content_info_by_id(uid, article_id):
+def get_top_content_info_by_id(uid, article_id, version=2.6):
     """
     根据 id 获取头条信息
     :param uid:   用户 id
@@ -180,6 +180,10 @@ def get_top_content_info_by_id(uid, article_id):
     document_article = db.session.query(DocumentArticle).filter(DocumentArticle.id == article_id) \
         .first()
     server_host_name = current_app.config['SERVER_HOST_NAME']
+    if version >= 2.7:
+        content_url = server_host_name + "/app.php/public/topcontent/version/2.7/type/view/id/" + str(article_id)
+    else:
+        content_url = server_host_name + "/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id)
     if top_content:
         content = {
             'id': top_content.id,
@@ -187,7 +191,7 @@ def get_top_content_info_by_id(uid, article_id):
             'description': top_content.description,
             'img': get_oss_pic_path_by_pic_id(top_content.cover_id, current_app.config['ALI_OSS_FORUM_BUCKET_NAME']),
             'view': top_content.view,
-            "content_url": server_host_name + "/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id),
+            "content_url": content_url,
             "share_url": server_host_name + "/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(
                 article_id),
             'create_time': top_content.create_time,
