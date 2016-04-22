@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from flask import json
+from flask import json, request
 from flask.globals import g
 
 from herovii.libs.bpbase import ApiBlueprint
+from herovii.libs.error_code import JSONStyleError
 from herovii.module.releationship import Relationship
-from herovii.validator.forms import FollowUserForm
 from herovii.libs.bpbase import auth
 
 __author__ = 'shaolei'
@@ -13,9 +13,13 @@ api = ApiBlueprint('follow')
 
 
 @api.route('/recommend_users', methods=['GET'])
+@auth.login_required
 def get_recommend_users():
     # 返回推荐用户列表
     if not hasattr(g, 'user'):
+        rts = Relationship(0)
+    elif g.user[1] == 100:
+        # 未登陆调用
         rts = Relationship(0)
     else:
         rts = Relationship(g.user[0])
@@ -27,10 +31,18 @@ def get_recommend_users():
 @api.route('/follow_user', methods=['POST'])
 @auth.login_required
 def follow_user():
-    form = FollowUserForm().create_api_form()
-    follow_uid = form.uid.data
-    recommend_id = form.recommend_id.data
-    recommend_type = form.recommend_type.data
+    json_data = request.get_json(force=True, silent=True)
+    if not json_data:
+        try:
+            follow_uid = request.values.get('uid')
+            recommend_id = request.values.get('recommend_id')
+            recommend_type = request.values.get('recommend_type')
+        except:
+            raise JSONStyleError()
+    else:
+        follow_uid = json_data['uid']
+        recommend_id = json_data['recommend_id']
+        recommend_type = json_data['recommend_type']
     rts = Relationship(g.user[0])
     is_follow = rts.follow_user(follow_uid)
     headers = {'Content-Type': 'application/json'}

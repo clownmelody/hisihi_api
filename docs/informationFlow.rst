@@ -141,7 +141,7 @@ banner列表（version-2.7）
 * version  版本号
 * page：页码，默认值为1
 * per_page: 每页条数，默认值为每页20条
-* type:  内容类型
+* type:  内容类型，默认-1，表示推荐，-2表示其他，栏目id
 
 **Response** `200` ::
 
@@ -202,5 +202,97 @@ banner列表（version-2.7）
             }
         ],
         "total_count":1
+    }
+
+
+首页搜索列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+     GET    information_flow/search
+
+**Parameters**:
+
+* keywords  关键字
+* page：页码，默认值为1
+* per_page: 每页条数，默认值为每页20条
+
+**Response** `200` ::
+
+    {
+    "data":[
+        {
+            "content_type":1,
+            "id":1260,
+            "top_content_info":{
+                "content_url":"http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/1260",
+                "cover_type":1,
+                "create_time":1434726420,
+                "description":"",
+                "id":1260,
+                "img":"http://forum-pic.oss-cn-qingdao.aliyuncs.com/2015-06-19/5584302697419.jpg",
+                "isFavorited":false,
+                "isSupportd":false,
+                "logo_pic":null,
+                "share_url":"http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/1260",
+                "source_name":"",
+                "supportCount":11999,
+                "title":"请原谅你的设计师男友",
+                "update_time":1435629865,
+                "view":114983
+            }
+        },
+        {
+            "content_type":1,
+            "id":1261,
+            "top_content_info":{
+                "content_url":"http://hisihi.com/app.php/public/topcontent/version/2.0/type/view/id/1261",
+                "cover_type":2,
+                "create_time":1434726840,
+                "description":"",
+                "id":1261,
+                "img":"http://forum-pic.oss-cn-qingdao.aliyuncs.com/2016-04-14/570f1936bfd9e.jpg",
+                "isFavorited":false,
+                "isSupportd":false,
+                "logo_pic":"http://hisihi-other.oss-cn-qingdao.aliyuncs.com/2016-04-14/570f1936bfd9e.jpg",
+                "share_url":"http://hisihi.com/app.php/public/v2contentforshare/type/view/version/2.3/id/1261",
+                "source_name":"heheh",
+                "supportCount":12287,
+                "title":"北京服装学院艺术设计学院 2015毕业设计",
+                "update_time":1460965528,
+                "view":117782
+            }
+        }
+    ],
+    "total_count":2
+}
+
+首页栏目列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+     GET    information_flow/column
+**Response** `200` ::
+
+    {
+      "data": [
+        {
+          "id": 1,
+          "title": "室内"
+        },
+        {
+          "id": 2,
+          "title": "平面"
+        },
+        {
+          "id": 3,
+          "title": "UI"
+        },
+        {
+          "id": 4,
+          "title": "网页"
+        }
+      ],
+      "total_count": 4
     }
 --

@@ -1,5 +1,7 @@
 import random
 
+from flask.globals import current_app
+
 from herovii.libs.helper import get_full_oss_url
 from herovii.models.base import db
 from herovii.models.user.avatar import Avatar
@@ -19,11 +21,11 @@ class Relationship(object):
         获取已经关注的用户uid列表
         :return:
         """
-        users = db.session.query(Follow.who_follow).filter(Follow.follow_who == self.uid, Follow.type == 1).all()
+        users = db.session.query(Follow.follow_who).filter(Follow.who_follow == self.uid, Follow.type == 1).all()
         if users:
             follow = []
             for user in users:
-                follow.append(user.who_follow)
+                follow.append(user.follow_who)
             return follow
         else:
             return None
@@ -46,9 +48,13 @@ class Relationship(object):
                 alumni = db.session.query(Field.uid).filter(Field.field_data.like('%' + school[0] + '%'),
                                                             Field.field_id == 36,
                                                             ~Field.uid.in_(followed))\
+                    .join(UserCSU, Field.uid == UserCSU.uid)\
                     .all()
             else:
-                alumni = db.session.query(Field.uid).filter(Field.field_data == school, Field.field_id == 36)\
+                alumni = db.session.query(Field.uid).filter(Field.field_data.like('%' + school[0] + '%'),
+                                                            Field.field_id == 36,
+                                                            Field.uid != self.uid)\
+                    .join(UserCSU, Field.uid == UserCSU.uid)\
                     .all()
             if alumni:
                 alumnis = []
@@ -112,17 +118,21 @@ class Relationship(object):
         a_users = self.get_alumni(3)
         if a_users and len(a_users) > 0:
             id_list.extend(a_users)
-            a_list = db.session.query(UserCSU.uid, UserCSU.nickname, Avatar.path)\
-                .join(Avatar, UserCSU.uid == Avatar.uid)\
-                .filter(UserCSU.uid.in_(a_users), Avatar.is_temp == 0)\
+            a_list = db.session.query(UserCSU.uid, UserCSU.nickname)\
+                .filter(UserCSU.uid.in_(a_users))\
                 .all()
             if len(a_list) > 0:
                 for user in a_list:
-                    path = user.path
-                    if not user.path or user.path.strip() is '':
-                        path = None
-                    if not user.path.strip().startswith('http://'):
-                         path = get_full_oss_url(user.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+                    path = db.session.query(Avatar.path)\
+                        .filter(Avatar.uid == user.uid, Avatar.is_temp == 0)\
+                        .first()
+                    if not path:
+                        path = 'http://' + current_app.config['ALI_OSS_AVATAR_BUCKET_NAME']\
+                           + '.'\
+                           + current_app.config['ALI_OSS_HOST']\
+                           + '/default/default.jpg'
+                    else:
+                         path = get_full_oss_url(path[0], bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
                     u = {
                         'uid': user.uid,
                         'nickname': user.nickname,
@@ -133,17 +143,21 @@ class Relationship(object):
         r_users = self.get_recommend_users()
         if r_users and len(r_users) > 0:
             id_list.extend(r_users)
-            r_list = db.session.query(UserCSU.uid, UserCSU.nickname, Avatar.path)\
-                .join(Avatar, UserCSU.uid == Avatar.uid)\
-                .filter(UserCSU.uid.in_(r_users), UserCSU.status == 4, Avatar.is_temp == 0)\
+            r_list = db.session.query(UserCSU.uid, UserCSU.nickname)\
+                .filter(UserCSU.uid.in_(r_users), UserCSU.status == 4)\
                 .all()
             if len(r_list) > 0:
                 for user in r_list:
-                    path = user.path
-                    if not user.path or user.path.strip() is '':
-                        path = None
-                    if not user.path.strip().startswith('http://'):
-                        path = get_full_oss_url(user.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+                    path = db.session.query(Avatar.path)\
+                        .filter(Avatar.uid == user.uid, Avatar.is_temp == 0)\
+                        .first()
+                    if not path:
+                        path = 'http://' + current_app.config['ALI_OSS_AVATAR_BUCKET_NAME']\
+                           + '.'\
+                           + current_app.config['ALI_OSS_HOST']\
+                           + '/default/default.jpg'
+                    else:
+                         path = get_full_oss_url(path[0], bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
                     u = {
                         'uid': user.uid,
                         'nickname': user.nickname,
@@ -181,19 +195,23 @@ class Relationship(object):
         else:
             uid = self.get_alumni(1, recommend_id)
         if uid:
-            user = db.session.query(UserCSU.uid, UserCSU.nickname, Avatar.path)\
-                        .join(Avatar, UserCSU.uid == Avatar.uid)\
-                        .filter(UserCSU.uid == uid, Avatar.is_temp == 0)\
-                        .all()
+            user = db.session.query(UserCSU.uid, UserCSU.nickname)\
+                        .filter(UserCSU.uid == uid)\
+                        .first()
             if user:
-                path = user[0].path
-                if not user[0].path or user[0].path.strip() is '':
-                    path = None
-                if not user[0].path.strip().startswith('http://'):
-                    path = get_full_oss_url(user[0].path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+                path = db.session.query(Avatar.path)\
+                    .filter(Avatar.uid == user.uid, Avatar.is_temp == 0)\
+                    .first()
+                if not path:
+                    path = 'http://' + current_app.config['ALI_OSS_AVATAR_BUCKET_NAME']\
+                           + '.'\
+                           + current_app.config['ALI_OSS_HOST']\
+                           + '/default/default.jpg'
+                else:
+                    path = get_full_oss_url(path[0], bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
                 u = {
-                        'uid': user[0].uid,
-                        'nickname': user[0].nickname,
+                        'uid': user.uid,
+                        'nickname': user.nickname,
                         'path': path,
                         'type': recommend_type
                     }
