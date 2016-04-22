@@ -3,8 +3,8 @@ from flask import json, request
 from flask.globals import g
 
 from herovii.libs.bpbase import ApiBlueprint
+from herovii.libs.error_code import JSONStyleError
 from herovii.module.releationship import Relationship
-from herovii.validator.forms import FollowUserForm
 from herovii.libs.bpbase import auth
 
 __author__ = 'shaolei'
@@ -33,10 +33,12 @@ def get_recommend_users():
 def follow_user():
     json_data = request.get_json(force=True, silent=True)
     if not json_data:
-        pass
-        # follow_uid = request.values.get('uid')
-        # recommend_id = request.values.get('recommend_id')
-        # recommend_type = request.values.get('recommend_type')
+        try:
+            follow_uid = request.values.get('uid')
+            recommend_id = request.values.get('recommend_id')
+            recommend_type = request.values.get('recommend_type')
+        except:
+            raise JSONStyleError()
     else:
         follow_uid = json_data['uid']
         recommend_id = json_data['recommend_id']
