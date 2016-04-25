@@ -233,8 +233,10 @@ def get_top_content_info_by_id(uid, article_id, version=2.6):
     server_host_name = current_app.config['SERVER_HOST_NAME']
     if version >= 2.7:
         content_url = server_host_name + "/app.php/public/topcontent/version/2.7/type/view/id/" + str(article_id)
+        share_url = server_host_name + "/app.php/public/topcontent/version/2.7/type/view/id/" + str(article_id)
     else:
         content_url = server_host_name + "/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id)
+        share_url = server_host_name + "/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(article_id)
     if top_content:
         content = {
             'id': top_content.id,
@@ -243,8 +245,7 @@ def get_top_content_info_by_id(uid, article_id, version=2.6):
             'img': get_oss_pic_path_by_pic_id(top_content.cover_id, current_app.config['ALI_OSS_FORUM_BUCKET_NAME']),
             'view': top_content.view,
             "content_url": content_url,
-            "share_url": server_host_name + "/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(
-                article_id),
+            "share_url": share_url,
             'create_time': top_content.create_time,
             'update_time': top_content.update_time,
             'isSupportd': is_article_support(uid, article_id),
