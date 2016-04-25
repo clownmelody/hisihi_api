@@ -233,7 +233,7 @@ def get_top_content_info_by_id(uid, article_id, version=2.6):
     server_host_name = current_app.config['SERVER_HOST_NAME']
     if version >= 2.7:
         content_url = server_host_name + "/app.php/public/topcontent/version/2.7/type/view/id/" + str(article_id)
-        share_url = server_host_name + "/app.php/public/topcontent/version/2.7/type/view/id/" + str(article_id)
+        share_url = content_url
     else:
         content_url = server_host_name + "/app.php/public/topcontent/version/2.0/type/view/id/" + str(article_id)
         share_url = server_host_name + "/app.php/public/v2contentforshare/type/view/version/2.3/id/" + str(article_id)
@@ -443,3 +443,10 @@ def get_information_flow_column_service():
     else:
         return 0, None
 
+
+def parse_img_str(img_str):
+    if img_str.startswith('http'):
+        return img_str
+    else:
+        url_prefix = 'http://game-pic.oss-cn-qingdao.aliyuncs.com/'
+        return url_prefix + img_str[4:]
