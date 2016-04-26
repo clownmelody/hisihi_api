@@ -122,10 +122,12 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
     content_list = []
     if config_type == -1:
         content_count = db.session.query(InformationFlowContent)\
-            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]))\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]),
+                    InformationFlowContent.config_type == 1)\
             .count()
         data_list = db.session.query(InformationFlowContent) \
-            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3])) \
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]),
+                    InformationFlowContent.config_type == 1) \
             .order_by(InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
@@ -144,13 +146,14 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
                 if info:
                     content_list.append(info_content)
     elif config_type == -2:
-        front_page = db.session.query(FrontPage.article_id).filter(FrontPage.status == 1) \
-            .group_by(FrontPage.article_id)\
+        front_page = db.session.query(InformationFlowContent.content_id)\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type == 1) \
+            .group_by(InformationFlowContent.content_id)\
             .all()
         pages = []
         if front_page:
             for page in front_page:
-                pages.append(page.article_id)
+                pages.append(page.content_id)
         if len(pages) > 0:
             content_count = db.session.query(Document)\
                 .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
@@ -182,21 +185,21 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
                 if info:
                     content_list.append(info_content)
     else:
-        content_count = db.session.query(FrontPage)\
-            .filter(FrontPage.status == 1, FrontPage.category == config_type) \
+        content_count = db.session.query(InformationFlowContent)\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type) \
             .count()
-        data_list = db.session.query(FrontPage.article_id) \
-            .filter(FrontPage.status == 1, FrontPage.category == config_type) \
-            .order_by(FrontPage.create_time.desc()) \
+        data_list = db.session.query(InformationFlowContent.id, InformationFlowContent.content_id) \
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type) \
+            .order_by(InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
         if data_list:
             for content in data_list:
                 info_content = {
-                    'id': content.article_id,
+                    'id': content.id,
                     'content_type': 1
                 }
-                info = get_top_content_info_by_id(uid, content.article_id, 2.7)
+                info = get_top_content_info_by_id(uid, content.content_id, 2.7)
                 info_content['top_content_info'] = info
                 if info:
                     content_list.append(info_content)
@@ -429,14 +432,14 @@ def search_information_flow_content_service(uid, keywords, page, per_page):
 
 def get_information_flow_column_service():
     data_list = []
-    config_list = db.session.query(FrontPageCategory) \
-        .filter(FrontPageCategory.status == 1) \
+    config_list = db.session.query(InformationFlowConfig) \
+        .filter(InformationFlowConfig.status == 1) \
         .all()
     if config_list:
         for config in config_list:
             config_object = {
                 'id': config.id,
-                'title': config.name
+                'title': config.title
             }
             data_list.append(config_object)
         return len(data_list), data_list
