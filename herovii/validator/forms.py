@@ -290,3 +290,37 @@ class FollowUserForm(Form):
     uid = StringField(validators=[DataRequired()])
     recommend_id = StringField(validators=[DataRequired()])
     recommend_type = StringField(validators=[DataRequired()])
+
+
+class LowPriceFeedbackForm(Form):
+    organization_id = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    organization_name = StringField(validators=[DataRequired()])
+    course_name = StringField(validators=[DataRequired()])
+    name = StringField(validators=[DataRequired()])
+    phone_num = StringField(validators=[DataRequired()])
+
+
+class OrgTeachingCourseForm(Form):
+    organization_id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    course_name = StringField(validators=[DataRequired()])
+    cover_pic = StringField(validators=[DataRequired()])
+    start_course_time = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
+    lesson_period = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    student_num = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    lecture_name = StringField(validators=[DataRequired()])
+    price = IntegerField(validators=[DataRequired(), NumberRange(1)])
+
+
+class UpdateOrgTeachingCourseForm(Form):
+    id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    organization_id = IntegerField()
+    course_name = StringField()
+    cover_pic = StringField()
+    start_course_time = StringField()
+    lesson_period = IntegerField()
+    student_num = IntegerField()
+    lecture_name = StringField()
+    price = IntegerField()
+
+
+

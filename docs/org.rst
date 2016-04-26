@@ -126,4 +126,173 @@
 ** end **
 
 
+用户询问低价
+~~~~~~~~~~~~~~~
+**URL**::
 
+    POST     /org/feedback/lowprice
+
+**Parameters**:
+
+* organization_id: 机构id号
+* organization_name: 机构名称
+* course_name: 课程名称
+* name: 学生姓名
+* phone_num: 手机号
+
+**Response** `201` ::
+
+    {
+        "course_name":"www",
+        "create_time":1461645185,
+        "id":1,
+        "name":"666",
+        "organization_id":1,
+        "organization_name":"heiwe",
+        "phone_num":"12324",
+        "status":1
+    }
+** end **
+
+
+创建培训课程
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /org/teaching_course
+
+**Parameters**:
+
+* organization_id: 机构id号
+* course_name: 课程名称
+* cover_pic: 课程图片
+* start_course_time: 课程开课时间 “2015-04-12”
+* lesson_period: 课时数
+* student_num: 班级人数
+* lecture_name: 讲师姓名
+* price: 课程价格
+
+**Response** `201` ::
+
+    {
+        "course_name":"java",
+        "cover_pic":"http://sdfsaww",
+        "create_time":1461655721,
+        "id":1,
+        "lecture_name":"rrr",
+        "lesson_period":66,
+        "organization_id":1001,
+        "price":1000,
+        "start_course_time":"2016-04-26",
+        "status":1,
+        "student_num":30
+    }
+** end **
+
+
+修改培训课程
+~~~~~~~~~~~~~~~
+**URL**::
+
+    PUT     /org/teaching_course
+
+**Parameters**:
+
+* id: 课程ID （必填）
+* organization_id: 机构id号  （选填）
+* course_name: 课程名称  （选填）
+* cover_pic: 课程图片   （选填）
+* start_course_time: 课程开课时间 “2015-04-12”  （选填）
+* lesson_period: 课时数   （选填）
+* student_num: 班级人数   （选填）
+* lecture_name: 讲师姓名  （选填）
+* price: 课程价格   （选填）
+
+**Response** `202` ::
+
+    {
+        "course_name":"java",
+        "cover_pic":"http://sdfsaww",
+        "create_time":1461655721,
+        "id":1,
+        "lecture_name":"rrr",
+        "lesson_period":66,
+        "organization_id":1001,
+        "price":3423,
+        "start_course_time":"2016-04-26",
+        "status":1,
+        "student_num":30
+    }
+** end **
+
+
+删除培训课程
+~~~~~~~~~~~~~~~
+**URL**::
+
+    DELETE     /org/teaching_course/<int:cid>
+
+**Parameters**:
+
+* id: 课程ID （必填）
+
+**Response** `204` ::
+
+** end **
+
+
+获取机构下培训课程列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/<int:oid>/teaching_course
+
+**Parameters**:
+
+* oid: 机构ID
+* page:  分页参数
+* per_page:  分页参数
+
+**Response** `200` ::
+
+    {
+        "courses":[
+            {
+                "course_name":"java",
+                "cover_pic":"http://sdfsaww",
+                "lecture_name":"rrr",
+                "lesson_period":66,
+                "organization_id":1001,
+                "price":3423,
+                "start_course_time":"2016-04-26",
+                "student_num":30
+            }
+        ],
+        "total_count":1
+    }
+** end **
+
+
+获取培训课程信息
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/teaching_course/<int:cid>
+
+**Parameters**:
+
+* cid: 培训课程ID
+
+**Response** `200` ::
+
+    {
+        "course_name":"java",
+        "cover_pic":"http://sdfsaww",
+        "lecture_name":"rrr",
+        "lesson_period":66,
+        "organization_id":1001,
+        "price":3423,
+        "start_course_time":"2016-04-26",
+        "student_num":30
+    }
+** end **

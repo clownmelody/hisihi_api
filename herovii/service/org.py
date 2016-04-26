@@ -26,6 +26,7 @@ from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
+from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.org.video import Video
 from herovii.models.user.field import Field
 from herovii.models.user.avatar import Avatar
@@ -194,6 +195,29 @@ def dto_org_courses_paginate(oid, page, count):
     }
 
 
+def dto_org_teaching_courses_paginate(oid, page, count):
+    teaching_courses_lsit, total_count = get_org_teaching_courses_paging(oid, int(page), int(count))
+    if not teaching_courses_lsit:
+        raise NotFound(error='teaching courses not found', error_code=5008)
+    c_l = []
+    for course in teaching_courses_lsit:
+        course = {
+            'organization_id': course.organization_id,
+            'course_name': course.course_name,
+            'cover_pic': course.cover_pic,
+            'start_course_time': course.start_course_time,
+            'lesson_period': course.lesson_period,
+            'student_num': course.student_num,
+            'lecture_name': course.lecture_name,
+            'price': course.price
+        }
+        c_l.append(course)
+    return {
+        'total_count': total_count,
+        'courses': c_l
+    }
+
+
 def get_org_courses_paging(oid, page, count):
     # q = Course.query.filter_by(organization_id=oid)
     # courses = q.paginate(page, count).items
@@ -204,6 +228,20 @@ def get_org_courses_paging(oid, page, count):
     start, stop = convert_paginate(page, count)
     courses = q.slice(start, stop).all()
     return courses, total_count
+
+
+def get_org_teaching_courses_paging(oid, page, count):
+    start, stop = convert_paginate(page, count)
+    total_count = db.session.query(TeachingCourse).filter(
+        TeachingCourse.status == 1,
+        TeachingCourse.organization_id == oid) \
+        .count()
+    teaching_course_list = db.session.query(TeachingCourse).filter(
+        TeachingCourse.status == 1,
+        TeachingCourse.organization_id == oid) \
+        .slice(start, stop) \
+        .all()
+    return teaching_course_list, total_count
 
 
 def get_course_by_id(cid):
@@ -219,6 +257,23 @@ def get_course_by_id(cid):
         'videos': videos,
         'category': issue
     }
+
+
+def get_teaching_course_by_id(cid):
+    course = TeachingCourse.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5008, error='培训课程信息不存在')
+    return {
+            'organization_id': course.organization_id,
+            'course_name': course.course_name,
+            'cover_pic': course.cover_pic,
+            'start_course_time': course.start_course_time,
+            'lesson_period': course.lesson_period,
+            'student_num': course.student_num,
+            'lecture_name': course.lecture_name,
+            'price': course.price
+        }
+
 
 
 def get_video_by_course_id(cid):
