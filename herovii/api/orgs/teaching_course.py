@@ -3,7 +3,7 @@ from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.helper import success_json
 from herovii.models.base import db
 from herovii.models.org.teaching_course import TeachingCourse
-from herovii.service.org import get_course_by_id, dto_org_teaching_courses_paginate, get_teaching_course_by_id
+from herovii.service.org import dto_org_teaching_courses_paginate, get_teaching_course_by_id
 from herovii.validator.forms import PagingForm, OrgTeachingCourseForm, UpdateOrgTeachingCourseForm
 
 __author__ = 'yangchujie'

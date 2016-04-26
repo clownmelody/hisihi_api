@@ -323,4 +323,18 @@ class UpdateOrgTeachingCourseForm(Form):
     price = IntegerField()
 
 
+class NewsForm(Form):
+    organization_id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    tag = StringField(validators=[DataRequired()])
+    title = StringField(validators=[DataRequired()])
+    content = StringField(validators=[DataRequired()])
+
+
+class UpdateNewsForm(Form):
+    id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    tag = StringField()
+    title = StringField()
+    content = StringField()
+
+
 

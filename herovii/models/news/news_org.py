@@ -12,7 +12,7 @@ class NewsOrg(Base):
     __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
-    # organization_id = Column(Integer, default=0)
+    organization_id = Column(Integer, default=0)
 
     # 新闻类型
     tag = Column(String(45))
@@ -22,8 +22,10 @@ class NewsOrg(Base):
     content = Column(Text)
 
     # 新闻是否推送到
-    # push_to_organization = Column(SmallInteger, default=0)
+    push_to_organization = Column(SmallInteger, default=1)
+    create_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
     update_time = Column(Integer, default=int(datetime.datetime.now().timestamp()))
+    status = Column(Integer, default=1)
 
     def keys(self):
         return (

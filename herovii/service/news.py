@@ -22,3 +22,8 @@ def get_news_dto_paginate(page, count):
     }
     return dto_paginate
 
+
+def get_news_org_by_id(nid):
+    news = NewsOrg.query.filter(NewsOrg.id == nid).first()
+    return news
+
