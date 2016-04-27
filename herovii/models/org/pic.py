@@ -15,12 +15,15 @@ class Pic(Base):
     url = Column(String(120))
     description = Column(String(300))
     type = Column(SmallInteger)
+    author_avatar = Column(String(100))
+    author_name = Column(String(100))
+    author_company = Column(String(100))
 
     organization_id = Column(Integer, nullable=False)
 
     def keys(self):
         return (
             'id', 'organization_id', 'url',
-            'description', 'type'
+            'description', 'type', 'author_avatar', 'author_name', 'author_company'
         )
 
