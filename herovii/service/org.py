@@ -282,7 +282,7 @@ def get_video_by_course_id(cid):
 
 
 def create_org_pics(pics):
-    print(pics)
+    # print(pics)
     # with db.auto_commit():
     #     db.session.execute(
     #         Pic.__table__.insert(),

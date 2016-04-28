@@ -77,9 +77,12 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
     [
         {
             "url" : "http://pic.hisihi.com",
-            "description" : "测试图片"
-            "type": 1
-            "organization_id" : 2
+            "description" : "测试图片"，
+            "type": 1，
+            "organization_id" : 2,
+            "author_avatar": "http://pic.hisihi.com",
+            "author_company": "测试",
+            "author_name": "测试"
         }
     ]
 
@@ -89,6 +92,9 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
 * description: 描述信息
 * type: 图片用途; 1 学生作品  2 机构环境
 * organization_id: 机构id号
+* author_avatar: 作者头像
+* author_company: 作者所在公司
+* author_name: 作者名字
 
 **Response** `201`:
 
@@ -100,7 +106,10 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
             "url" : "http://pic.hisihi.com",
             "description" : "测试图片"
             "type": 1
-            "organization_id" : 2
+            "organization_id" : 2,
+            "author_avatar": "http://pic.hisihi.com",
+            "author_company": "测试",
+            "author_name": "测试"
         }
     ]
 
@@ -126,37 +135,39 @@ http://help.aliyun.com/document_detail/oss/oss-img-api/image-processing/resize.h
 .. sourcecode:: json
 
     {
-      [
+        "pics": [
         {
-          "description": "放飞梦想-",
-          "id": 18,
+          "author_avatar": "http://pic.hisihi.com",
+          "author_company": "http://pic.hisihi.com",
+          "author_name": "http://pic.hisihi.com",
+          "description": "测试图片",
+          "id": 150,
           "organization_id": 2,
           "type": 1,
-          "url": "http://pic.hisihi.com/2015-12-02/565dcbd5049cb.jpg"
+          "url": "http://pic.hisihi.com"
         },
         {
-          "description": "VIP卡1",
-          "id": 17,
+          "author_avatar": null,
+          "author_company": null,
+          "author_name": null,
+          "description": "",
+          "id": 131,
           "organization_id": 2,
           "type": 1,
-          "url": "http://pic.hisihi.com/2015-12-02/565dcb467f114.jpg"
+          "url": "http://pic.hisihi.com/2016-02-16/1455611894006837.jpg"
         },
         {
-          "description": "花好月圆",
-          "id": 16,
+          "author_avatar": null,
+          "author_company": null,
+          "author_name": null,
+          "description": "",
+          "id": 132,
           "organization_id": 2,
           "type": 1,
-          "url": "http://pic.hisihi.com/2015-11-12/56440a5ccd24e.jpg"
-        },
-        {
-          "description": "抗战胜利海报",
-          "id": 15,
-          "organization_id": 2,
-          "type": 1,
-          "url": "http://pic.hisihi.com/2015-12-02/565dcb1f89843.jpg"
+          "url": "http://pic.hisihi.com/2016-02-16/1455611894519240.png"
         }
-      ],
-      "total_count": 16
+        ],
+        "total_count": 50
     }
 
 
