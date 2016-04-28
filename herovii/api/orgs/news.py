@@ -4,7 +4,7 @@ from herovii import db
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.helper import success_json
 from herovii.models.news.news_org import NewsOrg
-from herovii.service.news import get_news_dto_paginate, get_news_org_by_id
+from herovii.service.news import get_news_dto_paginate, get_news_org_by_id, get_org_news_dto_paginate
 from herovii.validator.forms import PagingForm, NewsForm, UpdateNewsForm
 
 __author__ = 'bliss'
@@ -18,6 +18,16 @@ def list_news():
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
     news = get_news_dto_paginate(int(form.page.data), int(form.per_page.data))
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(news), 200, headers
+
+
+@api.route('/<int:oid>/news', methods=['GET'])
+@auth.login_required
+def list_org_news(oid):
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    news = get_org_news_dto_paginate(oid, int(form.page.data), int(form.per_page.data))
     headers = {'Content-Type': 'application/json'}
     return json.dumps(news), 200, headers
 
