@@ -20,13 +20,14 @@ class TeachingCourse(Base):
     student_num = Column(Integer)
     lecture_name = Column(String(45))
     price = Column(Integer)
+    already_registered = Column(Integer, default=0)
     create_time = Column(Integer, default=int(time.time()))
     status = Column(Integer, default=1)
 
     def keys(self):
         return (
             'id', 'organization_id', 'course_name', 'cover_pic', 'price',
-            'start_course_time', 'lesson_period', 'student_num', 'lecture_name',
+            'start_course_time', 'lesson_period', 'student_num', 'lecture_name', 'already_registered',
             'create_time', 'status'
         )
 

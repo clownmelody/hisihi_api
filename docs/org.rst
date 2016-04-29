@@ -258,11 +258,13 @@
     {
         "courses":[
             {
+                "already_registered":0,
                 "course_name":"java",
-                "cover_pic":"http://sdfsaww",
-                "lecture_name":"rrr",
-                "lesson_period":66,
-                "organization_id":1001,
+                "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
+                "lecture_name":"讲师2",
+                "lesson_period":45,
+                "organization_id":16,
+                "organization_name":"刀塔天梯战队",
                 "price":3423,
                 "start_course_time":"2016-04-26",
                 "student_num":30
@@ -286,11 +288,13 @@
 **Response** `200` ::
 
     {
+        "already_registered":0,
         "course_name":"java",
-        "cover_pic":"http://sdfsaww",
-        "lecture_name":"rrr",
-        "lesson_period":66,
-        "organization_id":1001,
+        "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
+        "lecture_name":"讲师2",
+        "lesson_period":45,
+        "organization_id":16,
+        "organization_name":"刀塔天梯战队",
         "price":3423,
         "start_course_time":"2016-04-26",
         "student_num":30

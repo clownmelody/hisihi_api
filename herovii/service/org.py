@@ -201,15 +201,20 @@ def dto_org_teaching_courses_paginate(oid, page, count):
         raise NotFound(error='teaching courses not found', error_code=5008)
     c_l = []
     for course in teaching_courses_lsit:
+        org_info = Info.query.get(oid)
+        if not org_info:
+            raise NotFound(error='organization not found')
         course = {
             'organization_id': course.organization_id,
+            'organization_name': org_info.name,
             'course_name': course.course_name,
             'cover_pic': course.cover_pic,
             'start_course_time': course.start_course_time,
             'lesson_period': course.lesson_period,
             'student_num': course.student_num,
             'lecture_name': course.lecture_name,
-            'price': course.price
+            'price': course.price,
+            'already_registered': course.already_registered
         }
         c_l.append(course)
     return {
@@ -263,15 +268,20 @@ def get_teaching_course_by_id(cid):
     course = TeachingCourse.query.get(cid)
     if not course:
         raise NotFound(error_code=5008, error='培训课程信息不存在')
+    org_info = Info.query.get(course.organization_id)
+    if not org_info:
+        raise NotFound(error='organization not found')
     return {
             'organization_id': course.organization_id,
+            'organization_name': org_info.name,
             'course_name': course.course_name,
             'cover_pic': course.cover_pic,
             'start_course_time': course.start_course_time,
             'lesson_period': course.lesson_period,
             'student_num': course.student_num,
             'lecture_name': course.lecture_name,
-            'price': course.price
+            'price': course.price,
+            'already_registered': course.already_registered
         }
 
 
