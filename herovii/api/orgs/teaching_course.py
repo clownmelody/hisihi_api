@@ -42,7 +42,7 @@ def delete_org_teaching_course(cid):
 
 
 @api.route('/<int:oid>/teaching_course')
-@auth.login_required
+#@auth.login_required
 def list_teaching_courses(oid):
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
@@ -53,7 +53,7 @@ def list_teaching_courses(oid):
 
 
 @api.route('/teaching_course/<int:cid>')
-@auth.login_required
+#@auth.login_required
 def get_teaching_course(cid):
     course = get_teaching_course_by_id(cid)
     json_data = json.dumps(course)
