@@ -13,7 +13,7 @@ api = ApiBlueprint('org')
 
 
 @api.route('/news', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def list_news():
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
@@ -23,7 +23,7 @@ def list_news():
 
 
 @api.route('/<int:oid>/news', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def list_org_news(oid):
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
@@ -63,7 +63,7 @@ def delete_org_news(nid):
 
 
 @api.route('/news/<int:nid>')
-@auth.login_required
+#@auth.login_required
 def get_news(nid):
     course = get_news_org_by_id(nid)
     json_data = json.dumps(course)
