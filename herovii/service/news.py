@@ -1,4 +1,5 @@
 from flask import current_app
+from herovii import db
 from herovii.libs.error_code import NotFound
 from herovii.models.news.news_org import NewsOrg
 
@@ -24,23 +25,41 @@ def get_news_dto_paginate(page, count):
     return dto_paginate
 
 
-def get_org_news_dto_paginate(oid, page, count):
-    news = NewsOrg.query(NewsOrg.id, NewsOrg.organization_id, NewsOrg.tag, NewsOrg.title).filter(NewsOrg.status != -1, NewsOrg.organization_id == oid) \
-        .order_by(NewsOrg.create_time.desc()). \
-        paginate(page, count).items
+def get_org_news_dto_paginate(oid, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    news = db.session.query(NewsOrg.id, NewsOrg.organization_id, NewsOrg.title, NewsOrg.tag).filter(
+        NewsOrg.status != -1, NewsOrg.organization_id == oid) \
+        .order_by(NewsOrg.create_time.desc()) \
+        .slice(start, stop) \
+        .all()
     total_count = NewsOrg.query.count()
+    data_list = []
     if news is None:
         raise NotFound(error='news not found', error_code=3000)
     for news_info in news:
-        news_info['url'] = current_app.config['SERVER_HOST_NAME'] + '/api.php?s=/organization/noticedetail/id/' + news_info['id']
+        data = {
+            'id': news_info.id,
+            'organization_id': news_info.organization_id,
+            'tag': news_info.tag,
+            'title': news_info.title,
+            'url': current_app.config['SERVER_HOST_NAME'] + '/api.php?s=/organization/noticedetail/id/'+str(news_info.id)
+        }
+        data_list.append(data)
     dto_paginate = {
-        'news': news,
+        'news': data_list,
         'total_count': total_count
     }
     return dto_paginate
 
 
 def get_news_org_by_id(nid):
-    news = NewsOrg.query(NewsOrg.id, NewsOrg.organization_id, NewsOrg.tag, NewsOrg.title).filter(NewsOrg.id == nid).first()
-    news['url'] = current_app.config['SERVER_HOST_NAME'] + '/api.php?s=/organization/noticedetail/id/' + nid
-    return news
+    news = db.session.query(NewsOrg.id, NewsOrg.organization_id, NewsOrg.title, NewsOrg.tag).filter(
+        NewsOrg.id == nid).first()
+    return {
+            'id': news.id,
+            'organization_id': news.organization_id,
+            'tag': news.tag,
+            'title': news.title,
+            'url': current_app.config['SERVER_HOST_NAME'] + '/api.php?s=/organization/noticedetail/id/'+str(news.id)
+        }
