@@ -49,7 +49,7 @@ def update_org():
 
 
 @api.route('', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def get_org():
     uid = request.args.get('uid')
     oid = request.args.get('oid')
