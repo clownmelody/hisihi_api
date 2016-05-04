@@ -64,13 +64,13 @@ def get_information_flow_banner_service(page, per_page, client_version):
                 }
                 if jump_type == 2:
                     post_id = banner.url
-                    banner_object.url = 'hisihi://post/detailinfo?id=' + post_id
+                    banner_object['url'] = 'hisihi://post/detailinfo?id=' + post_id
                 elif jump_type == 3:
                     course_id = banner.url
-                    banner_object.url = 'hisihi://course/detailinfo?id=' + course_id
+                    banner_object['url'] = 'hisihi://course/detailinfo?id=' + course_id
                 elif jump_type == 4:
                     org_id = banner.url
-                    banner_object.url = 'hisihi://organization/detailinfo?id=' + org_id
+                    banner_object['url'] = 'hisihi://organization/detailinfo?id=' + org_id
                 data_list.append(banner_object)
     return banner_count, data_list
 

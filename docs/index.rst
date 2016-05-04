@@ -51,4 +51,5 @@ Api V1 说明
    informationFlow
    webSites
    follow
+   overseasStudy
 
