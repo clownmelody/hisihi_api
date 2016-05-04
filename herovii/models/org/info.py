@@ -24,8 +24,8 @@ class Info(Base):
     longitude = Column(String(40))
     latitude = Column(String(40))
 
-    # 机构类型，使用#号分隔，内容为Tag表的记录id
-    type = Column(String(80))
+    # 机构类型，内容为Tag表type=7的记录id
+    type = Column(Integer)
 
     # 机构审核进度
     application_status = Column(SmallInteger, default=1)

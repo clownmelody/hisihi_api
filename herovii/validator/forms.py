@@ -133,7 +133,7 @@ class OrgForm(Form):
     # uid = IntegerField(validators=[DataRequired()])
     # city = StringField(validators=[DataRequired()])
     #
-    # type = StringField(validators=[DataRequired()])
+    type = IntegerField(validators=[DataRequired()])
 
     phone_num = StringField(validators=[DataRequired()])
 
