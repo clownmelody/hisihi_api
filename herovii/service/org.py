@@ -27,6 +27,7 @@ from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
 from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.teaching_course import TeachingCourse
+from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.org.video import Video
 from herovii.models.user.field import Field
 from herovii.models.user.avatar import Avatar
@@ -195,8 +196,8 @@ def dto_org_courses_paginate(oid, page, count):
     }
 
 
-def dto_org_teaching_courses_paginate(oid, page, count):
-    teaching_courses_lsit, total_count = get_org_teaching_courses_paging(oid, int(page), int(count))
+def dto_org_teaching_courses_paginate(oid, except_id, page, count):
+    teaching_courses_lsit, total_count = get_org_teaching_courses_paging(oid, except_id, int(page), int(count))
     if not teaching_courses_lsit:
         raise NotFound(error='teaching courses not found', error_code=5008)
     c_l = []
@@ -235,14 +236,16 @@ def get_org_courses_paging(oid, page, count):
     return courses, total_count
 
 
-def get_org_teaching_courses_paging(oid, page, count):
+def get_org_teaching_courses_paging(oid, except_id, page, count):
     start, stop = convert_paginate(page, count)
     total_count = db.session.query(TeachingCourse).filter(
         TeachingCourse.status == 1,
+        TeachingCourse.id != except_id,
         TeachingCourse.organization_id == oid) \
         .count()
     teaching_course_list = db.session.query(TeachingCourse).filter(
         TeachingCourse.status == 1,
+        TeachingCourse.id != except_id,
         TeachingCourse.organization_id == oid) \
         .slice(start, stop) \
         .all()
@@ -280,10 +283,61 @@ def get_teaching_course_by_id(cid):
             'lesson_period': course.lesson_period,
             'student_num': course.student_num,
             'lecture_name': course.lecture_name,
-            'price': course.price,
-            'already_registered': course.already_registered
+            'price': course.price
         }
 
+
+def get_teaching_course_detail_by_id(cid):
+    course = TeachingCourse.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5008, error='培训课程信息不存在')
+    org_info = Info.query.get(course.organization_id)
+    if not org_info:
+        raise NotFound(error='organization not found')
+    total_count, enroll_list = get_teaching_course_enroll_by_id(cid, 1, 2000)
+    return {
+            'organization_id': course.organization_id,
+            'organization_name': org_info.name,
+            'course_name': course.course_name,
+            'cover_pic': course.cover_pic,
+            'start_course_time': course.start_course_time,
+            'lesson_period': course.lesson_period,
+            'student_num': course.student_num,
+            'lecture_name': course.lecture_name,
+            'price': course.price,
+            'already_registered': course.already_registered,
+            'light_authentication': org_info.light_authentication,
+            'introduction': course.introduction,
+            'plan': course.plan,
+            'enroll_info': {
+                "total_count": total_count,
+                "data": enroll_list
+            }
+        }
+
+
+def get_teaching_course_enroll_by_id(cid, page, per_page):
+    start, stop = convert_paginate(int(page), int(per_page))
+    course = TeachingCourse.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5008, error='培训课程信息不存在')
+    total_count = TeachingCourseEnroll.query.filter_by(course_id=cid, status=1).count()
+    enroll_list = TeachingCourseEnroll.query.filter_by(course_id=cid, status=1).slice(start, stop).all()
+    if not enroll_list:
+        raise NotFound(error='no one want to learn the course')
+    enroll_user_list = []
+    for enroll in enroll_list:
+        user_info = UserCSU.query.filter_by(uid=enroll.uid).first()
+        user_info = {
+            'uid': user_info.uid,
+            'nickname': user_info.nickname
+        }
+        stu_avatar = db.session.query(Avatar).filter(Avatar.uid == enroll.uid).first()
+        if stu_avatar:
+            stu_avatar_full_path = get_full_oss_url(stu_avatar.path, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
+            user_info.setdefault('avatar', stu_avatar_full_path)
+        enroll_user_list.append(user_info)
+    return total_count, enroll_user_list
 
 
 def get_video_by_course_id(cid):

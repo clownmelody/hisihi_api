@@ -311,6 +311,15 @@ class OrgTeachingCourseForm(Form):
     price = IntegerField(validators=[DataRequired(), NumberRange(1)])
 
 
+class OrgTeachingCourseEnrollForm(Form):
+    course_id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    uid = IntegerField(validators=[DataRequired()])
+    student_name = StringField(validators=[DataRequired()])
+    student_phone_num = StringField(validators=[DataRequired()])
+    student_university = StringField(validators=[DataRequired()])
+    student_qq = StringField()
+
+
 class UpdateOrgTeachingCourseForm(Form):
     id = IntegerField(validators=[NumberRange(1), DataRequired()])
     organization_id = IntegerField()

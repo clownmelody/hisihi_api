@@ -250,6 +250,7 @@
 **Parameters**:
 
 * oid: 机构ID
+* except_id: 排除的课程ID（传参方式同分页参数, 用于课程）
 * page:  分页参数
 * per_page:  分页参数
 
@@ -298,5 +299,104 @@
         "price":3423,
         "start_course_time":"2016-04-26",
         "student_num":30
+    }
+** end **
+
+
+获取培训课程详情
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/teaching_course/<int:cid>/detail
+
+**Parameters**:
+
+* cid: 培训课程ID
+
+**Response** `200` ::
+
+    {
+        "already_registered":0,
+        "course_name":"java",
+        "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
+        "enroll_info":{
+            "data":[
+                {
+                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg",
+                    "nickname":"Leslie",
+                    "uid":72
+                }
+            ],
+            "total_count":1
+        },
+        "introduction":"介绍1",
+        "lecture_name":"讲师2",
+        "lesson_period":45,
+        "light_authentication":0,
+        "organization_id":16,
+        "organization_name":"刀塔天梯战队",
+        "plan":"安排1",
+        "price":3423,
+        "start_course_time":"2016-04-26",
+        "student_num":30
+    }
+** end **
+
+
+获取培训课程报名信息
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /teaching_course/<int:cid>/enroll
+
+**Parameters**:
+
+* cid: 培训课程ID
+* page:  分页参数
+* per_page:  分页参数
+
+**Response** `200` ::
+
+     {
+        "data":[
+            {
+                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg",
+                "nickname":"Leslie",
+                "uid":72
+            }
+        ],
+        "total_count":1
+     }
+** end **
+
+
+用户培训课程报名
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /teaching_course/<int:cid>/enroll
+
+**Parameters**:
+
+* course_id:  课程id
+* uid: 用户id
+* student_name: 学生姓名
+* student_phone_num:  学生电话
+* student_university: 学生大学
+* student_qq: 学生qq(选填)
+
+**Response** `201` ::
+
+    {
+        "course_id":2,
+        "create_time":1462362166,
+        "id":3,
+        "status":1,
+        "student_name":"653",
+        "student_phone_num":"13100002324",
+        "student_qq":null,
+        "student_university":"pku",
+        "student_qq": "213423",
+        "uid":74
     }
 ** end **
