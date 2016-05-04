@@ -7,7 +7,7 @@ from flask import Blueprint
 from herovii.api import user, token, sms, online, pk, test, mall, news, file, link, information_flow, follow
 from herovii.api.im import im
 from herovii.api.orgs import lecture, admin, course, enroll, info, news, resource, stats, student,\
-    team, info, tag, classmate, feedback, video, teaching_course
+    team, info, tag, classmate, feedback, video, teaching_course, overseas_study
 
 from herovii.api import tags
 
@@ -111,6 +111,7 @@ def reg_v1_bp(app):
 
     feedback.api.register(bp_v1)
     teaching_course.api.register(bp_v1)
+    overseas_study.api.register(bp_v1)
 
     app.register_blueprint(bp_v1, url_prefix='/v1')
 
