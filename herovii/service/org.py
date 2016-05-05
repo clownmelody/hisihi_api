@@ -21,6 +21,7 @@ from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
 from herovii.models.org.org_config import OrgConfig
+from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.models.org.pic import Pic
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
@@ -29,6 +30,7 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.org.video import Video
+from herovii.models.tag import Tag
 from herovii.models.user.field import Field
 from herovii.models.user.avatar import Avatar
 from herovii.models.user.id_realeation import IdRelation
@@ -1140,4 +1142,47 @@ def get_organization_info_by_organization_id(organization_id):
     organization = db.session.query(Info).filter(Info.id == organization_id) \
         .first()
     return organization
+
+
+def add_major_to_org(oid, major_id):
+    ids = major_id.split(':')
+    info = []
+    result = db.session.query(OrgTagRelation).filter(OrgTagRelation.organization_id == oid,
+                                                     OrgTagRelation.tag_type == 8)\
+        .delete()
+    for tid in ids:
+        stu = {
+            "organization_id": int(oid),
+            "tag_id": tid,
+            "tag_type": 8,
+            "status": 1,
+            "create_time": int(time.time())
+        }
+        info.append(stu)
+    with db.auto_commit():
+        result = db.session.execute(OrgTagRelation.__table__.insert(), info)
+    msg = str(result.rowcount) + ' major has been added'
+    return msg
+
+
+def get_major_by_oid(oid):
+    major = db.session.query(OrgTagRelation.tag_id, Tag.value).filter(OrgTagRelation.organization_id == oid,
+                                                                      OrgTagRelation.tag_type == 8,
+                                                                      OrgTagRelation.status == 1) \
+        .join(Tag, Tag.id == OrgTagRelation.tag_id)\
+        .all()
+    result = {
+        "organization_id": oid,
+        "major_list": None
+    }
+    if major:
+        major_list = []
+        for item in major:
+            major_obj = {
+                "id": item.tag_id,
+                "value": item.value
+            }
+            major_list.append(major_obj)
+        result['major_list'] = major_list
+    return result
 

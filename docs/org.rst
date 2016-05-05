@@ -400,3 +400,97 @@
         "uid":74
     }
 ** end **
+
+
+机构添加专业
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /major
+
+**Parameters**:(json)
+
+* oid:  机构id
+* major_id: 专业id,格式36:35:33
+
+**Response** `201` ::
+
+    {
+      "code": 0,
+      "msg": "2 major has been added",
+      "request": "POST  /v1/org/major"
+    }
+** end **
+
+
+获取机构的专业
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /major/<int:oid>
+
+**Parameters**:
+
+* oid:  机构id
+
+**Response** `200` ::
+
+    {
+      "organization_id": 60,
+      "major_list": [
+        {
+          "id": 35,
+          "value": "网页"
+        },
+        {
+          "id": 36,
+          "value": "插画"
+        }
+      ]
+    }
+** end **
+
+
+获取所有机构专业列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /tag/<int:tag_type>
+
+**Parameters**:
+
+* tag_type:  标签类型id，专业标签固定值tag_type=8
+
+**Response** `200` ::
+
+    [
+      {
+        "create_time": 1462330462,
+        "extra": "http://pic.hisihi.com/2016-05-04/5729645a0db1d.png",
+        "id": 33,
+        "type": 8,
+        "value": "UI"
+      },
+      {
+        "create_time": 1462330486,
+        "extra": "http://pic.hisihi.com/2016-05-04/57296473b07cf.png",
+        "id": 34,
+        "type": 8,
+        "value": "平面"
+      },
+      {
+        "create_time": 1462330513,
+        "extra": "http://pic.hisihi.com/2016-05-04/5729648ebea5d.png",
+        "id": 35,
+        "type": 8,
+        "value": "网页"
+      },
+      {
+        "create_time": 1462330530,
+        "extra": "http://pic.hisihi.com/2016-05-04/572964a030841.png",
+        "id": 36,
+        "type": 8,
+        "value": "插画"
+      }
+    ]
+** end **
