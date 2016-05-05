@@ -2,6 +2,7 @@
 from herovii import db
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
 from herovii.models.overseas.country import Country
+from herovii.models.overseas.university import University
 
 __author__ = 'yangchujie'
 
@@ -51,6 +52,7 @@ def get_overseas_study_hot_country_service(page, per_page):
     country_list = db.session.query(Country.id, Country.name, Country.logo_url) \
         .filter(Country.status == 1,
                 Country.is_hot == 1) \
+        .order_by(Country.create_time.desc()) \
         .slice(start, stop) \
         .all()
     for country in country_list:
@@ -61,3 +63,25 @@ def get_overseas_study_hot_country_service(page, per_page):
         }
         data_list.append(data)
     return country_count, data_list
+
+
+def get_overseas_study_hot_university_service(page, per_page):
+    university_count = db.session.query(University).filter(University.status == 1,
+                                                           University.is_hot == 1).count()
+    data_list = []
+    start = (page - 1) * per_page
+    stop = start + per_page
+    university_list = db.session.query(University.id, University.name, University.logo_url) \
+        .filter(University.status == 1,
+                University.is_hot == 1) \
+        .order_by(University.create_time.desc()) \
+        .slice(start, stop) \
+        .all()
+    for university in university_list:
+        data = {
+            'id': university.id,
+            'name': university.name,
+            'logo_url': university.logo_url
+        }
+        data_list.append(data)
+    return university_count, data_list
