@@ -21,6 +21,7 @@ from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
 from herovii.models.org.org_config import OrgConfig
+from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.models.org.pic import Pic
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
@@ -1141,3 +1142,23 @@ def get_organization_info_by_organization_id(organization_id):
         .first()
     return organization
 
+
+def add_major_to_org(oid, major_id):
+    ids = major_id.split(':')
+    info = []
+    result = db.session.query(OrgTagRelation).filter(OrgTagRelation.organization_id == oid,
+                                                     OrgTagRelation.tag_type == 8)\
+        .delete()
+    for tid in ids:
+        stu = {
+            "organization_id": int(oid),
+            "tag_id": tid,
+            "tag_type": 8,
+            "status": 1,
+            "create_time": int(time.time())
+        }
+        info.append(stu)
+    with db.auto_commit():
+        result = db.session.execute(OrgTagRelation.__table__.insert(), info)
+    msg = str(result.rowcount) + ' major has been added'
+    return msg

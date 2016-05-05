@@ -12,9 +12,10 @@ class Tag(Base):
     id = Column(Integer, primary_key=True)
     type = Column(Integer, nullable=True)
     value = Column(String(50), nullable=True)
+    extra = Column(String(255), nullable=True)
 
     def keys(self):
         return (
             'id', 'type', 'value',
-            'create_time'
+            'create_time', 'extra'
         )
