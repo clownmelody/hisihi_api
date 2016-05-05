@@ -29,3 +29,30 @@
         "total_count":1
     }
 -- end
+
+
+获取热门国家
+~~~~~~~~~~~
+
+**URL**::
+
+    GET      overseas_study/hot_country
+
+**Parameters**:
+
+* page: 页数，默认值为1
+* per_page: 每页记录数, 默认值为8
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":1,
+                "logo_url":"http://pic.hisihi.com/2016-05-05/572addb5c3bd9.png",
+                "name":"美国"
+            }
+        ],
+        "total_count":1
+    }
+-- end
