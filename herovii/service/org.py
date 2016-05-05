@@ -30,6 +30,7 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.org.video import Video
+from herovii.models.tag import Tag
 from herovii.models.user.field import Field
 from herovii.models.user.avatar import Avatar
 from herovii.models.user.id_realeation import IdRelation
@@ -1162,3 +1163,26 @@ def add_major_to_org(oid, major_id):
         result = db.session.execute(OrgTagRelation.__table__.insert(), info)
     msg = str(result.rowcount) + ' major has been added'
     return msg
+
+
+def get_major_by_oid(oid):
+    major = db.session.query(OrgTagRelation.tag_id, Tag.value).filter(OrgTagRelation.organization_id == oid,
+                                                                      OrgTagRelation.tag_type == 8,
+                                                                      OrgTagRelation.status == 1) \
+        .join(Tag, Tag.id == OrgTagRelation.tag_id)\
+        .all()
+    result = {
+        "organization_id": oid,
+        "major_list": None
+    }
+    if major:
+        major_list = []
+        for item in major:
+            major_obj = {
+                "id": item.tag_id,
+                "value": item.value
+            }
+            major_list.append(major_obj)
+        result['major_list'] = major_list
+    return result
+

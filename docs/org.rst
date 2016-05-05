@@ -400,3 +400,52 @@
         "uid":74
     }
 ** end **
+
+
+机构添加专业
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /major
+
+**Parameters**:(json)
+
+* oid:  机构id
+* major_id: 专业id,格式36:35:33
+
+**Response** `201` ::
+
+    {
+      "code": 0,
+      "msg": "2 major has been added",
+      "request": "POST  /v1/org/major"
+    }
+** end **
+
+
+获取机构的专业
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /major/<int:oid>
+
+**Parameters**:
+
+* oid:  机构id
+
+**Response** `201` ::
+
+    {
+      "organization_id": 60,
+      "major_list": [
+        {
+          "id": 35,
+          "value": "网页"
+        },
+        {
+          "id": 36,
+          "value": "插画"
+        }
+      ]
+    }
+** end **
