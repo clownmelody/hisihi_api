@@ -88,3 +88,42 @@
         "total_count":2
     }
 -- end
+
+
+获取大学主页信息
+~~~~~~~~~~~
+
+**URL**::
+
+    GET      overseas_study/university/<int:uid>
+
+**Parameters**:
+
+* uid: 大学ID
+
+**Response** `200` ::
+
+    {
+        "application_requirements":"这里是申请的要求",
+        "deadline_for_applications":"2016年8月20日",
+        "difficulty_of_application":"难",
+        "graduate_major":[
+            "哈哈设计"
+        ],
+        "ielts":"9.2",
+        "introduction":"这里是学校简介",
+        "logo_url":"http://pic.hisihi.com/2016-05-05/572addb5c3bd9.png",
+        "name":"斯坦福大学",
+        "proportion_of_undergraduates":"67%",
+        "scholarship":"8000",
+        "school_environment":"这里是学校环境介绍",
+        "sia_recommend_level":"100&",
+        "sia_student_enrollment_rate":"90%",
+        "toefl":"7.0",
+        "tuition_fees":"￥434，000",
+        "undergraduate_major":[
+            "平面设计"
+        ],
+        "website":"http://stf.com"
+    }
+-- end

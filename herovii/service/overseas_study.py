@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from herovii import db
+from herovii.libs.error_code import NotFound
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
 from herovii.models.overseas.country import Country
 from herovii.models.overseas.university import University
+from herovii.models.overseas.university_major import UniversityMajor
 
 __author__ = 'yangchujie'
 
@@ -85,3 +87,40 @@ def get_overseas_study_hot_university_service(page, per_page):
         }
         data_list.append(data)
     return university_count, data_list
+
+
+def get_overseas_study_university_info_service(uid):
+    university = University.query.get(uid)
+    if not university:
+        raise NotFound(error_code=5008, error='大学信息不存在')
+    graduate_majors_array = university.graduate_majors.split("#")
+    undergraduate_majors_array = university.undergraduate_majors.split("#")
+    graduate_major_text = []
+    undergraduate_major_text = []
+    for graduate_major_id in graduate_majors_array:
+        major_info = UniversityMajor.query.get(graduate_major_id)
+        if major_info:
+            graduate_major_text.append(major_info.name)
+    for undergraduate_major_id in undergraduate_majors_array:
+        major_info = UniversityMajor.query.get(undergraduate_major_id)
+        if major_info:
+            undergraduate_major_text.append(major_info.name)
+    return {
+            'name': university.name,
+            'website': university.website,
+            'logo_url': university.logo_url,
+            'undergraduate_major': undergraduate_major_text,
+            'graduate_major': graduate_major_text,
+            'introduction': university.introduction,
+            'sia_recommend_level': university.sia_recommend_level,
+            'sia_student_enrollment_rate': university.sia_student_enrollment_rate,
+            'difficulty_of_application': university.difficulty_of_application,
+            'tuition_fees': university.tuition_fees,
+            'toefl': university.toefl,
+            'ielts': university.ielts,
+            'proportion_of_undergraduates': university.proportion_of_undergraduates,
+            'scholarship': university.scholarship,
+            'deadline_for_applications': university.deadline_for_applications,
+            'application_requirements': university.application_requirements,
+            'school_environment': university.school_environment
+        }

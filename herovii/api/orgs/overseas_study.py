@@ -1,7 +1,7 @@
 from flask import jsonify, json, request
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.service.overseas_study import get_overseas_study_banner_service, get_overseas_study_hot_country_service, \
-    get_overseas_study_hot_university_service
+    get_overseas_study_hot_university_service, get_overseas_study_university_info_service
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -53,3 +53,11 @@ def get_overseas_study_hot_university():
     json_obj = json.dumps({"total_count": count, "data": data})
     return json_obj, 200, headers
 
+
+@api.route('/university/<int:uid>', methods=['GET'])
+#@auth.login_required
+def get_overseas_study_university_info(uid):
+    data = get_overseas_study_university_info_service(uid)
+    headers = {'Content-Type': 'application/json'}
+    json_obj = json.dumps(data)
+    return json_obj, 200, headers
