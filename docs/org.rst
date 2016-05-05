@@ -433,7 +433,7 @@
 
 * oid:  机构id
 
-**Response** `201` ::
+**Response** `200` ::
 
     {
       "organization_id": 60,
@@ -448,4 +448,49 @@
         }
       ]
     }
+** end **
+
+
+获取所有机构专业列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /tag/<int:tag_type>
+
+**Parameters**:
+
+* tag_type:  标签类型id，专业标签固定值tag_type=8
+
+**Response** `200` ::
+
+    [
+      {
+        "create_time": 1462330462,
+        "extra": "http://pic.hisihi.com/2016-05-04/5729645a0db1d.png",
+        "id": 33,
+        "type": 8,
+        "value": "UI"
+      },
+      {
+        "create_time": 1462330486,
+        "extra": "http://pic.hisihi.com/2016-05-04/57296473b07cf.png",
+        "id": 34,
+        "type": 8,
+        "value": "平面"
+      },
+      {
+        "create_time": 1462330513,
+        "extra": "http://pic.hisihi.com/2016-05-04/5729648ebea5d.png",
+        "id": 35,
+        "type": 8,
+        "value": "网页"
+      },
+      {
+        "create_time": 1462330530,
+        "extra": "http://pic.hisihi.com/2016-05-04/572964a030841.png",
+        "id": 36,
+        "type": 8,
+        "value": "插画"
+      }
+    ]
 ** end **
