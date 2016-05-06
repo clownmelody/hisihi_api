@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+from flask import json
+from sqlalchemy import func
 from herovii import db
 from herovii.libs.error_code import NotFound
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
+from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.overseas.country import Country
+from herovii.models.overseas.organization_to_university import OrganizationToUniversity
 from herovii.models.overseas.university import University
 from herovii.models.overseas.university_major import UniversityMajor
 
@@ -106,21 +110,64 @@ def get_overseas_study_university_info_service(uid):
         if major_info:
             undergraduate_major_text.append(major_info.name)
     return {
+        'name': university.name,
+        'website': university.website,
+        'logo_url': university.logo_url,
+        'undergraduate_major': undergraduate_major_text,
+        'graduate_major': graduate_major_text,
+        'introduction': university.introduction,
+        'sia_recommend_level': university.sia_recommend_level,
+        'sia_student_enrollment_rate': university.sia_student_enrollment_rate,
+        'difficulty_of_application': university.difficulty_of_application,
+        'tuition_fees': university.tuition_fees,
+        'toefl': university.toefl,
+        'ielts': university.ielts,
+        'proportion_of_undergraduates': university.proportion_of_undergraduates,
+        'scholarship': university.scholarship,
+        'deadline_for_applications': university.deadline_for_applications,
+        'application_requirements': university.application_requirements,
+        'school_environment': university.school_environment
+    }
+
+
+def get_overseas_study_university_list_by_country_id_service(cid, page, per_page):
+    university_count = db.session.query(University).filter(University.status == 1,
+                                                           University.country_id == cid).count()
+    data_list = []
+    start = (page - 1) * per_page
+    stop = start + per_page
+    university_list = db.session.query(University.id, University.name, University.logo_url) \
+        .filter(University.status == 1,
+                University.country_id == cid) \
+        .order_by(University.create_time.desc()) \
+        .slice(start, stop) \
+        .all()
+    for university in university_list:
+        organization_total_count = db.session.query(OrganizationToUniversity).filter(
+            OrganizationToUniversity.status == 1,
+            OrganizationToUniversity.teaching_course_id == 0,
+            OrganizationToUniversity.university_id == university.id).count()
+        teaching_course_list = db.session.query(OrganizationToUniversity) \
+            .filter(OrganizationToUniversity.status == 1,
+                    OrganizationToUniversity.teaching_course_id != 0,
+                    OrganizationToUniversity.university_id == university.id) \
+            .all()
+        if len(teaching_course_list) == 0:
+            enroll_total_count = 0
+        else:
+            teaching_course_id_list = []
+            for teaching_course in teaching_course_list:
+                teaching_course_id_list.append(str(teaching_course.teaching_course_id))
+            enroll_total_count = db.session.query(TeachingCourseEnroll) \
+                .filter(TeachingCourseEnroll.status == 1,
+                        func.find_in_set(TeachingCourseEnroll.course_id, ','.join(teaching_course_id_list))) \
+                .count()
+        data = {
+            'id': university.id,
             'name': university.name,
-            'website': university.website,
             'logo_url': university.logo_url,
-            'undergraduate_major': undergraduate_major_text,
-            'graduate_major': graduate_major_text,
-            'introduction': university.introduction,
-            'sia_recommend_level': university.sia_recommend_level,
-            'sia_student_enrollment_rate': university.sia_student_enrollment_rate,
-            'difficulty_of_application': university.difficulty_of_application,
-            'tuition_fees': university.tuition_fees,
-            'toefl': university.toefl,
-            'ielts': university.ielts,
-            'proportion_of_undergraduates': university.proportion_of_undergraduates,
-            'scholarship': university.scholarship,
-            'deadline_for_applications': university.deadline_for_applications,
-            'application_requirements': university.application_requirements,
-            'school_environment': university.school_environment
+            'organization_total_count': organization_total_count,
+            'enroll_total_count': enroll_total_count
         }
+        data_list.append(data)
+    return university_count, data_list

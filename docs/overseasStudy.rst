@@ -127,3 +127,45 @@
         "website":"http://stf.com"
     }
 -- end
+
+
+获取国家下大学列表
+~~~~~~~~~~~
+
+**URL**::
+
+    GET      overseas_study/country/<int:cid>/university
+
+**Parameters**:
+
+* cid: 国家ID
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "enroll_total_count":0,
+                "id":3,
+                "logo_url":"http://pic.hisihi.com/2016-05-05/572addb5c3bd9.png",
+                "name":"哈弗大学",
+                "organization_total_count":0
+            },
+            {
+                "enroll_total_count":0,
+                "id":2,
+                "logo_url":"http://pic.hisihi.com/2016-05-05/572addb5c3bd9.png",
+                "name":"野鸡大学",
+                "organization_total_count":0
+            },
+            {
+                "enroll_total_count":1,
+                "id":1,
+                "logo_url":"http://pic.hisihi.com/2016-05-05/572addb5c3bd9.png",
+                "name":"斯坦福大学",
+                "organization_total_count":5
+            }
+        ],
+        "total_count":3
+    }
+-- end
