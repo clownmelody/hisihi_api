@@ -199,3 +199,41 @@
         "total_count":1
     }
 -- end
+
+
+获取大学的相册
+~~~~~~~~~~~
+
+**URL**::
+
+    GET      overseas_study/university/<int:uid>/photos
+
+**Parameters**:
+
+* uid: 大学id
+* page: 页数
+* per_page: 每页记录数
+
+**Response** `200` ::
+
+    {
+      "count": 3,
+      "list": [
+        {
+          "descript": "猫243",
+          "id": 3,
+          "pic_url": "http://pic.hisihi.com/2016-04-11/570b23b118f31.jpg"
+        },
+        {
+          "descript": "头像猫",
+          "id": 2,
+          "pic_url": "http://pic.hisihi.com/2016-04-11/570b23b118f31.jpg"
+        },
+        {
+          "descript": "图图图图图",
+          "id": 1,
+          "pic_url": "http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png"
+        }
+      ]
+    }
+-- end
