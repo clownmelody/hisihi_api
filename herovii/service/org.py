@@ -332,7 +332,9 @@ def get_teaching_course_enroll_by_id(cid, page, per_page):
         user_info = UserCSU.query.filter_by(uid=enroll.uid).first()
         user_info = {
             'uid': user_info.uid,
-            'nickname': user_info.nickname
+            'nickname': user_info.nickname,
+            'student_phone_num': enroll.student_phone_num,
+            'create_time': enroll.create_time
         }
         stu_avatar = db.session.query(Avatar).filter(Avatar.uid == enroll.uid).first()
         if stu_avatar:
