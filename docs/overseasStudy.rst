@@ -169,3 +169,33 @@
         "total_count":3
     }
 -- end
+
+
+
+获取国家列表
+~~~~~~~~~~~
+
+**URL**::
+
+    GET      overseas_study/country
+
+**Parameters**:
+
+* page: 页数
+* per_page: 每页记录数
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "enroll_total_count":3,
+                "id":1,
+                "logo_url":"http://pic.hisihi.com/2016-05-05/572addb5c3bd9.png",
+                "name":"美国",
+                "university_total_count":3
+            }
+        ],
+        "total_count":1
+    }
+-- end

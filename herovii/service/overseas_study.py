@@ -71,6 +71,53 @@ def get_overseas_study_hot_country_service(page, per_page):
     return country_count, data_list
 
 
+def get_overseas_study_country_service(page, per_page):
+    country_count = db.session.query(Country).filter(Country.status == 1).count()
+    data_list = []
+    start = (page - 1) * per_page
+    stop = start + per_page
+    country_list = db.session.query(Country.id, Country.name, Country.logo_url) \
+        .filter(Country.status == 1) \
+        .order_by(Country.create_time.desc()) \
+        .slice(start, stop) \
+        .all()
+    for country in country_list:
+        university_count = db.session.query(University).filter(University.status == 1,
+                                                               University.country_id == country.id).count()
+        university_list = db.session.query(University.id, University.name, University.logo_url) \
+            .filter(University.status == 1,
+                    University.country_id == country.id) \
+            .order_by(University.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
+        enroll_total_count = 0
+        for university in university_list:
+            teaching_course_list = db.session.query(OrganizationToUniversity) \
+                .filter(OrganizationToUniversity.status == 1,
+                        OrganizationToUniversity.teaching_course_id != 0,
+                        OrganizationToUniversity.university_id == university.id) \
+                .all()
+            if len(teaching_course_list) == 0:
+                enroll_total_count = 0
+            else:
+                teaching_course_id_list = []
+                for teaching_course in teaching_course_list:
+                    teaching_course_id_list.append(str(teaching_course.teaching_course_id))
+                enroll_total_count = db.session.query(TeachingCourseEnroll) \
+                    .filter(TeachingCourseEnroll.status == 1,
+                            func.find_in_set(TeachingCourseEnroll.course_id, ','.join(teaching_course_id_list))) \
+                    .count()
+        data = {
+            'id': country.id,
+            'name': country.name,
+            'logo_url': country.logo_url,
+            'university_total_count': university_count,
+            'enroll_total_count': enroll_total_count
+        }
+        data_list.append(data)
+    return country_count, data_list
+
+
 def get_overseas_study_hot_university_service(page, per_page):
     university_count = db.session.query(University).filter(University.status == 1,
                                                            University.is_hot == 1).count()
