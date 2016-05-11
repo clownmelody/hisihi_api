@@ -9,6 +9,7 @@ from herovii.models.overseas.country import Country
 from herovii.models.overseas.organization_to_university import OrganizationToUniversity
 from herovii.models.overseas.university import University
 from herovii.models.overseas.university_major import UniversityMajor
+from herovii.models.overseas.university_photos import UniversityPhotos
 
 __author__ = 'yangchujie'
 
@@ -223,3 +224,32 @@ def get_overseas_study_university_list_by_country_id_service(cid, page, per_page
         }
         data_list.append(data)
     return university_count, data_list
+
+
+def get_overseas_study_university_photos_service(uid, page, per_page):
+    photos_count = db.session.query(UniversityPhotos).filter(UniversityPhotos.status == 1,
+                                                             UniversityPhotos.university_id == uid).count()
+    data_list = {}
+    start = (page - 1) * per_page
+    stop = start + per_page
+    photo_list = db.session.query(UniversityPhotos.id, UniversityPhotos.descript, UniversityPhotos.pic_url) \
+        .filter(UniversityPhotos.status == 1,
+                UniversityPhotos.university_id == uid) \
+        .order_by(UniversityPhotos.create_time.desc()) \
+        .slice(start, stop) \
+        .all()
+    if photo_list:
+        p_list = []
+        for photo in photo_list:
+            photo_obj = {
+                "id": photo.id,
+                "descript": photo.descript,
+                "pic_url": photo.pic_url
+            }
+            p_list.append(photo_obj)
+        data_list['count'] = photos_count
+        data_list['list'] = p_list
+    else:
+        data_list['count'] = 0
+        data_list['list'] = None
+    return data_list
