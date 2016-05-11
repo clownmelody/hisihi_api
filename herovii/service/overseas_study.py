@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import json
+from flask import json, current_app
 from sqlalchemy import func
 from herovii import db
 from herovii.libs.error_code import NotFound
@@ -156,6 +156,9 @@ def get_overseas_study_university_info_service(uid):
         major_info = UniversityMajor.query.get(undergraduate_major_id)
         if major_info:
             undergraduate_major_text.append(major_info.name)
+    server_host_name = current_app.config['SERVER_HOST_NAME']
+    web_url = server_host_name + "/api.php?s=/university/showuniversitymainpage/university_id/" + str(uid)
+    share_url = web_url
     return {
         'name': university.name,
         'website': university.website,
@@ -173,7 +176,9 @@ def get_overseas_study_university_info_service(uid):
         'scholarship': university.scholarship,
         'deadline_for_applications': university.deadline_for_applications,
         'application_requirements': university.application_requirements,
-        'school_environment': university.school_environment
+        'school_environment': university.school_environment,
+        'web_url': web_url,
+        'share_url': share_url
     }
 
 

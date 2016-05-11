@@ -208,6 +208,7 @@ def dto_org_teaching_courses_paginate(oid, except_id, page, count):
         if not org_info:
             raise NotFound(error='organization not found')
         course = {
+            'id': course.id,
             'organization_id': course.organization_id,
             'organization_name': org_info.name,
             'course_name': course.course_name,

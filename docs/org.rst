@@ -259,6 +259,7 @@
     {
         "courses":[
             {
+                "id": 3,
                 "already_registered":0,
                 "course_name":"java",
                 "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",

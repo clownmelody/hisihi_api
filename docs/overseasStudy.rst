@@ -104,27 +104,31 @@
 **Response** `200` ::
 
     {
-        "application_requirements":"这里是申请的要求",
-        "deadline_for_applications":"2016年8月20日",
-        "difficulty_of_application":"难",
+        "application_requirements":"345356",
+        "deadline_for_applications":"2435",
+        "difficulty_of_application":"3451",
         "graduate_major":[
+            "工业设计",
             "哈哈设计"
         ],
-        "ielts":"9.2",
-        "introduction":"这里是学校简介",
+        "ielts":"3456",
+        "introduction":"4365",
         "logo_url":"http://pic.hisihi.com/2016-05-05/572addb5c3bd9.png",
-        "name":"斯坦福大学",
-        "proportion_of_undergraduates":"67%",
-        "scholarship":"8000",
-        "school_environment":"这里是学校环境介绍",
-        "sia_recommend_level":"100&",
-        "sia_student_enrollment_rate":"90%",
-        "toefl":"7.0",
-        "tuition_fees":"￥434，000",
+        "name":"哈弗大学",
+        "proportion_of_undergraduates":"132",
+        "scholarship":"4536",
+        "school_environment":"345645",
+        "share_url":"http://hisihi.com/api.php?s=/university/showuniversitymainpage/university_id/3",
+        "sia_recommend_level":"34534",
+        "sia_student_enrollment_rate":"234",
+        "toefl":"546",
+        "tuition_fees":"124",
         "undergraduate_major":[
-            "平面设计"
+            "平面设计",
+            "XX设计"
         ],
-        "website":"http://stf.com"
+        "web_url":"http://hisihi.com/api.php?s=/university/showuniversitymainpage/university_id/3",
+        "website":"34"
     }
 -- end
 
