@@ -107,7 +107,7 @@ def get_overseas_study_university_photos(uid):
 
 
 @api.route('/university/enroll', methods=['POST'])
-#@auth.login_required
+@auth.login_required
 def create_university_enroll():
     form = OrgUniversityEnrollForm.create_api_form()
     university_enroll = UniversityEnroll()
