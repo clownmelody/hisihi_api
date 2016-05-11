@@ -276,3 +276,39 @@
       "university_id": "1"
     }
 ** end **
+
+
+获取大学的专业列表
+~~~~~~~~~~~
+**URL**::
+
+    GET      overseas_study/university/<int:uid>/majors
+
+**Parameters**:
+
+* uid: 大学id
+
+**Response** `200` ::
+
+    {
+      "count": 4,
+      "list": [
+        {
+          "id": 1,
+          "name": "平面设计"
+        },
+        {
+          "id": 2,
+          "name": "工业设计"
+        },
+        {
+          "id": 3,
+          "name": "XX设计"
+        },
+        {
+          "id": 4,
+          "name": "哈哈设计"
+        }
+      ]
+    }
+-- end
