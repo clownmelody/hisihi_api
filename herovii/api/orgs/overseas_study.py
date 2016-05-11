@@ -1,10 +1,12 @@
+from herovii.models.base import db
 from flask import jsonify, json, request
 from herovii.libs.bpbase import ApiBlueprint, auth
+from herovii.models.org.university_enroll import UniversityEnroll
 from herovii.service.overseas_study import get_overseas_study_banner_service, get_overseas_study_hot_country_service, \
     get_overseas_study_hot_university_service, get_overseas_study_university_info_service, \
     get_overseas_study_university_list_by_country_id_service, get_overseas_study_country_service, \
     get_overseas_study_university_photos_service
-from herovii.validator.forms import PagingForm
+from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm
 
 __author__ = 'yangchujie'
 
@@ -102,3 +104,15 @@ def get_overseas_study_university_photos(uid):
     headers = {'Content-Type': 'application/json'}
     json_obj = json.dumps(data)
     return json_obj, 200, headers
+
+
+@api.route('/university/enroll', methods=['POST'])
+#@auth.login_required
+def create_university_enroll():
+    form = OrgUniversityEnrollForm.create_api_form()
+    university_enroll = UniversityEnroll()
+    for key, value in form.body_data.items():
+        setattr(university_enroll, key, value)
+    with db.auto_commit():
+        db.session.add(university_enroll)
+    return jsonify(university_enroll), 201

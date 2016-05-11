@@ -241,3 +241,38 @@
       ]
     }
 -- end
+
+
+留学大学报名
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /university/enroll
+
+**Parameters**:(jsoon)
+
+* university_id:  大学id
+* uid: 用户id
+* student_name: 学生姓名
+* student_phone_num:  学生电话
+* student_education: 学生学历
+* student_qq: 学生qq(选填)]
+* study_abroad_purpose: 留学目的
+* apply_major: 选择专业
+
+**Response** `201` ::
+
+    {
+      "apply_major": "室内设计",
+      "create_time": 1462953005,
+      "id": 1,
+      "status": 1,
+      "student_education": "本科",
+      "student_name": "雷锅",
+      "student_phone_num": "18600466074",
+      "student_qq": "1173838760",
+      "study_abroad_purpose": "艺术留学",
+      "uid": "577",
+      "university_id": "1"
+    }
+** end **
