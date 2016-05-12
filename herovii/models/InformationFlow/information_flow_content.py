@@ -17,3 +17,4 @@ class InformationFlowContent(Base):
     create_time = Column(Integer)
     status = Column(SmallInteger, default=1)
     config_type = Column(Integer, nullable=True)
+    sort = Column(Integer, nullable=True)
