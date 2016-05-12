@@ -128,7 +128,7 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
         data_list = db.session.query(InformationFlowContent) \
             .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]),
                     InformationFlowContent.config_type == 1) \
-            .order_by(InformationFlowContent.sort.asc(), InformationFlowContent.create_time.desc()) \
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
         if data_list:
@@ -190,7 +190,7 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
             .count()
         data_list = db.session.query(InformationFlowContent.id, InformationFlowContent.content_id) \
             .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type) \
-            .order_by(InformationFlowContent.sort.asc(), InformationFlowContent.create_time.desc()) \
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
         if data_list:
