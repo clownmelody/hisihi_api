@@ -4,6 +4,8 @@ import json
 import urllib.request
 from flask import current_app
 from sqlalchemy import func
+from sqlalchemy.sql.expression import distinct
+
 from herovii.libs.util import get_oss_pic_path_by_pic_id, get_img_service_path_by_pic_id
 from herovii.models.InformationFlow.advs import Advs
 from herovii.models.InformationFlow.document import Document
@@ -80,11 +82,13 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
     stop = start + per_page
     content_list = []
     if config_type == 0:
-        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1).count()
-        data_list = db.session.query(InformationFlowContent) \
-            .filter(InformationFlowContent.status == 1) \
-            .order_by(InformationFlowContent.create_time.desc()) \
-            .slice(start, stop) \
+        content_count = db.session.query(func.count(distinct(InformationFlowContent.content_id)))\
+            .filter(InformationFlowContent.status == 1).scalar()
+        data_list = db.session.query(InformationFlowContent)\
+            .filter(InformationFlowContent.status == 1)\
+            .group_by(InformationFlowContent.content_id)\
+            .order_by(InformationFlowContent.create_time.desc())\
+            .slice(start, stop)\
             .all()
     else:
         content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1,
