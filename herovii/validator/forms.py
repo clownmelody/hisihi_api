@@ -346,4 +346,14 @@ class UpdateNewsForm(Form):
     content = StringField()
 
 
+class OrgUniversityEnrollForm(Form):
+    university_id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    uid = IntegerField(validators=[DataRequired()])
+    student_name = StringField(validators=[DataRequired()])
+    student_phone_num = StringField(validators=[DataRequired()])
+    student_education = StringField(validators=[DataRequired()])
+    student_qq = StringField()
+    study_abroad_purpose = StringField(validators=[DataRequired()])
+    apply_major = StringField(validators=[DataRequired()])
+
 

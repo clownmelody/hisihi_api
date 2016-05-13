@@ -253,3 +253,34 @@ def get_overseas_study_university_photos_service(uid, page, per_page):
         data_list['count'] = 0
         data_list['list'] = None
     return data_list
+
+
+def get_overseas_study_university_majors_service(uid):
+    majors = db.session.query(University.undergraduate_majors, University.graduate_majors)\
+        .filter(University.status == 1, University.id == uid).first()
+    major_array = []
+    undergraduate_majors = majors.undergraduate_majors.split('#')
+    graduate_majors = majors.graduate_majors.split('#')
+    if undergraduate_majors:
+        major_array.extend(undergraduate_majors)
+    if graduate_majors:
+        major_array.extend(graduate_majors)
+    data_list = {}
+    major_list = db.session.query(UniversityMajor.name, UniversityMajor.id) \
+        .filter(UniversityMajor.status == 1,
+                UniversityMajor.id.in_(major_array)) \
+        .all()
+    if major_list:
+        p_list = []
+        for major in major_list:
+            major_obj = {
+                "id": major.id,
+                "name": major.name,
+            }
+            p_list.append(major_obj)
+        data_list['count'] = len(p_list)
+        data_list['list'] = p_list
+    else:
+        data_list['count'] = 0
+        data_list['list'] = None
+    return data_list

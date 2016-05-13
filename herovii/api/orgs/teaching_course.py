@@ -90,7 +90,7 @@ def get_teaching_course_enroll(cid):
 
 
 @api.route('/teaching_course/<int:cid>/enroll', methods=['POST'])
-#@auth.login_required
+@auth.login_required
 def create_org_teaching_course_enroll(cid):
     form = OrgTeachingCourseEnrollForm.create_api_form()
     teaching_course_enroll = TeachingCourseEnroll()

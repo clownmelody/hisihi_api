@@ -4,6 +4,8 @@ import json
 import urllib.request
 from flask import current_app
 from sqlalchemy import func
+from sqlalchemy.sql.expression import distinct
+
 from herovii.libs.util import get_oss_pic_path_by_pic_id, get_img_service_path_by_pic_id
 from herovii.models.InformationFlow.advs import Advs
 from herovii.models.InformationFlow.document import Document
@@ -80,9 +82,11 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
     stop = start + per_page
     content_list = []
     if config_type == 0:
-        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1).count()
+        content_count = db.session.query(func.count(distinct(InformationFlowContent.content_id)))\
+            .filter(InformationFlowContent.status == 1).scalar()
         data_list = db.session.query(InformationFlowContent) \
             .filter(InformationFlowContent.status == 1) \
+            .group_by(InformationFlowContent.content_id)\
             .order_by(InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
@@ -128,7 +132,7 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
         data_list = db.session.query(InformationFlowContent) \
             .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]),
                     InformationFlowContent.config_type == 1) \
-            .order_by(InformationFlowContent.create_time.desc()) \
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
         if data_list:
@@ -190,7 +194,7 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
             .count()
         data_list = db.session.query(InformationFlowContent.id, InformationFlowContent.content_id) \
             .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type) \
-            .order_by(InformationFlowContent.create_time.desc()) \
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
         if data_list:
