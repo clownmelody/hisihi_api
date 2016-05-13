@@ -98,6 +98,29 @@
 1. 如果任何参数都不传，则会返回当前用户的机构信息
 2. uid与oid为互斥参数，且oid的优先级高于uid.如果同时传递uid和oid，以oid为判断条件
 
+**Response** `200` ::
+
+    {
+        "advantage":"上市大公司#明星讲师#环境相当优越#设备非常先进#早晚班车接送#午餐供应#过节大礼包",
+        "city":"武汉",
+        "guarantee_num":200,
+        "id":16,
+        "introduce":"今天天气真好啊！",
+        "latitude":null,
+        "location":"洪山区野芷湖一号89037489347983742128号",
+        "logo":"http://pic.hisihi.com/2015-12-07/56654dfc5df6a.JPG",
+        "longitude":null,
+        "name":"刀塔天梯战队",
+        "phone_num":"123123123",
+        "slogan":"学设计就上嘿设汇",
+        "type":30,
+        "video":"",
+        "video_img":"",
+        "view_count":1968
+    }
+
+    备注：type： 14-手绘 15-留学 16-软件 （生产环境）; 30-软件 31-留学 32-手绘 （测试环境）;
+** end **
 
 获取已毕业学生
 ~~~~~~~~~~~~~~~
@@ -299,7 +322,8 @@
         "organization_name":"刀塔天梯战队",
         "price":3423,
         "start_course_time":"2016-04-26",
-        "student_num":30
+        "student_num":30,
+        "web_url": "http://hisihi.com/....."
     }
 ** end **
 
@@ -496,4 +520,69 @@
         "value": "插画"
       }
     ]
+** end **
+
+
+获取机构的简要信息（课程下的机构展示信息）
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /<int:oid>/base
+
+**Parameters**:
+
+* oid:  机构id
+
+**Response** `200` ::
+
+    {
+        "logo":"http://pic.hisihi.com/2015-12-01/565d633e3d4ed.png",
+        "view_count":2498,
+        "follow_count":8,
+        "auth":[
+            {
+                "default_display":0,
+                "tag_pic_url":"",
+                "pic_url":"http://pic.hisihi.com/2015-12-02/565e6ba9add2f.png",
+                "content":"嘿设汇为在线报名支付信用担保",
+                "disable_pic_url":"",
+                "status":true,
+                "name":"支付担保",
+                "id":2
+            },
+            {
+                "default_display":0,
+                "tag_pic_url":"",
+                "pic_url":"http://pic.hisihi.com/2015-12-02/565e6dcd5f74f.png",
+                "content":"嘿设汇为机构信誉担保",
+                "disable_pic_url":"",
+                "status":false,
+                "name":"信誉担保",
+                "id":3
+            },
+            {
+                "default_display":1,
+                "tag_pic_url":"http://pic.hisihi.com/2015-12-02/565ed4ef4f60e.png",
+                "pic_url":"http://pic.hisihi.com/2015-12-03/565faef8618b4.png",
+                "content":"嘿设汇进行评估认证",
+                "disable_pic_url":"http://pic.hisihi.com/2015-12-03/565faf03f2270.png",
+                "status":false,
+                "name":"嘿设汇认证",
+                "id":4
+            },
+            {
+                "default_display":1,
+                "tag_pic_url":"http://pic.hisihi.com/2015-12-02/565ed4fa22906.png",
+                "pic_url":"http://pic.hisihi.com/2015-12-03/565fb1c61bd54.png",
+                "content":"诚信机构诚信机构诚信机构诚信机构诚信机构诚信机构诚信机构诚信机构诚信机构诚信机构诚信机构诚信机构",
+                "disable_pic_url":"http://pic.hisihi.com/2015-12-03/565fb1cd92b81.png",
+                "status":false,
+                "name":"诚信机构",
+                "id":8
+            }
+        ],
+        "name":"黑马绘画培训机构",
+        "enroll_count":14,
+        "id":2
+    }
 ** end **

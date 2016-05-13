@@ -5,7 +5,7 @@ import re
 import time
 from datetime import datetime
 
-from flask import json
+from flask import json, current_app
 from sqlalchemy.sql.expression import text, distinct
 from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
@@ -20,6 +20,8 @@ from herovii.models.org.classmate import Classmate
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
+from herovii.models.org.org_authentication import OrgAuthentication
+from herovii.models.org.org_authentication_config import OrgAuthenticationConfig
 from herovii.models.org.org_config import OrgConfig
 from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.models.org.pic import Pic
@@ -33,6 +35,7 @@ from herovii.models.org.video import Video
 from herovii.models.tag import Tag
 from herovii.models.user.field import Field
 from herovii.models.user.avatar import Avatar
+from herovii.models.user.follow import Follow
 from herovii.models.user.id_realeation import IdRelation
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
@@ -277,17 +280,20 @@ def get_teaching_course_by_id(cid):
     org_info = Info.query.get(course.organization_id)
     if not org_info:
         raise NotFound(error='organization not found')
+    server_host_name = current_app.config['SERVER_HOST_NAME']
+    web_url = server_host_name + "/api.php?s=/organization/showteachingcoursemainpage/course_id/" + str(cid)
     return {
-            'organization_id': course.organization_id,
-            'organization_name': org_info.name,
-            'course_name': course.course_name,
-            'cover_pic': course.cover_pic,
-            'start_course_time': course.start_course_time,
-            'lesson_period': course.lesson_period,
-            'student_num': course.student_num,
-            'lecture_name': course.lecture_name,
-            'price': course.price
-        }
+        'organization_id': course.organization_id,
+        'organization_name': org_info.name,
+        'course_name': course.course_name,
+        'cover_pic': course.cover_pic,
+        'start_course_time': course.start_course_time,
+        'lesson_period': course.lesson_period,
+        'student_num': course.student_num,
+        'lecture_name': course.lecture_name,
+        'price': course.price,
+        'web_url': web_url
+    }
 
 
 def get_teaching_course_detail_by_id(cid):
@@ -299,24 +305,24 @@ def get_teaching_course_detail_by_id(cid):
         raise NotFound(error='organization not found')
     total_count, enroll_list = get_teaching_course_enroll_by_id(cid, 1, 2000)
     return {
-            'organization_id': course.organization_id,
-            'organization_name': org_info.name,
-            'course_name': course.course_name,
-            'cover_pic': course.cover_pic,
-            'start_course_time': course.start_course_time,
-            'lesson_period': course.lesson_period,
-            'student_num': course.student_num,
-            'lecture_name': course.lecture_name,
-            'price': course.price,
-            'already_registered': course.already_registered,
-            'light_authentication': org_info.light_authentication,
-            'introduction': course.introduction,
-            'plan': course.plan,
-            'enroll_info': {
-                "total_count": total_count,
-                "data": enroll_list
-            }
+        'organization_id': course.organization_id,
+        'organization_name': org_info.name,
+        'course_name': course.course_name,
+        'cover_pic': course.cover_pic,
+        'start_course_time': course.start_course_time,
+        'lesson_period': course.lesson_period,
+        'student_num': course.student_num,
+        'lecture_name': course.lecture_name,
+        'price': course.price,
+        'already_registered': course.already_registered,
+        'light_authentication': org_info.light_authentication,
+        'introduction': course.introduction,
+        'plan': course.plan,
+        'enroll_info': {
+            "total_count": total_count,
+            "data": enroll_list
         }
+    }
 
 
 def get_teaching_course_enroll_by_id(cid, page, per_page):
@@ -805,7 +811,7 @@ def get_class_sign_in_detail_by_date(oid, cid, date, page, per_page):
 def get_org_class_all_students_service(oid, cid, page, per_page):
     is_exist = db.session.query(StudentClass).filter(StudentClass.organization_id == oid,
                                                      StudentClass.id == cid,
-                                                     StudentClass.status == 1)\
+                                                     StudentClass.status == 1) \
         .count()
     if not is_exist:
         raise ParamException()
@@ -971,7 +977,7 @@ def get_org_pics(type_c, page, per_page, oid):
 
 
 def set_lecturer_extend_info(uid, oid):
-    res = db.session.query(IdRelation).filter(IdRelation.uid == uid)\
+    res = db.session.query(IdRelation).filter(IdRelation.uid == uid) \
         .update({IdRelation.group_id: 6})
     org_name = db.session.query(Info.name).filter(Info.id == oid, Info.status == 1).first()
     count = db.session.query(Field).filter(Field.uid == uid, Field.field_id == 39).count()
@@ -987,7 +993,7 @@ def set_lecturer_extend_info(uid, oid):
         with db.auto_commit():
             db.session.add(field)
     else:
-        result = db.session.query(Field).filter(Field.uid == uid, Field.field_id == 39)\
+        result = db.session.query(Field).filter(Field.uid == uid, Field.field_id == 39) \
             .update({Field.field_data: org_name.name})
     if res and (result or field.id):
         return True
@@ -1002,7 +1008,7 @@ def get_org_all_class_service(oid, page, per_page):
     stop = start + per_page
     class_list = db.session.query(StudentClass.id, StudentClass.title, StudentClass.monday, StudentClass.tuesday,
                                   StudentClass.wednesday, StudentClass.thursday, StudentClass.friday,
-                                  StudentClass.saturday, StudentClass.sunday)\
+                                  StudentClass.saturday, StudentClass.sunday) \
         .filter(StudentClass.organization_id == oid, StudentClass.status == 1) \
         .slice(start, stop) \
         .all()
@@ -1010,9 +1016,9 @@ def get_org_all_class_service(oid, page, per_page):
     for org_class in class_list:
         class_stu_total_count = db.session.query(Classmate).filter(Classmate.class_id == org_class.id,
                                                                    Classmate.status == 1).count()
-        class_time = '周一' + parse_class_time(org_class.monday) + '、周二' + parse_class_time(org_class.tuesday)\
-                     + '、周三' + parse_class_time(org_class.wednesday) + '、周四' + parse_class_time(org_class.thursday)\
-                     + '、周五' + parse_class_time(org_class.friday) + '、周六' + parse_class_time(org_class.saturday)\
+        class_time = '周一' + parse_class_time(org_class.monday) + '、周二' + parse_class_time(org_class.tuesday) \
+                     + '、周三' + parse_class_time(org_class.wednesday) + '、周四' + parse_class_time(org_class.thursday) \
+                     + '、周五' + parse_class_time(org_class.friday) + '、周六' + parse_class_time(org_class.saturday) \
                      + '、周日' + parse_class_time(org_class.sunday)
         _org_class = {"id": org_class.id, "name": org_class.title, "student_count": class_stu_total_count,
                       "class_time": class_time}
@@ -1037,19 +1043,19 @@ def parse_class_time(day):
 
 def get_org_enroll_student_service(oid, name):
     if name is None:
-        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path)\
-            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid)\
-            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid)\
-            .filter(Enroll.organization_id == oid, Enroll.status == 2)\
+        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path) \
+            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid) \
+            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid) \
+            .filter(Enroll.organization_id == oid, Enroll.status == 2) \
             .all()
         total_count = len(enroll_students)
     else:
-        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path)\
-            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid)\
-            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid)\
-            .outerjoin(UserCSUSecure, Enroll.student_uid == UserCSUSecure.id)\
+        enroll_students = db.session.query(Enroll.student_uid, UserCSU.nickname, Avatar.path) \
+            .outerjoin(Avatar, Enroll.student_uid == Avatar.uid) \
+            .outerjoin(UserCSU, Enroll.student_uid == UserCSU.uid) \
+            .outerjoin(UserCSUSecure, Enroll.student_uid == UserCSUSecure.id) \
             .filter(Enroll.organization_id == oid, Enroll.status == 2, or_(UserCSU.nickname.like('%' + name + '%'),
-                                                                           UserCSUSecure.mobile.like('%' + name + '%')))\
+                                                                           UserCSUSecure.mobile.like('%' + name + '%'))) \
             .all()
         total_count = len(enroll_students)
     data = []
@@ -1064,9 +1070,9 @@ def get_org_class_info_service(cid):
     class_info = db.session.query(StudentClass.id, StudentClass.title, StudentClass.class_start_date,
                                   StudentClass.class_end_date, StudentClass.monday, StudentClass.tuesday,
                                   StudentClass.wednesday, StudentClass.thursday, StudentClass.friday,
-                                  StudentClass.saturday, StudentClass.sunday)\
-            .filter(StudentClass.id == cid, StudentClass.status == 1)\
-            .first()
+                                  StudentClass.saturday, StudentClass.sunday) \
+        .filter(StudentClass.id == cid, StudentClass.status == 1) \
+        .first()
     if not class_info:
         raise NotFound()
     data = {
@@ -1088,8 +1094,8 @@ def get_org_class_info_service(cid):
 def join_org_class_service(cid, uids):
     ids = uids.split(':')
     info = []
-    id_in_class = db.session.query(Classmate.uid)\
-        .filter(Classmate.class_id == cid, Classmate.uid.in_(ids))\
+    id_in_class = db.session.query(Classmate.uid) \
+        .filter(Classmate.class_id == cid, Classmate.uid.in_(ids)) \
         .all()
     for id_in in id_in_class:
         if str(id_in.uid) in ids:
@@ -1111,29 +1117,29 @@ def join_org_class_service(cid, uids):
 def quit_org_class_service(cid, uids):
     ids = uids.split(':')
     with db.auto_commit():
-        count = db.session.query(Classmate).filter(Classmate.class_id == cid, Classmate.uid.in_(ids))\
+        count = db.session.query(Classmate).filter(Classmate.class_id == cid, Classmate.uid.in_(ids)) \
             .delete(synchronize_session=False)
     return count
 
 
 def update_teachers_field_info(oid, org_name):
-    teachers = db.session.query(TeacherGroupRelation.uid)\
+    teachers = db.session.query(TeacherGroupRelation.uid) \
         .filter(TeacherGroupRelation.organization_id == oid, TeacherGroupRelation.group == 6,
-                TeacherGroupRelation.status > 0)\
-        .distinct()\
+                TeacherGroupRelation.status > 0) \
+        .distinct() \
         .all()
     t_ids = []
     for uid in teachers:
         t_ids.append(uid.uid)
     if t_ids:
-        result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39)\
+        result = db.session.query(Field).filter(Field.uid.in_(t_ids), Field.field_id == 39) \
             .update({Field.field_data: org_name}, synchronize_session=False)
         if not result:
             raise UpdateDBError()
 
 
 def set_user_auth_group_access(uid, group_id):
-    res = db.session.query(IdRelation).filter(IdRelation.uid == uid)\
+    res = db.session.query(IdRelation).filter(IdRelation.uid == uid) \
         .update({IdRelation.group_id: group_id})
     if res:
         return True
@@ -1151,7 +1157,7 @@ def add_major_to_org(oid, major_id):
     ids = major_id.split(':')
     info = []
     result = db.session.query(OrgTagRelation).filter(OrgTagRelation.organization_id == oid,
-                                                     OrgTagRelation.tag_type == 8)\
+                                                     OrgTagRelation.tag_type == 8) \
         .delete()
     for tid in ids:
         stu = {
@@ -1172,7 +1178,7 @@ def get_major_by_oid(oid):
     major = db.session.query(OrgTagRelation.tag_id, Tag.value).filter(OrgTagRelation.organization_id == oid,
                                                                       OrgTagRelation.tag_type == 8,
                                                                       OrgTagRelation.status == 1) \
-        .join(Tag, Tag.id == OrgTagRelation.tag_id)\
+        .join(Tag, Tag.id == OrgTagRelation.tag_id) \
         .all()
     result = {
         "organization_id": oid,
@@ -1189,3 +1195,51 @@ def get_major_by_oid(oid):
         result['major_list'] = major_list
     return result
 
+
+def get_org_stat(oid):
+    if oid:
+        org_info = get_org_by_id(oid)
+        enroll_count = db.session.query(Enroll) \
+            .filter(Enroll.organization_id == oid, Enroll.status == 2) \
+            .count()
+        org = db.session.query(Info) \
+            .filter(Info.id == oid) \
+            .first()
+        follow_count = db.session.query(Follow) \
+            .filter(Follow.follow_who == oid, Follow.type == 2) \
+            .count()
+        follow_count += int(org.fake_fans_count)
+        auth_list = db.session.query(OrgAuthenticationConfig) \
+            .filter(OrgAuthenticationConfig.status == 1,
+                    OrgAuthenticationConfig.flag == 0) \
+            .all()
+        auth_result_list = []
+        for auth in auth_list:
+            is_auth = db.session.query(OrgAuthentication) \
+                .filter(OrgAuthentication.organization_id == oid,
+                        OrgAuthentication.authentication_id == auth.id) \
+                .first()
+            auth_data = {
+                'id': auth.id,
+                'name': auth.name,
+                'default_display': auth.default_display,
+                'pic_url': auth.pic_url,
+                'disable_pic_url': auth.disable_pic_url,
+                'tag_pic_url': auth.tag_pic_url,
+                'content': auth.content,
+                'status': False
+            }
+            if is_auth:
+                auth_data['status'] = True
+            auth_result_list.append(auth_data)
+        return {
+            'view_count': org_info.view_count,
+            'id': org_info.id,
+            'name': org_info.name,
+            'logo': org_info.logo,
+            'enroll_count': enroll_count,
+            'auth': auth_result_list,
+            'follow_count': follow_count
+        }
+    if not oid:
+        raise NotFound('organization not found', error_code=5000)
