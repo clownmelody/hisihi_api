@@ -332,8 +332,6 @@ def get_teaching_course_enroll_by_id(cid, page, per_page):
         raise NotFound(error_code=5008, error='培训课程信息不存在')
     total_count = TeachingCourseEnroll.query.filter_by(course_id=cid, status=1).count()
     enroll_list = TeachingCourseEnroll.query.filter_by(course_id=cid, status=1).slice(start, stop).all()
-    if not enroll_list:
-        raise NotFound(error='no one want to learn the course')
     enroll_user_list = []
     for enroll in enroll_list:
         user_info = UserCSU.query.filter_by(uid=enroll.uid).first()
