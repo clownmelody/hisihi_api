@@ -105,7 +105,7 @@ def get_org_major(oid):
 
 
 @api.route('/<int:oid>/base', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def get_org_base_info(oid):
     info = get_org_stat(oid)
     json_str = json.dumps(info)
