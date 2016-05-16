@@ -4,7 +4,7 @@ import json
 import urllib.request
 from flask import current_app
 from sqlalchemy import func
-from sqlalchemy.sql.expression import distinct
+from sqlalchemy.sql.expression import distinct, text
 
 from herovii.libs.util import get_oss_pic_path_by_pic_id, get_img_service_path_by_pic_id
 from herovii.models.InformationFlow.advs import Advs
@@ -84,21 +84,26 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
     if config_type == 0:
         content_count = db.session.query(func.count(distinct(InformationFlowContent.content_id)))\
             .filter(InformationFlowContent.status == 1).scalar()
-        data_list = db.session.query(InformationFlowContent) \
-            .filter(InformationFlowContent.status == 1) \
-            .group_by(InformationFlowContent.content_id)\
-            .order_by(InformationFlowContent.create_time.desc()) \
-            .slice(start, stop) \
+        query1 = db.session.query(InformationFlowContent)\
+            .filter(InformationFlowContent.status == 1)\
+            .order_by(InformationFlowContent.create_time.desc()).subquery()
+        query2 = db.session.query(query1)\
+            .group_by(query1.c.content_id).subquery()
+        data_list = db.session.query(query2)\
+            .order_by(query2.c.create_time.desc())\
+            .slice(start, stop)\
             .all()
     else:
-        content_count = db.session.query(InformationFlowContent).filter(InformationFlowContent.status == 1,
-                                                                        InformationFlowContent.config_type == config_type) \
-            .count()
-        data_list = db.session.query(InformationFlowContent) \
-            .filter(InformationFlowContent.status == 1,
-                    InformationFlowContent.config_type == config_type) \
-            .order_by(InformationFlowContent.create_time.desc()) \
-            .slice(start, stop) \
+        content_count = db.session.query(func.count(distinct(InformationFlowContent.content_id)))\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type).scalar()
+        query1 = db.session.query(InformationFlowContent)\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type)\
+            .order_by(InformationFlowContent.create_time.desc()).subquery()
+        query2 = db.session.query(query1)\
+            .group_by(query1.c.content_id).subquery()
+        data_list = db.session.query(query2)\
+            .order_by(query2.c.create_time.desc())\
+            .slice(start, stop)\
             .all()
     if data_list:
         for content in data_list:
