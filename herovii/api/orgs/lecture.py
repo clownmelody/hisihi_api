@@ -2,7 +2,7 @@ from collections import Counter
 from flask import jsonify, json
 from flask.globals import request
 from herovii.libs.bpbase import ApiBlueprint, auth
-from herovii.libs.error_code import ParamException, VolumeTooLarge
+from herovii.libs.error_code import ParamException, VolumeTooLarge, NotFound
 
 from herovii.libs.helper import success_json
 from herovii.models.base import db
@@ -59,6 +59,8 @@ def join_teacher_group():
     t_g_relation.uid = form.uid.data
     t_g_relation.organization_id = form.oid.data
     t_g_relation.group = 6
+    t_g_relation.teacher_good_at_subjects = form.teacher_good_at_subjects.data
+    t_g_relation.teacher_introduce = form.teacher_introduce.data
     set_lecturer_extend_info(t_g_relation.uid, t_g_relation.organization_id)
     with db.auto_commit():
         db.session.add(t_g_relation)
@@ -155,4 +157,17 @@ def get_lecture():
     headers = {'Content-Type': 'application/json'}
     return lecture, 200, headers
 
+
+@api.route('/lecture/info/update', methods=['PUT'])
+#@auth.login_required
+def update_teacher_info():
+    form = LectureJoinForm.create_api_form()
+    t_g_relation_id = form.id.data
+    t_g_relation_info = TeacherGroupRelation.query.get(t_g_relation_id)
+    if not t_g_relation_info:
+        raise NotFound(error='organization not found')
+    with db.auto_commit():
+        for key, value in form.body_data.items():
+            setattr(t_g_relation_info, key, value)
+    return jsonify(t_g_relation_info), 202
 
