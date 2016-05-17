@@ -74,9 +74,11 @@
 .. sourcecode:: json
 
     {
-        "uid":3,
-        "oid":2,
-        "teacher_group_id":5
+        "uid":3,(必填)
+        "oid":2,(必填)
+        "teacher_group_id":5,(必填)
+        "teacher_good_at_subjects":"擅长UI设计",
+        "teacher_introduce":"这个老师很帅"
     }
 
 **Parameters**:
@@ -84,6 +86,8 @@
 * uid：教师id
 * oid：机构id
 * teacher_group_id: 教师分组id
+* teacher_good_at_subjects：老师擅长课程
+* teacher_introduce: 老师简介
 
 **Response** `201`:
 
@@ -92,7 +96,7 @@
     {
         "id": 3,
         "uid": 3,
-        "teacher_group_id": 5
+        "teacher_group_id": 5,
         "teacher_good_at_subjects":"擅长UI设计",
         "teacher_introduce":"这个老师很帅"
     }
