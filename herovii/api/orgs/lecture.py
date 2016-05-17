@@ -12,7 +12,7 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 
 from herovii.service.org import get_org_teachers_by_group, search_lecture, get_org_teachers, set_lecturer_extend_info,\
     set_user_auth_group_access
-from herovii.validator.forms import TeacherGroupForm, LectureJoinForm, PagingForm
+from herovii.validator.forms import TeacherGroupForm, LectureJoinForm, PagingForm, LectureUpdateForm
 
 __author__ = 'bliss'
 
@@ -162,10 +162,14 @@ def get_lecture():
 #@auth.login_required
 def update_teacher_info():
     form = LectureJoinForm.create_api_form()
-    t_g_relation_id = form.id.data
-    t_g_relation_info = TeacherGroupRelation.query.get(t_g_relation_id)
+    uid = form.uid.data
+    teacher_group_id = form.teacher_group_id.data
+    oid = form.oid.data
+    t_g_relation_info = TeacherGroupRelation.query.filter(TeacherGroupRelation.uid == uid,
+                                                          TeacherGroupRelation.teacher_group_id == teacher_group_id,
+                                                          TeacherGroupRelation.organization_id == oid).first()
     if not t_g_relation_info:
-        raise NotFound(error='organization not found')
+        raise NotFound(error='teacher not found')
     with db.auto_commit():
         for key, value in form.body_data.items():
             setattr(t_g_relation_info, key, value)
