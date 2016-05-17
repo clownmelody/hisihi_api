@@ -74,9 +74,11 @@
 .. sourcecode:: json
 
     {
-        "uid":3,
-        "oid":2,
-        "teacher_group_id":5
+        "uid":3,(必填)
+        "oid":2,(必填)
+        "teacher_group_id":5,(必填)
+        "teacher_good_at_subjects":"擅长UI设计",
+        "teacher_introduce":"这个老师很帅"
     }
 
 **Parameters**:
@@ -84,6 +86,8 @@
 * uid：教师id
 * oid：机构id
 * teacher_group_id: 教师分组id
+* teacher_good_at_subjects：老师擅长课程
+* teacher_introduce: 老师简介
 
 **Response** `201`:
 
@@ -92,7 +96,9 @@
     {
         "id": 3,
         "uid": 3,
-        "teacher_group_id": 5
+        "teacher_group_id": 5,
+        "teacher_good_at_subjects":"擅长UI设计",
+        "teacher_introduce":"这个老师很帅"
     }
 
 **Memo** `201`:
@@ -141,57 +147,48 @@
     {
       "groups": [
         {
-          "group_id": 5,
-          "group_title": "平面设计培训组",
+          "group_id": 77,
+          "group_title": "平面设计分组",
           "lectures": [
             {
-              "avatar": "2015-07-15/55a6367000dd5-05505543.jpg",
+              "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-18/564c56eae6754-05505543.jpg",
               "lecture": {
-                "nickname": "Mouri",
-                "sex": 0,
-                "uid": 536
-              }
+                "nickname": "洁洁",
+                "sex": 2,
+                "uid": 578
+              },
+              "teacher_good_at_subjects": null,
+              "teacher_introduce": null
             },
             {
-              "avatar": "2015-07-15/55a63ecfafbfb-05505543.jpg",
+              "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-17/55a8aef4d0f65-05505543.jpg",
               "lecture": {
-                "nickname": "Use",
-                "sex": 0,
-                "uid": 543
-              }
-            }
-          ]
-        },
-        {
-          "group_id": 6,
-          "group_title": "UI设计培训组",
-          "lectures": [
-            {
-              "avatar": "2015-07-15/55a63dec7e9f8-05505543.jpg",
-              "lecture": {
-                "nickname": "Frankie",
-                "sex": 0,
-                "uid": 542
-              }
-            }
-          ]
-        },
-        {
-          "group_id": 7,
-          "group_title": "网页设计培训组",
-          "lectures": [
-            {
-              "avatar": "2015-07-20/55ac659074d27.png",
-              "lecture": {
-                "nickname": "Rfly",
+                "nickname": "皮卡Q",
                 "sex": 1,
-                "uid": 69
-              }
+                "uid": 103
+              },
+              "teacher_good_at_subjects": null,
+              "teacher_introduce": null
+            },
+            {
+              "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2016-04-21/5718976639ee3-05505543.jpg",
+              "lecture": {
+                "nickname": "少雷",
+                "sex": 1,
+                "uid": 577
+              },
+              "teacher_good_at_subjects": "hahhah",
+              "teacher_introduce": "henhao henhao"
             }
           ]
+        },
+        {
+          "group_id": 78,
+          "group_title": "ddd",
+          "lectures": []
         }
       ],
-      "org_id": 2
+      "org_id": 41
     }
 
 **Memo**：
@@ -214,27 +211,61 @@
 **Response** `200`::
 
     {
-        "data":[
-            {
-                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-15/55a62d15b9fc4-05505543.jpg",
-                "nickname":"LEE",
-                "teacher_group_id":5,
-                "uid":529
-            },
-            {
-                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-15/55a63ecfafbfb-05505543.jpg",
-                "nickname":"Use",
-                "teacher_group_id":7,
-                "uid":543
-            },
-            {
-                "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-03-26/551369fe8358c-05505543.jpg",
-                "nickname":"Rfly",
-                "teacher_group_id":7,
-                "uid":69
-            }
-        ],
-        "total_count":3
+      "data": [
+        {
+          "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-11-18/564c56eae6754-05505543.jpg",
+          "nickname": "洁洁",
+          "teacher_good_at_subjects": null,
+          "teacher_group_id": 77,
+          "teacher_introduce": null,
+          "uid": 578
+        },
+        {
+          "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-07-17/55a8aef4d0f65-05505543.jpg",
+          "nickname": "皮卡Q",
+          "teacher_good_at_subjects": null,
+          "teacher_group_id": 77,
+          "teacher_introduce": null,
+          "uid": 103
+        },
+        {
+          "avatar": "http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2016-04-21/5718976639ee3-05505543.jpg",
+          "nickname": "少雷",
+          "teacher_good_at_subjects": "hahhah",
+          "teacher_group_id": 77,
+          "teacher_introduce": "henhao henhao",
+          "uid": 577
+        }
+      ],
+      "total_count": 3
+    }
+
+-- end
+
+
+修改老师的信息
+~~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    PUT  org/lecture/info/update
+
+**Parameters**:（json）
+
+* oid：机构id号(必填)
+* uid：老师uid(必填)
+* teacher_group_id: 老师分组id(必填)
+* teacher_good_at_subjects：老师擅长课程
+* teacher_introduce: 老师简介
+
+**Response** `202`::
+
+    {
+      "id": 142,
+      "teacher_good_at_subjects": "擅长ps",
+      "teacher_group_id": "77",
+      "teacher_introduce": "这是一个好老师",
+      "uid": "577"
     }
 
 -- end

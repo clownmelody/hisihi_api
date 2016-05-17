@@ -58,11 +58,12 @@ def get_org_teachers_by_group(oid):
 
     # relation = aliased
     # 这里需要使用子查询 subquery
-    sub_query = db.session.query(TeacherGroupRelation.uid, TeacherGroupRelation.teacher_group_id). \
+    sub_query = db.session.query(TeacherGroupRelation). \
         filter(TeacherGroupRelation.status != -1).subquery()
 
     # 需要使用subquery的.c 属性来引用字段
-    collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid). \
+    collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid,
+                                        sub_query.c.teacher_good_at_subjects, sub_query.c.teacher_introduce,). \
         filter(TeacherGroup.organization_id == oid, TeacherGroup.status != -1). \
         outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id). \
         order_by(TeacherGroup.id)
@@ -110,7 +111,9 @@ def get_org_teachers(oid, page, per_page):
             'uid': teacher.uid,
             'teacher_group_id': teacher.teacher_group_id,
             'nickname': user.nickname,
-            'avatar': stu_avatar_full_path
+            'avatar': stu_avatar_full_path,
+            'teacher_good_at_subjects': teacher.teacher_good_at_subjects,
+            'teacher_introduce': teacher.teacher_introduce
         }
         data.append(tea_object)
     return total_count, data
@@ -146,8 +149,8 @@ def dto_teachers_group(oid, l, teachers):
 
 def dto_teachers_group_1(oid, l, teachers):
     group_keys = MultiDict()
-    for group_id, title, uid in l:
-        group_keys.add((group_id, title), uid)
+    for group_id, title, uid, teacher_good_at_subjects, teacher_introduce in l:
+        group_keys.add((group_id, title), (uid, teacher_good_at_subjects, teacher_introduce))
 
     groups = []
 
@@ -160,9 +163,10 @@ def dto_teachers_group_1(oid, l, teachers):
         lectures = []
         for uid in uids:
             for t, avatar in teachers:
-                if uid == t.uid:
+                if uid[0] == t.uid:
                     avatar = get_full_oss_url(avatar, bucket_config='ALI_OSS_AVATAR_BUCKET_NAME')
-                    t = {'lecture': t, 'avatar': avatar}
+                    t = {'lecture': t, 'avatar': avatar, 'teacher_good_at_subjects': uid[1],
+                         'teacher_introduce': uid[2]}
                     lectures.append(t)
         group['lectures'] = lectures
         groups.append(group)
@@ -217,6 +221,7 @@ def dto_org_teaching_courses_paginate(oid, except_id, page, count):
             'course_name': course.course_name,
             'cover_pic': course.cover_pic,
             'start_course_time': course.start_course_time,
+            'end_course_time': course.end_course_time,
             'lesson_period': course.lesson_period,
             'student_num': course.student_num,
             'lecture_name': course.lecture_name,
@@ -288,6 +293,7 @@ def get_teaching_course_by_id(cid):
         'course_name': course.course_name,
         'cover_pic': course.cover_pic,
         'start_course_time': course.start_course_time,
+        'end_course_time': course.end_course_time,
         'lesson_period': course.lesson_period,
         'student_num': course.student_num,
         'lecture_name': course.lecture_name,
@@ -310,6 +316,7 @@ def get_teaching_course_detail_by_id(cid):
         'course_name': course.course_name,
         'cover_pic': course.cover_pic,
         'start_course_time': course.start_course_time,
+        'end_course_time': course.end_course_time,
         'lesson_period': course.lesson_period,
         'student_num': course.student_num,
         'lecture_name': course.lecture_name,

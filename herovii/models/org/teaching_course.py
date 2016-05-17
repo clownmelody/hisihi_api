@@ -16,6 +16,7 @@ class TeachingCourse(Base):
     course_name = Column(String(100))
     cover_pic = Column(String(100))
     start_course_time = Column(String(45))
+    end_course_time = Column(String(45))
     lesson_period = Column(Integer)
     student_num = Column(Integer)
     lecture_name = Column(String(45))
@@ -29,7 +30,7 @@ class TeachingCourse(Base):
     def keys(self):
         return (
             'id', 'organization_id', 'course_name', 'cover_pic', 'price', 'introduction', 'plan',
-            'start_course_time', 'lesson_period', 'student_num', 'lecture_name', 'already_registered',
+            'start_course_time', 'end_course_time', 'lesson_period', 'student_num', 'lecture_name', 'already_registered',
             'create_time', 'status'
         )
 
