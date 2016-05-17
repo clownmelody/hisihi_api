@@ -90,7 +90,7 @@ def get_teaching_course_enroll(cid):
 
 
 @api.route('/teaching_course/<int:cid>/enroll', methods=['POST'])
-@auth.login_required
+#@auth.login_required
 def create_org_teaching_course_enroll(cid):
     form = OrgTeachingCourseEnrollForm.create_api_form()
     teaching_course_enroll = TeachingCourseEnroll()
@@ -98,4 +98,7 @@ def create_org_teaching_course_enroll(cid):
         setattr(teaching_course_enroll, key, value)
     with db.auto_commit():
         db.session.add(teaching_course_enroll)
+        course = TeachingCourse.query.get(cid)
+        count = int(course.already_registered) + 1
+        db.session.query(TeachingCourse).filter(TeachingCourse.id == cid).update({'already_registered': count})
     return jsonify(teaching_course_enroll), 201
