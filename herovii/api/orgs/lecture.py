@@ -12,7 +12,7 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 
 from herovii.service.org import get_org_teachers_by_group, search_lecture, get_org_teachers, set_lecturer_extend_info,\
     set_user_auth_group_access
-from herovii.validator.forms import TeacherGroupForm, LectureJoinForm, PagingForm, LectureUpdateForm
+from herovii.validator.forms import TeacherGroupForm, LectureJoinForm, PagingForm
 
 __author__ = 'bliss'
 
@@ -159,7 +159,7 @@ def get_lecture():
 
 
 @api.route('/lecture/info/update', methods=['PUT'])
-#@auth.login_required
+@auth.login_required
 def update_teacher_info():
     form = LectureJoinForm.create_api_form()
     uid = form.uid.data
