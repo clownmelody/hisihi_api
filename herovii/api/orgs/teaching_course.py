@@ -15,7 +15,7 @@ api = ApiBlueprint('org')
 
 
 @api.route('/teaching_course', methods=['POST'])
-@auth.login_required
+#@auth.login_required
 def create_org_teaching_course():
     form = OrgTeachingCourseForm.create_api_form()
     teaching_course = TeachingCourse()

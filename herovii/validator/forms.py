@@ -307,9 +307,12 @@ class OrgTeachingCourseForm(Form):
     course_name = StringField(validators=[DataRequired()])
     cover_pic = StringField(validators=[DataRequired()])
     start_course_time = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
+    end_course_time = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
     lesson_period = IntegerField(validators=[DataRequired(), NumberRange(1)])
     student_num = IntegerField(validators=[DataRequired(), NumberRange(1)])
     lecture_name = StringField(validators=[DataRequired()])
+    introduction = StringField(validators=[DataRequired()])
+    plan = StringField(validators=[DataRequired()])
     price = IntegerField(validators=[DataRequired(), NumberRange(1)])
 
 
@@ -328,10 +331,13 @@ class UpdateOrgTeachingCourseForm(Form):
     course_name = StringField()
     cover_pic = StringField()
     start_course_time = StringField()
+    end_course_time = StringField()
     lesson_period = IntegerField()
     student_num = IntegerField()
     lecture_name = StringField()
     price = IntegerField()
+    introduction = StringField(validators=[DataRequired()])
+    plan = StringField(validators=[DataRequired()])
 
 
 class NewsForm(Form):
