@@ -190,6 +190,7 @@
 * course_name: 课程名称
 * cover_pic: 课程图片
 * start_course_time: 课程开课时间 “2015-04-12”
+* end_course_time: 课程结束时间
 * lesson_period: 课时数
 * student_num: 班级人数
 * lecture_name: 讲师姓名
@@ -212,6 +213,7 @@
         "plan":"123",
         "price":1000,
         "start_course_time":"2016-06-09",
+        "end_course_time":"2016-04-26",
         "status":1,
         "student_num":3
     }
@@ -231,6 +233,7 @@
 * course_name: 课程名称  （选填）
 * cover_pic: 课程图片   （选填）
 * start_course_time: 课程开课时间 “2015-04-12”  （选填）
+* end_course_time: 课程结束时间 “2015-04-12”  （选填）
 * lesson_period: 课时数   （选填）
 * student_num: 班级人数   （选填）
 * lecture_name: 讲师姓名  （选填）
@@ -253,6 +256,7 @@
         "plan":"123",
         "price":1000,
         "start_course_time":"2016-06-09",
+        "end_course_time":"2016-06-09",
         "status":1,
         "student_num":3
     }
