@@ -296,16 +296,17 @@
     {
         "courses":[
             {
-                "id": 3,
                 "already_registered":0,
-                "course_name":"java",
+                "course_name":"PS-01",
                 "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
-                "lecture_name":"讲师2",
-                "lesson_period":45,
-                "organization_id":16,
-                "organization_name":"刀塔天梯战队",
-                "price":3423,
-                "start_course_time":"2016-04-26",
+                "end_course_time":"",
+                "id":3,
+                "lecture_name":"讲师3",
+                "lesson_period":31,
+                "organization_id":41,
+                "organization_name":"英雄联盟开黑组",
+                "price":2000,
+                "start_course_time":"2016-05-01",
                 "student_num":30
             }
         ],
@@ -327,17 +328,17 @@
 **Response** `200` ::
 
     {
-        "already_registered":0,
-        "course_name":"java",
+        "course_name":"UI",
         "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
-        "lecture_name":"讲师2",
-        "lesson_period":45,
-        "organization_id":16,
-        "organization_name":"刀塔天梯战队",
-        "price":3423,
-        "start_course_time":"2016-04-26",
-        "student_num":30,
-        "web_url": "http://hisihi.com/....."
+        "end_course_time":"",
+        "lecture_name":"讲师1",
+        "lesson_period":23,
+        "organization_id":60,
+        "organization_name":"北京测试机构",
+        "price":1200,
+        "start_course_time":"2016-04-27",
+        "student_num":40,
+        "web_url":"http://hisihi.com/api.php?s=/organization/showteachingcoursemainpage/course_id/2"
     }
 ** end **
 
@@ -356,28 +357,37 @@
 
     {
         "already_registered":0,
-        "course_name":"java",
+        "course_name":"UI",
         "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
+        "end_course_time":"",
         "enroll_info":{
             "data":[
                 {
-                    "avatar":"http://hisihi-avator.oss-cn-qingdao.aliyuncs.com/2015-12-22/56792a426d0b5-05505543.jpg",
-                    "nickname":"Leslie",
-                    "uid":72
+                    "create_time":1462508625,
+                    "nickname":"mnbv1234",
+                    "student_phone_num":"13100002324",
+                    "uid":74
+                },
+                {
+                    "avatar":"http://q.qlogo.cn/qqapp/1104475505/6B7F2330FA95A5DD7AF1DF2E0EB77915/100",
+                    "create_time":1462772925,
+                    "nickname":"多多",
+                    "student_phone_num":"15872386222",
+                    "uid":602
                 }
             ],
-            "total_count":1
+            "total_count":2
         },
-        "introduction":"介绍1",
-        "lecture_name":"讲师2",
-        "lesson_period":45,
-        "light_authentication":0,
-        "organization_id":16,
-        "organization_name":"刀塔天梯战队",
-        "plan":"安排1",
-        "price":3423,
-        "start_course_time":"2016-04-26",
-        "student_num":30
+        "introduction":"介绍2",
+        "lecture_name":"讲师1",
+        "lesson_period":23,
+        "light_authentication":1,
+        "organization_id":60,
+        "organization_name":"北京测试机构",
+        "plan":"安排2",
+        "price":1200,
+        "start_course_time":"2016-04-27",
+        "student_num":40
     }
 ** end **
 
