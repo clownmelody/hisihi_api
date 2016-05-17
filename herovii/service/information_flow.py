@@ -86,11 +86,11 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
             .filter(InformationFlowContent.status == 1).scalar()
         query1 = db.session.query(InformationFlowContent)\
             .filter(InformationFlowContent.status == 1)\
-            .order_by(InformationFlowContent.create_time.desc()).subquery()
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()).subquery()
         query2 = db.session.query(query1)\
             .group_by(query1.c.content_id).subquery()
         data_list = db.session.query(query2)\
-            .order_by(query2.c.create_time.desc())\
+            .order_by(query2.c.sort.desc(), query2.c.create_time.desc())\
             .slice(start, stop)\
             .all()
     else:
@@ -98,11 +98,11 @@ def get_information_flow_content_service(uid, config_type, page, per_page):
             .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type).scalar()
         query1 = db.session.query(InformationFlowContent)\
             .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type)\
-            .order_by(InformationFlowContent.create_time.desc()).subquery()
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()).subquery()
         query2 = db.session.query(query1)\
             .group_by(query1.c.content_id).subquery()
         data_list = db.session.query(query2)\
-            .order_by(query2.c.create_time.desc())\
+            .order_by(query2.c.sort.desc(), query2.c.create_time.desc())\
             .slice(start, stop)\
             .all()
     if data_list:
