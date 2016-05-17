@@ -194,21 +194,26 @@
 * student_num: 班级人数
 * lecture_name: 讲师姓名
 * price: 课程价格
+* introduction: 介绍
+* plan: 计划
 
 **Response** `201` ::
 
     {
-        "course_name":"java",
-        "cover_pic":"http://sdfsaww",
-        "create_time":1461655721,
-        "id":1,
-        "lecture_name":"rrr",
-        "lesson_period":66,
-        "organization_id":1001,
+        "already_registered":0,
+        "course_name":"ps",
+        "cover_pic":"http://123",
+        "create_time":1463464226,
+        "id":7,
+        "introduction":"intrio",
+        "lecture_name":"test",
+        "lesson_period":3,
+        "organization_id":41,
+        "plan":"123",
         "price":1000,
-        "start_course_time":"2016-04-26",
+        "start_course_time":"2016-06-09",
         "status":1,
-        "student_num":30
+        "student_num":3
     }
 ** end **
 
@@ -230,21 +235,26 @@
 * student_num: 班级人数   （选填）
 * lecture_name: 讲师姓名  （选填）
 * price: 课程价格   （选填）
+* introduction: 介绍 （选填）
+* plan: 计划  （选填）
 
 **Response** `202` ::
 
     {
-        "course_name":"java",
-        "cover_pic":"http://sdfsaww",
-        "create_time":1461655721,
-        "id":1,
-        "lecture_name":"rrr",
-        "lesson_period":66,
-        "organization_id":1001,
-        "price":3423,
-        "start_course_time":"2016-04-26",
+        "already_registered":0,
+        "course_name":"ps",
+        "cover_pic":"http://123",
+        "create_time":1463464226,
+        "id":7,
+        "introduction":"intrio",
+        "lecture_name":"test",
+        "lesson_period":3,
+        "organization_id":41,
+        "plan":"123",
+        "price":1000,
+        "start_course_time":"2016-06-09",
         "status":1,
-        "student_num":30
+        "student_num":3
     }
 ** end **
 
