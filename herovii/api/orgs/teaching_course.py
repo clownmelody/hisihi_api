@@ -41,7 +41,7 @@ def update_org_teaching_course():
 @auth.login_required
 def delete_org_teaching_course(cid):
     TeachingCourse.query.filter_by(id=cid).update({'status': -1})
-    return success_json(), 204
+    return success_json(), 202
 
 
 @api.route('/<int:oid>/teaching_course')
