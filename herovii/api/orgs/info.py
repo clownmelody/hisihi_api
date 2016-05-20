@@ -9,7 +9,7 @@ from herovii.models.base import db
 from herovii.models.org.info import Info
 from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.service.org import create_org_info, get_org_by_id, get_org_by_uid, update_teachers_field_info, \
-    add_major_to_org, get_major_by_oid, get_org_stat
+    add_major_to_org, get_major_by_oid, get_org_stat, get_university_by_oid, link_org_to_university
 from herovii.validator.forms import OrgForm, OrgUpdateForm
 
 __author__ = 'bliss'
@@ -111,3 +111,30 @@ def get_org_base_info(oid):
     json_str = json.dumps(info)
     headers = {'Content-Type': 'application/json'}
     return json_str, 200, headers
+
+
+@api.route('/<int:oid>/university', methods=['GET'])
+@auth.login_required
+def get_org_university(oid):
+    university = get_university_by_oid(oid)
+    json_str = json.dumps(university)
+    headers = {'Content-Type': 'application/json'}
+    return json_str, 200, headers
+
+
+@api.route('/link/university', methods=['POST'])
+@auth.login_required
+def link_org_and_university():
+    json_data = request.get_json(force=True, silent=True)
+    if not json_data:
+        try:
+            oid = request.values.get('oid')
+            university_id = request.values.get('university_id')
+        except:
+            raise JSONStyleError()
+    else:
+        oid = json_data['oid']
+        university_id = json_data['university_id']
+    msg = link_org_to_university(oid, university_id)
+    headers = {'Content-Type': 'application/json'}
+    return success_json(msg=msg), 201, headers
