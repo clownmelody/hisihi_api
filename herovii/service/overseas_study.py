@@ -284,3 +284,18 @@ def get_overseas_study_university_majors_service(uid):
         data_list['count'] = 0
         data_list['list'] = None
     return data_list
+
+
+def get_overseas_study_university_list_service():
+    data_list = []
+    university_list = db.session.query(University.id, University.name) \
+        .filter(University.status == 1) \
+        .order_by(University.create_time.desc()) \
+        .all()
+    for university in university_list:
+        data = {
+            'id': university.id,
+            'name': university.name,
+        }
+        data_list.append(data)
+    return data_list

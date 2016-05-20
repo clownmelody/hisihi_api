@@ -187,6 +187,7 @@
 **Parameters**:
 
 * organization_id: 机构id号
+* university_id:  大学id
 * course_name: 课程名称
 * cover_pic: 课程图片
 * start_course_time: 课程开课时间 “2015-04-12”
@@ -230,6 +231,7 @@
 
 * id: 课程ID （必填）
 * organization_id: 机构id号  （选填）
+* university_id:  大学id （选填）
 * course_name: 课程名称  （选填）
 * cover_pic: 课程图片   （选填）
 * start_course_time: 课程开课时间 “2015-04-12”  （选填）

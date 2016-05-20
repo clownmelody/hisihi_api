@@ -312,3 +312,27 @@
       ]
     }
 -- end
+
+
+获取所有大学列表
+~~~~~~~~~~~
+**URL**::
+
+    GET      overseas_study/universities
+
+**Parameters**:
+
+* N/A
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":13,
+                "name":"悉尼大学"
+            }
+        ],
+        "total_count":1
+    }
+-- end

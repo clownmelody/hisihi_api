@@ -304,6 +304,7 @@ class LowPriceFeedbackForm(Form):
 
 class OrgTeachingCourseForm(Form):
     organization_id = IntegerField(validators=[NumberRange(1), DataRequired()])
+    university_id = IntegerField(validators=[NumberRange(1), DataRequired()])
     course_name = StringField(validators=[DataRequired()])
     cover_pic = StringField(validators=[DataRequired()])
     start_course_time = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
