@@ -395,6 +395,32 @@
 
 * id:  计划id
 * html_content:  详情内容
+* url:  计划链接
+
+**Response** `202` ::
+
+    {
+       "create_time": 1461655721,
+       "html_content": "good",
+       "id": "1",
+       "organization_id": 1,
+       "status": 1,
+       "url": "http://baidu.com"
+    }
+-- end
+
+
+添加留学计划
+~~~~~~~~~~~
+**URL**::
+
+    POST      overseas_study/plan
+
+**Parameters**:
+
+* oid:  机构id
+* html_content:  详情内容
+* url:  计划链接
 
 **Response** `202` ::
 

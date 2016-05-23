@@ -50,13 +50,13 @@ class FilePiper(object):
         #     res.close(
 
     @staticmethod
-    def upload_text_to_oss(f):
+    def upload_text_to_oss(f, extension, directory):
         oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
                      secret_access_key=current_app.config['ALI_OSS_SECRET'])
-        object_url = 'overseas_article/' + get_oss_file_url('html')
+        object_url = directory + '/' + get_oss_file_url(extension)
         try:
             res = oss.put_object_from_string(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], object_url, f,
-                                             "text/HTML")
+                                             "text/plain")
             if res.code == 200:
                 return FilePiper.get_full_oss_url(object_url, True)
             else:

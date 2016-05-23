@@ -252,3 +252,39 @@ oss_url 是二维码图片的资源地址。qrcode_url是二维码指向的访�
     }
 
 qrcode_url 生成二维码的路径
+
+
+
+上传文本生成对应文件（通用）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**URL**::
+
+    POST        file/stringify
+
+**POST Sample**：
+
+.. sourcecode:: json
+
+    {
+        "text": "<html><head><meta charset=\"utf-8\"></head><body><h1 class=\"title\">你为什么</h1></body></html>",
+        "extension":"html",
+        "directory":"overseas_article"
+    }
+
+**Parameters**:
+
+* text: 文本信息
+* extension: 生成文件的后缀
+* directory: 文件在OSS的存放目录
+
+
+**Response** `201`:
+
+.. sourcecode:: json
+
+    {
+      "url": "http://pic.hisihi.com/overseas_article/2016-05-24/1464023069103349.html"
+    }
+
+
