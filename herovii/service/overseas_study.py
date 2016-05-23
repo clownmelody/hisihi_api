@@ -307,11 +307,10 @@ def get_overseas_study_university_list_service():
 
 
 def put_overseas_article_service():
-    content = '<html><head><meta charset="utf-8"></head><body youdao="bind">'\
-              + '<h class="title">你为什么成长的不够快？可能是因为你太乖</h1></body></html>'
+    content = '<html><head><meta charset="utf-8"></head><body>'\
+              + '<h class="title">你还好吗？还好</h1></body></html>'
     content_ = content.encode("utf-8")
-    length = str(len(content_))
-    oss_url = FilePiper.upload_text_to_oss(content, length)
+    oss_url = FilePiper.upload_text_to_oss(content)
     return oss_url
 
 
