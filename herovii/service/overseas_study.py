@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
 from flask import json, current_app
 from sqlalchemy import func
 from herovii import db
-from herovii.libs.error_code import NotFound
+from herovii.libs.error_code import NotFound, FileUploadFailed
+from herovii.libs.helper import get_oss_file_url
+from herovii.libs.oss import OssAPI
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.overseas.country import Country
@@ -10,6 +13,7 @@ from herovii.models.overseas.organization_to_university import OrganizationToUni
 from herovii.models.overseas.university import University
 from herovii.models.overseas.university_major import UniversityMajor
 from herovii.models.overseas.university_photos import UniversityPhotos
+from herovii.service.file import FilePiper
 
 __author__ = 'yangchujie'
 
@@ -299,3 +303,12 @@ def get_overseas_study_university_list_service():
         }
         data_list.append(data)
     return data_list
+
+
+def put_overseas_article_service():
+    content = '<html><head><meta charset="utf-8"></head><body youdao="bind">'\
+              + '<h class="title">你为什么成长的不够快？可能是因为你太乖</h1></body></html>'
+    content_ = content.encode("utf-8")
+    length = str(len(content_))
+    oss_url = FilePiper.upload_text_to_oss(content, length)
+    return oss_url

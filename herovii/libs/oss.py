@@ -52,14 +52,15 @@ class OssAPI(object):
         return res
 
     def put_object_from_string(self, bucket, object,
-                               input_content, content_type, headers, params):
+                               input_content, length, content_type, headers=None, params=None):
         if not headers:
             headers = {}
         if not content_type:
             content_type = get_content_type_by_filename(object)
         if not headers.get('Content-Type') and not headers.get('content-type'):
             headers['Content-Type'] = content_type
-        headers['Content-Length'] = str(len(input_content))
+        headers['Content-Length'] = length
+        headers['Content-Encoding'] = 'UTF-8'
         fp = StringIO(input_content)
         res = self.put_object_from_fp(bucket, object, fp, content_type, headers, params)
         fp.close()

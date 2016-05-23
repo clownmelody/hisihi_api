@@ -6,7 +6,7 @@ from herovii.service.overseas_study import get_overseas_study_banner_service, ge
     get_overseas_study_hot_university_service, get_overseas_study_university_info_service, \
     get_overseas_study_university_list_by_country_id_service, get_overseas_study_country_service, \
     get_overseas_study_university_photos_service, get_overseas_study_university_majors_service, \
-    get_overseas_study_university_list_service
+    get_overseas_study_university_list_service, put_overseas_article_service
 from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm
 
 __author__ = 'yangchujie'
@@ -132,6 +132,15 @@ def get_overseas_study_university_majors(uid):
 #@auth.login_required
 def get_overseas_study_university_list():
     data = get_overseas_study_university_list_service()
+    headers = {'Content-Type': 'application/json'}
+    json_obj = json.dumps({"total_count": len(data), "data": data})
+    return json_obj, 200, headers
+
+
+@api.route('/overseas_article', methods=['GET'])
+#@auth.login_required
+def put_overseas_article():
+    data = put_overseas_article_service()
     headers = {'Content-Type': 'application/json'}
     json_obj = json.dumps({"total_count": len(data), "data": data})
     return json_obj, 200, headers

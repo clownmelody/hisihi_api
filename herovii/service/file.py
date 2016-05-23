@@ -1,3 +1,4 @@
+import sys
 from flask import request
 from flask import current_app
 from werkzeug.exceptions import RequestEntityTooLarge
@@ -47,6 +48,22 @@ class FilePiper(object):
             raise FileUploadFailed()
         # finally:)
         #     res.close(
+
+    @staticmethod
+    def upload_text_to_oss(f, length):
+        oss = OssAPI(access_id=current_app.config['ALI_OSS_ID'], is_security=True,
+                     secret_access_key=current_app.config['ALI_OSS_SECRET'])
+        object_url = 'overseas_article/' + get_oss_file_url('html')
+        try:
+            res = oss.put_object_from_string(current_app.config['ALI_OSS_ORG_BUCKET_NAME'], object_url, f, length,
+                                             'text/html')
+            if res.code == 200:
+                return FilePiper.get_full_oss_url(object_url, True)
+            else:
+                raise FileUploadFailed()
+        except:
+            info = sys.exc_info()
+            raise FileUploadFailed()
 
     @staticmethod
     def upload_one_to_oss(file):

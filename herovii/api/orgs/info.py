@@ -30,6 +30,14 @@ def create_org():
     post_data['uid'] = uid
     org = Info(**post_data)
     org = create_org_info(org)
+    if int(org.type) == 31:
+        """
+        留学机构关联大学
+        """
+        json_data = request.get_json(force=True, silent=True)
+        oid = org.id
+        university_id = json_data['university_id']
+        msg = link_org_to_university(oid, university_id)
     return jsonify(org), 201
 
 
@@ -49,6 +57,12 @@ def update_org():
             setattr(org_info, key, value)
             if key == 'name':
                 update_teachers_field_info(org_id, value)
+            if int(org_info.type) == 31 and key == 'university_id':
+                """
+                留学机构关联大学
+                """
+                university_id = value
+                msg = link_org_to_university(org_id, university_id)
     return jsonify(org_info), 202
 
 
