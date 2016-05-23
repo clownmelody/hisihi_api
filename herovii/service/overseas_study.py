@@ -307,9 +307,14 @@ def get_overseas_study_university_list_service():
 
 
 def put_overseas_article_service():
-    content = '<html><head><meta charset="utf-8"></head><body>'\
-              + '<h class="title">你还好吗？还好</h1></body></html>'
-    content_ = content.encode("utf-8")
+    content = 'OSS有多种上传方式，不同的上传方式能够上传的数据大小也不一样。' \
+              '普通上传（PutObject）、追加上传（AppendObject） 最多只能上传小于或等于5GB的文件' \
+              '；而分片上传每个分片可以达到5GB，合并后的文件能够达到48.8TBOSS有多种上传方式，' \
+              '不同的上传方式能够上传的数据大小也不一样。普通上传（PutObject）、追加上传（AppendObject）' \
+              ' 最多只能上传小于或等于5GB的文件；而分片上传每个分片可以达到5GB' \
+              '，合并后的文件能够达到48.8TOSS有多种上传方式，不同的上传方式能够上传的数据大小也不一样' \
+              '。普通上传（PutObject）、追加上传（AppendObject） 最多只能上传小于或等于5GB的文件；' \
+              '而分片上传每个分片可以达到5GB，合并后的文件能够达到48.8TBB'
     oss_url = FilePiper.upload_text_to_oss(content)
     return oss_url
 
