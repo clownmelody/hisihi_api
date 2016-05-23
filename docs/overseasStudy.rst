@@ -336,3 +336,74 @@
         "total_count":1
     }
 -- end
+
+
+获取所有留学计划
+~~~~~~~~~~~
+**URL**::
+
+    GET      overseas_study/org/<int:oid>/plans
+
+**Parameters**:
+
+* oid:  机构id
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "id":1,
+                "url":"http://baidu.com"
+            }
+        ],
+        "total_count":1
+    }
+-- end
+
+
+获取留学计划详情
+~~~~~~~~~~~
+**URL**::
+
+    GET      overseas_study/plans/<int:pid>
+
+**Parameters**:
+
+* pid:  计划id
+
+**Response** `200` ::
+
+    {
+        "create_time":1461655721,
+        "html_content":"<html>hello</html>",
+        "id":1,
+        "organization_id":1,
+        "status":1,
+        "url":"http://baidu.com"
+    }
+-- end
+
+
+更新留学计划详情
+~~~~~~~~~~~
+**URL**::
+
+    PUT      overseas_study/plans/<int:pid>
+
+**Parameters**:
+
+* id:  计划id
+* html_content:  详情内容
+
+**Response** `202` ::
+
+    {
+       "create_time": 1461655721,
+       "html_content": "good",
+       "id": "1",
+       "organization_id": 1,
+       "status": 1,
+       "url": "http://baidu.com"
+    }
+-- end
