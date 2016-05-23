@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from wtforms import TextField
 from herovii.settings import PAGE_DEFAULT, PER_PAGE_DEFAULT
 
 __author__ = 'bliss'
@@ -365,4 +366,8 @@ class OrgUniversityEnrollForm(Form):
     study_abroad_purpose = StringField(validators=[DataRequired()])
     apply_major = StringField(validators=[DataRequired()])
 
+
+class OverseaPlanUpdateForm(Form):
+    id = IntegerField(validators=[DataRequired()])
+    html_content = StringField(validators=[DataRequired()])
 

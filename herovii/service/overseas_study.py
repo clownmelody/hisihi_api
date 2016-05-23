@@ -7,6 +7,7 @@ from herovii.models.InformationFlow.information_flow_banner import InformationFl
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.overseas.country import Country
 from herovii.models.overseas.organization_to_university import OrganizationToUniversity
+from herovii.models.overseas.overseas_plan import OverseasPlan
 from herovii.models.overseas.university import University
 from herovii.models.overseas.university_major import UniversityMajor
 from herovii.models.overseas.university_photos import UniversityPhotos
@@ -256,7 +257,7 @@ def get_overseas_study_university_photos_service(uid, page, per_page):
 
 
 def get_overseas_study_university_majors_service(uid):
-    majors = db.session.query(University.undergraduate_majors, University.graduate_majors)\
+    majors = db.session.query(University.undergraduate_majors, University.graduate_majors) \
         .filter(University.status == 1, University.id == uid).first()
     major_array = []
     undergraduate_majors = majors.undergraduate_majors.split('#')
@@ -299,3 +300,24 @@ def get_overseas_study_university_list_service():
         }
         data_list.append(data)
     return data_list
+
+
+def get_org_overseas_plan_list_service(oid):
+    data_list = []
+    plan_list = db.session.query(OverseasPlan.id, OverseasPlan.url) \
+        .filter(OverseasPlan.organization_id == oid, OverseasPlan.status == 1) \
+        .order_by(OverseasPlan.create_time.desc()) \
+        .all()
+    for plan in plan_list:
+        data = {
+            'id': plan.id,
+            'url': plan.url,
+        }
+        data_list.append(data)
+    return data_list
+
+
+def get_org_overseas_plan_detail_service(pid):
+    detail = db.session.query(OverseasPlan).filter(OverseasPlan.id == pid).first()
+    return detail
+
