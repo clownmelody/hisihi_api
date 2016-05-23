@@ -17,7 +17,7 @@ api = ApiBlueprint('org')
 
 
 @api.route('/teaching_course', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def create_org_teaching_course():
     form = OrgTeachingCourseForm.create_api_form()
     teaching_course = TeachingCourse()
@@ -26,13 +26,13 @@ def create_org_teaching_course():
     with db.auto_commit():
         db.session.add(teaching_course)
         db.session.commit()
-        is_overseas_org = Info.query.filter_by(id=teaching_course.organization_id, type=31).first()
-        if is_overseas_org:
-            org_to_university = OrganizationToUniversity()
-            org_to_university.organization_id = teaching_course.organization_id
-            org_to_university.university_id = form.body_data['university_id']
-            org_to_university.teaching_course_id = teaching_course.id
-            db.session.add(org_to_university)
+        # is_overseas_org = Info.query.filter_by(id=teaching_course.organization_id, type=31).first()
+        # if is_overseas_org:
+        #     org_to_university = OrganizationToUniversity()
+        #     org_to_university.organization_id = teaching_course.organization_id
+        #     org_to_university.university_id = form.body_data['university_id']
+        #     org_to_university.teaching_course_id = teaching_course.id
+        #     db.session.add(org_to_university)
     return jsonify(teaching_course), 201
 
 
@@ -44,12 +44,12 @@ def update_org_teaching_course():
     with db.auto_commit():
         for key, value in form.body_data.items():
             setattr(teaching_course, key, value)
-        is_overseas_org = Info.query.filter_by(id=teaching_course.organization_id, type=31).first()
-        if is_overseas_org:
-            if form.body_data['university_id']:
-                db.session.query(OrganizationToUniversity).filter(
-                    OrganizationToUniversity.teaching_course_id == teaching_course.id) \
-                    .update({'university': form.body_data['university_id']})
+        # is_overseas_org = Info.query.filter_by(id=teaching_course.organization_id, type=31).first()
+        # if is_overseas_org:
+        #     if form.body_data['university_id']:
+        #         db.session.query(OrganizationToUniversity).filter(
+        #             OrganizationToUniversity.teaching_course_id == teaching_course.id) \
+        #             .update({'university': form.body_data['university_id']})
     return jsonify(teaching_course), 202
 
 
