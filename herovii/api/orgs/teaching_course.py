@@ -56,7 +56,9 @@ def update_org_teaching_course():
 @api.route('/teaching_course/<int:cid>', methods=['DELETE'])
 @auth.login_required
 def delete_org_teaching_course(cid):
-    TeachingCourse.query.filter_by(id=cid).update({'status': -1})
+    with db.auto_commit():
+        db.session.query(TeachingCourse).filter(TeachingCourse.id == cid) \
+            .update({TeachingCourse.status: -1})
     return success_json(), 204
 
 
