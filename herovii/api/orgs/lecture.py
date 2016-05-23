@@ -68,6 +68,7 @@ def join_teacher_group():
 
 
 @api.route('/lecture/groups/join', methods=['POST'])
+@auth.login_required
 def join_teachers_group():
     lectures = []
     temp_lectures = request.get_json(silent=True, force=True)
@@ -95,6 +96,8 @@ def join_teachers_group():
         t_g_relation.uid = form.uid.data
         t_g_relation.organization_id = form.oid.data
         t_g_relation.group = 6
+        t_g_relation.teacher_good_at_subjects = form.teacher_good_at_subjects.data
+        t_g_relation.teacher_introduce = form.teacher_introduce.data
         set_lecturer_extend_info(t_g_relation.uid, t_g_relation.organization_id)
         lectures.append(t_g_relation)
     with db.auto_commit():

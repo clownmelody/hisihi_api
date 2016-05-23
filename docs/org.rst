@@ -612,3 +612,48 @@
         "id":2
     }
 ** end **
+
+
+获取机构已绑定的大学
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /<int:oid>/university
+
+**Parameters**:
+
+* oid:  机构id
+
+**Response** `200` ::
+
+    {
+      "university_list": [
+        {
+          "id": 1,
+          "name": "斯坦福大学"
+        }
+      ],
+      "organization_id": 41
+    }
+** end **
+
+
+机构添加大学
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /org/link/university
+
+**Parameters**:(json)
+
+* oid:  机构id
+* university_id: 大学id,格式36:35:33
+
+**Response** `201` ::
+
+    {
+      "code": 0,
+      "msg": "3 university has been added",
+      "request": "POST  /v1/org/link/university"
+    }
+** end **

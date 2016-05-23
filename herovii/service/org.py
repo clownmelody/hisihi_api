@@ -32,6 +32,8 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.org.video import Video
+from herovii.models.overseas.organization_to_university import OrganizationToUniversity
+from herovii.models.overseas.university import University
 from herovii.models.tag import Tag
 from herovii.models.user.field import Field
 from herovii.models.user.avatar import Avatar
@@ -1248,3 +1250,47 @@ def get_org_stat(oid):
         }
     if not oid:
         raise NotFound('organization not found', error_code=5000)
+
+
+def get_university_by_oid(oid):
+    university = db.session.query(OrganizationToUniversity.university_id, University.name)\
+        .filter(OrganizationToUniversity.organization_id == oid, OrganizationToUniversity.teaching_course_id == 0,
+                OrganizationToUniversity.status == 1) \
+        .join(University, OrganizationToUniversity.university_id == University.id)\
+        .all()
+    result = {
+        "organization_id": oid,
+        "university_list": None
+    }
+    if university:
+        major_list = []
+        for item in university:
+            major_obj = {
+                "id": item.university_id,
+                "name": item.name
+            }
+            major_list.append(major_obj)
+        result['university_list'] = major_list
+    return result
+
+
+def link_org_to_university(oid, university_id):
+    ids = university_id.split(':')
+    info = []
+    result = db.session.query(OrganizationToUniversity)\
+        .filter(OrganizationToUniversity.organization_id == oid,
+                OrganizationToUniversity.teaching_course_id == 0) \
+        .delete()
+    for tid in ids:
+        stu = {
+            "organization_id": int(oid),
+            "teaching_course_id": 0,
+            "university_id": tid,
+            "status": 1,
+            "create_time": int(time.time())
+        }
+        info.append(stu)
+    with db.auto_commit():
+        result = db.session.execute(OrganizationToUniversity.__table__.insert(), info)
+    msg = str(result.rowcount) + ' university has been added'
+    return msg
