@@ -370,4 +370,11 @@ class OrgUniversityEnrollForm(Form):
 class OverseaPlanUpdateForm(Form):
     id = IntegerField(validators=[DataRequired()])
     html_content = StringField(validators=[DataRequired()])
+    url = StringField(validators=[DataRequired()])
+
+
+class OverseaPlanAddForm(Form):
+    oid = IntegerField(validators=[DataRequired()])
+    html_content = StringField(validators=[DataRequired()])
+    url = StringField(validators=[DataRequired()])
 

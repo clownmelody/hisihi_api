@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import time
 from flask import json, current_app
 from sqlalchemy import func
 from herovii import db
@@ -306,12 +307,16 @@ def get_overseas_study_university_list_service():
     return data_list
 
 
-def put_overseas_article_service():
-    content = '<html><head><meta charset="utf-8"></head><body><h class="title">shsaha ahksjdksjdk ' \
-              'jdhsajkdhkdha diashjdksahdkjas asdkjsncj xasjhdjashjkdhsa sjdheuwfdueiw hsjdh</h1></body></html>'
-    # content_ = hex(ord(content))[2:]
-    oss_url = FilePiper.upload_text_to_oss(content)
-    return oss_url
+def put_overseas_article_service(oid, text, url):
+    plan = OverseasPlan()
+    plan.organization_id = oid
+    plan.html_content = text
+    plan.url = url
+    plan.create_time = int(time.time())
+    plan.status = 1
+    with db.auto_commit():
+        db.session.add(plan)
+    return plan
 
 
 def get_org_overseas_plan_list_service(oid):

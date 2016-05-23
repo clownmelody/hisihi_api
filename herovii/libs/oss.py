@@ -2,6 +2,7 @@ from http.client import HTTPSConnection, HTTPConnection
 import os
 import platform
 from io import StringIO
+from io import BytesIO
 import time
 from herovii.libs.util import get_content_type_by_filename, get_resource, is_oss_host, check_bucket_valid, is_ip, \
     get_assign
@@ -59,8 +60,9 @@ class OssAPI(object):
             content_type = get_content_type_by_filename(object)
         if not headers.get('Content-Type') and not headers.get('content-type'):
             headers['Content-Type'] = content_type
+        input_content = input_content.encode('utf-8')
         headers['Content-Length'] = str(len(input_content))
-        fp = StringIO(input_content)
+        fp = BytesIO(input_content)
         res = self.put_object_from_fp(bucket, object, fp, content_type, headers, params)
         fp.close()
         return res
@@ -72,7 +74,7 @@ class OssAPI(object):
         return self._put_or_post_object_from_fp(method, bucket, name, fp, content_type, headers, params)
 
     def _put_or_post_object_from_fp(self, method, bucket, name, fp,
-                                    content_type=DefaultContentType, is_bytes=True, headers=None, params=None):
+                                    content_type=DefaultContentType, headers=None, params=None):
         tmp_object = name
         tmp_headers = {}
         tmp_params = {}
@@ -84,6 +86,7 @@ class OssAPI(object):
         fp.seek(os.SEEK_SET, os.SEEK_END)
         file_size = fp.tell()
         fp.seek(os.SEEK_SET)
+
         conn = self._open_conn_to_put_object(method, bucket, name, file_size, content_type, headers, params)
         total_len = 0
         l = fp.read(self.SendBufferSize)
@@ -91,11 +94,13 @@ class OssAPI(object):
         while len(l) > 0:
             if retry_times > 100:
                 print("reach max retry times: %s" % retry_times)
+                break
             try:
-                if is_bytes:
-                    conn.send(l.encode('utf-8'))
-                else:
-                    conn.send(l)
+                # if is_bytes:
+                #     # conn.send(l)
+                conn.send(l)
+                # else:
+                #     conn.send(l.encode('utf-8'))
                 retry_times = 0
             except Exception as e:
                 s = e
