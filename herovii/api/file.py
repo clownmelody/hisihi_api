@@ -12,7 +12,7 @@ api = ApiBlueprint('file')
 
 
 @api.route('', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def upload_object():
     try:
         files_list = request.files.lists()
@@ -36,5 +36,20 @@ def create_a_qrcode():
         'qrcode_url': oss_url
     }
     return jsonify(data), 201
+
+
+@api.route('/stringify', methods=['POST'])
+def create_file_by_string():
+    # c = 1/0
+    text = 'OSS有多种上传方式，不同的上传方式能够上传的数据大小也不一样。' \
+              '普通上传（PutObject）、追加上传（AppendObject） 最多只能上传小于或等于5GB的文件' \
+              '；而分片上传每个分片可以达到5GB，合并后的文件能够达到48.8TBOSS有多种上传方式，' \
+              '不同的上传方式能够上传的数据大小也不一样。普通上传（PutObject）、追加上传（AppendObject）' \
+              ' 最多只能上传小于或等于5GB的文件；而分片上传每个分片可以达到5GB' \
+              '，合并后的文件能够达到48.8TOSS有多种上传方式，不同的上传方式能够上传的数据大小也不一样' \
+              '。普通上传（PutObject）、追加上传（AppendObject） 最多只能上传小于或等于5GB的文件；' \
+              '而分片上传每个分片可以达到5GB，合并后的文件能够达到48.8TBB'
+    FilePiper.upload_text_to_oss(text)
+    return 'success'
 
 
