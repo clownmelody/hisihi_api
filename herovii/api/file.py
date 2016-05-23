@@ -12,7 +12,7 @@ api = ApiBlueprint('file')
 
 
 @api.route('', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def upload_object():
     try:
         files_list = request.files.lists()
