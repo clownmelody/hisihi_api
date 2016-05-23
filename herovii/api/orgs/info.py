@@ -9,7 +9,8 @@ from herovii.models.base import db
 from herovii.models.org.info import Info
 from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.service.org import create_org_info, get_org_by_id, get_org_by_uid, update_teachers_field_info, \
-    add_major_to_org, get_major_by_oid, get_org_stat, get_university_by_oid, link_org_to_university
+    add_major_to_org, get_major_by_oid, get_org_stat, get_university_by_oid, link_org_to_university, \
+    get_org_promotion_list, get_org_promotion_coupon_list
 from herovii.validator.forms import OrgForm, OrgUpdateForm
 
 __author__ = 'bliss'
@@ -152,3 +153,11 @@ def link_org_and_university():
     msg = link_org_to_university(oid, university_id)
     headers = {'Content-Type': 'application/json'}
     return success_json(msg=msg), 201, headers
+
+
+@api.route('/hh/<int:oid>', methods=['GET'])
+def hh(oid):
+    university = get_org_promotion_coupon_list(oid)
+    json_str = json.dumps(university)
+    headers = {'Content-Type': 'application/json'}
+    return json_str, 200, headers

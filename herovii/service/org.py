@@ -17,14 +17,18 @@ from herovii.models.base import db
 from herovii.models.issue import Issue
 from herovii.models.org.class_mirror import ClassMirror
 from herovii.models.org.classmate import Classmate
+from herovii.models.org.coupon import Coupon
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
 from herovii.models.org.info import Info
 from herovii.models.org.org_authentication import OrgAuthentication
 from herovii.models.org.org_authentication_config import OrgAuthenticationConfig
 from herovii.models.org.org_config import OrgConfig
+from herovii.models.org.org_teaching_course_promotion_relation import OrgTeachingCoursePromotionRelation
 from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.models.org.pic import Pic
+from herovii.models.org.promotion import Promotion
+from herovii.models.org.promotion_coupon_relation import PromotionCouponRelation
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
@@ -65,7 +69,7 @@ def get_org_teachers_by_group(oid):
 
     # 需要使用subquery的.c 属性来引用字段
     collection_query = db.session.query(TeacherGroup.id, TeacherGroup.title, sub_query.c.uid,
-                                        sub_query.c.teacher_good_at_subjects, sub_query.c.teacher_introduce,). \
+                                        sub_query.c.teacher_good_at_subjects, sub_query.c.teacher_introduce, ). \
         filter(TeacherGroup.organization_id == oid, TeacherGroup.status != -1). \
         outerjoin(sub_query, TeacherGroup.id == sub_query.c.teacher_group_id). \
         order_by(TeacherGroup.id)
@@ -1253,10 +1257,10 @@ def get_org_stat(oid):
 
 
 def get_university_by_oid(oid):
-    university = db.session.query(OrganizationToUniversity.university_id, University.name)\
+    university = db.session.query(OrganizationToUniversity.university_id, University.name) \
         .filter(OrganizationToUniversity.organization_id == oid, OrganizationToUniversity.teaching_course_id == 0,
                 OrganizationToUniversity.status == 1) \
-        .join(University, OrganizationToUniversity.university_id == University.id)\
+        .join(University, OrganizationToUniversity.university_id == University.id) \
         .all()
     result = {
         "organization_id": oid,
@@ -1277,7 +1281,7 @@ def get_university_by_oid(oid):
 def link_org_to_university(oid, university_id):
     ids = university_id.split(':')
     info = []
-    result = db.session.query(OrganizationToUniversity)\
+    result = db.session.query(OrganizationToUniversity) \
         .filter(OrganizationToUniversity.organization_id == oid,
                 OrganizationToUniversity.teaching_course_id == 0) \
         .delete()
@@ -1294,3 +1298,87 @@ def link_org_to_university(oid, university_id):
         result = db.session.execute(OrganizationToUniversity.__table__.insert(), info)
     msg = str(result.rowcount) + ' university has been added'
     return msg
+
+
+# 获取机构参与活动的列表
+def get_org_promotion_list(oid):
+    promotion_list = db.session.query(distinct(OrgTeachingCoursePromotionRelation.promotion_id)) \
+        .filter(OrgTeachingCoursePromotionRelation.organization_id == oid,
+                OrgTeachingCoursePromotionRelation.status == 1) \
+        .all()
+    id_list = []
+    for ids in promotion_list:
+        id_list.append(ids[0])
+    result_list = []
+    for pid in id_list:
+        promotion_info = db.session.query(Promotion) \
+            .filter(Promotion.id == pid) \
+            .one()
+        info = {
+            'id': promotion_info.id,
+            'organization_id': oid,
+            'tag_url': promotion_info.tag_url,
+            'title': promotion_info.title
+        }
+        result_list.append(info)
+    return result_list
+
+
+# 获取机构参与活动和优惠券的列表
+def get_org_promotion_coupon_list(oid):
+    promotion_list = db.session.query(distinct(OrgTeachingCoursePromotionRelation.promotion_id)) \
+        .filter(OrgTeachingCoursePromotionRelation.organization_id == oid,
+                OrgTeachingCoursePromotionRelation.status == 1) \
+        .all()
+    id_list = []
+    for ids in promotion_list:
+        id_list.append(ids[0])
+    result_list = []
+    for pid in id_list:
+        promotion_info = db.session.query(Promotion) \
+            .filter(Promotion.id == pid) \
+            .one()
+        promotion_coupon_list = db.session.query(PromotionCouponRelation) \
+            .filter(PromotionCouponRelation.promotion_id == pid,
+                    PromotionCouponRelation.status == 1) \
+            .all()
+        info = {
+            'id': promotion_info.id,
+            'organization_id': oid,
+            'title': promotion_info.title,
+            'little_logo_url': promotion_info.little_logo_url,
+            'coupon_list': None
+        }
+        coupon_info_list = []
+        for coupon in promotion_coupon_list:
+            coupon_info = db.session.query(Coupon) \
+                .filter(Coupon.id == coupon.coupon_id) \
+                .one()
+            new_coupon = {
+                'name': coupon_info.name,
+                'type': coupon_info.type,
+                'start_time': coupon_info.start_time,
+                'end_time': coupon_info.end_time,
+                'money': coupon_info.money
+            }
+            coupon_info_list.append(new_coupon)
+        info['coupon_list'] = coupon_info_list
+        result_list.append(info)
+    return result_list
+
+
+# 获取活动详情
+def get_promotion_detail(pid):
+    promotion_info = db.session.query(Promotion) \
+            .filter(Promotion.id == pid) \
+            .one()
+    return {
+        'id': promotion_info.id,
+        'title': promotion_info.title,
+        'logo_url': promotion_info.logo_url,
+        'little_logo_url': promotion_info.little_logo_url,
+        'tag_url': promotion_info.tag_url,
+        'description': promotion_info.descripton,
+        'type': promotion_info.type
+    }
+
