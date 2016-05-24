@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import time
 from flask import json, current_app
 from sqlalchemy import func
 from herovii import db
@@ -306,17 +307,16 @@ def get_overseas_study_university_list_service():
     return data_list
 
 
-def put_overseas_article_service():
-    content = 'OSS有多种上传方式，不同的上传方式能够上传的数据大小也不一样。' \
-              '普通上传（PutObject）、追加上传（AppendObject） 最多只能上传小于或等于5GB的文件' \
-              '；而分片上传每个分片可以达到5GB，合并后的文件能够达到48.8TBOSS有多种上传方式，' \
-              '不同的上传方式能够上传的数据大小也不一样。普通上传（PutObject）、追加上传（AppendObject）' \
-              ' 最多只能上传小于或等于5GB的文件；而分片上传每个分片可以达到5GB' \
-              '，合并后的文件能够达到48.8TOSS有多种上传方式，不同的上传方式能够上传的数据大小也不一样' \
-              '。普通上传（PutObject）、追加上传（AppendObject） 最多只能上传小于或等于5GB的文件；' \
-              '而分片上传每个分片可以达到5GB，合并后的文件能够达到48.8TBB'
-    oss_url = FilePiper.upload_text_to_oss(content)
-    return oss_url
+def put_overseas_article_service(oid, text, url):
+    plan = OverseasPlan()
+    plan.organization_id = oid
+    plan.html_content = text
+    plan.url = url
+    plan.create_time = int(time.time())
+    plan.status = 1
+    with db.auto_commit():
+        db.session.add(plan)
+    return plan
 
 
 def get_org_overseas_plan_list_service(oid):

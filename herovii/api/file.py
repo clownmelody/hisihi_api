@@ -38,3 +38,17 @@ def create_a_qrcode():
     return jsonify(data), 201
 
 
+@api.route('/stringify', methods=['POST'])
+def create_file_by_string():
+    json_url = request.get_json(force=True)
+    text = json_url['text']
+    extension = json_url['extension']
+    directory = json_url['directory']
+    oss_url = FilePiper.upload_text_to_oss(text, extension, directory)
+    data = {
+        'url': oss_url
+    }
+    return jsonify(data), 201
+
+
+
