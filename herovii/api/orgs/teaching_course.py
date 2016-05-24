@@ -1,4 +1,4 @@
-from flask import jsonify, json, request
+from flask import jsonify, json, request, g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.helper import success_json
 from herovii.models.base import db
@@ -7,7 +7,8 @@ from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.overseas.organization_to_university import OrganizationToUniversity
 from herovii.service.org import dto_org_teaching_courses_paginate, get_teaching_course_by_id, \
-    get_teaching_course_detail_by_id, get_teaching_course_enroll_by_id
+    get_teaching_course_detail_by_id, get_teaching_course_enroll_by_id, get_teaching_course_promotions_by_id, \
+    dto_org_teaching_courses_paginate_v2_9
 from herovii.validator.forms import PagingForm, OrgTeachingCourseForm, UpdateOrgTeachingCourseForm, \
     OrgTeachingCourseEnrollForm
 
@@ -72,6 +73,24 @@ def list_teaching_courses(oid):
     return json_obj, 200, headers
 
 
+@api.route('/2.9/<int:oid>/teaching_course', methods=['GET'])
+@auth.login_required
+def list_teaching_courses_v2_9(oid):
+    if not hasattr(g, 'user'):
+        uid = 0
+    elif g.user[1] == 100:
+        uid = 0
+    else:
+        uid = g.user[0]
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    except_id = request.args.get('except_id', 0)
+    dto = dto_org_teaching_courses_paginate_v2_9(oid, except_id, form.page.data, form.per_page.data, uid)
+    headers = {'Content-Type': 'application/json'}
+    json_obj = json.dumps(dto)
+    return json_obj, 200, headers
+
+
 @api.route('/teaching_course/<int:cid>')
 # @auth.login_required
 def get_teaching_course(cid):
@@ -118,3 +137,18 @@ def create_org_teaching_course_enroll(cid):
         count = int(course.already_registered) + 1
         db.session.query(TeachingCourse).filter(TeachingCourse.id == cid).update({'already_registered': count})
     return jsonify(teaching_course_enroll), 201
+
+
+@api.route('/teaching_course/<int:cid>/promotions')
+@auth.login_required
+def get_teaching_course_promotions(cid):
+    if not hasattr(g, 'user'):
+        uid = 0
+    elif g.user[1] == 100:
+        uid = 0
+    else:
+        uid = g.user[0]
+    promotions = get_teaching_course_promotions_by_id(cid, uid)
+    json_data = json.dumps({"total_count": len(promotions), "data": promotions})
+    headers = {'Content-Type': 'application/json'}
+    return json_data, 200, headers
