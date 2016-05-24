@@ -96,6 +96,7 @@
                 "type":1,
                 "start_time":1464105600,
                 "is_used":false,
+                "is_out_of_date": false,
                 "course_name":"nodejs全栈式开发"
             }
         ]

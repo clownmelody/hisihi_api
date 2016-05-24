@@ -1456,6 +1456,16 @@ def is_coupon_used(cid, uid):
     return False
 
 
+def is_coupon_out_of_date(cid):
+    coupon = db.session.query(UserCoupon) \
+        .filter(UserCoupon.coupon_id == cid) \
+        .one()
+    now = int(time.time())
+    if now <= int(coupon.end_time):
+        return False
+    return True
+
+
 def get_teaching_course_promotions_by_id(cid, uid):
     _list = db.session.query(OrgTeachingCoursePromotionRelation) \
         .filter(OrgTeachingCoursePromotionRelation.teaching_course_id == cid,
@@ -1503,6 +1513,8 @@ def get_coupon_list_by_uid(uid, page, per_page):
             .filter(OrgTeachingCoursePromotionRelation.promotion_id == promotion.promotion_id)\
             .first()
         course = TeachingCourse.query.get(course_promotion_r.teaching_course_id)
+        is_used = is_coupon_used(info.id, uid)
+        is_out_of_date = is_coupon_out_of_date(info.id)
         coupon_info = {
             'id': info.id,
             'type': info.type,
@@ -1510,7 +1522,8 @@ def get_coupon_list_by_uid(uid, page, per_page):
             'end_time': info.end_time,
             'money': info.money,
             'course_name': course.course_name,
-            'is_used': False
+            'is_out_of_date': is_out_of_date,
+            'is_used': is_used
         }
         coupon_info_list.append(coupon_info)
     return total_count, coupon_info_list
