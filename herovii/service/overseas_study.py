@@ -296,7 +296,7 @@ def get_overseas_study_university_list_service():
     data_list = []
     university_list = db.session.query(University.id, University.name) \
         .filter(University.status == 1) \
-        .order_by(University.create_time.desc()) \
+        .order_by(University.name.asc()) \
         .all()
     for university in university_list:
         data = {
