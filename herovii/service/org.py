@@ -265,7 +265,7 @@ def dto_org_teaching_courses_paginate_v2_9(oid, except_id, page, count, uid):
             'lecture_name': course.lecture_name,
             'price': course.price,
             'already_registered': course.already_registered,
-            'coupon': coupon
+            'coupon_list': coupon
         }
         c_l.append(course)
     return {
@@ -1456,6 +1456,17 @@ def is_coupon_used(cid, uid):
     return False
 
 
+def is_coupon_obtained(cid, uid):
+    is_used = db.session.query(UserCoupon) \
+        .filter(UserCoupon.coupon_id == cid,
+                UserCoupon.uid == uid,
+                UserCoupon.status == 1) \
+        .count()
+    if is_used:
+        return True
+    return False
+
+
 def is_coupon_out_of_date(cid):
     coupon = db.session.query(UserCoupon) \
         .filter(UserCoupon.coupon_id == cid) \
@@ -1481,6 +1492,7 @@ def get_teaching_course_promotions_by_id(cid, uid):
                     PromotionCouponRelation.status == 1, Coupon.status == 1) \
             .first()
         is_used = is_coupon_used(_coupon.id, uid)
+        is_obtain = is_coupon_obtained(_coupon.id, uid)
         obj = {
             'promotion_info': promotion_info,
             'coupon_info': {
@@ -1490,7 +1502,8 @@ def get_teaching_course_promotions_by_id(cid, uid):
                 'start_time': _coupon.start_time,
                 'end_time': _coupon.end_time,
                 'money': _coupon.money,
-                'is_used': is_used
+                'is_used': is_used,
+                'is_obtain': is_obtain
             }
         }
         promotion_list.append(obj)

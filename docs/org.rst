@@ -338,13 +338,14 @@
         "courses":[
             {
                 "already_registered":0,
-                "coupon":[
+                "coupon_list":[
                     {
                         "coupon_info":{
                             "end_time":1464624000,
                             "id":1,
                             "money":200,
                             "is_used": false,
+                            "is_obtain": false,
                             "name":"直减200",
                             "start_time":1464105600,
                             "type":1
