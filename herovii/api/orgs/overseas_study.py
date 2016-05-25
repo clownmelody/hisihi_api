@@ -1,6 +1,6 @@
 from herovii.libs.error_code import NotFound
 from herovii.models.base import db
-from flask import jsonify, json, request
+from flask import jsonify, json, request, redirect
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.models.org.university_enroll import UniversityEnroll
 from herovii.models.overseas.overseas_plan import OverseasPlan
@@ -10,7 +10,8 @@ from herovii.service.overseas_study import get_overseas_study_banner_service, ge
     get_overseas_study_university_photos_service, get_overseas_study_university_majors_service,\
     get_overseas_study_university_list_service, put_overseas_article_service,\
     get_org_overseas_plan_list_service, get_org_overseas_plan_detail_service
-from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm, OverseaPlanUpdateForm, OverseaPlanAddForm
+from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm, OverseaPlanUpdateForm, OverseaPlanAddForm, \
+    OverseaPlanForm
 
 __author__ = 'yangchujie'
 
@@ -141,7 +142,7 @@ def get_overseas_study_university_list():
 
 
 @api.route('/plan', methods=['POST'])
-#@auth.login_required
+@auth.login_required
 def put_overseas_article():
     form = OverseaPlanAddForm().create_api_form()
     text = form.html_content.data
@@ -152,7 +153,7 @@ def put_overseas_article():
 
 
 @api.route('/org/<int:oid>/plans', methods=['GET'])
-#@auth.login_required
+@auth.login_required
 def get_org_overseas_plan_list(oid):
     data = get_org_overseas_plan_list_service(oid)
     headers = {'Content-Type': 'application/json'}
@@ -161,7 +162,7 @@ def get_org_overseas_plan_list(oid):
 
 
 @api.route('/plans/<int:pid>', methods=['GET'])
-#@auth.login_required
+@auth.login_required
 def get_org_overseas_plan_detail(pid):
     data = get_org_overseas_plan_detail_service(pid)
     headers = {'Content-Type': 'application/json'}
@@ -170,7 +171,7 @@ def get_org_overseas_plan_detail(pid):
 
 
 @api.route('/plans/<int:pid>', methods=['PUT'])
-#@auth.login_required
+@auth.login_required
 def update_org_overseas_plan_detail(pid):
     form = OverseaPlanUpdateForm().create_api_form()
     plan_info = OverseasPlan.query.get(pid)
@@ -180,6 +181,15 @@ def update_org_overseas_plan_detail(pid):
         for key, value in form.body_data.items():
             setattr(plan_info, key, value)
     return jsonify(plan_info), 202
+
+
+@api.route('/plan/index', methods=['POST'])
+def redirect_to_plan():
+    """
+    重定向到机构留学计划
+    """
+    form = OverseaPlanForm().create_api_form()
+    return redirect(form.url.data, 301)
 
 
 
