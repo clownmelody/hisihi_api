@@ -318,6 +318,81 @@
 ** end **
 
 
+获取机构下培训课程列表(v2.9)
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/<int:oid>/teaching_course
+
+**Parameters**:
+
+* version 2.9
+* oid: 机构ID
+* except_id: 排除的课程ID（传参方式同分页参数, 用于课程）
+* page:  分页参数
+* per_page:  分页参数
+
+**Response** `200` ::
+
+    {
+        "courses":[
+            {
+                "already_registered":0,
+                "coupon":[
+                    {
+                        "coupon_info":{
+                            "end_time":1464624000,
+                            "id":1,
+                            "money":200,
+                            "is_used": false,
+                            "name":"直减200",
+                            "start_time":1464105600,
+                            "type":1
+                        },
+                        "promotion_info":{
+                            "description":"嘿设汇亿元机构扶持计划ppppp",
+                            "id":1,
+                            "little_logo_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+                            "logo_url":"http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
+                            "tag_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+                            "title":"亿元扶持1",
+                            "type":1
+                        }
+                    }
+                ],
+                "course_name":"nodejs全栈式开发",
+                "cover_pic":"http://pic.hisihi.com/2016-05-17/1463467535627281.jpg",
+                "end_course_time":"2015-09-08",
+                "id":8,
+                "lecture_name":"MR.JJM",
+                "lesson_period":120,
+                "organization_id":41,
+                "organization_name":"英雄联盟开黑组",
+                "price":16888,
+                "start_course_time":"2016-06-08",
+                "student_num":30
+            },
+            {
+                "already_registered":1,
+                "coupon":[],
+                "course_name":"Python从入门到精通",
+                "cover_pic":"http://pic.hisihi.com/2016-05-17/1463478862029122.png",
+                "end_course_time":"2016-10-11",
+                "id":13,
+                "lecture_name":"雷磊",
+                "lesson_period":25,
+                "organization_id":41,
+                "organization_name":"英雄联盟开黑组",
+                "price":38888,
+                "start_course_time":"2016-07-09",
+                "student_num":15
+            }
+        ],
+        "total_count":2
+    }
+** end **
+
+
 获取培训课程信息
 ~~~~~~~~~~~~~~~
 **URL**::
@@ -656,5 +731,133 @@
       "code": 0,
       "msg": "3 university has been added",
       "request": "POST  /v1/org/link/university"
+    }
+** end **
+
+
+获取活动详情
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/promotion/<int:pid>
+
+**Parameters**:
+
+* pid:  活动id
+
+**Response** `200` ::
+
+    {
+        "title":"亿元扶持1",
+        "id":1,
+        "tag_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+        "little_logo_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+        "type":1,
+        "logo_url":"http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
+        "description":"嘿设汇亿元机构扶持计划ppppp"
+    }
+** end **
+
+
+获取活动相关的课程列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/promotion/<int:pid>/teaching_course
+
+**Parameters**:
+
+* pid:  活动id
+
+**Response** `200` ::
+
+    {
+        "total_count":2,
+        "data":[
+            {
+                "student_num":46,
+                "end_course_time":"",
+                "lesson_period":34,
+                "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
+                "organization_name":"河北测试机构",
+                "start_course_time":"2016-04-27",
+                "organization_id":62,
+                "coupon_info":{
+                    "start_time":1464105600,
+                    "type":1,
+                    "id":1,
+                    "money":200,
+                    "is_used":false,
+                    "end_time":1464624000,
+                    "name":"直减200"
+                },
+                "course_name":"UI-01",
+                "web_url":"http://hisihi.com/api.php?s=/organization/showteachingcoursemainpage/course_id/23",
+                "price":2200,
+                "lecture_name":"讲师01"
+            },
+            {
+                "student_num":43,
+                "end_course_time":"",
+                "lesson_period":25,
+                "cover_pic":"http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
+                "organization_name":"河北测试机构",
+                "start_course_time":"2016-04-27",
+                "organization_id":62,
+                "coupon_info":{
+                    "start_time":1464105600,
+                    "type":1,
+                    "id":1,
+                    "money":200,
+                    "is_used":false,
+                    "end_time":1464624000,
+                    "name":"直减200"
+                },
+                "course_name":"UI-03",
+                "web_url":"http://hisihi.com/api.php?s=/organization/showteachingcoursemainpage/course_id/24",
+                "price":1100,
+                "lecture_name":"讲师02"
+            }
+        ]
+    }
+** end **
+
+
+课程主页获取活动和优惠券列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/teaching_course/<int:cid>/promotions
+
+**Parameters**:
+
+* cid:  课程id
+
+**Response** `200` ::
+
+    {
+        "data":[
+            {
+                "coupon_info":{
+                    "end_time":1464624000,
+                    "id":1,
+                    "money":200,
+                    "is_used":false,
+                    "name":"直减200",
+                    "start_time":1464105600,
+                    "type":1
+                },
+                "promotion_info":{
+                    "description":"嘿设汇亿元机构扶持计划ppppp",
+                    "id":1,
+                    "little_logo_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+                    "logo_url":"http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
+                    "tag_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+                    "title":"亿元扶持1",
+                    "type":1
+                }
+            }
+        ],
+        "total_count":1
     }
 ** end **

@@ -74,3 +74,30 @@
     }
 
 
+获取用户优惠券列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /user/<int:uid>/coupons
+
+**Parameters**:
+
+* uid: 用户id
+
+**Response** `200` ::
+
+    {
+        "total_count":1,
+        "data":[
+            {
+                "id":1,
+                "end_time":1464624000,
+                "money":200,
+                "type":1,
+                "start_time":1464105600,
+                "is_used":false,
+                "is_out_of_date": false,
+                "course_name":"nodejs全栈式开发"
+            }
+        ]
+    }

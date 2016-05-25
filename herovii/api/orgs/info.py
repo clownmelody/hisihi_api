@@ -7,9 +7,10 @@ from herovii.libs.error_code import NotFound, IllegalOperation, JSONStyleError
 from herovii.libs.helper import is_first_party_cms, success_json
 from herovii.models.base import db
 from herovii.models.org.info import Info
-from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.service.org import create_org_info, get_org_by_id, get_org_by_uid, update_teachers_field_info, \
-    add_major_to_org, get_major_by_oid, get_org_stat, get_university_by_oid, link_org_to_university
+    add_major_to_org, get_major_by_oid, get_org_stat, get_university_by_oid, link_org_to_university, \
+    get_promotion_detail_service, \
+    get_promotion_teaching_course_list_service
 from herovii.validator.forms import OrgForm, OrgUpdateForm
 
 __author__ = 'bliss'
@@ -152,3 +153,27 @@ def link_org_and_university():
     msg = link_org_to_university(oid, university_id)
     headers = {'Content-Type': 'application/json'}
     return success_json(msg=msg), 201, headers
+
+
+@api.route('/promotion/<int:pid>', methods=['GET'])
+def get_promotion_detail(pid):
+    info = get_promotion_detail_service(pid)
+    json_str = json.dumps(info)
+    headers = {'Content-Type': 'application/json'}
+    return json_str, 200, headers
+
+
+@api.route('/promotion/<int:pid>/teaching_course', methods=['GET'])
+@auth.login_required
+def get_promotion_teaching_course_list(pid):
+    if not hasattr(g, 'user'):
+        uid = 0
+    elif g.user[1] == 100:
+        uid = 0
+    else:
+        uid = g.user[0]
+    course_list = get_promotion_teaching_course_list_service(pid, uid)
+    json_str = json.dumps({"total_count": len(course_list), "data": course_list})
+    headers = {'Content-Type': 'application/json'}
+    return json_str, 200, headers
+
