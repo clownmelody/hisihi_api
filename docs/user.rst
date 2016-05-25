@@ -101,3 +101,24 @@
             }
         ]
     }
+** end
+
+
+用户领取优惠券
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /user/coupons
+
+**Parameters**:
+
+* uid: 用户id
+* coupon_id: 优惠券id
+
+**Response** `200` ::
+
+    {
+      "coupon_id": "2",
+      "id": 2,
+      "uid": "72"
+    }

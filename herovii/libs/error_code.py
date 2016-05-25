@@ -168,3 +168,15 @@ class SendSysMessageFailture(APIException):
     code = 200
     error_code = 7008
     error = 'send sys message failture, not found target'
+
+
+class CouponOutOfDateFailture(APIException):
+    code = 200
+    error_code = 8000
+    error = 'the coupon is out of date'
+
+
+class CouponHasObtainedFailture(APIException):
+    code = 200
+    error_code = 8001
+    error = 'the coupon has been obtained'

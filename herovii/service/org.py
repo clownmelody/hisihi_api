@@ -1468,8 +1468,8 @@ def is_coupon_obtained(cid, uid):
 
 
 def is_coupon_out_of_date(cid):
-    coupon = db.session.query(UserCoupon) \
-        .filter(UserCoupon.coupon_id == cid) \
+    coupon = db.session.query(Coupon) \
+        .filter(Coupon.id == cid) \
         .one()
     now = int(time.time())
     if now <= int(coupon.end_time):

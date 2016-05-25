@@ -14,7 +14,7 @@ class UserCoupon(Base):
     uid = Column(Integer, unique=True)
     coupon_id = Column(Integer, unique=True)
     create_time = Column(Integer, default=int(time.time()))
-    status = Column(SmallInteger)
+    status = Column(SmallInteger, default=1)
 
     def keys(self):
         return (

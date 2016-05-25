@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
+from herovii import db
+from herovii.models.user.user_coupon import UserCoupon
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
-from herovii.service.org import get_coupon_list_by_uid
+from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date
 from herovii.service.user_csu import db_change_indentity
 from flask import jsonify, request
 from herovii.validator.forms import PhoneNumberForm, \
-    UserCSUChangeIdentityForm, PagingForm
+    UserCSUChangeIdentityForm, PagingForm, ObtainCouponForm
 from herovii.service import user_org
 from herovii.validator import user_verify
-from herovii.libs.error_code import NotFound
+from herovii.libs.error_code import NotFound, CouponOutOfDateFailture, CouponHasObtainedFailture
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.bpbase import auth
 
@@ -75,3 +77,22 @@ def get_user_coupon_list(uid):
     headers = {'Content-Type': 'application/json'}
     return json_data, 200, headers
 
+
+@api.route('/coupons', methods=['POST'])
+# @auth.login_required
+def add_coupon_to_user():
+    form = ObtainCouponForm.create_api_form()
+    user_coupon = UserCoupon()
+    for key, value in form.body_data.items():
+        setattr(user_coupon, key, value)
+    if is_coupon_out_of_date(user_coupon.coupon_id):
+        raise CouponOutOfDateFailture()
+    is_obtain = db.session.query(UserCoupon).filter(UserCoupon.uid == user_coupon.uid,
+                                                    UserCoupon.coupon_id == user_coupon.coupon_id,
+                                                    UserCoupon.status != -1) \
+        .count()
+    if is_obtain:
+        raise CouponHasObtainedFailture()
+    with db.auto_commit():
+        db.session.add(user_coupon)
+    return jsonify(user_coupon), 201

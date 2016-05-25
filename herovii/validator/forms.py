@@ -383,3 +383,8 @@ class OverseaPlanForm(Form):
     id = IntegerField(validators=[DataRequired()])
     url = StringField(validators=[DataRequired()])
 
+
+class ObtainCouponForm(Form):
+    uid = IntegerField(validators=[DataRequired()])
+    coupon_id = IntegerField(validators=[DataRequired()])
+
