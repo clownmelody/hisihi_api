@@ -2,7 +2,7 @@
 import sys
 import time
 from flask import json, current_app
-from sqlalchemy import func
+from sqlalchemy import func, text
 from herovii import db
 from herovii.libs.error_code import NotFound, FileUploadFailed
 from herovii.libs.helper import get_oss_file_url
@@ -296,7 +296,7 @@ def get_overseas_study_university_list_service():
     data_list = []
     university_list = db.session.query(University.id, University.name) \
         .filter(University.status == 1) \
-        .order_by(University.create_time.desc()) \
+        .order_by(text("CONVERT( name USING gbk ) COLLATE gbk_chinese_ci ASC")) \
         .all()
     for university in university_list:
         data = {
