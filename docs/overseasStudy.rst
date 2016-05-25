@@ -433,3 +433,20 @@
        "url": "http://baidu.com"
     }
 -- end
+
+
+请求留学计划页面
+~~~~~~~~~~~
+**URL**::
+
+    POST      overseas_study/plan/index
+
+**Parameters**:(json)
+
+* id:  计划id
+* url:  计划链接
+
+**Response** `301` ::
+
+    将进行一次重定向
+-- end
