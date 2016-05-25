@@ -277,6 +277,7 @@ qrcode_url 生成二维码的路径
 * text: 文本信息
 * extension: 生成文件的后缀
 * directory: 文件在OSS的存放目录
+* content_type: 设置Content-Type属性，如"text/html"
 
 
 **Response** `201`:
