@@ -44,7 +44,8 @@ def create_file_by_string():
     text = json_url['text']
     extension = json_url['extension']
     directory = json_url['directory']
-    oss_url = FilePiper.upload_text_to_oss(text, extension, directory)
+    content_type = json_url['content_type']
+    oss_url = FilePiper.upload_text_to_oss(text, extension, directory, content_type)
     data = {
         'url': oss_url
     }
