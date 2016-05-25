@@ -188,8 +188,10 @@ def redirect_to_plan():
     """
     重定向到机构留学计划
     """
-    form = OverseaPlanForm().create_api_form()
-    return redirect(form.url.data, 301)
+    json_url = request.get_json(force=True)
+    id = json_url['id']
+    url = json_url['url']
+    return redirect(url, 301)
 
 
 
