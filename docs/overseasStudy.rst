@@ -439,7 +439,7 @@
 ~~~~~~~~~~~
 **URL**::
 
-    POST      overseas_study/plan/<int:pid>
+    DELETE      overseas_study/plan/<int:pid>
 
 **Parameters**:
 
