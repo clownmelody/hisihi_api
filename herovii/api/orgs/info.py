@@ -187,7 +187,7 @@ def get_promo_code(tid, cid):
         uid = 0
     else:
         uid = g.user[0]
-    course_list = get_promotion_teaching_course_list_service(pid, uid)
+    course_list = get_promotion_teaching_course_list_service(tid, uid)
     json_str = json.dumps({"total_count": len(course_list), "data": course_list})
     headers = {'Content-Type': 'application/json'}
     return json_str, 200, headers
