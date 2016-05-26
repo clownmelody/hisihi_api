@@ -467,3 +467,31 @@
 
     将进行一次重定向
 -- end
+
+
+获取留学计划网页的文本
+~~~~~~~~~~~
+**URL**::
+
+    POST      overseas_study/plan/text
+
+**Parameters**:(json)
+
+* pid:  留学计划id
+* flag:  标签，0表示预览，返回40个文本， 1表示编辑，返回完整html文本
+* url:  计划链接
+
+**Example**::
+
+    {
+        "pid":"1",
+        "flag":"0",
+        "url":"http://pic.hisihi.com/overseas_article/2016-05-23/1464001178426599.html"
+    }
+
+**Response** `200` ::
+
+    {
+      "text": "shsaha ahksjdksjdk jdhsajkdhkdha diashjd"
+    }
+-- end

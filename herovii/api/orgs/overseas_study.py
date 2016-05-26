@@ -1,3 +1,7 @@
+import pycurl
+import re
+from io import StringIO, BytesIO
+
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import success_json
 from herovii.models.base import db
@@ -204,4 +208,31 @@ def delete_org_overseas_plan_detail(pid):
     return success_json(), 204
 
 
+@api.route('/plan/text', methods=['POST'])
+@auth.login_required
+def get_org_overseas_plan_text():
+    json_url = request.get_json(force=True)
+    flag = json_url['flag']
+    pid = json_url['pid']
+    url = json_url['url']
+    b = BytesIO()
+    c = pycurl.Curl()
+    c.setopt(c.URL, url)
+    c.setopt(c.WRITEFUNCTION, b.write)  #回调
+    c.setopt(c.FOLLOWLOCATION, 1)
+    c.setopt(c.HEADER, False)  # 去掉header
+    c.perform()
+    html = b.getvalue().decode('UTF-8')
+    if int(flag) == 0:
+        dd = re.sub('<[^>]+>', '', html)
+        if len(dd) > 40:
+            dd = dd[0:40]
+        data = {
+            'text': dd
+        }
+    else:
+        data = {
+            'text': html
+        }
+    return jsonify(data), 200
 
