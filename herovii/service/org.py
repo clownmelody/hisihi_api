@@ -1540,3 +1540,8 @@ def get_coupon_list_by_uid(uid, page, per_page):
         }
         coupon_info_list.append(coupon_info)
     return total_count, coupon_info_list
+
+
+def get_teaching_course_coupon_code_service():
+    return None
+

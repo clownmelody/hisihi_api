@@ -64,7 +64,7 @@ class OrgBaseScope(ScopeBase):
 class OrgAdminScope(ScopeBase):
     """Org管理员用户应用权限"""
     allow_api = ['v1.file+upload_object', 'v1.test+test_auth', 'v1.user+change_identity'] + OrgBaseScope.allow_api
-    allow_module = ['v1.org', 'v1.file'] + OrgBaseScope.allow_module
+    allow_module = ['v1.org', 'v1.file', 'v1.overseas_study'] + OrgBaseScope.allow_module
 
 
 def is_in_scope(scope, api_endpoint):

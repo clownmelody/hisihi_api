@@ -435,6 +435,23 @@
 -- end
 
 
+删除留学计划
+~~~~~~~~~~~
+**URL**::
+
+    DELETE      overseas_study/plan/<int:pid>
+
+**Parameters**:
+
+* pid:  留学计划id
+
+
+**Response** `204` ::
+
+
+-- end
+
+
 请求留学计划页面
 ~~~~~~~~~~~
 **URL**::
