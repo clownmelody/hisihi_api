@@ -10,7 +10,7 @@ from herovii.models.org.info import Info
 from herovii.service.org import create_org_info, get_org_by_id, get_org_by_uid, update_teachers_field_info, \
     add_major_to_org, get_major_by_oid, get_org_stat, get_university_by_oid, link_org_to_university, \
     get_promotion_detail_service, \
-    get_promotion_teaching_course_list_service
+    get_promotion_teaching_course_list_service, get_teaching_course_coupon_code_service
 from herovii.validator.forms import OrgForm, OrgUpdateForm
 
 __author__ = 'bliss'
@@ -178,7 +178,7 @@ def get_promotion_teaching_course_list(pid):
     return json_str, 200, headers
 
 
-@api.route('/teaching_course/<int:tid>/coupon/<int:cid>', methods=['GET'])
+@api.route('/teaching_course/<int:tid>/coupon/<int:cid>/code', methods=['GET'])
 #@auth.login_required
 def get_promo_code(tid, cid):
     if not hasattr(g, 'user'):
@@ -187,7 +187,7 @@ def get_promo_code(tid, cid):
         uid = 0
     else:
         uid = g.user[0]
-    course_list = get_promotion_teaching_course_list_service(tid, uid)
+    course_list = get_teaching_course_coupon_code_service(tid, uid)
     json_str = json.dumps({"total_count": len(course_list), "data": course_list})
     headers = {'Content-Type': 'application/json'}
     return json_str, 200, headers
