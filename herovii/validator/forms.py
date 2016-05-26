@@ -385,7 +385,7 @@ class OverseaPlanForm(Form):
 
 
 class ObtainCouponForm(Form):
-    uid = IntegerField(validators=[DataRequired()])
+    teaching_course_id = IntegerField(validators=[DataRequired()])
     coupon_id = IntegerField(validators=[DataRequired()])
 
 

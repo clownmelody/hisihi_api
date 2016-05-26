@@ -112,16 +112,21 @@
 
 **Parameters**:
 
-* uid: 用户id
+* 必须登录
+* teaching_course_id: 课程id
 * coupon_id: 优惠券id
 
 **Response** `201` ::
 
     {
-      "coupon_id": "2",
-      "id": 2,
-      "uid": "72"
+      "coupon_id": "1",
+      "id": 7,
+      "promo_code": "0800001471609291",
+      "promo_code_url": "http://pic.hisihi.com/2016-05-26/1464248500365467.png",
+      "teaching_course_id": "24",
+      "uid": 567
     }
+    promo_code 为优惠码     promo_code_url为优惠码生成的二维码
 ** end
 
 
@@ -149,3 +154,4 @@
         "phone_num": "1",
         "uid": "1"
     }
+** end

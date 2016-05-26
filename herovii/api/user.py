@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
+
+from flask.globals import g
+
 from herovii import db
 from herovii.models.user.user_coupon import UserCoupon
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
 from herovii.models.user.user_gift_package import UserGiftPackage
-from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date
+from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date, get_teaching_course_coupon_code_service
 from herovii.service.user_csu import db_change_indentity
 from flask import jsonify, request
 from herovii.validator.forms import PhoneNumberForm, \
@@ -83,10 +86,20 @@ def get_user_coupon_list(uid):
 @api.route('/coupons', methods=['POST'])
 @auth.login_required
 def add_coupon_to_user():
+    if not hasattr(g, 'user'):
+        uid = 0
+    elif g.user[1] == 100:
+        uid = 0
+    else:
+        uid = g.user[0]
     form = ObtainCouponForm.create_api_form()
     user_coupon = UserCoupon()
     for key, value in form.body_data.items():
         setattr(user_coupon, key, value)
+    promo_code, promo_code_url = get_teaching_course_coupon_code_service(uid)
+    user_coupon.uid = uid
+    user_coupon.promo_code = promo_code
+    user_coupon.promo_code_url = promo_code_url
     if is_coupon_out_of_date(user_coupon.coupon_id):
         raise CouponOutOfDateFailture()
     is_obtain = db.session.query(UserCoupon).filter(UserCoupon.uid == user_coupon.uid,

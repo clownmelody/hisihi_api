@@ -11,7 +11,7 @@ from sqlalchemy.sql.functions import func
 from werkzeug.datastructures import MultiDict
 from herovii.libs.error_code import NotFound, DataArgumentsException, StuClassNotFound, DirtyDataError, UpdateDBError, \
     ParamException
-from herovii.libs.helper import get_full_oss_url
+from herovii.libs.helper import get_full_oss_url, make_a_coupon_code, make_a_qrcode
 from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.base import db
 from herovii.models.issue import Issue
@@ -46,6 +46,7 @@ from herovii.models.user.id_realeation import IdRelation
 from herovii.models.user.user_coupon import UserCoupon
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
+from herovii.service.file import FilePiper
 
 __author__ = 'bliss'
 
@@ -1542,6 +1543,9 @@ def get_coupon_list_by_uid(uid, page, per_page):
     return total_count, coupon_info_list
 
 
-def get_teaching_course_coupon_code_service():
-    return None
+def get_teaching_course_coupon_code_service(uid):
+    coupon_code = make_a_coupon_code(uid)
+    f = make_a_qrcode(coupon_code)
+    oss_url = FilePiper.upload_bytes_to_oss(f)
+    return coupon_code, oss_url
 

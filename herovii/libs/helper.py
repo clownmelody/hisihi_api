@@ -132,5 +132,33 @@ def get_full_oss_url(object_url, cdn=False, bucket_config='ALI_OSS_ORG_BUCKET_NA
     return full_oss_url
 
 
+def make_a_coupon_code(uid):
+    """
+    生成优惠码
+    :param uid:
+    :return:
+    """
+    uid_list = list(str(uid))
+    uid_len = len(uid_list)
+    #08开头，标识为优惠码
+    coupon_code = ['0', '8']
+    if uid_len < 7:
+        for i in range(0, 7):
+            if i < (7 - uid_len):
+                coupon_code.append('0')
+            else:
+                num = int(uid_list[i - uid_len - 1]) * 3 + 6
+                num_list = list(str(num))
+                coupon_code.append(num_list[len(num_list) - 1])
+    else:
+        for i in range(0, 7):
+            num = int(uid_list[i + uid_len - 7]) * 3 + 6
+            num_list = list(str(num))
+            coupon_code.append(num_list[len(num_list) - 1])
+    for i in range(0, 7):
+        r = random.randint(0, 9)
+        coupon_code.append(str(int(r)))
+    coupon_code_str = ''.join(coupon_code)
+    return coupon_code_str
 
 
