@@ -47,7 +47,7 @@ class Online0002Scope(ScopeBase):
 class UserCSUScope(ScopeBase):
     """消费用户权限域"""
     allow_api = ['v1.mall+redirect_to_duiba', 'v1.org+get_users_profiles', 'v1.org+student_sign_in',
-                 'v1.follow+follow_user', 'v1.org+create_org_teaching_course_enroll']
+                 'v1.follow+follow_user', 'v1.org+create_org_teaching_course_enroll, v1.org+list_teaching_courses_v2_9']
     allow_module = ['v1.user', 'v1.im', 'v1.teaching_course', 'v1.news', 'v1.overseas_study']
     forbidden = ['v1.user+change_identity']
 
