@@ -1549,3 +1549,28 @@ def get_teaching_course_coupon_code_service(uid):
     oss_url = FilePiper.upload_bytes_to_oss(f)
     return coupon_code, oss_url
 
+
+def get_coupon_detail_by_uid(uid, cid):
+    coupon = UserCoupon.query.filter_by(uid=uid, coupon_id=cid, status=1)\
+        .order_by(UserCoupon.create_time.desc()) \
+        .first()
+    info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
+    course = TeachingCourse.query.get(coupon.teaching_course_id)
+    is_used = is_coupon_used(info.id, uid)
+    is_out_of_date = is_coupon_out_of_date(info.id)
+    coupon_info = {
+        'coupon_id': info.id,
+        'type': info.type,
+        'start_time': info.start_time,
+        'end_time': info.end_time,
+        'money': info.money,
+        'course_name': course.course_name,
+        'is_out_of_date': is_out_of_date,
+        'is_used': is_used,
+        'promo_code': coupon.promo_code,
+        'promo_code_url': coupon.promo_code_url,
+        'service_condition': info.service_condition,
+        'using_method': info.using_method,
+        'instructions_for_use': info.instructions_for_use
+    }
+    return coupon_info

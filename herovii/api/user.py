@@ -7,7 +7,8 @@ from herovii import db
 from herovii.models.user.user_coupon import UserCoupon
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
-from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date, get_teaching_course_coupon_code_service
+from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date, get_teaching_course_coupon_code_service, \
+    get_coupon_detail_by_uid
 from herovii.service.user_csu import db_change_indentity
 from flask import jsonify, request
 from herovii.validator.forms import PhoneNumberForm, \
@@ -109,3 +110,10 @@ def add_coupon_to_user():
     with db.auto_commit():
         db.session.add(user_coupon)
     return jsonify(user_coupon), 201
+
+
+@api.route('/<int:uid>/coupon/<int:cid>/detail', methods=['GET'])
+#@auth.login_required
+def get_user_coupon_detail(uid, cid):
+    coupon = get_coupon_detail_by_uid(uid, cid)
+    return jsonify(coupon), 201

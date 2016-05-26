@@ -16,6 +16,9 @@ class Coupon(Base):
     start_time = Column(Integer, nullable=False)
     end_time = Column(Integer, nullable=False)
     money = Column(Integer, nullable=False)
+    service_condition = Column(String(200), nullable=False)
+    using_method = Column(String(200), nullable=False)
+    instructions_for_use = Column(String(200), nullable=False)
     create_time = Column(Integer, default=int(time.time()))
     status = Column(SmallInteger)
 
