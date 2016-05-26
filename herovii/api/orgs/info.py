@@ -177,3 +177,17 @@ def get_promotion_teaching_course_list(pid):
     headers = {'Content-Type': 'application/json'}
     return json_str, 200, headers
 
+
+@api.route('/teaching_course/<int:tid>/coupon/<int:cid>', methods=['GET'])
+#@auth.login_required
+def get_promo_code(tid, cid):
+    if not hasattr(g, 'user'):
+        uid = 0
+    elif g.user[1] == 100:
+        uid = 0
+    else:
+        uid = g.user[0]
+    course_list = get_promotion_teaching_course_list_service(pid, uid)
+    json_str = json.dumps({"total_count": len(course_list), "data": course_list})
+    headers = {'Content-Type': 'application/json'}
+    return json_str, 200, headers
