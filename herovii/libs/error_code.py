@@ -180,3 +180,9 @@ class CouponHasObtainedFailture(APIException):
     code = 200
     error_code = 8001
     error = 'the coupon has been obtained'
+
+
+class GiftHasObtainedFailture(APIException):
+    code = 200
+    error_code = 8002
+    error = 'you have submitted the gift request'

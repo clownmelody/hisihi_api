@@ -388,3 +388,10 @@ class ObtainCouponForm(Form):
     teaching_course_id = IntegerField(validators=[DataRequired()])
     coupon_id = IntegerField(validators=[DataRequired()])
 
+
+class ObtainGiftPackageForm(Form):
+    uid = IntegerField(validators=[DataRequired()])
+    obtain_coupon_record_id = IntegerField(validators=[DataRequired()])
+    name = StringField(validators=[DataRequired()])
+    phone_num = StringField(validators=[DataRequired()])
+    address = StringField(validators=[DataRequired()])
