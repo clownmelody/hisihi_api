@@ -111,7 +111,7 @@
     POST     /user/coupons
 
 **Parameters**:
-必须登录
+* 必须登录
 * teaching_course_id: 课程id
 * coupon_id: 优惠券id
 
