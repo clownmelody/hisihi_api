@@ -1,4 +1,5 @@
 from herovii.libs.error_code import NotFound
+from herovii.libs.helper import success_json
 from herovii.models.base import db
 from flask import jsonify, json, request, redirect
 from herovii.libs.bpbase import ApiBlueprint, auth
@@ -193,6 +194,14 @@ def redirect_to_plan():
     url = json_url['url']
     return redirect(url, 301)
 
+
+@api.route('/plan/<int:pid>', methods=['DELETE'])
+@auth.login_required
+def delete_org_overseas_plan_detail(pid):
+    with db.auto_commit():
+        db.session.query(OverseasPlan).filter(OverseasPlan.id == pid) \
+            .update({OverseasPlan.status: -1})
+    return success_json(), 204
 
 
 
