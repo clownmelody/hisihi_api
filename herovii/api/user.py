@@ -4,14 +4,16 @@ from herovii import db
 from herovii.models.user.user_coupon import UserCoupon
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
+from herovii.models.user.user_gift_package import UserGiftPackage
 from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date
 from herovii.service.user_csu import db_change_indentity
 from flask import jsonify, request
 from herovii.validator.forms import PhoneNumberForm, \
-    UserCSUChangeIdentityForm, PagingForm, ObtainCouponForm
+    UserCSUChangeIdentityForm, PagingForm, ObtainCouponForm, ObtainGiftPackageForm
 from herovii.service import user_org
 from herovii.validator import user_verify
-from herovii.libs.error_code import NotFound, CouponOutOfDateFailture, CouponHasObtainedFailture
+from herovii.libs.error_code import NotFound, CouponOutOfDateFailture, CouponHasObtainedFailture, \
+    GiftHasObtainedFailture
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.bpbase import auth
 
@@ -79,7 +81,7 @@ def get_user_coupon_list(uid):
 
 
 @api.route('/coupons', methods=['POST'])
-# @auth.login_required
+@auth.login_required
 def add_coupon_to_user():
     form = ObtainCouponForm.create_api_form()
     user_coupon = UserCoupon()
@@ -96,3 +98,21 @@ def add_coupon_to_user():
     with db.auto_commit():
         db.session.add(user_coupon)
     return jsonify(user_coupon), 201
+
+
+@api.route('/gift_package', methods=['POST'])
+@auth.login_required
+def user_get_gift_package():
+    form = ObtainGiftPackageForm.create_api_form()
+    user_gift_package = UserGiftPackage()
+    for key, value in form.body_data.items():
+        setattr(user_gift_package, key, value)
+    is_obtain = db.session.query(UserGiftPackage).filter(UserGiftPackage.uid == user_gift_package.uid,
+                                                         UserGiftPackage.obtain_coupon_record_id == user_gift_package.obtain_coupon_record_id,
+                                                         UserGiftPackage.status != -1) \
+        .count()
+    if is_obtain:
+        raise GiftHasObtainedFailture()
+    with db.auto_commit():
+        db.session.add(user_gift_package)
+    return jsonify(user_gift_package), 201

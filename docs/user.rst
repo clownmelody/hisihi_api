@@ -115,10 +115,37 @@
 * uid: 用户id
 * coupon_id: 优惠券id
 
-**Response** `200` ::
+**Response** `201` ::
 
     {
       "coupon_id": "2",
       "id": 2,
       "uid": "72"
+    }
+** end
+
+
+用户领取礼包
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /user/gift_package
+
+**Parameters**:
+
+* uid: 用户id
+* obtain_coupon_record_id: 用户领取优惠券记录的id
+* name:  姓名
+* phone_num:  电话
+* address:  地址
+
+**Response** `201` ::
+
+    {
+        "address": "1",
+        "id": 1,
+        "name": "1",
+        "obtain_coupon_record_id": "1",
+        "phone_num": "1",
+        "uid": "1"
     }
