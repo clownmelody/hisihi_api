@@ -393,8 +393,7 @@
 
 **Parameters**:
 
-* id:  计划id
-* html_content:  详情内容
+* pid:  计划id
 * url:  计划链接
 
 **Response** `202` ::
@@ -419,7 +418,6 @@
 **Parameters**:
 
 * oid:  机构id
-* html_content:  详情内容
 * url:  计划链接
 
 **Response** `202` ::
