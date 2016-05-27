@@ -343,12 +343,12 @@ def get_org_overseas_plan_detail_service(pid):
 
 def get_org_overseas_plan_text_service(flag, plans, str_count):
     text_list = []
-    b = BytesIO()
     c = pycurl.Curl()
-    c.setopt(c.WRITEFUNCTION, b.write)  #回调
     c.setopt(c.FOLLOWLOCATION, 1)
     c.setopt(c.HEADER, False)  # 去掉header
     for i in plans:
+        b = BytesIO()
+        c.setopt(c.WRITEFUNCTION, b.write)  #回调
         c.setopt(c.URL, i['url'])
         c.perform()
         html = b.getvalue().decode('UTF-8')
