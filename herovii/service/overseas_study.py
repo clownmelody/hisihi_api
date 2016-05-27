@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
+import pycurl
+import re
+from io import BytesIO
 import time
 from flask import json, current_app
 from sqlalchemy import func, text
@@ -339,3 +342,29 @@ def get_org_overseas_plan_detail_service(pid):
     return detail
 
 
+def get_org_overseas_plan_text_service(flag, plans):
+    text_list = []
+    b = BytesIO()
+    c = pycurl.Curl()
+    c.setopt(c.WRITEFUNCTION, b.write)  #回调
+    c.setopt(c.FOLLOWLOCATION, 1)
+    c.setopt(c.HEADER, False)  # 去掉header
+    for i in plans:
+        c.setopt(c.URL, i['url'])
+        c.perform()
+        html = b.getvalue().decode('UTF-8')
+        if int(flag) == 0:
+            dd = re.sub('<[^>]+>', '', html)
+            if len(dd) > 40:
+                dd = dd[0:40]
+            data = {
+                'pid': i['pid'],
+                'text': dd
+            }
+        else:
+            data = {
+                'pid': i['pid'],
+                'text': html
+            }
+        text_list.append(data)
+    return text_list

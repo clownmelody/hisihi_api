@@ -1,6 +1,4 @@
-import pycurl
-import re
-from io import StringIO, BytesIO
+
 
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import success_json
@@ -14,7 +12,7 @@ from herovii.service.overseas_study import get_overseas_study_banner_service, ge
     get_overseas_study_university_list_by_country_id_service, get_overseas_study_country_service, \
     get_overseas_study_university_photos_service, get_overseas_study_university_majors_service,\
     get_overseas_study_university_list_service, put_overseas_article_service,\
-    get_org_overseas_plan_list_service, get_org_overseas_plan_detail_service
+    get_org_overseas_plan_list_service, get_org_overseas_plan_detail_service, get_org_overseas_plan_text_service
 from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm, OverseaPlanUpdateForm, OverseaPlanAddForm, \
     OverseaPlanForm
 
@@ -213,26 +211,10 @@ def delete_org_overseas_plan_detail(pid):
 def get_org_overseas_plan_text():
     json_url = request.get_json(force=True)
     flag = json_url['flag']
-    pid = json_url['pid']
-    url = json_url['url']
-    b = BytesIO()
-    c = pycurl.Curl()
-    c.setopt(c.URL, url)
-    c.setopt(c.WRITEFUNCTION, b.write)  #回调
-    c.setopt(c.FOLLOWLOCATION, 1)
-    c.setopt(c.HEADER, False)  # 去掉header
-    c.perform()
-    html = b.getvalue().decode('UTF-8')
-    if int(flag) == 0:
-        dd = re.sub('<[^>]+>', '', html)
-        if len(dd) > 40:
-            dd = dd[0:40]
-        data = {
-            'text': dd
-        }
-    else:
-        data = {
-            'text': html
-        }
+    plans = json_url['plans']
+    text_list = get_org_overseas_plan_text_service(flag, plans)
+    data = {
+        'text_list': text_list
+    }
     return jsonify(data), 200
 
