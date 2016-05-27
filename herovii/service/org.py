@@ -1516,6 +1516,11 @@ def get_teaching_course_promotions_by_id(cid, uid):
                     'is_obtain': is_obtain,
                     'is_out_of_date': is_out_of_date
                 }
+            if is_obtain:
+                obtain_id = db.session.query(UserCoupon.id).filter(UserCoupon.coupon_id == cid, UserCoupon.uid == uid,
+                                                              UserCoupon.status > 0, UserCoupon.coupon_id == _coupon.id)\
+                    .first()
+                obj['coupon_info']['obtain_id'] = obtain_id
         else:
             obj['coupon_info'] = None
         promotion_list.append(obj)
