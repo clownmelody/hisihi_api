@@ -28,7 +28,6 @@ from herovii.models.org.org_teaching_course_promotion_relation import OrgTeachin
 from herovii.models.org.org_tag_relation import OrgTagRelation
 from herovii.models.org.pic import Pic
 from herovii.models.org.promotion import Promotion
-from herovii.models.org.promotion_coupon_relation import PromotionCouponRelation
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
@@ -1359,49 +1358,6 @@ def get_org_promotion_list(oid):
     return result_list
 
 
-# 获取机构参与活动和优惠券的列表
-def get_org_promotion_coupon_list(oid):
-    promotion_list = db.session.query(distinct(OrgTeachingCoursePromotionRelation.promotion_id)) \
-        .filter(OrgTeachingCoursePromotionRelation.organization_id == oid,
-                OrgTeachingCoursePromotionRelation.status == 1) \
-        .all()
-    id_list = []
-    for ids in promotion_list:
-        id_list.append(ids[0])
-    result_list = []
-    for pid in id_list:
-        promotion_info = db.session.query(Promotion) \
-            .filter(Promotion.id == pid) \
-            .one()
-        promotion_coupon_list = db.session.query(PromotionCouponRelation) \
-            .filter(PromotionCouponRelation.promotion_id == pid,
-                    PromotionCouponRelation.status == 1) \
-            .all()
-        info = {
-            'id': promotion_info.id,
-            'organization_id': oid,
-            'title': promotion_info.title,
-            'little_logo_url': promotion_info.little_logo_url,
-            'coupon_list': None
-        }
-        coupon_info_list = []
-        for coupon in promotion_coupon_list:
-            coupon_info = db.session.query(Coupon) \
-                .filter(Coupon.id == coupon.coupon_id) \
-                .one()
-            new_coupon = {
-                'name': coupon_info.name,
-                'type': coupon_info.type,
-                'start_time': coupon_info.start_time,
-                'end_time': coupon_info.end_time,
-                'money': coupon_info.money
-            }
-            coupon_info_list.append(new_coupon)
-        info['coupon_list'] = coupon_info_list
-        result_list.append(info)
-    return result_list
-
-
 # 获取活动详情
 def get_promotion_detail_service(pid):
     promotion_info = db.session.query(Promotion) \
@@ -1426,26 +1382,29 @@ def get_promotion_teaching_course_list_service(pid, uid):
     course_list = []
     for course in _list:
         info = get_teaching_course_by_id(course.teaching_course_id)
-        coupon_info = db.session.query(Coupon).join(PromotionCouponRelation,
-                                                    PromotionCouponRelation.coupon_id == Coupon.id) \
+        coupon_info = db.session.query(Coupon).join(TeachingCourseCouponRelation,
+                                                    TeachingCourseCouponRelation.coupon_id == Coupon.id) \
             .order_by(Coupon.money.desc()) \
-            .filter(PromotionCouponRelation.promotion_id == pid,
-                    PromotionCouponRelation.status == 1, Coupon.status == 1) \
+            .filter(TeachingCourseCouponRelation.teaching_course_id == course.teaching_course_id,
+                    TeachingCourseCouponRelation.status == 1, Coupon.status == 1) \
             .first()
-        is_used = is_coupon_used(coupon_info.id, uid)
-        is_obtain = is_coupon_obtained(coupon_info.id, uid)
-        is_out_of_date = is_coupon_out_of_date(coupon_info.id)
-        new_coupon = {
-            'id': coupon_info.id,
-            'name': coupon_info.name,
-            'type': coupon_info.type,
-            'start_time': coupon_info.start_time,
-            'end_time': coupon_info.end_time,
-            'money': coupon_info.money,
-            'is_used': is_used,
-            'is_obtain': is_obtain,
-            'is_out_of_date': is_out_of_date
-        }
+        if coupon_info is not None:
+            is_used = is_coupon_used(coupon_info.id, uid)
+            is_obtain = is_coupon_obtained(coupon_info.id, uid)
+            is_out_of_date = is_coupon_out_of_date(coupon_info.id)
+            new_coupon = {
+                'id': coupon_info.id,
+                'name': coupon_info.name,
+                'type': coupon_info.type,
+                'start_time': coupon_info.start_time,
+                'end_time': coupon_info.end_time,
+                'money': coupon_info.money,
+                'is_used': is_used,
+                'is_obtain': is_obtain,
+                'is_out_of_date': is_out_of_date
+            }
+        else:
+            new_coupon = None
         info['coupon_info'] = new_coupon
         course_list.append(info)
     return course_list
@@ -1499,8 +1458,8 @@ def get_teaching_course_promotions_by_id(cid, uid):
             .slice(0, 1) \
             .first()
         obj = {
-                'promotion_info': promotion_info
-            }
+            'promotion_info': promotion_info
+        }
         if _coupon is not None:
             is_used = is_coupon_used(_coupon.id, uid)
             is_obtain = is_coupon_obtained(_coupon.id, uid)
@@ -1532,19 +1491,17 @@ def get_teaching_course_promotions_by_id(cid, uid):
 def get_coupon_list_by_uid(uid, page, per_page):
     start, stop = convert_paginate(int(page), int(per_page))
     total_count = UserCoupon.query.filter_by(uid=uid, status=1).count()
-    coupon_list = UserCoupon.query.filter_by(uid=uid, status=1)\
-        .order_by(UserCoupon.create_time.desc()) \
+    coupon_list = UserCoupon.query.filter_by(uid=uid, status=1) \
+        .order_by(UserCoupon.create_time.asc()) \
         .slice(start, stop).all()
     coupon_info_list = []
     for coupon in coupon_list:
         info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
-        promotion = db.session.query(PromotionCouponRelation)\
-            .filter(PromotionCouponRelation.coupon_id == coupon.coupon_id)\
+        tccr = db.session.query(TeachingCourseCouponRelation) \
+            .filter(TeachingCourseCouponRelation.coupon_id == coupon.coupon_id)\
+            .slice(0, 1) \
             .first()
-        course_promotion_r = db.session.query(OrgTeachingCoursePromotionRelation)\
-            .filter(OrgTeachingCoursePromotionRelation.promotion_id == promotion.promotion_id)\
-            .first()
-        course = TeachingCourse.query.get(course_promotion_r.teaching_course_id)
+        course = TeachingCourse.query.get(tccr.teaching_course_id)
         is_used = is_coupon_used(info.id, uid)
         is_out_of_date = is_coupon_out_of_date(info.id)
         coupon_info = {
@@ -1570,7 +1527,7 @@ def get_teaching_course_coupon_code_service(uid):
 
 
 def get_coupon_detail_by_uid(id):
-    coupon = UserCoupon.query.filter_by(id=id, status=1)\
+    coupon = UserCoupon.query.filter_by(id=id, status=1) \
         .order_by(UserCoupon.create_time.desc()) \
         .first()
     info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
