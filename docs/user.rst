@@ -92,8 +92,8 @@
         {
           "is_out_of_date": false,
           "end_time": 1464624000,
-          "coupon_id": 1,
-          "id": 6,
+          "id": 1,
+          "obtain_id": 6,
           "is_used": false,
           "course_name": "PS-01",
           "money": 200,
@@ -171,10 +171,10 @@
 **Response** `201` ::
 
     {
-      "coupon_id": 1,
+      "id": 1,
       "course_name": "UI-03",
       "end_time": 1464624000,
-      "id": 6,
+      "obtain_id": 6,
       "instructions_for_use": "本券限现场使用，每次限用一张；本券不可兑换现金",
       "is_out_of_date": false,
       "is_used": false,

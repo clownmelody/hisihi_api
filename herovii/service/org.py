@@ -1517,10 +1517,12 @@ def get_teaching_course_promotions_by_id(cid, uid):
                     'is_out_of_date': is_out_of_date
                 }
             if is_obtain:
-                obtain_id = db.session.query(UserCoupon.id).filter(UserCoupon.coupon_id == cid, UserCoupon.uid == uid,
-                                                              UserCoupon.status > 0, UserCoupon.coupon_id == _coupon.id)\
+                obtain_id = db.session.query(UserCoupon.id).filter(UserCoupon.teaching_course_id == cid,
+                                                                   UserCoupon.uid == uid,
+                                                                   UserCoupon.status > 0,
+                                                                   UserCoupon.coupon_id == _coupon.id)\
                     .first()
-                obj['coupon_info']['obtain_id'] = obtain_id
+                obj['coupon_info']['obtain_id'] = obtain_id.id
         else:
             obj['coupon_info'] = None
         promotion_list.append(obj)
@@ -1546,8 +1548,8 @@ def get_coupon_list_by_uid(uid, page, per_page):
         is_used = is_coupon_used(info.id, uid)
         is_out_of_date = is_coupon_out_of_date(info.id)
         coupon_info = {
-            'id': coupon.id,
-            'coupon_id': info.id,
+            'obtain_id': coupon.id,
+            'id': info.id,
             'type': info.type,
             'start_time': info.start_time,
             'end_time': info.end_time,
@@ -1576,8 +1578,8 @@ def get_coupon_detail_by_uid(id):
     is_used = is_coupon_used(info.id, coupon.uid)
     is_out_of_date = is_coupon_out_of_date(info.id)
     coupon_info = {
-        'id': coupon.id,
-        'coupon_id': info.id,
+        'obtain_id': coupon.id,
+        'id': info.id,
         'type': info.type,
         'start_time': info.start_time,
         'end_time': info.end_time,

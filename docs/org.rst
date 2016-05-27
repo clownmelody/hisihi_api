@@ -335,63 +335,66 @@
 **Response** `200` ::
 
     {
-        "courses":[
+      "courses": [
+        {
+          "already_registered": 0,
+          "coupon_list": [
             {
-                "already_registered":0,
-                "coupon_list":[
-                    {
-                        "coupon_info":{
-                            "end_time":1464624000,
-                            "id":2,
-                            "is_obtain":false,
-                            "is_out_of_date":false,
-                            "is_used":false,
-                            "money":400,
-                            "name":"直减400",
-                            "start_time":1464105600,
-                            "type":1
-                        },
-                        "promotion_info":{
-                            "description":"嘿设汇亿元机构扶持计划ppppp",
-                            "id":1,
-                            "little_logo_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
-                            "logo_url":"http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
-                            "tag_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
-                            "title":"亿元扶持1",
-                            "type":1
-                        }
-                    }
-                ],
-                "course_name":"nodejs全栈式开发",
-                "cover_pic":"http://pic.hisihi.com/2016-05-17/1463467535627281.jpg",
-                "end_course_time":"2015-09-08",
-                "id":8,
-                "lecture_name":"MR.JJM",
-                "lesson_period":120,
-                "organization_id":41,
-                "organization_name":"英雄联盟开黑组",
-                "price":16888,
-                "start_course_time":"2016-06-08",
-                "student_num":30
-            },
-            {
-                "already_registered":1,
-                "coupon":[],
-                "course_name":"Python从入门到精通",
-                "cover_pic":"http://pic.hisihi.com/2016-05-17/1463478862029122.png",
-                "end_course_time":"2016-10-11",
-                "id":13,
-                "lecture_name":"雷磊",
-                "lesson_period":25,
-                "organization_id":41,
-                "organization_name":"英雄联盟开黑组",
-                "price":38888,
-                "start_course_time":"2016-07-09",
-                "student_num":15
+              "coupon_info": {
+                "end_time": 1464624000,
+                "id": 1,
+                "is_obtain": true,
+                "is_out_of_date": false,
+                "is_used": false,
+                "money": 200,
+                "name": "直减200",
+                "obtain_id": 6,
+                "start_time": 1464105600,
+                "type": 1
+              },
+              "promotion_info": {
+                "description": "嘿设汇亿元机构扶持计划ppppp",
+                "id": 1,
+                "little_logo_url": "http://pic.hisihi.com/2016-05-23/574287226672b.png",
+                "logo_url": "http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
+                "tag_url": "http://pic.hisihi.com/2016-05-23/574287226672b.png",
+                "title": "亿元扶持1",
+                "type": 1
+              }
             }
-        ],
-        "total_count":2
+          ],
+          "course_name": "PS-01",
+          "cover_pic": "http://pic.hisihi.com/2015-12-01/565d62d9c4ce4.png",
+          "end_course_time": "",
+          "id": 3,
+          "lecture_name": "讲师3",
+          "lesson_period": 31,
+          "organization_id": 41,
+          "organization_name": "英雄联盟开黑组",
+          "price": 2000,
+          "start_course_time": "2016-05-01",
+          "student_num": 30
+        },
+        {
+          "already_registered": 0,
+          "coupon_list": [],
+          "course_name": "nodejs全栈式开发",
+          "cover_pic": "http://pic.hisihi.com/2016-05-17/1463467535627281.jpg",
+          "end_course_time": "2015-09-08",
+          "id": 8,
+          "lecture_name": "MR.JJM",
+          "lesson_period": 120,
+          "organization_id": 41,
+          "organization_name": "英雄联盟开黑组",
+          "price": 16888,
+          "start_course_time": "2016-06-08",
+          "student_num": 30
+        }
+      ],
+      "total_count": 10
     }
+
+    当is_obtain=true时，返回obtain_id，用于获取领取的优惠券详情
 ** end **
 
 

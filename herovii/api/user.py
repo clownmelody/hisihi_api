@@ -104,10 +104,11 @@ def add_coupon_to_user():
         raise CouponOutOfDateFailture()
     is_obtain = db.session.query(UserCoupon).filter(UserCoupon.uid == user_coupon.uid,
                                                     UserCoupon.coupon_id == user_coupon.coupon_id,
+                                                    UserCoupon.teaching_course_id == form.teaching_course_id.data,
                                                     UserCoupon.status != -1) \
-        .count()
+        .first()
     if is_obtain:
-        raise CouponHasObtainedFailture()
+        return jsonify(user_coupon), 201
     with db.auto_commit():
         db.session.add(user_coupon)
     return jsonify(user_coupon), 201
