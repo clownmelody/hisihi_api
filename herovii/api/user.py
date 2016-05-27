@@ -117,7 +117,7 @@ def add_coupon_to_user():
 #@auth.login_required
 def get_user_coupon_detail(uid, cid):
     coupon = get_coupon_detail_by_uid(uid, cid)
-    return jsonify(coupon), 201
+    return jsonify(coupon), 200
 
 
 @api.route('/gift_package', methods=['POST'])

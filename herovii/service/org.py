@@ -1559,6 +1559,7 @@ def get_coupon_detail_by_uid(uid, cid):
     is_used = is_coupon_used(info.id, uid)
     is_out_of_date = is_coupon_out_of_date(info.id)
     coupon_info = {
+        'id': coupon.id,
         'coupon_id': info.id,
         'type': info.type,
         'start_time': info.start_time,
