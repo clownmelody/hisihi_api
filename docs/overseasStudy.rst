@@ -477,21 +477,39 @@
 
 **Parameters**:(json)
 
-* pid:  留学计划id
-* flag:  标签，0表示预览，返回40个文本， 1表示编辑，返回完整html文本
-* url:  计划链接
+* plans:  留学计划列表，支持返回多个计划的文本；pid为计划id, url为计划的链接
+* flag:  标签，0表示预览，返回str_count个文本， 1表示编辑，返回完整html文本
+* str_count:  返回的文本字数，flag=0时有效
 
 **Example**::
 
     {
-        "pid":"1",
         "flag":"0",
-        "url":"http://pic.hisihi.com/overseas_article/2016-05-23/1464001178426599.html"
+        "str_count":"20",
+        "plans": [
+            {
+                "pid":"1",
+                "url":"http://pic.hisihi.com/overseas_article/2016-05-23/1464001178426599.html"
+            },
+            {
+                "pid":"2",
+                "url":"http://pic.hisihi.com/overseas_article/2016-05-25/1464155341369309.html"
+            }
+        ]
     }
 
 **Response** `200` ::
 
     {
-      "text": "shsaha ahksjdksjdk jdhsajkdhkdha diashjd"
+      "text_list": [
+        {
+          "pid": "1",
+          "text": "shsaha ahksjdksjdk j"
+        },
+        {
+          "pid": "2",
+          "text": "shsaha ahksjdksjdk j"
+        }
+      ]
     }
 -- end

@@ -13,8 +13,8 @@ from herovii.service.overseas_study import get_overseas_study_banner_service, ge
     get_overseas_study_university_photos_service, get_overseas_study_university_majors_service,\
     get_overseas_study_university_list_service, put_overseas_article_service,\
     get_org_overseas_plan_list_service, get_org_overseas_plan_detail_service, get_org_overseas_plan_text_service
-from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm, OverseaPlanUpdateForm, OverseaPlanAddForm, \
-    OverseaPlanForm
+from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm, OverseaPlanUpdateForm, OverseaPlanAddForm
+
 
 __author__ = 'yangchujie'
 
@@ -212,7 +212,8 @@ def get_org_overseas_plan_text():
     json_url = request.get_json(force=True)
     flag = json_url['flag']
     plans = json_url['plans']
-    text_list = get_org_overseas_plan_text_service(flag, plans)
+    str_count = json_url['str_count']
+    text_list = get_org_overseas_plan_text_service(flag, plans, str_count)
     data = {
         'text_list': text_list
     }

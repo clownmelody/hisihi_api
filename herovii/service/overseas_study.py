@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-import sys
-import pycurl
+
 import re
-from io import BytesIO
 import time
-from flask import json, current_app
+from io import BytesIO
+
+import pycurl
+from flask import current_app
 from sqlalchemy import func, text
 from herovii import db
-from herovii.libs.error_code import NotFound, FileUploadFailed
-from herovii.libs.helper import get_oss_file_url
-from herovii.libs.oss import OssAPI
+from herovii.libs.error_code import NotFound
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.overseas.country import Country
@@ -18,7 +17,7 @@ from herovii.models.overseas.overseas_plan import OverseasPlan
 from herovii.models.overseas.university import University
 from herovii.models.overseas.university_major import UniversityMajor
 from herovii.models.overseas.university_photos import UniversityPhotos
-from herovii.service.file import FilePiper
+
 
 __author__ = 'yangchujie'
 
@@ -342,7 +341,7 @@ def get_org_overseas_plan_detail_service(pid):
     return detail
 
 
-def get_org_overseas_plan_text_service(flag, plans):
+def get_org_overseas_plan_text_service(flag, plans, str_count):
     text_list = []
     b = BytesIO()
     c = pycurl.Curl()
@@ -355,8 +354,8 @@ def get_org_overseas_plan_text_service(flag, plans):
         html = b.getvalue().decode('UTF-8')
         if int(flag) == 0:
             dd = re.sub('<[^>]+>', '', html)
-            if len(dd) > 40:
-                dd = dd[0:40]
+            if len(dd) > int(str_count):
+                dd = dd[0:int(str_count)]
             data = {
                 'pid': i['pid'],
                 'text': dd
@@ -368,3 +367,4 @@ def get_org_overseas_plan_text_service(flag, plans):
             }
         text_list.append(data)
     return text_list
+
