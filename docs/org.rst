@@ -342,11 +342,12 @@
                     {
                         "coupon_info":{
                             "end_time":1464624000,
-                            "id":1,
-                            "money":200,
-                            "is_used": false,
-                            "is_obtain": false,
-                            "name":"直减200",
+                            "id":2,
+                            "is_obtain":false,
+                            "is_out_of_date":false,
+                            "is_used":false,
+                            "money":400,
+                            "name":"直减400",
                             "start_time":1464105600,
                             "type":1
                         },
@@ -789,6 +790,8 @@
                     "id":1,
                     "money":200,
                     "is_used":false,
+                    "is_obtain":false,
+                    "is_out_of_date":false,
                     "end_time":1464624000,
                     "name":"直减200"
                 },
@@ -811,6 +814,8 @@
                     "id":1,
                     "money":200,
                     "is_used":false,
+                    "is_obtain":false,
+                    "is_out_of_date":false,
                     "end_time":1464624000,
                     "name":"直减200"
                 },
@@ -842,8 +847,10 @@
                 "coupon_info":{
                     "end_time":1464624000,
                     "id":1,
-                    "money":200,
+                    "is_obtain":false,
+                    "is_out_of_date":false,
                     "is_used":false,
+                    "money":200,
                     "name":"直减200",
                     "start_time":1464105600,
                     "type":1
