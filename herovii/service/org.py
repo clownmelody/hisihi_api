@@ -1530,7 +1530,8 @@ def get_coupon_list_by_uid(uid, page, per_page):
         is_used = is_coupon_used(info.id, uid)
         is_out_of_date = is_coupon_out_of_date(info.id)
         coupon_info = {
-            'id': info.id,
+            'id': coupon.id,
+            'coupon_id': info.id,
             'type': info.type,
             'start_time': info.start_time,
             'end_time': info.end_time,
@@ -1550,13 +1551,13 @@ def get_teaching_course_coupon_code_service(uid):
     return coupon_code, oss_url
 
 
-def get_coupon_detail_by_uid(uid, cid):
-    coupon = UserCoupon.query.filter_by(uid=uid, coupon_id=cid, status=1)\
+def get_coupon_detail_by_uid(id):
+    coupon = UserCoupon.query.filter_by(id=id, status=1)\
         .order_by(UserCoupon.create_time.desc()) \
         .first()
     info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
     course = TeachingCourse.query.get(coupon.teaching_course_id)
-    is_used = is_coupon_used(info.id, uid)
+    is_used = is_coupon_used(info.id, coupon.uid)
     is_out_of_date = is_coupon_out_of_date(info.id)
     coupon_info = {
         'id': coupon.id,
