@@ -393,8 +393,7 @@
 
 **Parameters**:
 
-* id:  计划id
-* html_content:  详情内容
+* pid:  计划id
 * url:  计划链接
 
 **Response** `202` ::
@@ -419,7 +418,6 @@
 **Parameters**:
 
 * oid:  机构id
-* html_content:  详情内容
 * url:  计划链接
 
 **Response** `202` ::
@@ -466,4 +464,50 @@
 **Response** `301` ::
 
     将进行一次重定向
+-- end
+
+
+获取留学计划网页的文本
+~~~~~~~~~~~
+**URL**::
+
+    POST      overseas_study/plan/text
+
+**Parameters**:(json)
+
+* plans:  留学计划列表，支持返回多个计划的文本；pid为计划id, url为计划的链接
+* flag:  标签，0表示预览，返回str_count个文本， 1表示编辑，返回完整html文本
+* str_count:  返回的文本字数，flag=0时有效
+
+**Example**::
+
+    {
+        "flag":"0",
+        "str_count":"20",
+        "plans": [
+            {
+                "pid":"1",
+                "url":"http://pic.hisihi.com/overseas_article/2016-05-23/1464001178426599.html"
+            },
+            {
+                "pid":"2",
+                "url":"http://pic.hisihi.com/overseas_article/2016-05-25/1464155341369309.html"
+            }
+        ]
+    }
+
+**Response** `200` ::
+
+    {
+      "text_list": [
+        {
+          "pid": "1",
+          "text": "shsaha ahksjdksjdk j"
+        },
+        {
+          "pid": "2",
+          "text": "shsaha ahksjdksjdk j"
+        }
+      ]
+    }
 -- end

@@ -6,7 +6,7 @@ from flask.globals import g
 from herovii import db
 from herovii.models.user.user_coupon import UserCoupon
 from herovii.models.user.user_csu import UserCSU
-from herovii.models.user.user_csu_secure import UserCSUSecure
+from herovii.service.org import get_coupon_detail_by_uid
 from herovii.models.user.user_gift_package import UserGiftPackage
 from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date, get_teaching_course_coupon_code_service
 from herovii.service.user_csu import db_change_indentity
@@ -113,6 +113,13 @@ def add_coupon_to_user():
     return jsonify(user_coupon), 201
 
 
+@api.route('/coupon/<int:id>/detail', methods=['GET'])
+@auth.login_required
+def get_user_coupon_detail(id):
+    coupon = get_coupon_detail_by_uid(id)
+    return jsonify(coupon), 200
+
+
 @api.route('/gift_package', methods=['POST'])
 @auth.login_required
 def user_get_gift_package():
@@ -129,3 +136,4 @@ def user_get_gift_package():
     with db.auto_commit():
         db.session.add(user_gift_package)
     return jsonify(user_gift_package), 201
+

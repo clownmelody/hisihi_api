@@ -87,19 +87,20 @@
 **Response** `200` ::
 
     {
-        "total_count":1,
-        "data":[
-            {
-                "id":1,
-                "end_time":1464624000,
-                "money":200,
-                "type":1,
-                "start_time":1464105600,
-                "is_used":false,
-                "is_out_of_date": false,
-                "course_name":"nodejs全栈式开发"
-            }
-        ]
+      "total_count": 1,
+      "data": [
+        {
+          "is_out_of_date": false,
+          "end_time": 1464624000,
+          "coupon_id": 1,
+          "id": 6,
+          "is_used": false,
+          "course_name": "PS-01",
+          "money": 200,
+          "type": 1,
+          "start_time": 1464105600
+        }
+      ]
     }
 ** end
 
@@ -153,5 +154,36 @@
         "obtain_coupon_record_id": "1",
         "phone_num": "1",
         "uid": "1"
+    }
+** end
+
+
+用户优惠券详情
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /user/coupon/<int:id>/detail
+
+**Parameters**:
+
+* id: 优惠券列表里的id
+
+**Response** `201` ::
+
+    {
+      "coupon_id": 1,
+      "course_name": "UI-03",
+      "end_time": 1464624000,
+      "id": 6,
+      "instructions_for_use": "本券限现场使用，每次限用一张；本券不可兑换现金",
+      "is_out_of_date": false,
+      "is_used": false,
+      "money": 200,
+      "promo_code": "0800001772654868",
+      "promo_code_url": "http://pic.hisihi.com/2016-05-26/1464247184466871.png",
+      "service_condition": "仅可购买@C++--从入门到放弃",
+      "start_time": 1464105600,
+      "type": 1,
+      "using_method": "结算时手机出示此优惠券，请商家扫描二维码或输入号码，待验证成功后，即成功使用"
     }
 ** end
