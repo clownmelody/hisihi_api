@@ -128,7 +128,7 @@ def add_coupon_to_user():
 
 
 @api.route('/coupon/<int:id>/detail', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def get_user_coupon_detail(id):
     coupon = get_coupon_detail_by_uid(id)
     return jsonify(coupon), 200

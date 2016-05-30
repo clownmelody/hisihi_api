@@ -164,22 +164,23 @@
 
 **Parameters**:
 
-* id: 优惠券列表里的id
+* id: 领取记录obtain_id
 
 **Response** `201` ::
 
     {
-      "id": 1,
-      "course_name": "UI-03",
+      "course_name": "javascript 入门到放弃（5）",
       "end_time": 1464624000,
-      "obtain_id": 6,
+      "id": 2,
       "instructions_for_use": "本券限现场使用，每次限用一张；本券不可兑换现金",
+      "is_obtain_gift_package": true,
       "is_out_of_date": false,
       "is_used": false,
-      "money": 200,
-      "promo_code": "0800001772654868",
-      "promo_code_url": "http://pic.hisihi.com/2016-05-26/1464247184466871.png",
-      "service_condition": "仅可购买@C++--从入门到放弃",
+      "money": 400,
+      "obtain_id": 12,
+      "promo_code": "0800004906247644",
+      "promo_code_url": "http://pic.hisihi.com/2016-05-27/1464338164107386.png",
+      "service_condition": "仅可购买课程@javascript 入门到放弃（5）",
       "start_time": 1464105600,
       "type": 1,
       "using_method": "结算时手机出示此优惠券，请商家扫描二维码或输入号码，待验证成功后，即成功使用"

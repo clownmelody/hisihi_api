@@ -46,6 +46,7 @@ from herovii.models.user.id_realeation import IdRelation
 from herovii.models.user.user_coupon import UserCoupon
 from herovii.models.user.user_csu import UserCSU
 from herovii.models.user.user_csu_secure import UserCSUSecure
+from herovii.models.user.user_gift_package import UserGiftPackage
 from herovii.service.file import FilePiper
 
 __author__ = 'bliss'
@@ -1534,6 +1535,13 @@ def get_coupon_detail_by_uid(id):
     course = TeachingCourse.query.get(coupon.teaching_course_id)
     is_used = is_coupon_used(info.id, coupon.uid)
     is_out_of_date = is_coupon_out_of_date(info.id)
+    is_obtain_gift_package = db.session.query(UserGiftPackage)\
+        .filter(UserGiftPackage.uid == coupon.uid,
+                UserGiftPackage.obtain_coupon_record_id == coupon.id,
+                UserGiftPackage.status != -1).count()
+    course_coupon = db.session.query(TeachingCourseCouponRelation)\
+        .filter(TeachingCourseCouponRelation.coupon_id == info.id,
+                TeachingCourseCouponRelation.teaching_course_id == course.id).one()
     coupon_info = {
         'obtain_id': coupon.id,
         'id': info.id,
@@ -1546,8 +1554,12 @@ def get_coupon_detail_by_uid(id):
         'is_used': is_used,
         'promo_code': coupon.promo_code,
         'promo_code_url': coupon.promo_code_url,
-        'service_condition': info.service_condition,
-        'using_method': info.using_method,
-        'instructions_for_use': info.instructions_for_use
+        'service_condition': course_coupon.service_condition,
+        'using_method': course_coupon.using_method,
+        'instructions_for_use': course_coupon.instructions_for_use
     }
+    if is_obtain_gift_package:
+        coupon_info['is_obtain_gift_package'] = True
+    else:
+        coupon_info['is_obtain_gift_package'] = False
     return coupon_info
