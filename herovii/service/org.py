@@ -1428,7 +1428,7 @@ def is_coupon_obtained(cid, uid, tid):
         .filter(UserCoupon.coupon_id == cid,
                 UserCoupon.uid == uid,
                 UserCoupon.teaching_course_id == tid,
-                UserCoupon.status == 1) \
+                UserCoupon.status > 0) \
         .count()
     if is_used:
         return True
