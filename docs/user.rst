@@ -120,14 +120,12 @@
 **Response** `201` ::
 
     {
-      "coupon_id": "1",
-      "id": 7,
-      "promo_code": "0800001471609291",
-      "promo_code_url": "http://pic.hisihi.com/2016-05-26/1464248500365467.png",
-      "teaching_course_id": "24",
-      "uid": 567
+      "has_obtained": false,
+      "obtain_id": 14
     }
-    promo_code 为优惠码     promo_code_url为优惠码生成的二维码
+
+    obtain_id 为优惠码领取记录id，用于获取优惠券详情
+    has_obtained表示优惠券是否已经领取过，true为已经领取过，false表示第一次领取
 ** end
 
 

@@ -96,22 +96,35 @@ def add_coupon_to_user():
     user_coupon = UserCoupon()
     for key, value in form.body_data.items():
         setattr(user_coupon, key, value)
-    promo_code, promo_code_url = get_teaching_course_coupon_code_service(uid)
     user_coupon.uid = uid
-    user_coupon.promo_code = promo_code
-    user_coupon.promo_code_url = promo_code_url
-    if is_coupon_out_of_date(user_coupon.coupon_id):
-        raise CouponOutOfDateFailture()
     is_obtain = db.session.query(UserCoupon).filter(UserCoupon.uid == user_coupon.uid,
                                                     UserCoupon.coupon_id == user_coupon.coupon_id,
                                                     UserCoupon.teaching_course_id == form.teaching_course_id.data,
                                                     UserCoupon.status != -1) \
         .first()
     if is_obtain:
-        return jsonify(user_coupon), 201
-    with db.auto_commit():
-        db.session.add(user_coupon)
-    return jsonify(user_coupon), 201
+        data = {
+            'obtain_id': is_obtain.id,
+            'has_obtained': True
+        }
+        json_data = json.dumps(data)
+        headers = {'Content-Type': 'application/json'}
+        return json_data, 201, headers
+    else:
+        promo_code, promo_code_url = get_teaching_course_coupon_code_service(uid)
+        user_coupon.promo_code = promo_code
+        user_coupon.promo_code_url = promo_code_url
+        if is_coupon_out_of_date(user_coupon.coupon_id):
+            raise CouponOutOfDateFailture()
+        with db.auto_commit():
+            db.session.add(user_coupon)
+        data = {
+                'obtain_id': user_coupon.id,
+                'has_obtained': False
+            }
+        json_data = json.dumps(data)
+        headers = {'Content-Type': 'application/json'}
+        return json_data, 201, headers
 
 
 @api.route('/coupon/<int:id>/detail', methods=['GET'])
