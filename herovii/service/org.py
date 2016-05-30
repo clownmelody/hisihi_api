@@ -1390,8 +1390,8 @@ def get_promotion_teaching_course_list_service(pid, uid):
                     TeachingCourseCouponRelation.status == 1, Coupon.status == 1) \
             .first()
         if coupon_info is not None:
-            is_used = is_coupon_used(coupon_info.id, uid)
-            is_obtain = is_coupon_obtained(coupon_info.id, uid)
+            is_used = is_coupon_used(coupon_info.id, uid, course.teaching_course_id)
+            is_obtain = is_coupon_obtained(coupon_info.id, uid, course.teaching_course_id)
             is_out_of_date = is_coupon_out_of_date(coupon_info.id)
             new_coupon = {
                 'id': coupon_info.id,
@@ -1411,10 +1411,11 @@ def get_promotion_teaching_course_list_service(pid, uid):
     return course_list
 
 
-def is_coupon_used(cid, uid):
+def is_coupon_used(cid, uid, tid):
     is_used = db.session.query(UserCoupon) \
         .filter(UserCoupon.coupon_id == cid,
                 UserCoupon.uid == uid,
+                UserCoupon.teaching_course_id == tid,
                 UserCoupon.status == 2) \
         .count()
     if is_used:
@@ -1422,11 +1423,12 @@ def is_coupon_used(cid, uid):
     return False
 
 
-def is_coupon_obtained(cid, uid):
+def is_coupon_obtained(cid, uid, tid):
     is_used = db.session.query(UserCoupon) \
         .filter(UserCoupon.coupon_id == cid,
                 UserCoupon.uid == uid,
-                UserCoupon.status == 1) \
+                UserCoupon.teaching_course_id == tid,
+                UserCoupon.status > 0) \
         .count()
     if is_used:
         return True
@@ -1462,8 +1464,8 @@ def get_teaching_course_promotions_by_id(cid, uid):
             'promotion_info': promotion_info
         }
         if _coupon is not None:
-            is_used = is_coupon_used(_coupon.id, uid)
-            is_obtain = is_coupon_obtained(_coupon.id, uid)
+            is_used = is_coupon_used(_coupon.id, uid, cid)
+            is_obtain = is_coupon_obtained(_coupon.id, uid, cid)
             is_out_of_date = is_coupon_out_of_date(_coupon.id)
             obj['coupon_info'] = {
                     'id': _coupon.id,
@@ -1491,19 +1493,15 @@ def get_teaching_course_promotions_by_id(cid, uid):
 
 def get_coupon_list_by_uid(uid, page, per_page):
     start, stop = convert_paginate(int(page), int(per_page))
-    total_count = UserCoupon.query.filter_by(uid=uid, status=1).count()
-    coupon_list = UserCoupon.query.filter_by(uid=uid, status=1) \
+    total_count = db.session.query(UserCoupon).filter(UserCoupon.uid == uid, UserCoupon.status > 0).count()
+    coupon_list = db.session.query(UserCoupon).filter(UserCoupon.uid == uid, UserCoupon.status > 0) \
         .order_by(UserCoupon.create_time.asc()) \
         .slice(start, stop).all()
     coupon_info_list = []
     for coupon in coupon_list:
         info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
-        tccr = db.session.query(TeachingCourseCouponRelation) \
-            .filter(TeachingCourseCouponRelation.coupon_id == coupon.coupon_id)\
-            .slice(0, 1) \
-            .first()
-        course = TeachingCourse.query.get(tccr.teaching_course_id)
-        is_used = is_coupon_used(info.id, uid)
+        course = TeachingCourse.query.get(coupon.teaching_course_id)
+        is_used = is_coupon_used(info.id, uid, coupon.teaching_course_id)
         is_out_of_date = is_coupon_out_of_date(info.id)
         coupon_info = {
             'obtain_id': coupon.id,
@@ -1528,12 +1526,12 @@ def get_teaching_course_coupon_code_service(uid):
 
 
 def get_coupon_detail_by_uid(id):
-    coupon = UserCoupon.query.filter_by(id=id, status=1) \
+    coupon = db.session.query(UserCoupon).filter(UserCoupon.id == id, UserCoupon.status > 0) \
         .order_by(UserCoupon.create_time.desc()) \
         .first()
     info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
     course = TeachingCourse.query.get(coupon.teaching_course_id)
-    is_used = is_coupon_used(info.id, coupon.uid)
+    is_used = is_coupon_used(info.id, coupon.uid, coupon.teaching_course_id)
     is_out_of_date = is_coupon_out_of_date(info.id)
     is_obtain_gift_package = db.session.query(UserGiftPackage)\
         .filter(UserGiftPackage.uid == coupon.uid,
@@ -1559,7 +1557,9 @@ def get_coupon_detail_by_uid(id):
         'instructions_for_use': course_coupon.instructions_for_use
     }
     if is_obtain_gift_package:
-        coupon_info['is_obtain_gift_package'] = True
+        coupon_info['is_obtain_gift_package'] = 2
+    elif int(coupon.status) == 2:
+        coupon_info['is_obtain_gift_package'] = 1
     else:
-        coupon_info['is_obtain_gift_package'] = False
+        coupon_info['is_obtain_gift_package'] = 0
     return coupon_info

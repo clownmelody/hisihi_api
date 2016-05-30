@@ -173,7 +173,7 @@
       "end_time": 1464624000,
       "id": 2,
       "instructions_for_use": "本券限现场使用，每次限用一张；本券不可兑换现金",
-      "is_obtain_gift_package": true,
+      "is_obtain_gift_package": 0,
       "is_out_of_date": false,
       "is_used": false,
       "money": 400,
@@ -185,4 +185,7 @@
       "type": 1,
       "using_method": "结算时手机出示此优惠券，请商家扫描二维码或输入号码，待验证成功后，即成功使用"
     }
+
+    is_obtain_gift_package有三种状态，0表示未领取礼包未验证二维码，1表示未领取礼包已验证二维码，2表示已领取礼包
+        0和1两种状态下都可以领取礼包
 ** end

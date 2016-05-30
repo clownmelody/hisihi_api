@@ -28,7 +28,7 @@ class ScopeBase(object):
 
 
 class CSUAppBaseScope(ScopeBase):
-    allow_api = ['v1.follow+get_recommend_users']
+    allow_api = ['v1.follow+get_recommend_users', 'v1.org+list_teaching_courses_v2_9']
 
 
 class Online0001Scope(ScopeBase):

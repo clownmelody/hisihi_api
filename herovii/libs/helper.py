@@ -147,7 +147,7 @@ def make_a_coupon_code(uid):
             if i < (7 - uid_len):
                 coupon_code.append('0')
             else:
-                num = int(uid_list[i - uid_len - 1]) * 3 + 6
+                num = int(uid_list[i - (7 - uid_len)]) * 3 + 6
                 num_list = list(str(num))
                 coupon_code.append(num_list[len(num_list) - 1])
     else:
