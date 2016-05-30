@@ -142,7 +142,7 @@ def create_org_teaching_course_enroll(cid):
 
 
 @api.route('/teaching_course/<int:cid>/promotions')
-@auth.login_required
+#@auth.login_required
 def get_teaching_course_promotions(cid):
     if not hasattr(g, 'user'):
         uid = 0
