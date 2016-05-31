@@ -395,3 +395,22 @@ class ObtainGiftPackageForm(Form):
     name = StringField(validators=[DataRequired()])
     phone_num = StringField(validators=[DataRequired()])
     address = StringField(validators=[DataRequired()])
+
+
+class VerifyOrgAdminForm(Form):
+    account = create_not_empty_field()
+    secret = StringField(validators=[DataRequired()])
+
+
+class AdminBindWeixinForm(Form):
+    admin_id = IntegerField(validators=[DataRequired()])
+    weixin_account = StringField(validators=[DataRequired()])
+    weixin_nickname = StringField(validators=[DataRequired()])
+    weixin_avatar = StringField(validators=[DataRequired()])
+
+
+class VerifyCouponCodeForm(Form):
+    admin_id = IntegerField(validators=[DataRequired()])
+    weixin_account = StringField(validators=[DataRequired()])
+
+

@@ -1,10 +1,15 @@
 from flask import jsonify,  json
+from herovii import db
+from herovii.api.token import verify_user
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.libs.error_code import  UnknownError
+from herovii.libs.error_code import  UnknownError, AuthFailed
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
+from herovii.models.org.org_admin_bind_weixin import OrgAdminBindWeixin
 from herovii.service import account
-from herovii.validator.forms import RegisterByMobileForm
+from herovii.service.org import get_org_info_by_admin_id
+from herovii.validator.forms import RegisterByMobileForm, VerifyOrgAdminForm, \
+    AdminBindWeixinForm, VerifyCouponCodeForm
 from herovii.service.user_org import register_by_mobile
 
 api = ApiBlueprint('org')
@@ -62,3 +67,39 @@ def get_org_admin(id):
 @api.route('/admin/<int:id>', methods=['PUT'])
 def update_org_admin(id):
     pass
+
+
+@api.route('/verify/org/admin', methods=['POST'])
+def verify_org_admin():
+    form = VerifyOrgAdminForm.create_api_form()
+    uid_scope = verify_user(form.account.data, form.secret.data, 300)
+    if uid_scope is None:
+        raise AuthFailed(error='id or password is incorrect', error_code=1005)
+    org = get_org_info_by_admin_id(uid_scope[0])
+    data = {
+        'admin_id': uid_scope[0],
+        'org': org
+    }
+    return jsonify(data), 200
+
+
+@api.route('/admin/bind/weixin', methods=['POST'])
+def admin_bind_weixin():
+    form = AdminBindWeixinForm.create_api_form()
+    org_admin_bind_weixin = OrgAdminBindWeixin()
+    for key, value in form.body_data.items():
+        setattr(org_admin_bind_weixin, key, value)
+    with db.auto_commit():
+        db.session.add(org_admin_bind_weixin)
+    return jsonify(org_admin_bind_weixin), 201
+
+
+@api.route('/admin/verify/coupon/code', methods=['POST'])
+def verify_coupon_code():
+    form = VerifyCouponCodeForm.create_api_form()
+    org_admin_bind_weixin = OrgAdminBindWeixin()
+    for key, value in form.body_data.items():
+        setattr(org_admin_bind_weixin, key, value)
+    with db.auto_commit():
+        db.session.add(org_admin_bind_weixin)
+    return jsonify(org_admin_bind_weixin), 201

@@ -1563,3 +1563,18 @@ def get_coupon_detail_by_uid(id):
     else:
         coupon_info['is_obtain_gift_package'] = 0
     return coupon_info
+
+
+def get_org_info_by_admin_id(aid):
+    org = db.session.query(Info.id, Info.name, Info.logo, Info.application_status)\
+        .filter(Info.uid == aid, Info.status == 1).first()
+    if org:
+        org_info = {
+            'id': org.id,
+            'name': org.name,
+            'logo': org.logo,
+            'application_status': org.application_status
+        }
+        return org_info
+    else:
+        return None
