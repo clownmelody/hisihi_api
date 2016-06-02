@@ -42,6 +42,7 @@
 
 **Parameters**:
 
+* organization_id:  机构管理员账号记录id
 * admin_id:  机构管理员账号记录id
 * weixin_account: 微信帐号
 * weixin_nickname:  微信昵称
@@ -51,11 +52,36 @@
 **Response** `201` ::
 
     {
+      "organization_id":"41",
       "admin_id": "2",
       "id": 1,
       "weixin_account": "oh03Xs4rFTwohwvjrA5ehtFqBeRg",
       "weixin_avatar": " http://127.0.0.1:5000/v1/org/verify/org/admin",
       "weixin_nickname": "Jimmy"
+    }
+
+-- end
+
+
+验证优惠码
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST org/admin/verify/coupon/code
+
+**Parameters**:
+
+* weixin_account: 微信帐号
+* coupon_code:  优惠码
+
+**Response** `202` ::
+
+    {
+      "has_teaching_course": true,
+      "is_bind": true,
+      "is_out_of_date": false,
+      "is_used": true,
+      "is_verify": true
     }
 
 -- end

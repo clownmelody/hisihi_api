@@ -7,7 +7,7 @@ from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.models.org.org_admin_bind_weixin import OrgAdminBindWeixin
 from herovii.service import account
-from herovii.service.org import get_org_info_by_admin_id
+from herovii.service.org import get_org_info_by_admin_id, verify_coupon_code_service
 from herovii.validator.forms import RegisterByMobileForm, VerifyOrgAdminForm, \
     AdminBindWeixinForm, VerifyCouponCodeForm
 from herovii.service.user_org import register_by_mobile
@@ -87,6 +87,12 @@ def verify_org_admin():
 def admin_bind_weixin():
     form = AdminBindWeixinForm.create_api_form()
     org_admin_bind_weixin = OrgAdminBindWeixin()
+    has_bind_weixin = db.session.query(OrgAdminBindWeixin)\
+        .filter(OrgAdminBindWeixin.weixin_account == form.weixin_account.data,
+                OrgAdminBindWeixin.organization_id == form.organization_id.data,
+                OrgAdminBindWeixin.status == 1).first()
+    if has_bind_weixin:
+        return jsonify(has_bind_weixin), 201
     for key, value in form.body_data.items():
         setattr(org_admin_bind_weixin, key, value)
     with db.auto_commit():
@@ -97,9 +103,7 @@ def admin_bind_weixin():
 @api.route('/admin/verify/coupon/code', methods=['POST'])
 def verify_coupon_code():
     form = VerifyCouponCodeForm.create_api_form()
-    org_admin_bind_weixin = OrgAdminBindWeixin()
-    for key, value in form.body_data.items():
-        setattr(org_admin_bind_weixin, key, value)
-    with db.auto_commit():
-        db.session.add(org_admin_bind_weixin)
-    return jsonify(org_admin_bind_weixin), 201
+    weixin_account = form.weixin_account.data
+    coupon_code = form.coupon_code.data
+    data = verify_coupon_code_service(weixin_account, coupon_code)
+    return jsonify(data), 202

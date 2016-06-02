@@ -17,10 +17,11 @@ class UserCoupon(Base):
     teaching_course_id = Column(Integer, nullable=False)
     promo_code = Column(String(30), nullable=False)
     promo_code_url = Column(String(100), nullable=False)
+    bind_weixin_id = Column(Integer, default=0, nullable=False)
     create_time = Column(Integer, default=int(time.time()))
     status = Column(SmallInteger, default=1)
 
     def keys(self):
         return (
-            'id', 'uid', 'coupon_id', 'teaching_course_id', 'promo_code', 'promo_code_url'
+            'id', 'uid', 'coupon_id', 'teaching_course_id', 'promo_code', 'promo_code_url', 'bind_weixin_id'
         )

@@ -403,6 +403,7 @@ class VerifyOrgAdminForm(Form):
 
 
 class AdminBindWeixinForm(Form):
+    organization_id = IntegerField(validators=[DataRequired()])
     admin_id = IntegerField(validators=[DataRequired()])
     weixin_account = StringField(validators=[DataRequired()])
     weixin_nickname = StringField(validators=[DataRequired()])
@@ -410,7 +411,6 @@ class AdminBindWeixinForm(Form):
 
 
 class VerifyCouponCodeForm(Form):
-    admin_id = IntegerField(validators=[DataRequired()])
     weixin_account = StringField(validators=[DataRequired()])
-
+    coupon_code = StringField(validators=[DataRequired()])
 

@@ -12,7 +12,8 @@ class OrgAdminBindWeixin(Base):
     __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
-    admin_id = Column(Integer)
+    organization_id = Column(Integer, nullable=False)
+    admin_id = Column(Integer, nullable=False)
     weixin_account = Column(String(100), nullable=False)
     weixin_nickname = Column(String(100), nullable=False)
     weixin_avatar = Column(String(255), nullable=False)
@@ -25,5 +26,5 @@ class OrgAdminBindWeixin(Base):
 
     def keys(self):
         return (
-            'id', 'admin_id', 'weixin_account', 'weixin_nickname', 'weixin_avatar'
+            'id', 'organization_id', 'admin_id', 'weixin_account', 'weixin_nickname', 'weixin_avatar'
         )
