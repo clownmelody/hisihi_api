@@ -1,8 +1,8 @@
-from flask import jsonify,  json
+from flask import jsonify,  json, request
 from herovii import db
 from herovii.api.token import verify_user
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.libs.error_code import  UnknownError, AuthFailed
+from herovii.libs.error_code import UnknownError, AuthFailed
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.models.org.org_admin_bind_weixin import OrgAdminBindWeixin
