@@ -81,7 +81,9 @@
       "is_bind": true,
       "is_out_of_date": false,
       "is_used": true,
-      "is_verify": true
+      "is_verify": true,
+      "course_name":"PS-01",
+      "money":200
     }
 
 -- end
