@@ -1601,14 +1601,21 @@ def verify_coupon_code_service(weixin_account, coupon_code):
         .join(Coupon, UserCoupon.coupon_id == Coupon.id)\
         .filter(UserCoupon.promo_code == coupon_code, UserCoupon.status > 0, Coupon.status > 0) \
         .first()
+    if not coupon:
+        data['is_bind'] = True
+        return data
     teaching_course = db.session.query(TeachingCourse.course_name)\
         .filter(TeachingCourse.id == coupon.teaching_course_id,
                 TeachingCourse.organization_id == admin_bind_weixin.organization_id,
                 TeachingCourse.status > 0) \
         .first()
-    if teaching_course:
-        data['is_verify'] = True
+    if not teaching_course:
         data['is_bind'] = True
+        data['is_verify'] = True
+        return data
+    else:
+        data['is_bind'] = True
+        data['is_verify'] = True
         data['has_teaching_course'] = True
         if int(coupon.end_time) < int(time.time()):
             data['is_out_of_date'] = True
@@ -1619,12 +1626,8 @@ def verify_coupon_code_service(weixin_account, coupon_code):
                 return data
             else:
                 db.session.query(UserCoupon). filter(UserCoupon.id == coupon.id) \
-                    .update({UserCoupon.status: 2, UserCoupon.bind_weixin_id: admin_bind_weixin.id})
+                        .update({UserCoupon.status: 2, UserCoupon.bind_weixin_id: admin_bind_weixin.id})
                 data['course_name'] = teaching_course.course_name
                 data['money'] = coupon.money
                 return data
-    else:
-        data['is_verify'] = True
-        data['is_bind'] = True
-        return data
 
