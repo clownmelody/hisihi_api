@@ -109,4 +109,8 @@ def test_auth():
     return 'success', 200
 
 
+@api.route('/test')
+def test_test():
+    str1 = request.values.get('echostr')
+    return str1
 
