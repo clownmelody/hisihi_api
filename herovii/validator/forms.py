@@ -378,3 +378,8 @@ class OverseaPlanAddForm(Form):
     html_content = StringField(validators=[DataRequired()])
     url = StringField(validators=[DataRequired()])
 
+
+class OverseaPlanForm(Form):
+    id = IntegerField(validators=[DataRequired()])
+    url = StringField(validators=[DataRequired()])
+
