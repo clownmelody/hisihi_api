@@ -754,7 +754,8 @@
         "little_logo_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
         "type":1,
         "logo_url":"http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
-        "description":"嘿设汇亿元机构扶持计划ppppp"
+        "description":"嘿设汇亿元机构扶持计划ppppp",
+        "detail_web_url": "http://baidu.com"
     }
 ** end **
 
