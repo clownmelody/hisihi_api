@@ -1523,8 +1523,7 @@ def get_coupon_list_by_uid(uid, page, per_page):
 
 def get_teaching_course_coupon_code_service(uid):
     coupon_code = make_a_coupon_code(uid)
-    f = make_a_qrcode(coupon_code)
-    oss_url = FilePiper.upload_bytes_to_oss(f)
+    oss_url = current_app.config['WEIXIN_SERVER_HOST_NAME'] + '/scissor/index/index?coupon=' + coupon_code
     return coupon_code, oss_url
 
 
