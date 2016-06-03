@@ -52,4 +52,5 @@ Api V1 说明
    webSites
    follow
    overseasStudy
+   verifyCoupon
 
