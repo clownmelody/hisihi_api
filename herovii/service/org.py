@@ -1371,7 +1371,9 @@ def get_promotion_detail_service(pid):
         'little_logo_url': promotion_info.little_logo_url,
         'tag_url': promotion_info.tag_url,
         'description': promotion_info.description,
-        'type': promotion_info.type
+        'type': promotion_info.type,
+        'detail_web_url': current_app.config[
+                              'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail/promotion_id/' + str(pid)
     }
 
 
