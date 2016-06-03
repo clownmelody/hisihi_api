@@ -1412,7 +1412,9 @@ def get_promotion_detail_service(pid):
         'little_logo_url': promotion_info.little_logo_url,
         'tag_url': promotion_info.tag_url,
         'description': promotion_info.description,
-        'type': promotion_info.type
+        'type': promotion_info.type,
+        'detail_web_url': current_app.config[
+                              'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail/promotion_id/' + str(pid)
     }
 
 
@@ -1500,17 +1502,17 @@ def get_teaching_course_promotions_by_id(cid, uid):
 def get_coupon_list_by_uid(uid, page, per_page):
     start, stop = convert_paginate(int(page), int(per_page))
     total_count = UserCoupon.query.filter_by(uid=uid, status=1).count()
-    coupon_list = UserCoupon.query.filter_by(uid=uid, status=1)\
+    coupon_list = UserCoupon.query.filter_by(uid=uid, status=1) \
         .order_by(UserCoupon.create_time.desc()) \
         .slice(start, stop).all()
     coupon_info_list = []
     for coupon in coupon_list:
         info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
-        promotion = db.session.query(PromotionCouponRelation)\
-            .filter(PromotionCouponRelation.coupon_id == coupon.coupon_id)\
+        promotion = db.session.query(PromotionCouponRelation) \
+            .filter(PromotionCouponRelation.coupon_id == coupon.coupon_id) \
             .first()
-        course_promotion_r = db.session.query(OrgTeachingCoursePromotionRelation)\
-            .filter(OrgTeachingCoursePromotionRelation.promotion_id == promotion.promotion_id)\
+        course_promotion_r = db.session.query(OrgTeachingCoursePromotionRelation) \
+            .filter(OrgTeachingCoursePromotionRelation.promotion_id == promotion.promotion_id) \
             .first()
         course = TeachingCourse.query.get(course_promotion_r.teaching_course_id)
         is_used = is_coupon_used(info.id, uid)
