@@ -330,6 +330,7 @@ def get_teaching_course_by_id(cid):
     server_host_name = current_app.config['SERVER_HOST_NAME']
     web_url = server_host_name + "/api.php?s=/organization/showteachingcoursemainpage/course_id/" + str(cid)
     return {
+        'course_id': cid,
         'organization_id': course.organization_id,
         'organization_name': org_info.name,
         'course_name': course.course_name,

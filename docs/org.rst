@@ -781,6 +781,7 @@
         "total_count":2,
         "data":[
             {
+                "course_id": 1,
                 "student_num":46,
                 "end_course_time":"",
                 "lesson_period":34,
@@ -805,6 +806,7 @@
                 "lecture_name":"讲师01"
             },
             {
+                "course_id": 2;
                 "student_num":43,
                 "end_course_time":"",
                 "lesson_period":25,
