@@ -98,7 +98,8 @@
           "course_name": "PS-01",
           "money": 200,
           "type": 1,
-          "start_time": 1464105600
+          "start_time": 1464105600,
+          "is_invalid": false
         }
       ]
     }

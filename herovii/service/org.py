@@ -1449,6 +1449,21 @@ def is_coupon_out_of_date(cid):
     return True
 
 
+def is_coupon_invalid(coupon_id, teaching_course_id):
+    coupon = db.session.query(Coupon) \
+        .filter(Coupon.id == coupon_id,
+                Coupon.status == 1) \
+        .one()
+    course = db.session.query(TeachingCourse).filter(
+        TeachingCourse.status == 1,
+        TeachingCourse.id == teaching_course_id) \
+        .one()
+    if coupon and course:
+        return True
+    else:
+        return False
+
+
 def get_teaching_course_promotions_by_id(cid, uid):
     _list = db.session.query(OrgTeachingCoursePromotionRelation) \
         .filter(OrgTeachingCoursePromotionRelation.teaching_course_id == cid,
@@ -1507,6 +1522,7 @@ def get_coupon_list_by_uid(uid, page, per_page):
         course = TeachingCourse.query.get(coupon.teaching_course_id)
         is_used = is_coupon_used(info.id, uid, coupon.teaching_course_id)
         is_out_of_date = is_coupon_out_of_date(info.id)
+        is_invalid = is_coupon_invalid(info.id, coupon.teaching_course_id)
         coupon_info = {
             'obtain_id': coupon.id,
             'id': info.id,
@@ -1516,7 +1532,8 @@ def get_coupon_list_by_uid(uid, page, per_page):
             'money': info.money,
             'course_name': course.course_name,
             'is_out_of_date': is_out_of_date,
-            'is_used': is_used
+            'is_used': is_used,
+            'is_invalid': is_invalid
         }
         coupon_info_list.append(coupon_info)
     return total_count, coupon_info_list
