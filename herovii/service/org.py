@@ -1630,7 +1630,7 @@ def verify_coupon_code_service(weixin_account, coupon_code):
         .filter(OrgAdminBindWeixin.weixin_account == weixin_account, OrgAdminBindWeixin.status == 1).first()
     if not admin_bind_weixin:
         return data
-    coupon = db.session.query(UserCoupon.id, UserCoupon.teaching_course_id, UserCoupon.status,
+    coupon = db.session.query(UserCoupon.id, UserCoupon.coupon_id, UserCoupon.teaching_course_id, UserCoupon.status,
                               Coupon.money, Coupon.end_time)\
         .join(Coupon, UserCoupon.coupon_id == Coupon.id)\
         .filter(UserCoupon.promo_code == coupon_code, UserCoupon.status > 0, Coupon.status > 0) \
@@ -1638,10 +1638,13 @@ def verify_coupon_code_service(weixin_account, coupon_code):
     if not coupon:
         data['is_bind'] = True
         return data
-    teaching_course = db.session.query(TeachingCourse.course_name)\
+    teaching_course = db.session.query(TeachingCourse.course_name, TeachingCourseCouponRelation.id)\
+        .join(TeachingCourseCouponRelation, TeachingCourseCouponRelation.teaching_course_id == TeachingCourse.id)\
         .filter(TeachingCourse.id == coupon.teaching_course_id,
                 TeachingCourse.organization_id == admin_bind_weixin.organization_id,
-                TeachingCourse.status > 0) \
+                TeachingCourse.status > 0,
+                TeachingCourseCouponRelation.coupon_id == coupon.coupon_id,
+                TeachingCourseCouponRelation.status > 0) \
         .first()
     if not teaching_course:
         data['is_bind'] = True
