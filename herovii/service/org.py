@@ -345,6 +345,31 @@ def get_teaching_course_by_id(cid):
     }
 
 
+def get_teaching_course_by_id_v2_9(cid):
+    course = TeachingCourse.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5008, error='培训课程信息不存在')
+    org_info = Info.query.get(course.organization_id)
+    if not org_info:
+        raise NotFound(error='organization not found')
+    server_host_name = current_app.config['SERVER_HOST_NAME']
+    web_url = server_host_name + "/api.php?s=/organization/showteachingcoursemainpage_v2_9/course_id/" + str(cid)
+    return {
+        'course_id': cid,
+        'organization_id': course.organization_id,
+        'organization_name': org_info.name,
+        'course_name': course.course_name,
+        'cover_pic': course.cover_pic,
+        'start_course_time': course.start_course_time,
+        'end_course_time': course.end_course_time,
+        'lesson_period': course.lesson_period,
+        'student_num': course.student_num,
+        'lecture_name': course.lecture_name,
+        'price': course.price,
+        'web_url': web_url
+    }
+
+
 def get_teaching_course_detail_by_id(cid):
     course = TeachingCourse.query.get(cid)
     if not course:

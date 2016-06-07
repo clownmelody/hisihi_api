@@ -8,7 +8,7 @@ from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.overseas.organization_to_university import OrganizationToUniversity
 from herovii.service.org import dto_org_teaching_courses_paginate, get_teaching_course_by_id, \
     get_teaching_course_detail_by_id, get_teaching_course_enroll_by_id, get_teaching_course_promotions_by_id, \
-    dto_org_teaching_courses_paginate_v2_9
+    dto_org_teaching_courses_paginate_v2_9, get_teaching_course_by_id_v2_9
 from herovii.validator.forms import PagingForm, OrgTeachingCourseForm, UpdateOrgTeachingCourseForm, \
     OrgTeachingCourseEnrollForm
 
@@ -97,6 +97,15 @@ def list_teaching_courses_v2_9(oid):
 # @auth.login_required
 def get_teaching_course(cid):
     course = get_teaching_course_by_id(cid)
+    json_data = json.dumps(course)
+    headers = {'Content-Type': 'application/json'}
+    return json_data, 200, headers
+
+
+@api.route('/2.9/teaching_course/<int:cid>')
+# @auth.login_required
+def get_teaching_course_v2_9(cid):
+    course = get_teaching_course_by_id_v2_9(cid)
     json_data = json.dumps(course)
     headers = {'Content-Type': 'application/json'}
     return json_data, 200, headers
