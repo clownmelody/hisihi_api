@@ -1453,11 +1453,11 @@ def is_coupon_invalid(coupon_id, teaching_course_id):
     coupon = db.session.query(Coupon) \
         .filter(Coupon.id == coupon_id,
                 Coupon.status == 1) \
-        .one()
+        .count()
     course = db.session.query(TeachingCourse).filter(
         TeachingCourse.status == 1,
         TeachingCourse.id == teaching_course_id) \
-        .one()
+        .count()
     if coupon and course:
         return True
     else:
