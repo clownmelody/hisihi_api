@@ -1396,6 +1396,10 @@ def get_promotion_teaching_course_list_service(pid, uid):
         if coupon_info is not None:
             is_used = is_coupon_used(coupon_info.id, uid, course.teaching_course_id)
             is_obtain = is_coupon_obtained(coupon_info.id, uid, course.teaching_course_id)
+            if is_obtain:
+                obtain_id = get_coupon_obtain_id(coupon_info.id, uid, course.teaching_course_id)
+            else:
+                obtain_id = 0
             is_out_of_date = is_coupon_out_of_date(coupon_info.id)
             new_coupon = {
                 'id': coupon_info.id,
@@ -1406,7 +1410,8 @@ def get_promotion_teaching_course_list_service(pid, uid):
                 'money': coupon_info.money,
                 'is_used': is_used,
                 'is_obtain': is_obtain,
-                'is_out_of_date': is_out_of_date
+                'is_out_of_date': is_out_of_date,
+                'obtain_id': obtain_id
             }
         else:
             new_coupon = None
@@ -1437,6 +1442,16 @@ def is_coupon_obtained(cid, uid, tid):
     if is_used:
         return True
     return False
+
+
+def get_coupon_obtain_id(cid, uid, tid):
+    user_coupon = db.session.query(UserCoupon) \
+        .filter(UserCoupon.coupon_id == cid,
+                UserCoupon.uid == uid,
+                UserCoupon.teaching_course_id == tid,
+                UserCoupon.status > 0) \
+        .one()
+    return user_coupon.id
 
 
 def is_coupon_out_of_date(cid):

@@ -798,7 +798,8 @@
                     "id":1,
                     "is_used":false,
                     "start_time":1464105600,
-                    "is_out_of_date":false
+                    "is_out_of_date":false,
+                    "obtain_id": 1
                 },
                 "course_name":"UI-01",
                 "web_url":"http://hisihi.com/api.php?s=/organization/showteachingcoursemainpage/course_id/23",
@@ -823,7 +824,8 @@
                     "id":1,
                     "is_used":false,
                     "start_time":1464105600,
-                    "is_out_of_date":false
+                    "is_out_of_date":false,
+                    "obtain_id": 0
                 },
                 "course_name":"UI-03",
                 "web_url":"http://hisihi.com/api.php?s=/organization/showteachingcoursemainpage/course_id/24",
