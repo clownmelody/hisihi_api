@@ -1474,9 +1474,9 @@ def is_coupon_invalid(coupon_id, teaching_course_id):
         TeachingCourse.id == teaching_course_id) \
         .count()
     if coupon and course:
-        return True
-    else:
         return False
+    else:
+        return True
 
 
 def get_teaching_course_promotions_by_id(cid, uid):
