@@ -1694,6 +1694,7 @@ def verify_coupon_code_service(weixin_account, coupon_code):
             else:
                 db.session.query(UserCoupon).filter(UserCoupon.id == coupon.id) \
                     .update({UserCoupon.status: 2, UserCoupon.bind_weixin_id: admin_bind_weixin.id})
+                db.session.commit()
                 data['course_name'] = teaching_course.course_name
                 data['money'] = coupon.money
                 return data
