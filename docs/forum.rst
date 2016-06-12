@@ -59,3 +59,28 @@
         ],
         "total_count":1
     }
+
+** end
+
+
+获取话题详情
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     topic/<int:tid>
+
+**Parameters**:
+
+* tid:   话题 id
+
+**Response** `200` ::
+
+    {
+        "data":{
+            "id":1,
+            "is_hot":1,
+            "img_url":"http://pic.hisihi.com/2016-06-12/575cd088442ac.png",
+            "title":"端午加班了吗",
+            "description":"哈哈哈哈哈哈哈"
+        }
+    }

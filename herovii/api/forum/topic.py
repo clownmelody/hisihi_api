@@ -2,7 +2,8 @@
 import json
 from flask import request
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.service.forum import get_forum_hot_topic_list_service, get_forum_common_topic_list_service
+from herovii.service.forum import get_forum_hot_topic_list_service, get_forum_common_topic_list_service, \
+    get_forum_topic_info_service
 from herovii.validator.forms import PagingForm
 
 __author__ = 'yangchujie'
@@ -17,6 +18,16 @@ def get_forum_hot_topic_list():
     result = {
         'total_count': total_count,
         'data': data_list
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+
+
+@api.route('/<int:tid>', methods=['GET'])
+def get_topic_info(tid):
+    info = get_forum_topic_info_service(tid)
+    result = {
+        'data': info
     }
     headers = {'Content-Type': 'application/json'}
     return json.dumps(result), 200, headers

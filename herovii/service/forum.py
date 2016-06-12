@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from herovii import db
+from herovii.libs.error_code import NotFound
 from herovii.models.forum.TopicToPostRelation import TopicToPostRelation
 from herovii.models.forum.topic import Topic
 
@@ -50,6 +51,19 @@ def get_forum_common_topic_list_service(page, per_page):
         }
         data_list.append(info)
     return count, data_list
+
+
+def get_forum_topic_info_service(topic_id):
+    topic = Topic.query.get(topic_id)
+    if not topic:
+        raise NotFound(error_code=9000, error='论坛话题不存在')
+    return {
+        'id': topic.id,
+        'title': topic.title,
+        'description': topic.description,
+        'img_url': topic.img_url,
+        'is_hot': topic.is_hot
+    }
 
 
 def get_post_count_by_topic_id(topic_id):
