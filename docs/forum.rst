@@ -41,7 +41,8 @@
 
 **Parameters**:
 
-* N/A
+* page
+* per_page
 
 **Response** `200` ::
 
