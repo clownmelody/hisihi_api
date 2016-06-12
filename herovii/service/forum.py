@@ -36,7 +36,7 @@ def get_forum_common_topic_list_service(page, per_page):
     stop = start + per_page
     topic_list = db.session.query(Topic).filter(Topic.status == 1,
                                                 Topic.is_hot == -1) \
-        .order(Topic.create_time.desc()) \
+        .order_by(Topic.create_time.desc()) \
         .slice(start, stop) \
         .all()
     data_list = []
