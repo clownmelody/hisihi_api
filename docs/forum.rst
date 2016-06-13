@@ -81,6 +81,7 @@
             "is_hot":1,
             "img_url":"http://pic.hisihi.com/2016-06-12/575cd088442ac.png",
             "title":"端午加班了吗",
-            "description":"哈哈哈哈哈哈哈"
+            "description":"哈哈哈哈哈哈哈",
+            "share_web_url": "http://baidu.com"
         }
     }

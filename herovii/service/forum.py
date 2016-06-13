@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask import current_app
 from herovii import db
 from herovii.libs.error_code import NotFound
 from herovii.models.forum.TopicToPostRelation import TopicToPostRelation
@@ -13,7 +14,7 @@ def get_forum_hot_topic_list_service():
         .count()
     topic_list = db.session.query(Topic).filter(Topic.status == 1,
                                                 Topic.is_hot == 1) \
-        .order_by(Topic.sort.asc(), Topic.create_time.desc())\
+        .order_by(Topic.sort.asc(), Topic.create_time.desc()) \
         .all()
     data_list = []
     for topic in topic_list:
@@ -63,7 +64,9 @@ def get_forum_topic_info_service(topic_id):
         'title': topic.title,
         'description': topic.description,
         'img_url': topic.img_url,
-        'is_hot': topic.is_hot
+        'is_hot': topic.is_hot,
+        'share_web_url': current_app.config['SERVER_HOST_NAME'] + '/api.php?=/forum/topicPostListView/topicId/' + str(
+            topic_id)
     }
 
 
