@@ -15,6 +15,7 @@ class Topic(Base):
     is_hot = Column(Integer, nullable=False)
     create_time = Column(Integer, nullable=False)
     status = Column(Integer, default=1)
+    sort = Column(Integer, default=999)
 
     def __init__(self):
         self.create_time = time.time()
