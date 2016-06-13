@@ -10,7 +10,8 @@ from herovii.models.org.info import Info
 from herovii.service.org import create_org_info, get_org_by_id, get_org_by_uid, update_teachers_field_info, \
     add_major_to_org, get_major_by_oid, get_org_stat, get_university_by_oid, link_org_to_university, \
     get_promotion_detail_service, \
-    get_promotion_teaching_course_list_service, get_teaching_course_coupon_code_service
+    get_promotion_teaching_course_list_service, get_teaching_course_coupon_code_service, \
+    get_org_promotion_teaching_course_list_service, get_org_promotion_detail_service
 from herovii.validator.forms import OrgForm, OrgUpdateForm
 
 __author__ = 'bliss'
@@ -163,6 +164,14 @@ def get_promotion_detail(pid):
     return json_str, 200, headers
 
 
+@api.route('/<int:oid>/promotion/<int:pid>', methods=['GET'])
+def get_promotion_detail(oid, pid):
+    info = get_org_promotion_detail_service(oid, pid)
+    json_str = json.dumps(info)
+    headers = {'Content-Type': 'application/json'}
+    return json_str, 200, headers
+
+
 @api.route('/promotion/<int:pid>/teaching_course', methods=['GET'])
 @auth.login_required
 def get_promotion_teaching_course_list(pid):
@@ -177,4 +186,18 @@ def get_promotion_teaching_course_list(pid):
     headers = {'Content-Type': 'application/json'}
     return json_str, 200, headers
 
+
+@api.route('/<int:oid>/promotion/<int:pid>/teaching_course', methods=['GET'])
+@auth.login_required
+def get_promotion_teaching_course_list(oid, pid):
+    if not hasattr(g, 'user'):
+        uid = 0
+    elif g.user[1] == 100:
+        uid = 0
+    else:
+        uid = g.user[0]
+    course_list = get_org_promotion_teaching_course_list_service(oid, pid, uid)
+    json_str = json.dumps({"total_count": len(course_list), "data": course_list})
+    headers = {'Content-Type': 'application/json'}
+    return json_str, 200, headers
 

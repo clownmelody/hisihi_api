@@ -1404,9 +1404,69 @@ def get_promotion_detail_service(pid):
     }
 
 
+def get_org_promotion_detail_service(oid, pid):
+    promotion_info = db.session.query(Promotion) \
+        .filter(Promotion.id == pid) \
+        .one()
+    return {
+        'id': promotion_info.id,
+        'title': promotion_info.title,
+        'logo_url': promotion_info.logo_url,
+        'little_logo_url': promotion_info.little_logo_url,
+        'tag_url': promotion_info.tag_url,
+        'description': promotion_info.description,
+        'type': promotion_info.type,
+        'detail_web_url': current_app.config[
+                              'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail/promotion_id/' + str(
+            pid) + '/organization_id/' + str(oid)
+    }
+
+
 def get_promotion_teaching_course_list_service(pid, uid):
     _list = db.session.query(OrgTeachingCoursePromotionRelation) \
         .filter(OrgTeachingCoursePromotionRelation.promotion_id == pid,
+                OrgTeachingCoursePromotionRelation.status == 1) \
+        .all()
+    course_list = []
+    for course in _list:
+        info = get_teaching_course_by_id(course.teaching_course_id)
+        coupon_info = db.session.query(Coupon).join(TeachingCourseCouponRelation,
+                                                    TeachingCourseCouponRelation.coupon_id == Coupon.id) \
+            .order_by(Coupon.money.desc()) \
+            .filter(TeachingCourseCouponRelation.teaching_course_id == course.teaching_course_id,
+                    TeachingCourseCouponRelation.status == 1, Coupon.status == 1) \
+            .first()
+        if coupon_info is not None:
+            is_used = is_coupon_used(coupon_info.id, uid, course.teaching_course_id)
+            is_obtain = is_coupon_obtained(coupon_info.id, uid, course.teaching_course_id)
+            if is_obtain:
+                obtain_id = get_coupon_obtain_id(coupon_info.id, uid, course.teaching_course_id)
+            else:
+                obtain_id = 0
+            is_out_of_date = is_coupon_out_of_date(coupon_info.id)
+            new_coupon = {
+                'id': coupon_info.id,
+                'name': coupon_info.name,
+                'type': coupon_info.type,
+                'start_time': coupon_info.start_time,
+                'end_time': coupon_info.end_time,
+                'money': coupon_info.money,
+                'is_used': is_used,
+                'is_obtain': is_obtain,
+                'is_out_of_date': is_out_of_date,
+                'obtain_id': obtain_id
+            }
+        else:
+            new_coupon = None
+        info['coupon_info'] = new_coupon
+        course_list.append(info)
+    return course_list
+
+
+def get_org_promotion_teaching_course_list_service(oid, pid, uid):
+    _list = db.session.query(OrgTeachingCoursePromotionRelation) \
+        .filter(OrgTeachingCoursePromotionRelation.promotion_id == pid,
+                OrgTeachingCoursePromotionRelation.organization_id == oid,
                 OrgTeachingCoursePromotionRelation.status == 1) \
         .all()
     course_list = []
@@ -1661,15 +1721,15 @@ def verify_coupon_code_service(weixin_account, coupon_code):
     if not admin_bind_weixin:
         return data
     coupon = db.session.query(UserCoupon.id, UserCoupon.coupon_id, UserCoupon.teaching_course_id, UserCoupon.status,
-                              Coupon.money, Coupon.end_time)\
-        .join(Coupon, UserCoupon.coupon_id == Coupon.id)\
+                              Coupon.money, Coupon.end_time) \
+        .join(Coupon, UserCoupon.coupon_id == Coupon.id) \
         .filter(UserCoupon.promo_code == coupon_code, UserCoupon.status > 0, Coupon.status > 0) \
         .first()
     if not coupon:
         data['is_bind'] = True
         return data
-    teaching_course = db.session.query(TeachingCourse.course_name, TeachingCourseCouponRelation.id)\
-        .join(TeachingCourseCouponRelation, TeachingCourseCouponRelation.teaching_course_id == TeachingCourse.id)\
+    teaching_course = db.session.query(TeachingCourse.course_name, TeachingCourseCouponRelation.id) \
+        .join(TeachingCourseCouponRelation, TeachingCourseCouponRelation.teaching_course_id == TeachingCourse.id) \
         .filter(TeachingCourse.id == coupon.teaching_course_id,
                 TeachingCourse.organization_id == admin_bind_weixin.organization_id,
                 TeachingCourse.status > 0,
