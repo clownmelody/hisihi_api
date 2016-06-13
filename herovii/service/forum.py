@@ -13,6 +13,7 @@ def get_forum_hot_topic_list_service():
         .count()
     topic_list = db.session.query(Topic).filter(Topic.status == 1,
                                                 Topic.is_hot == 1) \
+        .order_by(Topic.sort.asc(), Topic.create_time.desc())\
         .all()
     data_list = []
     for topic in topic_list:
