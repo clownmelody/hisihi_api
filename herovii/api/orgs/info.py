@@ -157,7 +157,7 @@ def link_org_and_university():
 
 
 @api.route('/promotion/<int:pid>', methods=['GET'])
-def get_promotion_detail(pid):
+def get_promotion_detail_by_pid(pid):
     info = get_promotion_detail_service(pid)
     json_str = json.dumps(info)
     headers = {'Content-Type': 'application/json'}
@@ -165,7 +165,7 @@ def get_promotion_detail(pid):
 
 
 @api.route('/<int:oid>/promotion/<int:pid>', methods=['GET'])
-def get_promotion_detail(oid, pid):
+def get_promotion_detail_by_pid_and_oid(oid, pid):
     info = get_org_promotion_detail_service(oid, pid)
     json_str = json.dumps(info)
     headers = {'Content-Type': 'application/json'}
