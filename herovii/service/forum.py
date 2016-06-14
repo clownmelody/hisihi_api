@@ -65,6 +65,7 @@ def get_forum_topic_info_service(topic_id):
         'description': topic.description,
         'img_url': topic.img_url,
         'is_hot': topic.is_hot,
+        'post_count': get_post_count_by_topic_id(topic.id),
         'share_web_url': current_app.config['SERVER_HOST_NAME'] + '/api.php?=/forum/topicPostListView/topicId/' + str(
             topic_id)
     }
