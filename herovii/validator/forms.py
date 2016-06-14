@@ -308,14 +308,14 @@ class OrgTeachingCourseForm(Form):
     university_id = IntegerField()
     course_name = StringField(validators=[DataRequired()])
     cover_pic = StringField(validators=[DataRequired()])
-    start_course_time = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
-    end_course_time = StringField(validators=[DataRequired(), Regexp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')])
-    lesson_period = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    student_num = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    lecture_name = StringField(validators=[DataRequired()])
-    introduction = StringField(validators=[DataRequired()])
-    plan = StringField(validators=[DataRequired()])
-    price = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    start_course_time = StringField()
+    end_course_time = StringField()
+    lesson_period = IntegerField()
+    student_num = IntegerField()
+    lecture_name = StringField()
+    introduction = StringField()
+    plan = StringField()
+    price = IntegerField()
 
 
 class OrgTeachingCourseEnrollForm(Form):
@@ -329,17 +329,17 @@ class OrgTeachingCourseEnrollForm(Form):
 
 class UpdateOrgTeachingCourseForm(Form):
     id = IntegerField(validators=[NumberRange(1), DataRequired()])
-    organization_id = IntegerField()
-    course_name = StringField()
-    cover_pic = StringField()
+    organization_id = IntegerField(validators=[DataRequired()])
+    course_name = StringField(validators=[DataRequired()])
+    cover_pic = StringField(validators=[DataRequired()])
     start_course_time = StringField()
     end_course_time = StringField()
     lesson_period = IntegerField()
     student_num = IntegerField()
     lecture_name = StringField()
     price = IntegerField()
-    introduction = StringField(validators=[DataRequired()])
-    plan = StringField(validators=[DataRequired()])
+    introduction = StringField()
+    plan = StringField()
 
 
 class NewsForm(Form):
