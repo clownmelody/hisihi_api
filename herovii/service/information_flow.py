@@ -198,7 +198,8 @@ def get_information_flow_content_service_v2_7(uid, config_type, page, per_page):
             .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type) \
             .count()
         data_list = db.session.query(InformationFlowContent.id, InformationFlowContent.content_id) \
-            .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type) \
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type == 1,
+                    InformationFlowContent.config_type == config_type) \
             .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()) \
             .slice(start, stop) \
             .all()
