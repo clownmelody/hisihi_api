@@ -300,6 +300,7 @@ def get_org_teaching_courses_paging(oid, except_id, page, count):
         TeachingCourse.status == 1,
         TeachingCourse.id != except_id,
         TeachingCourse.organization_id == oid) \
+        .order_by(TeachingCourse.create_time.desc())\
         .slice(start, stop) \
         .all()
     return teaching_course_list, total_count
