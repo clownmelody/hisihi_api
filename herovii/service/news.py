@@ -9,7 +9,7 @@ __author__ = 'bliss'
 def get_news_org_by_paging(page, count):
     news = NewsOrg.query.filter(NewsOrg.status != -1).order_by(NewsOrg.create_time.desc()). \
         paginate(page, count).items
-    total_count = NewsOrg.query.count()
+    total_count = NewsOrg.query.filter(NewsOrg.status != -1).count()
     return total_count, news
 
 
@@ -33,7 +33,9 @@ def get_org_news_dto_paginate(oid, page, per_page):
         .order_by(NewsOrg.create_time.desc()) \
         .slice(start, stop) \
         .all()
-    total_count = NewsOrg.query.count()
+    total_count = db.session.query(NewsOrg.id, NewsOrg.organization_id, NewsOrg.title, NewsOrg.tag).filter(
+        NewsOrg.status != -1, NewsOrg.organization_id == oid) \
+        .count()
     data_list = []
     if news is None:
         raise NotFound(error='news not found', error_code=3000)
