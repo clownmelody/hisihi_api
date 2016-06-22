@@ -18,8 +18,10 @@ class UserGiftPackage(Base):
     address = Column(String)
     create_time = Column(Integer, default=int(time.time()))
     status = Column(SmallInteger, default=1)
+    voucher = Column(String)
+    check = Column(SmallInteger, default=0)
 
     def keys(self):
         return (
-            'id', 'uid', 'obtain_coupon_record_id', 'name', 'phone_num', 'address'
+            'id', 'uid', 'obtain_coupon_record_id', 'name', 'phone_num', 'address', 'voucher', 'check'
         )

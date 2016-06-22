@@ -394,7 +394,8 @@ class ObtainGiftPackageForm(Form):
     obtain_coupon_record_id = IntegerField(validators=[DataRequired()])
     name = StringField(validators=[DataRequired()])
     phone_num = StringField(validators=[DataRequired()])
-    address = StringField(validators=[DataRequired()])
+    address = StringField()
+    voucher = StringField()
 
 
 class VerifyOrgAdminForm(Form):

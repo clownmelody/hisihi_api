@@ -157,6 +157,37 @@
 ** end
 
 
+用户领取礼包(v2.9.2)
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST     /user/gift_package
+
+**Parameters**:
+
+* version: 2.92   放head里
+* uid: 用户id
+* obtain_coupon_record_id: 用户领取优惠券记录的id
+* name:  姓名
+* phone_num:  电话
+* voucher:  图片地址用逗号隔开，如"http://pic.hisihi.com/2016-03-16/56e9281be6c06.png,http://pic.hisihi.com/2016-04-05/570362f43b62f.png"
+
+**Response** `201` ::
+
+    {
+      "address": null,
+      "check": 0,
+      "id": 11,
+      "name": "少雷",
+      "obtain_coupon_record_id": "120",
+      "phone_num": "18600466074",
+      "uid": "624",
+      "voucher": "http://pic.hisihi.com/2016-03-16/56e9281be6c06.png,http://pic.hisihi.com/2016-04-05/570362f43b62f.png,http://pic.hisihi.com/2016-04-05/5703249a54993.png"
+    }
+** end
+
+
+
 用户优惠券详情
 ~~~~~~~~~~~~~~~
 **URL**::

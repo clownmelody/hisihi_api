@@ -158,3 +158,21 @@ def user_get_gift_package():
         db.session.add(user_gift_package)
     return jsonify(user_gift_package), 201
 
+
+@api.route('/2.92/gift_package', methods=['POST'])
+@auth.login_required
+def user_get_gift_package_v2_9_2():
+    form = ObtainGiftPackageForm.create_api_form()
+    user_gift_package = UserGiftPackage()
+    for key, value in form.body_data.items():
+        setattr(user_gift_package, key, value)
+    is_obtain = db.session.query(UserGiftPackage)\
+        .filter(UserGiftPackage.uid == user_gift_package.uid,
+                UserGiftPackage.obtain_coupon_record_id == user_gift_package.obtain_coupon_record_id,
+                UserGiftPackage.status != -1) \
+        .count()
+    if is_obtain:
+        raise GiftHasObtainedFailture()
+    with db.auto_commit():
+        db.session.add(user_gift_package)
+    return jsonify(user_gift_package), 201
