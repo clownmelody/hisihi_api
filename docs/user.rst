@@ -190,3 +190,61 @@
     is_obtain_gift_package有三种状态，0表示未领取礼包未验证二维码，1表示未领取礼包已验证二维码，2表示已领取礼包
         0和1两种状态下都可以领取礼包
 ** end
+
+
+用户优惠券详情（v2.9.2版本）
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /user/coupon/<int:id>/detail
+
+**Parameters**:
+
+* version: 2.92
+* id: 领取记录obtain_id
+
+**Response** `200` ::
+
+    {
+        "course_id":3,
+        "course_name":"PS-01",
+        "customer_service_telephone_number":"4000340033",
+        "end_time":1466006399,
+        "gift_package_info":{
+            "detail":"送wecom1280元数位板一个，200元马克笔一套",
+            "id":1,
+            "introduce":"报名成功即可领取wacom数位板一套"
+        },
+        "id":1,
+        "instructions_for_use":"",
+        "is_obtain_gift_package":0,
+        "is_out_of_date":true,
+        "is_used":false,
+        "money":200,
+        "obtain_id":45,
+        "organization_info":{
+            "advantage":"环境相当优越#go kb#上市大公司",
+            "city":"湖北省 武汉市",
+            "guarantee_num":200,
+            "id":41,
+            "introduce":"测试",
+            "latitude":null,
+            "location":"洪山区野芷湖西路你懂的",
+            "logo":"http://pic.hisihi.com/2016-05-23/1463985032967582.jpg@17-102-542-542a",
+            "longitude":null,
+            "name":"英雄联盟开黑组",
+            "phone_num":"145632145632",
+            "slogan":"",
+            "type":32,
+            "video":"70",
+            "video_img":"http://pic.hisihi.com/2016-04-30/572416c5971ac.JPG",
+            "view_count":5595
+        },
+        "promo_code":"0800004905599549",
+        "promo_code_url":"http://wechat.hisihi.com/online/index.php/scissor/index/index?coupon=0800004905599549",
+        "service_condition":"",
+        "start_time":1464105600,
+        "type":1,
+        "using_method":""
+    }
+** end

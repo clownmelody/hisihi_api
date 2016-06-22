@@ -20,6 +20,7 @@ from herovii.models.org.classmate import Classmate
 from herovii.models.org.coupon import Coupon
 from herovii.models.org.course import Course
 from herovii.models.org.enroll import Enroll
+from herovii.models.org.gift_package import GiftPackage
 from herovii.models.org.info import Info
 from herovii.models.org.org_admin_bind_weixin import OrgAdminBindWeixin
 from herovii.models.org.org_authentication import OrgAuthentication
@@ -300,7 +301,7 @@ def get_org_teaching_courses_paging(oid, except_id, page, count):
         TeachingCourse.status == 1,
         TeachingCourse.id != except_id,
         TeachingCourse.organization_id == oid) \
-        .order_by(TeachingCourse.create_time.desc())\
+        .order_by(TeachingCourse.create_time.desc()) \
         .slice(start, stop) \
         .all()
     return teaching_course_list, total_count
@@ -1691,6 +1692,54 @@ def get_coupon_detail_by_uid(id):
     return coupon_info
 
 
+def get_coupon_detail_by_uid_v2_9_2(id):
+    coupon = db.session.query(UserCoupon).filter(UserCoupon.id == id, UserCoupon.status > 0) \
+        .order_by(UserCoupon.create_time.desc()) \
+        .first()
+    info = db.session.query(Coupon).filter(Coupon.id == coupon.coupon_id).one()
+    course = TeachingCourse.query.get(coupon.teaching_course_id)
+    organization_info = get_organization_info_by_organization_id(course.organization_id)
+    org_tag = db.session.query(Tag).filter(Tag.type == 5, Tag.status == 1) \
+        .first()
+    gift_package_info = get_gift_package_info_by_course_id_and_coupon_id(coupon.teaching_course_id, coupon.coupon_id)
+    is_used = is_coupon_used(info.id, coupon.uid, coupon.teaching_course_id)
+    is_out_of_date = is_coupon_out_of_date(info.id)
+    is_obtain_gift_package = db.session.query(UserGiftPackage) \
+        .filter(UserGiftPackage.uid == coupon.uid,
+                UserGiftPackage.obtain_coupon_record_id == coupon.id,
+                UserGiftPackage.status != -1).count()
+    course_coupon = db.session.query(TeachingCourseCouponRelation) \
+        .filter(TeachingCourseCouponRelation.coupon_id == info.id,
+                TeachingCourseCouponRelation.teaching_course_id == course.id).one()
+    coupon_info = {
+        'obtain_id': coupon.id,
+        'id': info.id,
+        'type': info.type,
+        'start_time': info.start_time,
+        'end_time': info.end_time,
+        'money': info.money,
+        'course_name': course.course_name,
+        'course_id': course.id,
+        'is_out_of_date': is_out_of_date,
+        'is_used': is_used,
+        'promo_code': coupon.promo_code,
+        'promo_code_url': coupon.promo_code_url,
+        'service_condition': course_coupon.service_condition,
+        'using_method': course_coupon.using_method,
+        'instructions_for_use': course_coupon.instructions_for_use,
+        'organization_info': organization_info,
+        'customer_service_telephone_number': org_tag.value,
+        'gift_package_info': gift_package_info
+    }
+    if is_obtain_gift_package:
+        coupon_info['is_obtain_gift_package'] = 2
+    elif int(coupon.status) == 2:
+        coupon_info['is_obtain_gift_package'] = 1
+    else:
+        coupon_info['is_obtain_gift_package'] = 0
+    return coupon_info
+
+
 def get_org_info_by_admin_id(aid):
     org = db.session.query(Info.id, Info.name, Info.logo, Info.application_status) \
         .filter(Info.uid == aid, Info.status == 1).first()
@@ -1759,3 +1808,27 @@ def verify_coupon_code_service(weixin_account, coupon_code):
                 data['course_name'] = teaching_course.course_name
                 data['money'] = coupon.money
                 return data
+
+
+def get_gift_package_info_by_course_id_and_coupon_id(course_id, coupon_id):
+    tccr = db.session.query(TeachingCourseCouponRelation).filter(
+        TeachingCourseCouponRelation.teaching_course_id == course_id,
+        TeachingCourseCouponRelation.coupon_id == coupon_id,
+        TeachingCourseCouponRelation.status == 1) \
+        .first()
+    if tccr:
+        gift_package_id = tccr.gift_package_id
+        gift = db.session.query(GiftPackage).filter(
+            GiftPackage.id == gift_package_id,
+            GiftPackage.status == 1) \
+            .first()
+        if gift:
+            return {
+                'id': gift.id,
+                'introduce': gift.introduce,
+                'detail': gift.detail
+            }
+        else:
+            return None
+    else:
+        return None

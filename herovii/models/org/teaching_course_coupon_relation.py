@@ -20,3 +20,4 @@ class TeachingCourseCouponRelation(Base):
     service_condition = Column(String(200), nullable=False)
     using_method = Column(String(200), nullable=False)
     instructions_for_use = Column(String(200), nullable=False)
+    gift_package_id = Column(Integer)
