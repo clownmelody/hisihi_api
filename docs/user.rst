@@ -237,6 +237,7 @@
 **Response** `200` ::
 
     {
+        "name": "减减减",
         "course_id":3,
         "course_name":"PS-01",
         "customer_service_telephone_number":"4000340033",

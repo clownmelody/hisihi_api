@@ -1729,7 +1729,8 @@ def get_coupon_detail_by_uid_v2_9_2(id):
         'instructions_for_use': course_coupon.instructions_for_use,
         'organization_info': organization_info,
         'customer_service_telephone_number': org_tag.value,
-        'gift_package_info': gift_package_info
+        'gift_package_info': gift_package_info,
+        'name': info.name
     }
     if is_obtain_gift_package:
         coupon_info['is_obtain_gift_package'] = 2
