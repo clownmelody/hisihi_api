@@ -30,7 +30,7 @@ def get_overseas_study_banner_service(page, per_page):
     stop = start + per_page
     banner_list = db.session.query(InformationFlowBanner) \
         .filter(InformationFlowBanner.status == 1,
-                InformationFlowBanner.show_pos == 3) \
+                InformationFlowBanner.show_pos == -3) \
         .slice(start, stop) \
         .all()
     if banner_list:
