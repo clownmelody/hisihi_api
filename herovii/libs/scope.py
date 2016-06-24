@@ -51,7 +51,7 @@ class UserCSUScope(ScopeBase):
     """消费用户权限域"""
     allow_api = ['v1.mall+redirect_to_duiba', 'v1.org+get_users_profiles', 'v1.org+student_sign_in',
                  'v1.follow+follow_user', 'v1.org+create_org_teaching_course_enroll']
-    allow_module = ['v1.user', 'v1.im', 'v1.teaching_course', 'v1.news', 'v1.overseas_study', 'v1.topic']
+    allow_module = ['v1.user', 'v1.im', 'v1.teaching_course', 'v1.news', 'v1.overseas_study', 'v1.topic', 'v1.file']
     forbidden = ['v1.user+change_identity']
 
     def __init__(self):
