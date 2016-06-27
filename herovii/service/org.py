@@ -1402,7 +1402,10 @@ def get_promotion_detail_service(pid):
         'description': promotion_info.description,
         'type': promotion_info.type,
         'detail_web_url': current_app.config[
-                              'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail/promotion_id/' + str(pid)
+                              'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail/promotion_id/' + str(pid),
+        'share_detail_web_url': current_app.config[
+                                    'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail_share/promotion_id/' + str(
+            pid)
     }
 
 
@@ -1420,6 +1423,9 @@ def get_org_promotion_detail_service(oid, pid):
         'type': promotion_info.type,
         'detail_web_url': current_app.config[
                               'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail/promotion_id/' + str(
+            pid) + '/organization_id/' + str(oid),
+        'share_detail_web_url': current_app.config[
+                                    'SERVER_HOST_NAME'] + '/api.php?s=/Promotion/promotion_detail_share/promotion_id/' + str(
             pid) + '/organization_id/' + str(oid)
     }
 
