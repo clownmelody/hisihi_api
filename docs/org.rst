@@ -766,6 +766,33 @@
 ** end **
 
 
+获取活动详情(M)
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     /org/<int:oid>/promotion/<int:pid>
+
+**Parameters**:
+
+* oid:  机构id
+* pid:  活动id
+
+**Response** `200` ::
+
+    {
+        "title":"亿元扶持1",
+        "id":1,
+        "tag_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+        "little_logo_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
+        "type":1,
+        "logo_url":"http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
+        "description":"嘿设汇亿元机构扶持计划ppppp",
+        "detail_web_url": "http://baidu.com",
+        "share_detail_web_url": "http://baidu.com"
+    }
+** end **
+
+
 获取活动相关的课程列表
 ~~~~~~~~~~~~~~~
 **URL**::
