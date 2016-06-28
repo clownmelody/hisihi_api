@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import string
 from _operator import or_, and_
 import re
@@ -1584,7 +1585,8 @@ def get_teaching_course_promotions_by_id(cid, uid):
         .all()
     promotion_list = []
     for _info in _list:
-        promotion_info = get_promotion_detail_service(_info['promotion_id'])
+        #promotion_info = get_promotion_detail_service(_info['promotion_id'])
+        promotion_info = get_org_promotion_detail_service(_info['organization_id'], _info['promotion_id'])
         _coupon = db.session.query(Coupon).join(TeachingCourseCouponRelation,
                                                 TeachingCourseCouponRelation.coupon_id == Coupon.id) \
             .order_by(Coupon.money.desc()) \

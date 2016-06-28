@@ -898,7 +898,9 @@
                     "logo_url":"http://pic.hisihi.com/2016-05-23/57429b5d4d4f6.png",
                     "tag_url":"http://pic.hisihi.com/2016-05-23/574287226672b.png",
                     "title":"亿元扶持1",
-                    "type":1
+                    "type":1,
+                    "detail_web_url": "http://baidu.com",
+                    "share_detail_web_url": "http://baidu.com"
                 }
             }
         ],
