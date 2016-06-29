@@ -53,6 +53,7 @@ def get_information_flow_banner_service(page, per_page, client_version):
         banner_list = db.session.query(InformationFlowBanner) \
             .filter(InformationFlowBanner.status == 1,
                     InformationFlowBanner.show_pos == 1) \
+            .order_by(InformationFlowBanner.sort.asc())\
             .slice(start, stop) \
             .all()
         if banner_list:
