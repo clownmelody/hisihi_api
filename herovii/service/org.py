@@ -1718,7 +1718,8 @@ def get_coupon_detail_by_uid_v2_9_2(id):
                 UserGiftPackage.status != -1).count()
     course_coupon = db.session.query(TeachingCourseCouponRelation) \
         .filter(TeachingCourseCouponRelation.coupon_id == info.id,
-                TeachingCourseCouponRelation.teaching_course_id == course.id).one()
+                TeachingCourseCouponRelation.teaching_course_id == course.id,
+                TeachingCourseCouponRelation.status == 1).first()
     coupon_info = {
         'obtain_id': coupon.id,
         'id': info.id,
