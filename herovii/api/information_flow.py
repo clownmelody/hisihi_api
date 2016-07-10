@@ -7,7 +7,8 @@ from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.util import parse_page_args, make_cache_key
 from herovii.service.information_flow import get_information_flow_banner_service, get_information_flow_content_service, \
     get_information_flow_content_type_service, get_information_flow_content_service_v2_7, \
-    search_information_flow_content_service, get_information_flow_column_service
+    search_information_flow_content_service, get_information_flow_column_service, \
+    get_information_flow_content_service_v2_9
 
 __author__ = 'yangchujie'
 
@@ -82,6 +83,30 @@ def get_information_flow_content_v2_7():
     if 'type' in request.args:
         information_type = int(request.args.get('type'))
     total_count, data_list = get_information_flow_content_service_v2_7(uid, information_type, page, per_page)
+    result = {
+        'total_count': total_count,
+        'data': data_list
+    }
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(result), 200, headers
+
+
+@api.route('/2.9/content', methods=['GET'])
+@cache.cached(timeout=120, key_prefix=make_cache_key)
+def get_information_flow_content_v2_9():
+    request_json = request.get_json(force=True, silent=True)
+    page, per_page = parse_page_args(request_json)
+    if request_json is None or 'type' not in request_json.keys():
+        information_type = -1
+    else:
+        information_type = request_json['type']
+    if not hasattr(g, 'user'):
+        uid = 0
+    else:
+        uid = g.user[0]
+    if 'type' in request.args:
+        information_type = int(request.args.get('type'))
+    total_count, data_list = get_information_flow_content_service_v2_9(uid, information_type, page, per_page)
     result = {
         'total_count': total_count,
         'data': data_list
