@@ -337,7 +337,7 @@ def get_top_content_info_by_id(uid, article_id, version=2.6):
         .first()
     server_host_name = current_app.config['SERVER_HOST_NAME']
     if version >= 2.9:
-        content_url = server_host_name + "/app.php/public/topcontent/version/2.9/type/view/id/" + str(article_id)
+        content_url = server_host_name + "/app.php/public/topcontent/version/2.93/type/view/id/" + str(article_id)
         share_url = content_url
     elif 2.7 <= version < 2.9:
         content_url = server_host_name + "/app.php/public/topcontent/version/2.7/type/view/id/" + str(article_id)
