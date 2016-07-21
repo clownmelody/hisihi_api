@@ -16,6 +16,7 @@ class InformationFlowBanner(Base):
     show_pos = Column(Integer, nullable=True)
     jump_type = Column(Integer, nullable=True)
     url = Column(String(200), nullable=True)
+    organization_id = Column(Integer, nullable=True)
     create_time = Column(Integer)
     status = Column(SmallInteger, default=1)
     sort = Column(Integer, default=99)

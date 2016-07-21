@@ -74,6 +74,13 @@ def get_information_flow_banner_service(page, per_page, client_version):
                 elif jump_type == 4:
                     org_id = banner.url
                     banner_object['url'] = 'hisihi://organization/detailinfo?id=' + org_id
+                elif jump_type == 5:
+                    org_id = banner.url
+                    banner_object['url'] = 'hisihi://university/detailinfo?id=' + org_id
+                elif jump_type == 6:
+                    promotion_id = banner.url
+                    org_id = banner.organization_id
+                    banner_object['url'] = 'hisihi://promotion/detailinfo?id=' + promotion_id + '&oid=' + str(org_id)
                 data_list.append(banner_object)
     return banner_count, data_list
 

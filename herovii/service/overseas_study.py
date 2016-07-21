@@ -54,6 +54,10 @@ def get_overseas_study_banner_service(page, per_page):
             elif jump_type == 5:
                 university_id = banner.url
                 banner_object['url'] = 'hisihi://university/detailinfo?id=' + university_id
+            elif jump_type == 6:
+                promotion_id = banner.url
+                org_id = banner.organization_id
+                banner_object['url'] = 'hisihi://promotion/detailinfo?id=' + promotion_id + '&oid=' + str(org_id)
             data_list.append(banner_object)
     return banner_count, data_list
 
