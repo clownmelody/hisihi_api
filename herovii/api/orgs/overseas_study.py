@@ -3,7 +3,7 @@
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import success_json
 from herovii.models.base import db
-from flask import jsonify, json, request, redirect
+from flask import jsonify, json, request, redirect, g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.models.org.university_enroll import UniversityEnroll
 from herovii.models.overseas.overseas_plan import OverseasPlan
@@ -12,7 +12,8 @@ from herovii.service.overseas_study import get_overseas_study_banner_service, ge
     get_overseas_study_university_list_by_country_id_service, get_overseas_study_country_service, \
     get_overseas_study_university_photos_service, get_overseas_study_university_majors_service,\
     get_overseas_study_university_list_service, put_overseas_article_service,\
-    get_org_overseas_plan_list_service, get_org_overseas_plan_detail_service, get_org_overseas_plan_text_service
+    get_org_overseas_plan_list_service, get_org_overseas_plan_detail_service, get_org_overseas_plan_text_service, \
+    get_overseas_study_university_info_service_v2_9_5
 from herovii.validator.forms import PagingForm, OrgUniversityEnrollForm, OverseaPlanUpdateForm, OverseaPlanAddForm
 
 
@@ -83,6 +84,19 @@ def get_overseas_study_hot_university():
 #@auth.login_required
 def get_overseas_study_university_info(uid):
     data = get_overseas_study_university_info_service(uid)
+    headers = {'Content-Type': 'application/json'}
+    json_obj = json.dumps(data)
+    return json_obj, 200, headers
+
+
+@api.route('/2.95/university/<int:uid>', methods=['GET'])
+#@auth.login_required
+def get_overseas_study_university_info_v2_9_5(uid):
+    if not hasattr(g, 'user'):
+        user_id = 0
+    else:
+        user_id = g.user[0]
+    data = get_overseas_study_university_info_service_v2_9_5(user_id, uid)
     headers = {'Content-Type': 'application/json'}
     json_obj = json.dumps(data)
     return json_obj, 200, headers
