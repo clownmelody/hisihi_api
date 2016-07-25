@@ -11,6 +11,6 @@ class Favorite(db.Model):
     __bind_key__ = 'csu'
 
     id = Column(Integer, primary_key=True)
-    appname = Column(String(20), nullable=False)
+    appname = Column(String(45), nullable=False)
     row = Column(Integer, nullable=True)
     uid = Column(Integer, nullable=True)
