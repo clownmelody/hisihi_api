@@ -113,7 +113,7 @@ def get_teaching_course_v2_9(cid):
 
 
 @api.route('/2.95/teaching_course/<int:cid>')
-# @auth.login_required
+@auth.login_required
 def get_teaching_course_v2_9_5(cid):
     if not hasattr(g, 'user'):
         uid = 0

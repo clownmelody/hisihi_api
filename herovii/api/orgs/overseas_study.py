@@ -3,7 +3,8 @@
 from herovii.libs.error_code import NotFound
 from herovii.libs.helper import success_json
 from herovii.models.base import db
-from flask import jsonify, json, request, redirect, g
+from flask import jsonify, json, request, redirect
+from flask.globals import g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.models.org.university_enroll import UniversityEnroll
 from herovii.models.overseas.overseas_plan import OverseasPlan
