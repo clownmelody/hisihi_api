@@ -119,7 +119,7 @@ def get_teaching_course_v2_9_5(cid):
     else:
         uid = g.user[0]
     print('TestUid: '+str(uid)+' - '+str(cid))
-    print('jsondumps'+json.dumps(g))
+    print('jsondumps'+json.dumps(g.user))
     course = get_teaching_course_by_id_v2_9_5(uid, cid)
     json_data = json.dumps(course)
     headers = {'Content-Type': 'application/json'}
