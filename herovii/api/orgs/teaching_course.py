@@ -1,4 +1,5 @@
-from flask import jsonify, json, request, g
+from flask import jsonify, json, request
+from flask.globals import g
 from herovii.libs.bpbase import ApiBlueprint, auth
 from herovii.libs.helper import success_json
 from herovii.models.base import db
