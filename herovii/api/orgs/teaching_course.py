@@ -115,10 +115,11 @@ def get_teaching_course_v2_9(cid):
 # @auth.login_required
 def get_teaching_course_v2_9_5(cid):
     if not hasattr(g, 'user'):
-        user_id = 0
+        uid = 0
     else:
-        user_id = g.user[0]
-    course = get_teaching_course_by_id_v2_9_5(user_id, cid)
+        uid = g.user[0]
+    print('TestUid: '+str(uid)+' - '+str(cid))
+    course = get_teaching_course_by_id_v2_9_5(uid, cid)
     json_data = json.dumps(course)
     headers = {'Content-Type': 'application/json'}
     return json_data, 200, headers
