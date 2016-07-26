@@ -40,6 +40,7 @@ from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.org.teaching_course_coupon_relation import TeachingCourseCouponRelation
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
 from herovii.models.org.video import Video
+from herovii.models.org.yuyue import Yuyue
 from herovii.models.overseas.organization_to_university import OrganizationToUniversity
 from herovii.models.overseas.university import University
 from herovii.models.tag import Tag
@@ -396,7 +397,8 @@ def get_teaching_course_by_id_v2_9_5(user_id, cid):
         'lecture_name': course.lecture_name,
         'price': course.price,
         'web_url': web_url,
-        'is_favorite': is_teaching_course_favorite(user_id, cid)
+        'is_favorite': is_teaching_course_favorite(user_id, cid),
+        'is_enroll': is_enroll_teaching_course(user_id, cid)
     }
 
 
@@ -406,6 +408,16 @@ def is_teaching_course_favorite(uid, cid):
                                                     Favorite.uid == uid) \
         .count()
     if is_favorite:
+        return True
+    else:
+        return False
+
+
+def is_enroll_teaching_course(uid, cid):
+    is_enroll = db.session.query(Yuyue).filter(Yuyue.uid == uid,
+                                               Yuyue.course_id == cid) \
+        .count()
+    if is_enroll:
         return True
     else:
         return False
@@ -1623,7 +1635,7 @@ def get_teaching_course_promotions_by_id(cid, uid):
         .all()
     promotion_list = []
     for _info in _list:
-        #promotion_info = get_promotion_detail_service(_info['promotion_id'])
+        # promotion_info = get_promotion_detail_service(_info['promotion_id'])
         promotion_info = get_org_promotion_detail_service(_info['organization_id'], _info['promotion_id'])
         _coupon = db.session.query(Coupon).join(TeachingCourseCouponRelation,
                                                 TeachingCourseCouponRelation.coupon_id == Coupon.id) \
