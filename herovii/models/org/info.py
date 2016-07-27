@@ -47,6 +47,7 @@ class Info(Base):
     guarantee_num = Column(Integer, default=200)
 
     fake_fans_count = Column(Integer, default=0)
+    is_listen_preview = Column(Integer, default=0)
 
     def __init__(self, **entries):
         self.__dict__.update(entries)

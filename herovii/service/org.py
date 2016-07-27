@@ -398,7 +398,8 @@ def get_teaching_course_by_id_v2_9_5(user_id, cid):
         'price': course.price,
         'web_url': web_url,
         'is_favorite': is_teaching_course_favorite(user_id, cid),
-        'is_enroll': is_enroll_teaching_course(user_id, cid)
+        'is_enroll': is_enroll_teaching_course(user_id, cid),
+        'is_listen_preview': is_teaching_course_listen_preview(cid)
     }
 
 
@@ -419,6 +420,22 @@ def is_enroll_teaching_course(uid, cid):
         .count()
     if is_enroll:
         return True
+    else:
+        return False
+
+
+def is_teaching_course_listen_preview(cid):
+    teaching_course = db.session.query(TeachingCourse).filter(TeachingCourse.id == cid,
+                                                              TeachingCourse.status == 1) \
+        .first()
+    if teaching_course:
+        is_listen_preview = db.session.query(Info).filter(Info.id == teaching_course.organization_id,
+                                                          Info.is_listen_preview == 1) \
+            .count()
+        if is_listen_preview:
+            return True
+        else:
+            return False
     else:
         return False
 
