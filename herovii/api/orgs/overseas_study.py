@@ -91,7 +91,7 @@ def get_overseas_study_university_info(uid):
 
 
 @api.route('/2.95/university/<int:uid>', methods=['GET'])
-#@auth.login_required
+@auth.login_required
 def get_overseas_study_university_info_v2_9_5(uid):
     if not hasattr(g, 'user'):
         user_id = 0
