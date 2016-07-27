@@ -12,6 +12,7 @@ from herovii.libs.error_code import NotFound
 from herovii.models.InformationFlow.favorite import Favorite
 from herovii.models.InformationFlow.information_flow_banner import InformationFlowBanner
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
+from herovii.models.org.yuyue import Yuyue
 from herovii.models.overseas.country import Country
 from herovii.models.overseas.organization_to_university import OrganizationToUniversity
 from herovii.models.overseas.overseas_plan import OverseasPlan
@@ -235,7 +236,8 @@ def get_overseas_study_university_info_service_v2_9_5(user_id, uid):
         'school_environment': university.school_environment,
         'web_url': web_url,
         'share_url': share_url,
-        'is_favorite': is_university_favorite(user_id, uid)
+        'is_favorite': is_university_favorite(user_id, uid),
+        'is_enroll': is_user_enroll_university(user_id, uid)
     }
 
 
@@ -248,6 +250,17 @@ def is_university_favorite(uid, university_id):
         return True
     else:
         return False
+
+
+def is_user_enroll_university(uid, university_id):
+    is_enroll = db.session.query(Yuyue).filter(Yuyue.uid == uid,
+                                               Yuyue.university_id == university_id) \
+        .count()
+    if is_enroll:
+        return True
+    else:
+        return False
+
 
 
 def get_overseas_study_university_list_by_country_id_service(cid, page, per_page):
