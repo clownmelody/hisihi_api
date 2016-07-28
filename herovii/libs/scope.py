@@ -32,7 +32,7 @@ class CSUAppBaseScope(ScopeBase):
                  'v1.org+get_teaching_course_promotions', 'v1.org+get_promotion_teaching_course_list_by_pid',
                  'v1.org+get_promotion_teaching_course_list_by_pid_oid', 'v1.org+get_promotion_detail_by_pid',
                  'v1.org+get_promotion_detail_by_pid_and_oid', 'v1.org+get_teaching_course_v2_9_5',
-                 'v1.org+get_overseas_study_university_info_v2_9_5']
+                 'v1.overseas_study+get_overseas_study_university_info_v2_9_5']
 
 
 class Online0001Scope(ScopeBase):
