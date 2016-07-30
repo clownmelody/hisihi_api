@@ -251,8 +251,8 @@ def dto_org_teaching_courses_paginate(oid, except_id, page, count):
 
 def dto_org_teaching_courses_paginate_v2_9(oid, except_id, page, count, uid):
     teaching_courses_lsit, total_count = get_org_teaching_courses_paging(oid, except_id, int(page), int(count))
-    if not teaching_courses_lsit:
-        raise NotFound(error='teaching courses not found', error_code=5008)
+    # if not teaching_courses_lsit:
+    #     raise NotFound(error='teaching courses not found', error_code=5008)
     c_l = []
     for course in teaching_courses_lsit:
         org_info = Info.query.get(oid)
