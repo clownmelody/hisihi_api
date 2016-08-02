@@ -4,6 +4,7 @@ __author__ = 'bliss'
 
 from herovii.models.user.user_org import OrgAdmin
 from herovii.models.user.user_csu_secure import UserCSUSecure
+from herovii.models.stats.user_stats_secure import UserStatsSecure
 from herovii.models.base import db
 from herovii.libs.error_code import NotFound
 from herovii.models.heroapi.app import App
@@ -90,6 +91,18 @@ def verify_in_org_by_mobile(mobile, raw_password):
         return None
 
 
+def verify_in_stats_by_account(account, raw_password):
+    """通过验证用户手机和密码进行授权"""
+    user_stats_secure = db.session.query(UserStatsSecure)\
+        .filter_by(name=account).first()
+    if not user_stats_secure:
+        return None
+    else:
+        valid = user_stats_secure.check_password(raw_password)
+    if valid:
+        return [user_stats_secure.id, 'UserStats']
+    else:
+        return None
 
 
 

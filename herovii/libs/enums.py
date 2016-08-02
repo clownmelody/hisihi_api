@@ -29,6 +29,7 @@ class AccountTypeEnum(Enum):
     user_csu_qq = 203
     use_csu_social = 230
     user_org_mobile = 300
+    user_stats_account = 400
 
 
 class TagType(Enum):

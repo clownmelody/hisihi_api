@@ -114,3 +114,8 @@ def test_test():
     str1 = request.values.get('echostr')
     return str1
 
+
+@api.route('/user/agent')
+def test_user_agent():
+    str1 = request.headers.get('User-Agent')
+    return jsonify({'info': str1}), 200
