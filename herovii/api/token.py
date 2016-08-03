@@ -48,7 +48,8 @@ def get_token_info():
     r = {
         'scope': data[0]['scope'],
         'create_at': data[1]['iat'],
-        'expire_in': data[1]['exp']
+        'expire_in': data[1]['exp'],
+        'uid': data[0]['uid']
     }
     return jsonify(r), 200
 
