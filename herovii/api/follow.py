@@ -6,6 +6,7 @@ from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.error_code import JSONStyleError
 from herovii.module.releationship import Relationship
 from herovii.libs.bpbase import auth
+from herovii.service.forum import add_fans_count_to_recommend_users_info
 
 __author__ = 'shaolei'
 
@@ -24,6 +25,23 @@ def get_recommend_users():
     else:
         rts = Relationship(g.user[0])
     user_list = rts.merge_recommend_users()
+    headers = {'Content-Type': 'application/json'}
+    return json.dumps(user_list), 200, headers
+
+
+@api.route('/2.96/recommend_users', methods=['GET'])
+@auth.login_required
+def get_recommend_users_v_2_9_6():
+    # 返回推荐用户列表
+    if not hasattr(g, 'user'):
+        rts = Relationship(0)
+    elif g.user[1] == 100:
+        # 未登陆调用
+        rts = Relationship(0)
+    else:
+        rts = Relationship(g.user[0])
+    user_list = rts.merge_recommend_users()
+    user_list['users'] = add_fans_count_to_recommend_users_info(user_list['users'])
     headers = {'Content-Type': 'application/json'}
     return json.dumps(user_list), 200, headers
 

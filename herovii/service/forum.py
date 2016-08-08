@@ -4,6 +4,7 @@ from herovii import db
 from herovii.libs.error_code import NotFound
 from herovii.models.forum.TopicToPostRelation import TopicToPostRelation
 from herovii.models.forum.topic import Topic
+from herovii.models.user.follow import Follow
 
 __author__ = 'yangchujie'
 
@@ -75,4 +76,23 @@ def get_post_count_by_topic_id(topic_id):
     count = db.session.query(TopicToPostRelation).filter(TopicToPostRelation.status == 1,
                                                          TopicToPostRelation.topic_id == topic_id) \
         .count()
+    return count
+
+
+def add_fans_count_to_recommend_users_info(user_list):
+    new_user_list = []
+    for user in user_list:
+        info = {
+            "nickname": user['nickname'],
+            "path": user['path'],
+            "type": user['type'],
+            "uid": user['uid'],
+            "fans_count": get_fans_count_by_uid(user['uid'])
+        }
+        new_user_list.append(info)
+    return new_user_list
+
+
+def get_fans_count_by_uid(uid):
+    count = db.session.query(Follow).filter(Follow.follow_who == uid, Follow.type == 1).count()
     return count
