@@ -214,7 +214,7 @@ def get_overseas_study_university_info_service_v2_9_5(user_id, uid):
         if major_info:
             undergraduate_major_text.append(major_info.name)
     server_host_name = current_app.config['SERVER_HOST_NAME']
-    web_url = server_host_name + "/api.php?s=/university/showuniversitymainpage/university_id/" + str(uid)
+    web_url = server_host_name + "/api.php?s=/university/university_main_page_v2_9_5/university_id/" + str(uid)
     share_url = web_url
     return {
         'name': university.name,
