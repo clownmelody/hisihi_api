@@ -44,7 +44,7 @@ class Info(Base):
     view_count = Column(Integer, default=0)
 
     # 剩余担保人数
-    guarantee_num = Column(Integer, default=200)
+    guarantee_num = Column(Integer, default=0)
 
     fake_fans_count = Column(Integer, default=0)
     is_listen_preview = Column(Integer, default=0)
