@@ -315,6 +315,97 @@ def get_information_flow_content_service_v2_9(uid, config_type, page, per_page):
     return content_count, content_list
 
 
+def get_information_flow_content_service_v2_9_6(uid, config_type, page, per_page):
+    start = (page - 1) * per_page
+    stop = start + per_page
+    content_list = []
+    if config_type == -1:
+        content_count = db.session.query(InformationFlowContent)\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]),
+                    InformationFlowContent.config_type == 1)\
+            .count()
+        data_list = db.session.query(InformationFlowContent) \
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type.in_([1, 3]),
+                    InformationFlowContent.config_type == 1) \
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
+        if data_list:
+            for content in data_list:
+                info_content = {
+                    'id': content.id,
+                    'content_type': content.content_type
+                }
+                if content.content_type == 1:  # 头条
+                    info = get_top_content_info_by_id(uid, content.content_id, 2.96)
+                    info_content['top_content_info'] = info
+                elif content.content_type == 3:  # 广告
+                    info = get_advs_pic_info_by_id(content.content_id)
+                    info_content['adv_info'] = info
+                if info:
+                    content_list.append(info_content)
+    elif config_type == -2:
+        front_page = db.session.query(InformationFlowContent.content_id)\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type == 1) \
+            .group_by(InformationFlowContent.content_id)\
+            .all()
+        pages = []
+        if front_page:
+            for page in front_page:
+                pages.append(page.content_id)
+        if len(pages) > 0:
+            content_count = db.session.query(Document)\
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
+                        ~Document.id.in_(pages)) \
+                .count()
+            data_list = db.session.query(Document.id) \
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5,
+                        ~Document.id.in_(pages)) \
+                .order_by(Document.create_time.desc()) \
+                .slice(start, stop) \
+                .all()
+        else:
+            content_count = db.session.query(Document)\
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5) \
+                .count()
+            data_list = db.session.query(Document.id) \
+                .filter(Document.status == 1, Document.category_id == 47, Document.position != 5) \
+                .order_by(Document.create_time.desc()) \
+                .slice(start, stop) \
+                .all()
+        if data_list:
+            for content in data_list:
+                info_content = {
+                    'id': content.id,
+                    'content_type': 1
+                }
+                info = get_top_content_info_by_id(uid, content.id, 2.9)
+                info_content['top_content_info'] = info
+                if info:
+                    content_list.append(info_content)
+    else:
+        content_count = db.session.query(InformationFlowContent)\
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.config_type == config_type) \
+            .count()
+        data_list = db.session.query(InformationFlowContent.id, InformationFlowContent.content_id) \
+            .filter(InformationFlowContent.status == 1, InformationFlowContent.content_type == 1,
+                    InformationFlowContent.config_type == config_type) \
+            .order_by(InformationFlowContent.sort.desc(), InformationFlowContent.create_time.desc()) \
+            .slice(start, stop) \
+            .all()
+        if data_list:
+            for content in data_list:
+                info_content = {
+                    'id': content.id,
+                    'content_type': 1
+                }
+                info = get_top_content_info_by_id(uid, content.content_id, 2.9)
+                info_content['top_content_info'] = info
+                if info:
+                    content_list.append(info_content)
+    return content_count, content_list
+
+
 def get_top_content_info_by_id(uid, article_id, version=2.6):
     """
     根据 id 获取头条信息
@@ -372,6 +463,11 @@ def get_top_content_info_by_id(uid, article_id, version=2.6):
             content['source_name'] = document_article.source_name
             content['logo_pic'] = get_oss_pic_path_by_pic_id(document_article.logo_pic,
                                                              current_app.config['ALI_OSS_ORG_BUCKET_NAME'])
+        if version >= 2.96:
+            content['tag_pic_url'] = get_oss_pic_path_by_pic_id(top_content.tag_type_pic_id,
+                                                                current_app.config['ALI_OSS_ORG_BUCKET_NAME'])
+            content['text_tag'] = top_content.text_tag
+            content['text_tag_color'] = top_content.text_color_type
         return content
     else:
         return None
