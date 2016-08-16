@@ -3,7 +3,8 @@
 import re
 import time
 from io import BytesIO
-
+import urllib.request
+import json
 import pycurl
 from flask import current_app
 from sqlalchemy import func, text
@@ -321,10 +322,17 @@ def get_overseas_study_university_photos_service(uid, page, per_page):
     if photo_list:
         p_list = []
         for photo in photo_list:
+            try:
+                resp = urllib.request.urlopen(photo.pic_url + '@info')
+                resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
+                size = [resp_dict['width'], resp_dict['height']]
+            except:
+                size = None
             photo_obj = {
                 "id": photo.id,
                 "descript": photo.descript,
-                "pic_url": photo.pic_url
+                "pic_url": photo.pic_url,
+                "size": size
             }
             p_list.append(photo_obj)
         data_list['count'] = photos_count
