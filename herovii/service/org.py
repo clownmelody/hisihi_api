@@ -2,7 +2,7 @@
 import string
 from _operator import or_, and_
 import re
-
+import urllib.request
 import time
 from datetime import datetime
 
@@ -1109,11 +1109,32 @@ def get_org_pics(type_c, page, per_page, oid):
     if not pics:
         raise NotFound(error_code=5007, error='the pics of this org are not found')
 
+    p_list = []
+    for photo in pics:
+        try:
+            resp = urllib.request.urlopen(photo.url + '@info')
+            resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
+            size = [resp_dict['width'], resp_dict['height']]
+        except:
+            size = None
+        photo_obj = {
+            "id": photo.id,
+            "author_avatar": photo.author_avatar,
+            "author_company": photo.author_company,
+            "author_name": photo.author_name,
+            "description": photo.description,
+            "organization_id": photo.organization_id,
+            "type":  photo.type,
+            "url": photo.url,
+            "size": size
+        }
+        p_list.append(photo_obj)
+
     total_count = db.session.query(func.count('*')).select_from(Pic). \
         filter(Pic.organization_id == oid, Pic.status != -1, text(type_str)).scalar()
 
     data = {
-        'pics': pics,
+        'pics': p_list,
         'total_count': total_count
     }
     return data
