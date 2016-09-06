@@ -506,10 +506,29 @@ def create_org_pics(pics):
     #         Pic.__table__.insert(),
     #         [pic for pic in pics]
     #     )
+    pic_list = []
     with db.auto_commit():
         for pic in pics:
             db.session.add(pic)
-    return pics
+            try:
+                resp = urllib.request.urlopen(pic.url + '@info')
+                resp_dict = json.loads(str(resp.read(), encoding="utf-8"))
+                size = [resp_dict['width'], resp_dict['height']]
+            except:
+                size = None
+            photo_obj = {
+                "id": pic.id,
+                "author_avatar": pic.author_avatar,
+                "author_company": pic.author_company,
+                "author_name": pic.author_name,
+                "description": pic.description,
+                "organization_id": pic.organization_id,
+                "type":  pic.type,
+                "url": pic.url,
+                "size": size
+            }
+            pic_list.append(photo_obj)
+    return pic_list
 
 
 def view_student_count(oid):
