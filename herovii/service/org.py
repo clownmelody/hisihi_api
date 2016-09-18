@@ -30,8 +30,10 @@ from herovii.models.org.org_authentication_config import OrgAuthenticationConfig
 from herovii.models.org.org_config import OrgConfig
 from herovii.models.org.org_teaching_course_promotion_relation import OrgTeachingCoursePromotionRelation
 from herovii.models.org.org_tag_relation import OrgTagRelation
+from herovii.models.org.org_teaching_course_rebate_relation import OrgTeachingCourseRebateRelation
 from herovii.models.org.pic import Pic
 from herovii.models.org.promotion import Promotion
+from herovii.models.org.rebate import Rebate
 from herovii.models.org.sign_in import StudentSignIn
 from herovii.models.org.student_class import StudentClass
 from herovii.models.org.teacher_group import TeacherGroup
@@ -273,6 +275,36 @@ def dto_org_teaching_courses_paginate_v2_9(oid, except_id, page, count, uid):
             'price': course.price,
             'already_registered': course.already_registered,
             'coupon_list': coupon
+        }
+        c_l.append(course)
+    return {
+        'total_count': total_count,
+        'courses': c_l
+    }
+
+
+def dto_org_teaching_courses_paginate_v3_02(oid, except_id, page, count, uid):
+    teaching_courses_lsit, total_count = get_org_teaching_courses_paging(oid, except_id, int(page), int(count))
+    c_l = []
+    for course in teaching_courses_lsit:
+        org_info = Info.query.get(oid)
+        if not org_info:
+            raise NotFound(error='organization not found')
+        rebate = get_teaching_course_rebate_by_id(course.id, uid)
+        course = {
+            'id': course.id,
+            'organization_id': course.organization_id,
+            'organization_name': org_info.name,
+            'course_name': course.course_name,
+            'cover_pic': course.cover_pic,
+            'start_course_time': course.start_course_time,
+            'end_course_time': course.end_course_time,
+            'lesson_period': course.lesson_period,
+            'student_num': course.student_num,
+            'lecture_name': course.lecture_name,
+            'price': course.price,
+            'already_registered': course.already_registered,
+            'rebate_info': rebate
         }
         c_l.append(course)
     return {
@@ -1690,6 +1722,30 @@ def get_teaching_course_promotions_by_id(cid, uid):
             obj['coupon_info'] = None
         promotion_list.append(obj)
     return promotion_list
+
+
+def get_teaching_course_rebate_by_id(cid, uid):
+    _list = db.session.query(OrgTeachingCourseRebateRelation) \
+        .filter(OrgTeachingCourseRebateRelation.teaching_course_id == cid,
+                OrgTeachingCourseRebateRelation.status == 1) \
+        .all()
+    for _info in _list:
+        _rebate = db.session.query(Rebate).join(OrgTeachingCourseRebateRelation,
+                                                OrgTeachingCourseRebateRelation.rebate_id == Rebate.id) \
+            .order_by(Rebate.rebate_value.desc()) \
+            .filter(OrgTeachingCourseRebateRelation.teaching_course_id == cid,
+                    OrgTeachingCourseRebateRelation.status == 1, Rebate.status == 1) \
+            .slice(0, 1) \
+            .first()
+        if _rebate is not None:
+            return {
+                'id': _rebate.id,
+                'name': _rebate.name,
+                'value': _rebate.value,
+                'rebate_value': _rebate.rebate_value
+            }
+        else:
+            return None
 
 
 def get_coupon_list_by_uid(uid, page, per_page):
