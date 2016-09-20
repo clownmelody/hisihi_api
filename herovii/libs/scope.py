@@ -29,6 +29,7 @@ class ScopeBase(object):
 
 class CSUAppBaseScope(ScopeBase):
     allow_api = ['v1.follow+get_recommend_users', 'v1.org+list_teaching_courses_v2_9',
+                 'v1.org+list_teaching_courses_v3_02',
                  'v1.org+get_teaching_course_promotions', 'v1.org+get_promotion_teaching_course_list_by_pid',
                  'v1.org+get_promotion_teaching_course_list_by_pid_oid', 'v1.org+get_promotion_detail_by_pid',
                  'v1.org+get_promotion_detail_by_pid_and_oid', 'v1.org+get_teaching_course_v2_9_5',
