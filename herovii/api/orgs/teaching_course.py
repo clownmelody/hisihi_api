@@ -70,8 +70,9 @@ def delete_org_teaching_course(cid):
 def list_teaching_courses(oid):
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
-    except_id = request.args.get('except_id', 0)
-    dto = dto_org_teaching_courses_paginate(oid, except_id, form.page.data, form.per_page.data)
+    except_id = request.args.get('except_id', '0')
+    except_id_list = except_id.split(',')
+    dto = dto_org_teaching_courses_paginate(oid, except_id_list, form.page.data, form.per_page.data)
     headers = {'Content-Type': 'application/json'}
     json_obj = json.dumps(dto)
     return json_obj, 200, headers
@@ -88,8 +89,9 @@ def list_teaching_courses_v2_9(oid):
         uid = g.user[0]
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
-    except_id = request.args.get('except_id', 0)
-    dto = dto_org_teaching_courses_paginate_v2_9(oid, except_id, form.page.data, form.per_page.data, uid)
+    except_id = request.args.get('except_id', '0')
+    except_id_list = except_id.split(',')
+    dto = dto_org_teaching_courses_paginate_v2_9(oid, except_id_list, form.page.data, form.per_page.data, uid)
     headers = {'Content-Type': 'application/json'}
     json_obj = json.dumps(dto)
     return json_obj, 200, headers
@@ -106,8 +108,9 @@ def list_teaching_courses_v3_02(oid):
         uid = g.user[0]
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
-    except_id = request.args.get('except_id', 0)
-    dto = dto_org_teaching_courses_paginate_v3_02(oid, except_id, form.page.data, form.per_page.data, uid)
+    except_id = request.args.get('except_id', '0')
+    except_id_list = except_id.split(',')
+    dto = dto_org_teaching_courses_paginate_v3_02(oid, except_id_list, form.page.data, form.per_page.data, uid)
     headers = {'Content-Type': 'application/json'}
     json_obj = json.dumps(dto)
     return json_obj, 200, headers

@@ -329,12 +329,12 @@ def get_org_teaching_courses_paging(oid, except_id, page, count):
     start, stop = convert_paginate(page, count)
     total_count = db.session.query(TeachingCourse).filter(
         TeachingCourse.status == 1,
-        TeachingCourse.id != except_id,
+        ~TeachingCourse.id.in_(except_id),
         TeachingCourse.organization_id == oid) \
         .count()
     teaching_course_list = db.session.query(TeachingCourse).filter(
         TeachingCourse.status == 1,
-        TeachingCourse.id != except_id,
+        ~TeachingCourse.id.in_(except_id),
         TeachingCourse.organization_id == oid) \
         .order_by(TeachingCourse.create_time.desc()) \
         .slice(start, stop) \
