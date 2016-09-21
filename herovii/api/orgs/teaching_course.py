@@ -98,7 +98,7 @@ def list_teaching_courses_v2_9(oid):
 
 
 @api.route('/3.02/<int:oid>/teaching_course', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def list_teaching_courses_v3_02(oid):
     if not hasattr(g, 'user'):
         uid = 0
