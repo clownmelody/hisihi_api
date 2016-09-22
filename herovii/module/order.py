@@ -92,13 +92,15 @@ class Order(object):
             .filter(Rebate.id == order.rebate_id)\
             .first()
         rebate_text = str(rebate.value) + '元抵扣券抵' + str(rebate.rebate_value) + '元学费'
-        rebate_status = db.session.query(UserRebate.status)\
+        user_rebate = db.session.query(UserRebate.id, UserRebate.status)\
             .filter(UserRebate.order_id == order.id, UserRebate.rebate_id == order.rebate_id)\
             .first()
-        if rebate_status:
-            is_use = rebate_status.status
+        if user_rebate:
+            is_use = user_rebate.status
+            user_rebate_id = user_rebate.id
         else:
             is_use = 0
+            user_rebate_id = 0
         cur_time = time.time()
         if cur_time > rebate.use_end_time:
             is_out_of_date = 1
@@ -113,8 +115,9 @@ class Order(object):
                     'price': order.price,
                     'num': order.rebate_num,
                     'create_time': order.create_time,
+                    'organization_id': order.organization_id,
                     'rebate': {
-                        'rebate_id': order.rebate_id,
+                        'id': order.rebate_id,
                         'rebate_name': rebate.name,
                         'use_start_time': rebate.use_start_time,
                         'use_end_time': rebate.use_end_time,
@@ -123,7 +126,8 @@ class Order(object):
                         'courses_name': courses.course_name,
                         'courses_pic': courses.cover_pic,
                         'is_use': is_use,
-                        'is_out_of_date': is_out_of_date
+                        'is_out_of_date': is_out_of_date,
+                        'user_rebate_id': user_rebate_id
                     }
         }
         return order_obj
