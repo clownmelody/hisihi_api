@@ -25,7 +25,7 @@ class Rebate(Base):
 
     def __init__(self, **entries):
         self.__dict__.update(entries)
-        super(Coupon, self).__init__()
+        super(Rebate, self).__init__()
 
     def keys(self):
         return (
