@@ -186,3 +186,15 @@ class GiftHasObtainedFailture(APIException):
     code = 200
     error_code = 8002
     error = 'you have submitted the gift request'
+
+
+class CreateOrderFailure(APIException):
+    code = 200
+    error_code = 10001
+    error = 'create order failed'
+
+
+class OrderNotFindFailure(APIException):
+    code = 404
+    error_code = 10002
+    error = 'order not find'

@@ -83,3 +83,4 @@ w3lib==1.14.2
 wsgiref==0.1.2
 xattr==0.6.4
 zope.interface==4.1.1
+rsa==3.4.2
