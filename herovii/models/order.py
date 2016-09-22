@@ -16,7 +16,6 @@ class RebateOrder(Base):
     order_status = Column(SmallInteger, default=0)
     price = Column(Integer, default=0)
     pay_type = Column(SmallInteger)
-    pay_status = Column(SmallInteger, default=0)
     courses_id = Column(Integer, nullable=False)
     organization_id = Column(Integer, nullable=False)
     rebate_id = Column(Integer, nullable=False)
@@ -31,7 +30,7 @@ class RebateOrder(Base):
 
     def keys(self):
         return (
-            'id', 'order_sn', 'uid', 'mobile', 'order_status', 'pay_type', 'pay_status', 'courses_id',
+            'id', 'order_sn', 'uid', 'mobile', 'order_status', 'pay_type', 'courses_id',
             'organization_id', 'rebate_id', 'rebate_num', 'create_time', 'pay_time', 'status', 'price'
         )
 

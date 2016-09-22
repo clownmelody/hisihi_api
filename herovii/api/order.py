@@ -7,6 +7,7 @@ from herovii.libs.error_code import JSONStyleError
 from herovii.libs.bpbase import auth
 from herovii.module.order import Order
 from herovii.libs.error_code import CreateOrderFailure
+from herovii.validator.forms import PagingForm
 
 __author__ = 'shaolei'
 
@@ -16,9 +17,13 @@ api = ApiBlueprint('order')
 @api.route('/list', methods=['GET'])
 @auth.login_required
 def get_user_order_list():
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    page = int(form.page.data)
+    per_page = int(form.per_page.data)
     order = Order(g.user[0])
     # order = Order(72)
-    order_list = order.get_user_order_list()
+    order_list = order.get_user_order_list(page, per_page)
     headers = {'Content-Type': 'application/json'}
     return json.dumps(order_list), 200, headers
 
@@ -45,11 +50,7 @@ def create_order():
     obj = order.create_order(mobile, courses_id, rebate_id, num)
     headers = {'Content-Type': 'application/json'}
     if obj:
-        data = {
-            'info': '提交订单成功',
-            'order': obj
-        }
-        return json.dumps(data), 201, headers
+        return json.dumps(obj), 201, headers
     else:
         raise CreateOrderFailure()
 
