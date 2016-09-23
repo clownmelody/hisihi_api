@@ -19,7 +19,7 @@ from herovii.libs.error_code import NotFound, CouponOutOfDateFailture, CouponHas
     GiftHasObtainedFailture
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.bpbase import auth
-from herovii.service.rebate import get_rebate_list_by_uid
+from herovii.service.rebate import get_rebate_list_by_uid, get_rebate_detail_info
 
 __author__ = 'bliss'
 
@@ -190,5 +190,14 @@ def get_user_rebate_list(uid, type):
         "data": rebate_list
     }
     json_data = json.dumps(result)
+    headers = {'Content-Type': 'application/json'}
+    return json_data, 200, headers
+
+
+@api.route('/rebate/<int:id>/detail')
+@auth.login_required
+def get_user_rebate_detail(id):
+    rebate = get_rebate_detail_info(id)
+    json_data = json.dumps(rebate)
     headers = {'Content-Type': 'application/json'}
     return json_data, 200, headers

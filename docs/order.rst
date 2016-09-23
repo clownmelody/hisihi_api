@@ -232,3 +232,58 @@
 * is_obtain_gift_package: 是否领取礼包,0未领取，1已领取
 * value: 抵扣券金额
 * rebate_value: 抵扣券抵扣的金额
+
+
+抵扣券详情
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET user/rebate/<int:id>/detail
+
+**Parameters**:
+
+* id: 用户抵扣券id，user_rebate_id
+
+
+**Response** `200` ::
+
+    {
+      "is_out_of_date": 0,
+      "promo_code": "0800000726408296",
+      "value": 500,
+      "order_id": 1,
+      "id": 5,
+      "is_used": 1,
+      "customer_service_telephone_number": "4000340033",
+      "user_rebate_id": 1,
+      "rebate_value": 10000,
+      "use_condition": "且前期费",
+      "is_obtain_gift_package": 0,
+      "use_method": "请问发给为爱人",
+      "name": "我是抵扣券",
+      "use_end_time": 1478327940,
+      "organization_id": 41,
+      "gift_package_info": {
+        "id": 2,
+        "detail": "送wecom1280元数位板一个",
+        "introduce": "报名成功即可领取wacom数位板一个"
+      },
+      "use_instruction": "去放弃而过去发",
+      "courses_name": "javascript 入门到放弃(6)",
+      "promo_code_url": "http://wechat.hisihi.com/online/index.php/scissor/index/index?coupon=0800000726408296",
+      "use_start_time": 1474353540,
+      "courses_id": 60,
+      "courses_pic": "http://pic.hisihi.com/2016-09-06/1473157611724128.png"
+    }
+
+**结果说明**:
+* courses_pic: 课程图片
+* name: 抵扣券名称
+* use_end_time: 有效期开始时间
+* use_start_time: 有效期结束时间
+* is_use: 是否已使用,0未使用，1已使用
+* is_out_of_date: 是否已过期,0未过期，1已过期
+* user_rebate_id: 用户抵扣券id，0表示还未生成，用于调用抵扣券详情接口
+* is_obtain_gift_package: 是否领取礼包,0未领取，1已领取
+* value: 抵扣券金额
+* rebate_value: 抵扣券抵扣的金额
