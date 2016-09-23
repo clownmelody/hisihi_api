@@ -62,6 +62,7 @@
 * price: 订单金额
 * num: 抵扣券数量
 * rebate_id: 抵扣券id
+* user_rebate_id: 用户抵扣券id，0表示还未生成
 
 
 用户订单列表
@@ -152,3 +153,4 @@
 * is_use: 是否已使用,0未使用，1已使用
 * is_out_of_date: 是否已过期,0未过期，1已过期
 * order_status: 订单状态，0待付款，1已付款，2已使用，3已评价
+* user_rebate_id: 用户抵扣券id，0表示还未生成
