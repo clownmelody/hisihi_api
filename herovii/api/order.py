@@ -15,17 +15,21 @@ api = ApiBlueprint('order')
 
 
 @api.route('/list', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def get_user_order_list():
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
     page = int(form.page.data)
     per_page = int(form.per_page.data)
-    order = Order(g.user[0])
-    # order = Order(72)
-    order_list = order.get_user_order_list(page, per_page)
+    # order = Order(g.user[0])
+    order = Order(72)
+    count, order_list = order.get_user_order_list(page, per_page)
     headers = {'Content-Type': 'application/json'}
-    return json.dumps(order_list), 200, headers
+    data = {
+        'count': count,
+        'data': order_list
+    }
+    return json.dumps(data), 200, headers
 
 
 @api.route('/create', methods=['POST'])

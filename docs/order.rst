@@ -31,25 +31,25 @@
 **Response** `201` ::
 
     {
-      "create_time": 1474510557,
-      "id": 1,
+      "create_time": 1474534427,
+      "id": 2,
       "mobile": "18600466074",
       "num": 1,
-      "order_sn": "201609221015536363",
+      "order_sn": "201609221653472174",
       "order_status": 0,
       "organization_id": 41,
-      "price": 500,
+      "price": 100,
       "rebate": {
-        "courses_id": 60,
-        "courses_name": "javascript 入门到放弃(6)",
-        "courses_pic": "http://pic.hisihi.com/2016-09-06/1473157611724128.png",
-        "id": 5,
+        "courses_id": 30,
+        "courses_name": "手绘测试",
+        "courses_pic": "http://pic.hisihi.com/2016-06-02/1464838896954120.png",
+        "id": 3,
         "is_out_of_date": 0,
         "is_use": 0,
-        "rebate_name": "我是抵扣券",
-        "rebate_text": "500元抵扣券抵10000元学费",
-        "use_end_time": 1478327940,
-        "use_start_time": 1474353540,
+        "name": "就是辣鸡",
+        "rebate_text": "100元抵扣券抵1000元学费",
+        "use_end_time": 1475050260,
+        "use_start_time": 1474618260,
         "user_rebate_id": 0
       },
       "uid": 72
@@ -78,32 +78,59 @@
 
 **Response** `200` ::
 
-    [
-      {
-          "create_time": 1474510557,
-          "id": 1,
+    {
+      "count": 3,
+      "data": [
+        {
+          "create_time": 1474534657,
+          "id": 3,
           "mobile": "18600466074",
           "num": 1,
-          "order_sn": "201609221015536363",
+          "order_sn": "201609221657379606",
           "order_status": 0,
-          "organization_id": 41,
-          "price": 500,
+          "organization_id": 48,
+          "price": 200,
           "rebate": {
-            "courses_id": 60,
-            "courses_name": "javascript 入门到放弃(6)",
-            "courses_pic": "http://pic.hisihi.com/2016-09-06/1473157611724128.png",
-            "id": 5,
+            "courses_id": 52,
+            "courses_name": "哈哈哈",
+            "courses_pic": "http://pic.hisihi.com/2016-06-22/1466589018729417.png",
+            "id": 2,
             "is_out_of_date": 0,
             "is_use": 0,
-            "rebate_name": "我是抵扣券",
-            "rebate_text": "500元抵扣券抵10000元学费",
-            "use_end_time": 1478327940,
-            "use_start_time": 1474353540,
+            "name": "还是辣鸡",
+            "rebate_text": "200元抵扣券抵2000元学费",
+            "use_end_time": 1475309400,
+            "use_start_time": 1474618200,
+            "user_rebate_id": 0
+          },
+          "uid": 72
+        },
+        {
+          "create_time": 1474534427,
+          "id": 2,
+          "mobile": "18600466074",
+          "num": 1,
+          "order_sn": "201609221653472174",
+          "order_status": 0,
+          "organization_id": 41,
+          "price": 100,
+          "rebate": {
+            "courses_id": 30,
+            "courses_name": "手绘测试",
+            "courses_pic": "http://pic.hisihi.com/2016-06-02/1464838896954120.png",
+            "id": 3,
+            "is_out_of_date": 0,
+            "is_use": 0,
+            "name": "就是辣鸡",
+            "rebate_text": "100元抵扣券抵1000元学费",
+            "use_end_time": 1475050260,
+            "use_start_time": 1474618260,
             "user_rebate_id": 0
           },
           "uid": 72
         }
-    ]
+      ]
+    }
 
 
 订单详情
@@ -120,25 +147,25 @@
 **Response** `200` ::
 
     {
-      "create_time": 1474510557,
-      "id": 1,
+      "create_time": 1474534427,
+      "id": 2,
       "mobile": "18600466074",
       "num": 1,
-      "order_sn": "201609221015536363",
+      "order_sn": "201609221653472174",
       "order_status": 0,
       "organization_id": 41,
-      "price": 500,
+      "price": 100,
       "rebate": {
-        "courses_id": 60,
-        "courses_name": "javascript 入门到放弃(6)",
-        "courses_pic": "http://pic.hisihi.com/2016-09-06/1473157611724128.png",
-        "id": 5,
+        "courses_id": 30,
+        "courses_name": "手绘测试",
+        "courses_pic": "http://pic.hisihi.com/2016-06-02/1464838896954120.png",
+        "id": 3,
         "is_out_of_date": 0,
         "is_use": 0,
-        "rebate_name": "我是抵扣券",
-        "rebate_text": "500元抵扣券抵10000元学费",
-        "use_end_time": 1478327940,
-        "use_start_time": 1474353540,
+        "name": "就是辣鸡",
+        "rebate_text": "100元抵扣券抵1000元学费",
+        "use_end_time": 1475050260,
+        "use_start_time": 1474618260,
         "user_rebate_id": 0
       },
       "uid": 72

@@ -19,6 +19,7 @@ from herovii.libs.error_code import NotFound, CouponOutOfDateFailture, CouponHas
     GiftHasObtainedFailture
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.bpbase import auth
+from herovii.service.rebate import get_rebate_list_by_uid
 
 __author__ = 'bliss'
 
@@ -176,3 +177,18 @@ def user_get_gift_package_v2_9_2():
     with db.auto_commit():
         db.session.add(user_gift_package)
     return jsonify(user_gift_package), 201
+
+
+@api.route('/<int:uid>/rebate/<int:type>')
+@auth.login_required
+def get_user_rebate_list(uid, type):
+    args = request.args.to_dict()
+    form = PagingForm.create_api_form(**args)
+    total_count, coupon_list = get_rebate_list_by_uid(uid, form.page.data, form.per_page.data)
+    result = {
+        "total_count": total_count,
+        "data": coupon_list
+    }
+    json_data = json.dumps(result)
+    headers = {'Content-Type': 'application/json'}
+    return json_data, 200, headers

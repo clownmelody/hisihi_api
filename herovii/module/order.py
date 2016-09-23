@@ -27,14 +27,16 @@ class Order(object):
         order_list = db.session.query(RebateOrder).filter(RebateOrder.uid == self.uid, RebateOrder.status >= 0)\
             .order_by(RebateOrder.create_time.desc())\
             .slice(start, stop).all()
+        total_count = db.session.query(RebateOrder).filter(RebateOrder.uid == self.uid, RebateOrder.status >= 0)\
+            .count()
         if order_list:
             orders = []
             for order in order_list:
                 order_obj = self.get_order_obj(order)
                 orders.append(order_obj)
-            return orders
+            return total_count, orders
         else:
-            return None
+            return 0, None
 
     def create_order(self, mobile, courses_id, rebate_id, num):
         """
@@ -118,7 +120,7 @@ class Order(object):
                     'organization_id': order.organization_id,
                     'rebate': {
                         'id': order.rebate_id,
-                        'rebate_name': rebate.name,
+                        'name': rebate.name,
                         'use_start_time': rebate.use_start_time,
                         'use_end_time': rebate.use_end_time,
                         'rebate_text': rebate_text,
