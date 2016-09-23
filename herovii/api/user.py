@@ -180,7 +180,7 @@ def user_get_gift_package_v2_9_2():
 
 
 @api.route('/<int:uid>/rebate/<int:type>')
-#@auth.login_required
+@auth.login_required
 def get_user_rebate_list(uid, type):
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)

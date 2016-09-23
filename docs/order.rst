@@ -1,6 +1,6 @@
 .. _order:
 
-抵扣券订单
+抵扣券相关
 =========
 
 提交订单
@@ -61,8 +61,8 @@
 * order_status: 订单状态，0待付款，1已付款，2已使用，3已评价
 * price: 订单金额
 * num: 抵扣券数量
-* rebate_id: 抵扣券id
-* user_rebate_id: 用户抵扣券id，0表示还未生成
+* id: 抵扣券id
+* user_rebate_id: 用户抵扣券id，0表示还未生成，用于调用抵扣券详情接口
 
 
 用户订单列表
@@ -173,11 +173,62 @@
 
 **结果说明**:
 * courses_pic: 课程图片
-* rebate_name: 抵扣券名称
+* name: 抵扣券名称
 * rebate_text: 优惠方案
 * use_end_time: 有效期开始时间
 * use_start_time: 有效期结束时间
 * is_use: 是否已使用,0未使用，1已使用
 * is_out_of_date: 是否已过期,0未过期，1已过期
 * order_status: 订单状态，0待付款，1已付款，2已使用，3已评价
-* user_rebate_id: 用户抵扣券id，0表示还未生成
+* user_rebate_id: 用户抵扣券id，0表示还未生成，用于调用抵扣券详情接口
+
+
+
+用户抵扣券列表
+~~~~~~~~~~~~~~~
+**URL**::
+
+    GET user/<int:uid>/rebate/<int:type>?page=1&per_page=10
+
+**Parameters**:
+
+* uid: 用户id
+* type: 类型，0表示未使用，1表示已失效，包含过期和已使用的
+* page: 页码
+* per_page: 每页数量
+
+
+**Response** `200` ::
+
+    {
+      "data": [
+        {
+          "rebate_value": 1000,
+          "name": "就是辣鸡",
+          "courses_name": "手绘测试",
+          "courses_id": 30,
+          "use_end_time": 1474473600,
+          "courses_pic": "http://pic.hisihi.com/2016-06-02/1464838896954120.png",
+          "use_start_time": 1474618260,
+          "is_out_of_date": 1,
+          "user_rebate_id": 2,
+          "is_obtain_gift_package": 0,
+          "id": 3,
+          "value": 100,
+          "is_use": 0
+        }
+      ],
+      "count": 1
+    }
+
+**结果说明**:
+* courses_pic: 课程图片
+* name: 抵扣券名称
+* use_end_time: 有效期开始时间
+* use_start_time: 有效期结束时间
+* is_use: 是否已使用,0未使用，1已使用
+* is_out_of_date: 是否已过期,0未过期，1已过期
+* user_rebate_id: 用户抵扣券id，0表示还未生成，用于调用抵扣券详情接口
+* is_obtain_gift_package: 是否领取礼包,0未领取，1已领取
+* value: 抵扣券金额
+* rebate_value: 抵扣券抵扣的金额

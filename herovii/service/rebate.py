@@ -7,6 +7,7 @@ from herovii.libs.util import convert_paginate
 from herovii.models.org.rebate import Rebate
 from herovii.models.user.user_rebate import UserRebate
 from herovii.models.org.teaching_course import TeachingCourse
+from herovii.models.user.user_rebate_gift import UserRebateGift
 
 __author__ = 'shaolei'
 
@@ -29,20 +30,27 @@ def get_rebate_list_by_uid(uid, type, page, per_page):
         total_count = db.session.query(UserRebate)\
             .filter(UserRebate.uid == uid, or_(UserRebate.status == 1, UserRebate.rebate_id.in_(out_date_rebate_ids))) \
             .count()
-        rebate_info_list = []
-        for rebate in rebate_list:
-            rebate_info = get_rebate_info(rebate)
-            rebate_info_list.append(rebate_info)
-        return total_count, rebate_info_list
+        if rebate_list:
+            rebate_info_list = []
+            for rebate in rebate_list:
+                rebate_info = get_rebate_info(rebate)
+                rebate_info_list.append(rebate_info)
+        else:
+            total_count = 0
+            rebate_info_list = None
     else:
         total_count = db.session.query(UserRebate).filter(UserRebate.uid == uid, UserRebate.status == 0).count()
         rebate_list = db.session.query(UserRebate).filter(UserRebate.uid == uid, UserRebate.status == 0) \
             .order_by(UserRebate.create_time.desc()) \
             .slice(start, stop).all()
-        rebate_info_list = []
-        for rebate in rebate_list:
-            rebate_info = get_rebate_info(rebate)
-            rebate_info_list.append(rebate_info)
+        if rebate_list:
+            rebate_info_list = []
+            for rebate in rebate_list:
+                rebate_info = get_rebate_info(rebate)
+                rebate_info_list.append(rebate_info)
+        else:
+            total_count = 0
+            rebate_info_list = None
     return total_count, rebate_info_list
 
 
@@ -61,6 +69,14 @@ def get_rebate_info(user_rebate):
         is_out_of_date = 1
     else:
         is_out_of_date = 0
+    is_obtain_gift_package = db.session.query(UserRebateGift) \
+        .filter(UserRebateGift.uid == user_rebate.uid,
+                UserRebateGift.user_rebate_id == user_rebate_id,
+                UserRebateGift.status != -1).count()
+    if is_obtain_gift_package:
+        obtain_gift_package = 1
+    else:
+        obtain_gift_package = 0
     rebate_obj = {
         'id': user_rebate.rebate_id,
         'name': rebate.name,
@@ -73,7 +89,8 @@ def get_rebate_info(user_rebate):
         'courses_pic': courses.cover_pic,
         'is_use': is_use,
         'is_out_of_date': is_out_of_date,
-        'user_rebate_id': user_rebate_id
+        'user_rebate_id': user_rebate_id,
+        'is_obtain_gift_package': obtain_gift_package
     }
     return rebate_obj
 
