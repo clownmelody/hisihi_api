@@ -180,14 +180,14 @@ def user_get_gift_package_v2_9_2():
 
 
 @api.route('/<int:uid>/rebate/<int:type>')
-@auth.login_required
+#@auth.login_required
 def get_user_rebate_list(uid, type):
     args = request.args.to_dict()
     form = PagingForm.create_api_form(**args)
-    total_count, coupon_list = get_rebate_list_by_uid(uid, form.page.data, form.per_page.data)
+    total_count, rebate_list = get_rebate_list_by_uid(uid, type, form.page.data, form.per_page.data)
     result = {
-        "total_count": total_count,
-        "data": coupon_list
+        "count": total_count,
+        "data": rebate_list
     }
     json_data = json.dumps(result)
     headers = {'Content-Type': 'application/json'}
