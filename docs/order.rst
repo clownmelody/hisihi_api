@@ -287,3 +287,49 @@
 * is_obtain_gift_package: 是否领取礼包,0未领取，1已领取
 * value: 抵扣券金额
 * rebate_value: 抵扣券抵扣的金额
+
+
+领取抵扣券礼包
+~~~~~~~~~~~~~~~
+**URL**::
+
+    POST user/rebate/gift_package
+
+**POST Sample**：
+
+.. sourcecode:: json
+
+    {
+        "uid":72,
+        "user_rebate_id":1,
+        "name":"航航",
+        "phone_num":"18600466074",
+        "address":"马湖商业街",
+        "voucher":"http://pic.hisihi.com/2016-06-28/1467095297745554.jpg,http://pic.hisihi.com/2016-06-28/1467095295418991.jpg"
+    }
+
+**Parameters**:
+
+* user_rebate_id: 用户抵扣券id
+* uid: 用户id
+* name: 用户姓名
+* phone_num: 用户电话
+* address: 用户地址
+* voucher: 上传凭证，多图片地址逗号隔开
+
+
+**Response** `200` ::
+
+    {
+      "address": "马湖商业街",
+      "check": 0,
+      "id": 1,
+      "name": "航航",
+      "phone_num": "18600466074",
+      "uid": 72,
+      "user_rebate_id": 1,
+      "voucher": "http://pic.hisihi.com/2016-06-28/1467095297745554.jpg,http://pic.hisihi.com/2016-06-28/1467095295418991.jpg"
+    }
+
+**结果说明**:
+* check: 审核状态，0未审核，1已审核，2已发放

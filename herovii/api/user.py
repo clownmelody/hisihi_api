@@ -12,7 +12,7 @@ from herovii.service.org import get_coupon_list_by_uid, is_coupon_out_of_date, g
 from herovii.service.user_csu import db_change_indentity
 from flask import jsonify, request
 from herovii.validator.forms import PhoneNumberForm, \
-    UserCSUChangeIdentityForm, PagingForm, ObtainCouponForm, ObtainGiftPackageForm
+    UserCSUChangeIdentityForm, PagingForm, ObtainCouponForm, ObtainGiftPackageForm, ObtainRebateGiftPackageForm
 from herovii.service import user_org
 from herovii.validator import user_verify
 from herovii.libs.error_code import NotFound, CouponOutOfDateFailture, CouponHasObtainedFailture, \
@@ -20,6 +20,7 @@ from herovii.libs.error_code import NotFound, CouponOutOfDateFailture, CouponHas
 from herovii.libs.bpbase import ApiBlueprint
 from herovii.libs.bpbase import auth
 from herovii.service.rebate import get_rebate_list_by_uid, get_rebate_detail_info
+from herovii.models.user.user_rebate_gift import UserRebateGift
 
 __author__ = 'bliss'
 
@@ -201,3 +202,22 @@ def get_user_rebate_detail(id):
     json_data = json.dumps(rebate)
     headers = {'Content-Type': 'application/json'}
     return json_data, 200, headers
+
+
+@api.route('/rebate/gift_package', methods=['POST'])
+@auth.login_required
+def user_get_rebate_gift_package():
+    form = ObtainRebateGiftPackageForm.create_api_form()
+    user_gift_package = UserRebateGift()
+    for key, value in form.body_data.items():
+        setattr(user_gift_package, key, value)
+    is_obtain = db.session.query(UserRebateGift)\
+        .filter(UserRebateGift.uid == user_gift_package.uid,
+                UserRebateGift.user_rebate_id == user_gift_package.user_rebate_id,
+                UserRebateGift.status != -1) \
+        .count()
+    if is_obtain:
+        raise GiftHasObtainedFailture()
+    with db.auto_commit():
+        db.session.add(user_gift_package)
+    return jsonify(user_gift_package), 201

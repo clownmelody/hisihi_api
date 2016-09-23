@@ -398,6 +398,15 @@ class ObtainGiftPackageForm(Form):
     voucher = StringField()
 
 
+class ObtainRebateGiftPackageForm(Form):
+    uid = IntegerField(validators=[DataRequired()])
+    user_rebate_id = IntegerField(validators=[DataRequired()])
+    name = StringField(validators=[DataRequired()])
+    phone_num = StringField(validators=[DataRequired()])
+    address = StringField()
+    voucher = StringField()
+
+
 class VerifyOrgAdminForm(Form):
     account = create_not_empty_field()
     secret = StringField(validators=[DataRequired()])
