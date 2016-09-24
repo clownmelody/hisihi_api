@@ -29,7 +29,8 @@ def create_pay_order(oid, type):
                                trade_type='APP')
     headers = {'Content-Type': 'application/json'}
     if obj:
-        return json.dumps(obj), 200, headers
+        app_data = wx_pay.second_sign(prepayid=obj['prepay_id'])
+        return json.dumps(app_data), 200, headers
     else:
         raise CreateOrderFailure()
 

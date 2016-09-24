@@ -17,6 +17,7 @@
 
 **Response** `200` ::
 
+    微信返回结果：
     {
       "appid": "wx9dcbe8acfcac3740",
       "mch_id": "1392378802",

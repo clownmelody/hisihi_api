@@ -209,6 +209,16 @@ class WeixinPay(object):
             raise WeixinPayError(err_msg)
         return raw
 
+    def second_sign(self, **data):
+        data.setdefault("appid", self.app_id)
+        data.setdefault("partnerid", self.mch_id)
+        # data.setdefault("prepayid", self.notify_url)
+        data.setdefault("noncestr", self.nonce_str)
+        data.setdefault("package", 'Sign=WXPay')
+        data.setdefault("timestamp", int(time.time()))
+        data.setdefault("sign", self.sign(data))
+        return data
+
     def jsapi(self, **kwargs):
         """
         生成给JavaScript调用的数据
