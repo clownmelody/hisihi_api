@@ -128,7 +128,8 @@ class WeixinPay(object):
         s = ""
         for k, v in raw.items():
             s += "<{0}>{1}</{0}>".format(k, self.to_utf8(v), k)
-        return "<xml>{0}</xml>".format(s)
+        value = "<xml>{0}</xml>".format(s)
+        return urllib.parse.urlencode(value).encode(encoding='UTF8')
 
     def to_dict(self, content):
         raw = {}

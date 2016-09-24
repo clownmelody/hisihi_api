@@ -233,6 +233,7 @@
 * is_obtain_gift_package: 是否领取礼包,0未领取，1已领取
 * value: 抵扣券金额
 * rebate_value: 抵扣券抵扣的金额
+* is_bind_gift_package: 抵扣券是否绑定礼包，0未绑定，1绑定
 
 
 抵扣券详情

@@ -44,7 +44,7 @@ def get_rebate_list_by_uid(uid, type, page, per_page):
     else:
         cur_time = int(time.time())
         out_date_rebate = db.session.query(Rebate.id)\
-            .filter(Rebate.use_end_time <= cur_time) \
+            .filter(Rebate.use_end_time >= cur_time) \
             .all()
         out_date_rebate_ids = []
         for obj in out_date_rebate:
