@@ -213,6 +213,7 @@
           "is_out_of_date": 1,
           "user_rebate_id": 2,
           "is_obtain_gift_package": 0,
+          "is_bind_gift_package": 1,
           "id": 3,
           "value": 100,
           "is_use": 0
