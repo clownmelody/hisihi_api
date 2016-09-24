@@ -20,14 +20,12 @@
     微信返回结果：
     {
       "appid": "wx9dcbe8acfcac3740",
-      "mch_id": "1392378802",
-      "nonce_str": "obbxtwtSeIGcTg17",
-      "prepay_id": "wx20160924172118be70f5e9240487045014",
-      "result_code": "SUCCESS",
-      "return_code": "SUCCESS",
-      "return_msg": "OK",
-      "sign": "99F51B8E3D09D291C519EA50190FF2B2",
-      "trade_type": "APP"
+      "noncestr": "oYaEvh3oZrbuIJPVaXcItMiB2LBaQnz0",
+      "package": "Sign=WXPay",
+      "partnerid": "1392378802",
+      "prepayid": "wx20160924194638b628a487960185021418",
+      "sign": "D5BF86A210D846C4D7E03E9F8D335354",
+      "timestamp": 1474717600
     }
 
 
