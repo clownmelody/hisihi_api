@@ -10,6 +10,7 @@ import urllib.error
 import xmltodict
 import requests
 
+
 from collections import namedtuple
 
 try:
@@ -153,8 +154,7 @@ class WeixinPay(object):
         response = requests.post(url, data=xml, headers=headers)
         response.encoding = 'utf-8'
         response_dict = xmltodict.parse(response.text)['xml']
-        if response_dict['return_code'] == 'SUCCESS':
-            return build_form_by_prepay_id(response_dict['prepay_id'])
+        return response_dict
 
     def dict_to_xml(self, params):
         xml_elements = ["<xml>",]
@@ -201,7 +201,7 @@ class WeixinPay(object):
         data.setdefault("spbill_create_ip", self.remote_addr)
         data.setdefault("sign", self.sign(data))
 
-        raw = self.fetch(url, data)
+        raw = self.fetch2(url, data)
         if raw["return_code"] == "FAIL":
             raise WeixinPayError(raw["return_msg"])
         err_msg = raw.get("err_code_des")
