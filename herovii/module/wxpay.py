@@ -126,7 +126,7 @@ class WeixinPay(object):
 
     def to_xml(self, raw):
         s = ""
-        for k, v in raw.iteritems():
+        for k, v in raw.items():
             s += "<{0}>{1}</{0}>".format(k, self.to_utf8(v), k)
         return "<xml>{0}</xml>".format(s)
 

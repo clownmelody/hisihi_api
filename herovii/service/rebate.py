@@ -42,10 +42,19 @@ def get_rebate_list_by_uid(uid, type, page, per_page):
             total_count = 0
             rebate_info_list = None
     else:
-        total_count = db.session.query(UserRebate).filter(UserRebate.uid == uid, UserRebate.status == 0).count()
-        rebate_list = db.session.query(UserRebate).filter(UserRebate.uid == uid, UserRebate.status == 0) \
+        cur_time = int(time.time())
+        out_date_rebate = db.session.query(Rebate.id)\
+            .filter(Rebate.use_end_time <= cur_time) \
+            .all()
+        out_date_rebate_ids = []
+        for obj in out_date_rebate:
+            out_date_rebate_ids.append(obj.id)
+        rebate_list = db.session.query(UserRebate)\
+            .filter(UserRebate.uid == uid, UserRebate.status == 0, UserRebate.rebate_id.in_(out_date_rebate_ids)) \
             .order_by(UserRebate.create_time.desc()) \
             .slice(start, stop).all()
+        total_count = db.session.query(UserRebate).filter(UserRebate.uid == uid, UserRebate.status == 0).count()
+
         if rebate_list:
             rebate_info_list = []
             for rebate in rebate_list:
@@ -80,6 +89,15 @@ def get_rebate_info(user_rebate):
         obtain_gift_package = 1
     else:
         obtain_gift_package = 0
+    tccr = db.session.query(OrgTeachingCourseRebateRelation.gift_package_id).filter(
+        OrgTeachingCourseRebateRelation.teaching_course_id == user_rebate.teaching_course_id,
+        OrgTeachingCourseRebateRelation.rebate_id == user_rebate.rebate_id,
+        OrgTeachingCourseRebateRelation.status == 1) \
+        .first()
+    if tccr.gift_package_id:
+        is_bind_gift_package = 1
+    else:
+        is_bind_gift_package = 0
     rebate_obj = {
         'id': user_rebate.rebate_id,
         'name': rebate.name,
@@ -93,7 +111,8 @@ def get_rebate_info(user_rebate):
         'is_use': is_use,
         'is_out_of_date': is_out_of_date,
         'user_rebate_id': user_rebate_id,
-        'is_obtain_gift_package': obtain_gift_package
+        'is_obtain_gift_package': obtain_gift_package,
+        'is_bind_gift_package': is_bind_gift_package
     }
     return rebate_obj
 
