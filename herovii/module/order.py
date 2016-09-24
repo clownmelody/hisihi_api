@@ -55,7 +55,7 @@ class Order(object):
         rebate = db.session.query(Rebate)\
             .filter(Rebate.id == rebate_id)\
             .first()
-        total_price = rebate.value * num
+        total_price = int(rebate.value) * int(num)
         now = datetime.datetime.now()
         time_str = now.strftime("%Y%m%d%H%M%S")
         order_sn = time_str + str(random.randint(1000, 9999))

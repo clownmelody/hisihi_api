@@ -7,6 +7,8 @@ import random
 import hashlib
 import urllib.request
 import urllib.error
+import xmltodict
+import requests
 
 from collections import namedtuple
 
@@ -128,8 +130,7 @@ class WeixinPay(object):
         s = ""
         for k, v in raw.items():
             s += "<{0}>{1}</{0}>".format(k, self.to_utf8(v), k)
-        value = "<xml>{0}</xml>".format(s)
-        return urllib.parse.urlencode(value).encode(encoding='UTF8')
+        return "<xml>{0}</xml>".format(s)
 
     def to_dict(self, content):
         raw = {}
@@ -145,6 +146,25 @@ class WeixinPay(object):
         except urllib.error.HTTPError as e:
             resp = e
         return self.to_dict(resp.read())
+
+    def fetch2(self, url, data):
+        headers = {'Content-Type': 'application/xml'}
+        xml = self.dict_to_xml(data).encode('utf-8')
+        response = requests.post(url, data=xml, headers=headers)
+        response.encoding = 'utf-8'
+        response_dict = xmltodict.parse(response.text)['xml']
+        if response_dict['return_code'] == 'SUCCESS':
+            return build_form_by_prepay_id(response_dict['prepay_id'])
+
+    def dict_to_xml(self, params):
+        xml_elements = ["<xml>",]
+        for (k, v) in params.items():
+            if str(v).isdigit():
+                xml_elements.append('<%s>%s</%s>' % (k, v, k))
+            else:
+                xml_elements.append('<%s><![CDATA[%s]]></%s>' % (k, v, k))
+        xml_elements.append('</xml>')
+        return ''.join(xml_elements)
 
     def reply(self, msg, ok=True):
         code = "SUCCESS" if ok else "FAIL"
