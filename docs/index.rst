@@ -55,3 +55,4 @@ Api V1 说明
    verifyCoupon
    forum
    order
+   pay

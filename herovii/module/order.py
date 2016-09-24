@@ -12,7 +12,7 @@ __author__ = 'shaolei'
 
 
 class Order(object):
-    def __init__(self, uid):
+    def __init__(self, uid=0):
         self.uid = uid
 
     def get_user_order_list(self, page=1, per_page=10):
@@ -133,3 +133,8 @@ class Order(object):
                     }
         }
         return order_obj
+
+    def update_order_status(self, oid, status):
+        Order.query.filter_by(id=oid).update({'status': status})
+        db.session.commit()
+

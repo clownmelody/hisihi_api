@@ -13,18 +13,23 @@ from herovii.module.wxpay import WeixinPay
 __author__ = 'shaolei'
 
 api = ApiBlueprint('pay')
+wx_pay = WeixinPay()
 
 
-@api.route('/create/pay/<int:type>', methods=['POST'])
-# @auth.login_required
-def create_pay_order(type):
-    data = request.get_json(force=True, silent=True)
-    wx_pay = WeixinPay(None)
-    obj = wx_pay.unified_order(out_trade_no=data['out_trade_no'], body=data['body'], total_fee=data['total_fee'],
-                               trade_type=data['trade_type'])
+@api.route('/create/pay/<int:oid>/<int:type>', methods=['GET'])
+@auth.login_required
+def create_pay_order(oid, type):
+    order = Order(g.user[0])
+    # order = Order(72)
+    data = order.get_order_detail(oid)
+    body = 'hisihi-rebate'
+    # total_fee = int(data['price']) * 100
+    total_fee = 1
+    obj = wx_pay.unified_order(out_trade_no=data['order_sn'], body=body, total_fee=total_fee,
+                               trade_type='APP')
     headers = {'Content-Type': 'application/json'}
     if obj:
-        return json.dumps(obj), 201, headers
+        return json.dumps(obj), 200, headers
     else:
         raise CreateOrderFailure()
 
@@ -44,10 +49,11 @@ def wxpay_notify():
     """
     微信异步通知
     """
-    wx_pay = WeixinPay()
     data = wx_pay.to_dict(request.data)
     if not wx_pay.check(data):
         return wx_pay.reply("签名验证失败", False)
     # 处理业务逻辑
+    order = Order()
+    order.update_order_status(5, 1)
     return wx_pay.reply("OK", True)
 
