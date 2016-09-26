@@ -59,8 +59,9 @@
       "pay_status": 1,
       "user_rebate_id": 2
     }
+**结果说明** ::
+* pay_status: 支付状态，0未支付，1已支付，2正在支付中
 
 **Error_Code** ::
 
-**结果说明** ::
-* pay_status: 支付状态，0未支付，1已支付，2正在支付中
+
