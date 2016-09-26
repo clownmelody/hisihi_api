@@ -3,7 +3,7 @@ from flask import json, request
 from flask.globals import g
 
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.libs.error_code import JSONStyleError
+from herovii.libs.error_code import JSONStyleError, OrderAlreadyPayFailure
 from herovii.libs.bpbase import auth
 from herovii.module.order import Order
 from herovii.libs.error_code import CreateOrderFailure
@@ -22,6 +22,8 @@ def create_pay_order(oid, type):
     order = Order(g.user[0])
     # order = Order(72)
     data = order.get_order_detail(oid)
+    if data['status'] > 0:
+        raise OrderAlreadyPayFailure()
     body = 'hisihi-rebate'
     # total_fee = int(data['price']) * 100
     total_fee = 1
@@ -45,16 +47,21 @@ def get_order_detail(oid):
     return json.dumps(obj), 200, headers
 
 
-@api.route("/wxpay/notify")
+@api.route("/wxpay/notify", methods=['POST'])
 def wxpay_notify():
     """
     微信异步通知
     """
     data = wx_pay.to_dict(request.data)
-    if not wx_pay.check(data):
-        return wx_pay.reply("签名验证失败", False)
+    # if not wx_pay.check(data):
+    #     return wx_pay.reply("签名验证失败", False)
     # 处理业务逻辑
     order = Order()
-    order.update_order_status(5, 1)
-    return wx_pay.reply("OK", True)
+    res = order.check_order_status(data['out_trade_no'])
+    if res:
+        return wx_pay.reply("OK", True)
+    else:
+        order.update_order_status(data['out_trade_no'], 1)
+        return wx_pay.reply("OK", True)
+
 

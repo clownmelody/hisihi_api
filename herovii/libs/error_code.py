@@ -198,3 +198,9 @@ class OrderNotFindFailure(APIException):
     code = 404
     error_code = 10002
     error = 'order not find'
+
+
+class OrderAlreadyPayFailure(APIException):
+    code = 200
+    error_code = 11001
+    error = 'order has been pay'

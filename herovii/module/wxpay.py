@@ -212,7 +212,6 @@ class WeixinPay(object):
     def second_sign(self, **data):
         data.setdefault("appid", self.app_id)
         data.setdefault("partnerid", self.mch_id)
-        # data.setdefault("prepayid", self.notify_url)
         data.setdefault("noncestr", self.nonce_str)
         data.setdefault("package", 'Sign=WXPay')
         data.setdefault("timestamp", int(time.time()))

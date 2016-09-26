@@ -134,7 +134,15 @@ class Order(object):
         }
         return order_obj
 
-    def update_order_status(self, oid, status):
-        Order.query.filter_by(id=oid).update({'status': status})
+    def update_order_status(self, order_sn, status):
+        RebateOrder.query.filter_by(order_sn=order_sn).update({'status': status})
         db.session.commit()
 
+    def check_order_status(self, order_sn):
+        order = db.session.query(RebateOrder.status)\
+            .filter(RebateOrder.order_sn == order_sn)\
+            .first()
+        if order.status > 0:
+            return True
+        else:
+            return False
