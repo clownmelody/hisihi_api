@@ -250,7 +250,7 @@ class WeixinPay(object):
         data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("sign", self.sign(data))
 
-        raw = self.fetch(url, data)
+        raw = self.fetch2(url, data)
         if raw["return_code"] == "FAIL":
             raise WeixinPayError(raw["return_msg"])
         return raw

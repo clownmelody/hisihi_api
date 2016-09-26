@@ -142,6 +142,7 @@ def get_rebate_detail_info(id):
         obtain_gift_package = 1
     else:
         obtain_gift_package = 0
+    rebate_text = str(rebate.value) + '元抵扣券抵' + str(rebate.rebate_value) + '元学费'
     rebate_info = {
         'user_rebate_id': id,
         'id': rebate.id,
@@ -149,6 +150,7 @@ def get_rebate_detail_info(id):
         'use_end_time': rebate.use_end_time,
         'value': rebate.value,
         'rebate_value': rebate.rebate_value,
+        'rebate_text': rebate_text,
         'courses_name': course.course_name,
         'courses_id': course.id,
         'courses_pic': course.cover_pic,

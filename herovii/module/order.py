@@ -4,7 +4,7 @@ import time
 
 from flask.globals import current_app
 
-from herovii.libs.helper import make_a_coupon_code
+from herovii.libs.helper import make_a_coupon_code, make_an_bizid
 from herovii.models.base import db
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.order import RebateOrder
@@ -60,9 +60,10 @@ class Order(object):
             .filter(Rebate.id == rebate_id)\
             .first()
         total_price = int(rebate.value) * int(num)
-        now = datetime.datetime.now()
-        time_str = now.strftime("%Y%m%d%H%M%S")
-        order_sn = time_str + str(random.randint(1000, 9999))
+        # now = datetime.datetime.now()
+        # time_str = now.strftime("%Y%m%d%H%M%S")
+        # order_sn = time_str + str(random.randint(1000, 9999))
+        order_sn = make_an_bizid()
         with db.auto_commit():
             order = RebateOrder()
             order.price = total_price

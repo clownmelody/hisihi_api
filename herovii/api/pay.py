@@ -44,14 +44,39 @@ def create_pay_order(oid, type):
         raise CreateOrderFailure()
 
 
-@api.route('/detail/<int:oid>', methods=['GET'])
+@api.route('/order/query/<int:oid>/<int:type>', methods=['GET'])
 @auth.login_required
-def get_order_detail(oid):
+def get_order_detail(oid, type):
+    headers = {'Content-Type': 'application/json'}
     order = Order(g.user[0])
     # order = Order(72)
-    obj = order.get_order_detail(oid)
-    headers = {'Content-Type': 'application/json'}
-    return json.dumps(obj), 200, headers
+    data = order.get_order_detail(oid)
+    if data['order_status'] > 0:
+        pay_status = 1
+        user_rebate_id = order.get_user_rebate_id(oid)
+        app_data = {
+            'pay_status': pay_status,
+            'user_rebate_id': user_rebate_id
+        }
+        return json.dumps(app_data), 200, headers
+    else:
+        obj = wx_pay.order_query(out_trade_no=data['order_sn'])
+        if obj['trade_state'] == 'SUCCESS':
+            pay_status = 1
+            user_rebate_id = order.get_user_rebate_id(oid)
+            app_data = {
+                'pay_status': pay_status,
+                'user_rebate_id': user_rebate_id
+            }
+        elif obj['trade_state'] == 'USERPAYING':
+            app_data = {
+                'pay_status': 2
+            }
+        else:
+            app_data = {
+                'pay_status': 0
+            }
+        return json.dumps(app_data), 200, headers
 
 
 @api.route("/wxpay/notify", methods=['POST'])
