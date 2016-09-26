@@ -59,15 +59,17 @@ def wxpay_notify():
     """
     微信异步通知
     """
-    data = wx_pay.to_dict(request.data)
-    # if not wx_pay.check(data):
-    #     return wx_pay.reply("签名验证失败", False)
+    req = request.stream.read()
+    data = wx_pay.to_dict(req)
+    if not wx_pay.check(data):
+        return wx_pay.reply("签名验证失败", False)
     # 处理业务逻辑
     order = Order()
     res = order.check_order_status(data['out_trade_no'])
     if res:
         return wx_pay.reply("OK", True)
     else:
+        order.create_user_rebate(data['out_trade_no'])
         order.update_order_status(data['out_trade_no'], 1)
         return wx_pay.reply("OK", True)
 

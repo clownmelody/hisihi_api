@@ -168,7 +168,8 @@ class WeixinPay(object):
 
     def reply(self, msg, ok=True):
         code = "SUCCESS" if ok else "FAIL"
-        return self.to_xml(dict(return_code=code, return_msg=msg))
+        # return self.to_xml(dict(return_code=code, return_msg=msg))
+        return self.dict_to_xml(dict(return_code=code, return_msg=msg))
 
     def unified_order(self, **data):
         """

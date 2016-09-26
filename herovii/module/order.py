@@ -1,6 +1,10 @@
 import random
 import datetime
 import time
+
+from flask.globals import current_app
+
+from herovii.libs.helper import make_a_coupon_code
 from herovii.models.base import db
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.order import RebateOrder
@@ -135,14 +139,14 @@ class Order(object):
         return order_obj
 
     def update_order_status(self, order_sn, status):
-        RebateOrder.query.filter_by(order_sn=order_sn).update({'status': status})
+        RebateOrder.query.filter_by(order_sn=order_sn).update({'order_status': status})
         db.session.commit()
 
     def check_order_status(self, order_sn):
-        order = db.session.query(RebateOrder.status)\
+        order = db.session.query(RebateOrder.order_status)\
             .filter(RebateOrder.order_sn == order_sn)\
             .first()
-        if order.status > 0:
+        if order.order_status > 0:
             return True
         else:
             return False
@@ -155,3 +159,27 @@ class Order(object):
             return user_rebate.id
         else:
             raise UserRebateNotFindFailure()
+
+    def get_rebate_code_service(self, uid):
+        coupon_code = make_a_coupon_code(uid)
+        oss_url = current_app.config['WEIXIN_SERVER_HOST_NAME'] + '/scissor/index/index?rebate=' + coupon_code
+        return coupon_code, oss_url
+
+    def get_order_by_ordersn(self, order_sn):
+        order = db.session.query(RebateOrder)\
+            .filter(RebateOrder.order_sn == order_sn)\
+            .first()
+        return order
+
+    def create_user_rebate(self, order_sn):
+        user_order = self.get_order_by_ordersn(order_sn)
+        promo_code, promo_code_url = self.get_rebate_code_service(user_order.uid)
+        user_rebate = UserRebate()
+        user_rebate.promo_code = promo_code
+        user_rebate.promo_code_url = promo_code_url
+        user_rebate.rebate_id = user_order.rebate_id
+        user_rebate.order_id = user_order.id
+        user_rebate.uid = user_order.uid
+        user_rebate.teaching_course_id = user_order.courses_id
+        with db.auto_commit():
+            db.session.add(user_rebate)
