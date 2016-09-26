@@ -39,14 +39,15 @@ def create_pay_order(oid, type):
     if obj:
         app_data = wx_pay.second_sign(prepayid=obj['prepay_id'])
         app_data.setdefault('pay_status', 0)
+        order.update_order_pay_type(oid, type)
         return json.dumps(app_data), 200, headers
     else:
         raise CreateOrderFailure()
 
 
-@api.route('/order/query/<int:oid>/<int:type>', methods=['GET'])
+@api.route('/order/query/<int:oid>', methods=['GET'])
 @auth.login_required
-def get_order_detail(oid, type):
+def get_order_detail(oid):
     headers = {'Content-Type': 'application/json'}
     order = Order(g.user[0])
     # order = Order(72)

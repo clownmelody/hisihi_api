@@ -44,12 +44,11 @@
 ~~~~~~~~~~~~~~~~~~~~~~~
 **URL**::
 
-    GET     pay/order/query/<int:oid>/<int:type>
+    GET     pay/order/query/<int:oid>
 
 **Parameters**:
 
 * oid: 订单id
-* type: 支付类型,0微信支付，1支付宝支付
 
 
 **Response** `200` ::

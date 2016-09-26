@@ -143,6 +143,10 @@ class Order(object):
         RebateOrder.query.filter_by(order_sn=order_sn).update({'order_status': status})
         db.session.commit()
 
+    def update_order_pay_type(self, oid, type):
+        RebateOrder.query.filter_by(id=oid).update({'pay_type': type})
+        db.session.commit()
+
     def check_order_status(self, order_sn):
         order = db.session.query(RebateOrder.order_status)\
             .filter(RebateOrder.order_sn == order_sn)\
