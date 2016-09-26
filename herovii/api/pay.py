@@ -19,19 +19,26 @@ wx_pay = WeixinPay()
 @api.route('/create/pay/<int:oid>/<int:type>', methods=['GET'])
 @auth.login_required
 def create_pay_order(oid, type):
+    headers = {'Content-Type': 'application/json'}
     order = Order(g.user[0])
     # order = Order(72)
     data = order.get_order_detail(oid)
-    if data['status'] > 0:
-        raise OrderAlreadyPayFailure()
+    if data['order_status'] > 0:
+        pay_status = 1
+        user_rebate_id = order.get_user_rebate_id(oid)
+        app_data = {
+            'pay_status': pay_status,
+            'user_rebate_id': user_rebate_id
+        }
+        return json.dumps(app_data), 200, headers
     body = 'hisihi-rebate'
     # total_fee = int(data['price']) * 100
     total_fee = 1
     obj = wx_pay.unified_order(out_trade_no=data['order_sn'], body=body, total_fee=total_fee,
                                trade_type='APP')
-    headers = {'Content-Type': 'application/json'}
     if obj:
         app_data = wx_pay.second_sign(prepayid=obj['prepay_id'])
+        app_data.setdefault('pay_status', 0)
         return json.dumps(app_data), 200, headers
     else:
         raise CreateOrderFailure()

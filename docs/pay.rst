@@ -17,17 +17,23 @@
 
 **Response** `200` ::
 
-    微信返回结果：
+    订单已支付返回结果：
     {
-      "appid": "wx9dcbe8acfcac3740",
-      "noncestr": "oYaEvh3oZrbuIJPVaXcItMiB2LBaQnz0",
-      "package": "Sign=WXPay",
-      "partnerid": "1392378802",
-      "prepayid": "wx20160924194638b628a487960185021418",
-      "sign": "D5BF86A210D846C4D7E03E9F8D335354",
-      "timestamp": 1474717600
+      "pay_status": 1,
+      "user_rebate_id": 2
     }
 
+    微信调用成功返回结果：
+    {
+      "appid": "wx9dcbe8acfcac3740",
+      "noncestr": "jRdtzOTD8dBBk9cUVQixC5G4RhHwWrRw",
+      "package": "Sign=WXPay",
+      "partnerid": "1392378802",
+      "pay_status": 0,
+      "prepayid": "wx201609261152180f8256ae9d0049337449",
+      "sign": "E7C64668CE5253A000951837B57D86E4",
+      "timestamp": 1474861950
+    }
 **Error_Code** ::
 * 10001: 创建订单失败
-* 11001: 订单已经支付
+* 10003: 获取用户抵扣券失败

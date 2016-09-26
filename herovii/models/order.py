@@ -31,6 +31,6 @@ class RebateOrder(Base):
     def keys(self):
         return (
             'id', 'order_sn', 'uid', 'mobile', 'order_status', 'pay_type', 'courses_id',
-            'organization_id', 'rebate_id', 'rebate_num', 'create_time', 'pay_time', 'status', 'price'
+            'organization_id', 'rebate_id', 'rebate_num', 'create_time', 'pay_time', 'status', 'price', 'status'
         )
 

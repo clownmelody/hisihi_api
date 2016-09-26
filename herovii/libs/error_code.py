@@ -204,3 +204,9 @@ class OrderAlreadyPayFailure(APIException):
     code = 200
     error_code = 11001
     error = 'order has been pay'
+
+
+class UserRebateNotFindFailure(APIException):
+    code = 404
+    error_code = 10003
+    error = 'user rebate not find'

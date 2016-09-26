@@ -4,7 +4,7 @@ import time
 from herovii.models.base import db
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.order import RebateOrder
-from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure
+from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure
 from herovii.models.org.rebate import Rebate
 from herovii.models.user.user_rebate import UserRebate
 
@@ -146,3 +146,12 @@ class Order(object):
             return True
         else:
             return False
+
+    def get_user_rebate_id(self, oid):
+        user_rebate = db.session.query(UserRebate.id)\
+            .filter(UserRebate.order_id == oid, UserRebate.uid == self.uid)\
+            .first()
+        if user_rebate:
+            return user_rebate.id
+        else:
+            raise UserRebateNotFindFailure()
