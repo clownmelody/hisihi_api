@@ -435,6 +435,34 @@ def get_teaching_course_by_id_v2_9_5(user_id, cid):
     }
 
 
+def get_teaching_course_by_id_v3_0_2(user_id, cid):
+    course = TeachingCourse.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5008, error='培训课程信息不存在')
+    org_info = Info.query.get(course.organization_id)
+    if not org_info:
+        raise NotFound(error='organization not found')
+    server_host_name = current_app.config['SERVER_HOST_NAME']
+    web_url = server_host_name + "/api.php?s=/organization/teaching_course_main_page_v3_02/course_id/" + str(cid)
+    return {
+        'course_id': cid,
+        'organization_id': course.organization_id,
+        'organization_name': org_info.name,
+        'course_name': course.course_name,
+        'cover_pic': course.cover_pic,
+        'start_course_time': course.start_course_time,
+        'end_course_time': course.end_course_time,
+        'lesson_period': course.lesson_period,
+        'student_num': course.student_num,
+        'lecture_name': course.lecture_name,
+        'price': course.price,
+        'web_url': web_url,
+        'is_favorite': is_teaching_course_favorite(user_id, cid),
+        'is_enroll': is_enroll_teaching_course(user_id, cid),
+        'is_listen_preview': is_teaching_course_listen_preview(cid)
+    }
+
+
 def is_teaching_course_favorite(uid, cid):
     is_favorite = db.session.query(Favorite).filter(Favorite.row == cid,
                                                     Favorite.appname == 'OrganizationTeachingCourse',
