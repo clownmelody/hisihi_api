@@ -1798,11 +1798,14 @@ def get_teaching_course_rebate_by_id(cid, uid):
                 OrgTeachingCourseRebateRelation.status == 1) \
         .all()
     for _info in _list:
+        now = time.time()
         _rebate = db.session.query(Rebate).join(OrgTeachingCourseRebateRelation,
                                                 OrgTeachingCourseRebateRelation.rebate_id == Rebate.id) \
             .order_by(Rebate.rebate_value.desc()) \
             .filter(OrgTeachingCourseRebateRelation.teaching_course_id == cid,
-                    OrgTeachingCourseRebateRelation.status == 1, Rebate.status == 1) \
+                    OrgTeachingCourseRebateRelation.status == 1,
+                    Rebate.status == 1,
+                    Rebate.buy_end_time >= now) \
             .slice(0, 1) \
             .first()
         if _rebate is not None:
