@@ -32,7 +32,7 @@ def create_pay_order(oid, type):
             'user_rebate_id': user_rebate_id
         }
         return json.dumps(app_data), 200, headers
-    rebate = order.get_rebate_info(data['rebate_id'])
+    rebate = order.get_rebate_info(data['rebate']['id'])
     is_out_of_date = order.is_out_of_date(rebate)
     if is_out_of_date:
         raise RebateExpiredFailure()
