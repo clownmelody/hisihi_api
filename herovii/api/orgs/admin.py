@@ -7,7 +7,7 @@ from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.models.org.org_admin_bind_weixin import OrgAdminBindWeixin
 from herovii.service import account
-from herovii.service.org import get_org_info_by_admin_id, verify_coupon_code_service
+from herovii.service.org import get_org_info_by_admin_id, verify_coupon_code_service, verify_rebate_code_service
 from herovii.validator.forms import RegisterByMobileForm, VerifyOrgAdminForm, \
     AdminBindWeixinForm, VerifyCouponCodeForm
 from herovii.service.user_org import register_by_mobile
@@ -106,4 +106,13 @@ def verify_coupon_code():
     weixin_account = form.weixin_account.data
     coupon_code = form.coupon_code.data
     data = verify_coupon_code_service(weixin_account, coupon_code)
+    return jsonify(data), 202
+
+
+@api.route('/admin/verify/rebate/code', methods=['POST'])
+def verify_rebate_code():
+    form = VerifyCouponCodeForm.create_api_form()
+    weixin_account = form.weixin_account.data
+    coupon_code = form.coupon_code.data
+    data = verify_rebate_code_service(weixin_account, coupon_code)
     return jsonify(data), 202

@@ -37,3 +37,30 @@
 **Error_Code** ::
 * 10001: 创建订单失败
 * 10003: 获取用户抵扣券失败
+
+
+
+支付状态查询
+~~~~~~~~~~~~~~~~~~~~~~~
+**URL**::
+
+    GET     pay/order/query/<int:oid>
+
+**Parameters**:
+
+* oid: 订单id
+
+
+**Response** `200` ::
+
+    订单已支付返回结果：
+    {
+      "pay_status": 1,
+      "user_rebate_id": 2
+    }
+**结果说明** ::
+* pay_status: 支付状态，0未支付，1已支付，2正在支付中
+
+**Error_Code** ::
+
+
