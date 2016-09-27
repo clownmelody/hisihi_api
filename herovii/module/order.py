@@ -8,7 +8,7 @@ from herovii.libs.helper import make_a_coupon_code, make_an_bizid
 from herovii.models.base import db
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.order import RebateOrder
-from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure
+from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure, RebateExpiredFailure
 from herovii.models.org.rebate import Rebate
 from herovii.models.user.user_rebate import UserRebate
 
@@ -59,6 +59,9 @@ class Order(object):
         rebate = db.session.query(Rebate)\
             .filter(Rebate.id == rebate_id)\
             .first()
+        cur_time = int(time.time())
+        if cur_time > rebate.use_end_time:
+            raise RebateExpiredFailure()
         total_price = int(rebate.value) * int(num)
         # now = datetime.datetime.now()
         # time_str = now.strftime("%Y%m%d%H%M%S")
@@ -108,7 +111,7 @@ class Order(object):
         else:
             is_use = 0
             user_rebate_id = 0
-        cur_time = time.time()
+        cur_time = int(time.time())
         if cur_time > rebate.use_end_time:
             is_out_of_date = 1
         else:
@@ -188,3 +191,17 @@ class Order(object):
         user_rebate.teaching_course_id = user_order.courses_id
         with db.auto_commit():
             db.session.add(user_rebate)
+
+    def is_out_of_date(self, rebate):
+        cur_time = int(time.time())
+        if cur_time > rebate.use_end_time:
+            return True
+        else:
+            return False
+
+    def get_rebate_info(self, rebate_id):
+        rebate = db.session.query(Rebate.name, Rebate.value, Rebate.rebate_value,
+                                  Rebate.use_start_time, Rebate.use_end_time)\
+            .filter(Rebate.id == rebate_id)\
+            .first()
+        return rebate

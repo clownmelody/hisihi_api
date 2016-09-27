@@ -64,6 +64,11 @@
 * id: 抵扣券id
 * user_rebate_id: 用户抵扣券id，0表示还未生成，用于调用抵扣券详情接口
 
+**Error_code**::
+* 5000: 未找到对应机构
+* 10001: 创建订单失败
+* 10004: 抵扣券已过期
+
 
 用户订单列表
 ~~~~~~~~~~~~~~~
@@ -255,7 +260,7 @@
       "value": 500,
       "order_id": 1,
       "id": 5,
-      "is_used": 1,
+      "is_use": 1,
       "customer_service_telephone_number": "4000340033",
       "user_rebate_id": 1,
       "rebate_value": 10000,

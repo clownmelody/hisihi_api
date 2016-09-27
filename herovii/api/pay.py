@@ -3,8 +3,9 @@ from flask import json, request
 from flask.globals import g
 
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.libs.error_code import JSONStyleError, OrderAlreadyPayFailure
+from herovii.libs.error_code import JSONStyleError, OrderAlreadyPayFailure, RebateExpiredFailure
 from herovii.libs.bpbase import auth
+from herovii.models.org.rebate import Rebate
 from herovii.module.order import Order
 from herovii.libs.error_code import CreateOrderFailure
 from herovii.validator.forms import PagingForm
@@ -31,6 +32,10 @@ def create_pay_order(oid, type):
             'user_rebate_id': user_rebate_id
         }
         return json.dumps(app_data), 200, headers
+    rebate = order.get_rebate_info(data['rebate_id'])
+    is_out_of_date = order.is_out_of_date(rebate)
+    if is_out_of_date:
+        raise RebateExpiredFailure()
     body = 'heishehui.cn'
     # total_fee = int(data['price']) * 100
     total_fee = 1

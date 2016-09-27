@@ -210,3 +210,9 @@ class UserRebateNotFindFailure(APIException):
     code = 404
     error_code = 10003
     error = 'user rebate not find'
+
+
+class RebateExpiredFailure(APIException):
+    code = 200
+    error_code = 10004
+    error = 'the rebate has expired'
