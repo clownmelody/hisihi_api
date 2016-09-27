@@ -31,7 +31,7 @@ def create_pay_order(oid, type):
             'user_rebate_id': user_rebate_id
         }
         return json.dumps(app_data), 200, headers
-    body = 'hisihi-rebate'
+    body = 'heishehui.cn'
     # total_fee = int(data['price']) * 100
     total_fee = 1
     obj = wx_pay.unified_order(out_trade_no=data['order_sn'], body=body, total_fee=total_fee,
