@@ -2032,7 +2032,7 @@ def verify_rebate_code_service(weixin_account, coupon_code):
     if not admin_bind_weixin:
         return data
     coupon = db.session.query(UserRebate.id, UserRebate.rebate_id, UserRebate.teaching_course_id, UserRebate.status,
-                              Rebate.value, Rebate.rebate_value, Rebate.end_time) \
+                              Rebate.value, Rebate.rebate_value, Rebate.use_end_time) \
         .join(Rebate, UserRebate.rebate_id == Rebate.id) \
         .filter(UserRebate.promo_code == coupon_code, UserRebate.status >= 0, Rebate.status > 0) \
         .first()
@@ -2055,7 +2055,7 @@ def verify_rebate_code_service(weixin_account, coupon_code):
         data['is_bind'] = True
         data['is_verify'] = True
         data['has_teaching_course'] = True
-        if int(coupon.end_time) < int(time.time()):
+        if int(coupon.use_end_time) < int(time.time()):
             data['is_out_of_date'] = True
             return data
         else:
