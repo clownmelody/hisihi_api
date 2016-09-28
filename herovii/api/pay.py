@@ -40,8 +40,8 @@ def create_pay_order(oid, type):
     if is_out_of_date:
         raise RebateExpiredFailure()
     body = 'heishehui.cn'
-    # total_fee = int(data['price']) * 100
-    total_fee = 1
+    total_fee = int(data['price']) * 100
+    # total_fee = 1
     obj = wx_pay.unified_order(out_trade_no=data['order_sn'], body=body, total_fee=total_fee,
                                trade_type='APP')
     if obj:
