@@ -222,3 +222,9 @@ class WeixinHasBindOrgFailure(APIException):
     code = 200
     error_code = 10005
     error = 'the weixin account has bind org'
+
+
+class RebateIsDisabledFailure(APIException):
+    code = 200
+    error_code = 10006
+    error = 'the rebate is disabled'
