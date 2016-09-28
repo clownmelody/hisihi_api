@@ -11,9 +11,10 @@ from herovii.models.order import RebateOrder
 from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure, RebateExpiredFailure
 from herovii.models.org.rebate import Rebate
 from herovii.models.user.user_rebate import UserRebate
+from herovii.module.wxpay import WeixinPay
 
 __author__ = 'shaolei'
-
+wx_pay = WeixinPay()
 
 class Order(object):
     def __init__(self, uid=0):
@@ -151,6 +152,11 @@ class Order(object):
         RebateOrder.query.filter_by(id=oid).update({'pay_type': type})
         db.session.commit()
 
+    def update_order_pay_time(self, order_sn):
+        ctime = int(time.time())
+        RebateOrder.query.filter_by(order_sn=order_sn).update({'pay_time': ctime})
+        db.session.commit()
+
     def check_order_status(self, order_sn):
         order = db.session.query(RebateOrder.order_status)\
             .filter(RebateOrder.order_sn == order_sn)\
@@ -206,3 +212,11 @@ class Order(object):
             .filter(Rebate.id == rebate_id)\
             .first()
         return rebate
+
+    def check_order_pay_status(self, oid):
+        order = db.session.query(RebateOrder.order_status, RebateOrder.pay_type, RebateOrder.order_sn)\
+            .filter(RebateOrder.id == oid).first()
+        if order.order_status < 1 and (order.pay_type == 0 or order.pay_type == 1):
+            obj = wx_pay.order_query(out_trade_no=order.order_sn)
+            if obj['trade_state'] == 'SUCCESS':
+                self.update_order_status(order.order_sn, 1)

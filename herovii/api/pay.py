@@ -102,6 +102,7 @@ def wxpay_notify():
     else:
         order.create_user_rebate(data['out_trade_no'])
         order.update_order_status(data['out_trade_no'], 1)
+        order.update_order_pay_time(data['out_trade_no'])
         return wx_pay.reply("OK", True)
 
 

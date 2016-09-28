@@ -64,6 +64,7 @@ def create_order():
 def get_order_detail(oid):
     order = Order(g.user[0])
     # order = Order(72)
+    order.check_order_pay_status(oid)
     obj = order.get_order_detail(oid)
     headers = {'Content-Type': 'application/json'}
     return json.dumps(obj), 200, headers
