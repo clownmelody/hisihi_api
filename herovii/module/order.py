@@ -6,6 +6,7 @@ from flask.globals import current_app
 
 from herovii.libs.helper import make_a_coupon_code, make_an_bizid
 from herovii.models.base import db
+from herovii.models.org.org_teaching_course_rebate_relation import OrgTeachingCourseRebateRelation
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.order import RebateOrder
 from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure, RebateExpiredFailure
@@ -95,6 +96,7 @@ class Order(object):
             raise OrderNotFindFailure()
 
     def get_order_obj(self, order):
+        is_disabled = 0
         courses = db.session.query(TeachingCourse.course_name, TeachingCourse.cover_pic)\
             .filter(TeachingCourse.id == order.courses_id)\
             .first()
@@ -104,7 +106,16 @@ class Order(object):
                                   Rebate.use_start_time, Rebate.use_end_time)\
             .filter(Rebate.id == order.rebate_id)\
             .first()
+        if not rebate:
+            is_disabled = 1
         if rebate.value != order.price:
+            is_disabled = 1
+        tccr = db.session.query(OrgTeachingCourseRebateRelation.rebate_id).filter(
+            OrgTeachingCourseRebateRelation.teaching_course_id == order.courses_id,
+            OrgTeachingCourseRebateRelation.rebate_id == order.rebate_id,
+            OrgTeachingCourseRebateRelation.status == 1) \
+            .first()
+        if not tccr:
             is_disabled = 1
         db.session.query(TeachingCourse.course_name, TeachingCourse.cover_pic)\
             .filter(TeachingCourse.id == order.courses_id)\
@@ -147,6 +158,7 @@ class Order(object):
                         'is_out_of_date': is_out_of_date,
                         'user_rebate_id': user_rebate_id,
                         'organization_id': order.organization_id,
+                        'is_disabled': is_disabled
                     }
         }
         return order_obj
