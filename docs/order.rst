@@ -50,7 +50,8 @@
         "rebate_text": "100元抵扣券抵1000元学费",
         "use_end_time": 1475050260,
         "use_start_time": 1474618260,
-        "user_rebate_id": 0
+        "user_rebate_id": 0,
+        "organization_id": 41,
       },
       "uid": 72
     }
@@ -106,7 +107,8 @@
             "rebate_text": "200元抵扣券抵2000元学费",
             "use_end_time": 1475309400,
             "use_start_time": 1474618200,
-            "user_rebate_id": 0
+            "user_rebate_id": 0,
+            "organization_id": 41,
           },
           "uid": 72
         },
@@ -171,7 +173,8 @@
         "rebate_text": "100元抵扣券抵1000元学费",
         "use_end_time": 1475050260,
         "use_start_time": 1474618260,
-        "user_rebate_id": 0
+        "user_rebate_id": 0,
+        "organization_id": 41,
       },
       "uid": 72
     }

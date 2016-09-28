@@ -137,7 +137,8 @@ class Order(object):
                         'courses_pic': courses.cover_pic,
                         'is_use': is_use,
                         'is_out_of_date': is_out_of_date,
-                        'user_rebate_id': user_rebate_id
+                        'user_rebate_id': user_rebate_id,
+                        'organization_id': order.organization_id,
                     }
         }
         return order_obj
