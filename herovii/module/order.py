@@ -98,9 +98,16 @@ class Order(object):
         courses = db.session.query(TeachingCourse.course_name, TeachingCourse.cover_pic)\
             .filter(TeachingCourse.id == order.courses_id)\
             .first()
+        if not courses:
+            is_disabled = 1
         rebate = db.session.query(Rebate.name, Rebate.value, Rebate.rebate_value,
                                   Rebate.use_start_time, Rebate.use_end_time)\
             .filter(Rebate.id == order.rebate_id)\
+            .first()
+        if rebate.value != order.price:
+            is_disabled = 1
+        db.session.query(TeachingCourse.course_name, TeachingCourse.cover_pic)\
+            .filter(TeachingCourse.id == order.courses_id)\
             .first()
         rebate_text = str(rebate.value) + '元抵扣券抵' + str(rebate.rebate_value) + '元学费'
         user_rebate = db.session.query(UserRebate.id, UserRebate.status)\
