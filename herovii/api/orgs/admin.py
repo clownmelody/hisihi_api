@@ -2,7 +2,7 @@ from flask import jsonify,  json, request
 from herovii import db
 from herovii.api.token import verify_user
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.libs.error_code import UnknownError, AuthFailed
+from herovii.libs.error_code import UnknownError, AuthFailed, WeixinHasBindOrgFailure
 from herovii.libs.httper import BMOB
 from herovii.libs.helper import success_json
 from herovii.models.org.org_admin_bind_weixin import OrgAdminBindWeixin
@@ -93,6 +93,11 @@ def admin_bind_weixin():
                 OrgAdminBindWeixin.status == 1).first()
     if has_bind_weixin:
         return jsonify(has_bind_weixin), 201
+    has_bind_other_org = db.session.query(OrgAdminBindWeixin)\
+        .filter(OrgAdminBindWeixin.weixin_account == form.weixin_account.data,
+                OrgAdminBindWeixin.status == 1).first()
+    if has_bind_other_org:
+        raise WeixinHasBindOrgFailure()
     for key, value in form.body_data.items():
         setattr(org_admin_bind_weixin, key, value)
     with db.auto_commit():
