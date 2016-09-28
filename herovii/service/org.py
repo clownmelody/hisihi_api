@@ -2041,13 +2041,10 @@ def verify_rebate_code_service(weixin_account, coupon_code):
     if not coupon:
         data['is_bind'] = True
         return data
-    teaching_course = db.session.query(TeachingCourse.course_name, OrgTeachingCourseRebateRelation.id) \
-        .join(OrgTeachingCourseRebateRelation, OrgTeachingCourseRebateRelation.teaching_course_id == TeachingCourse.id) \
+    teaching_course = db.session.query(TeachingCourse.course_name) \
         .filter(TeachingCourse.id == coupon.teaching_course_id,
                 TeachingCourse.organization_id == admin_bind_weixin.organization_id,
-                TeachingCourse.status > 0,
-                OrgTeachingCourseRebateRelation.rebate_id == coupon.rebate_id,
-                OrgTeachingCourseRebateRelation.status > 0) \
+                TeachingCourse.status > 0) \
         .first()
     if not teaching_course:
         data['is_bind'] = True
