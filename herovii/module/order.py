@@ -133,6 +133,7 @@ class Order(object):
         cur_time = int(time.time())
         if cur_time > rebate.use_end_time:
             is_out_of_date = 1
+            is_disabled = 1
         else:
             is_out_of_date = 0
         order_obj = {
