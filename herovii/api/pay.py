@@ -7,6 +7,7 @@ from herovii.libs.error_code import JSONStyleError, OrderAlreadyPayFailure, Reba
     RebateIsDisabledFailure
 from herovii.libs.bpbase import auth
 from herovii.models.org.rebate import Rebate
+from herovii.module.alipay import AliPay
 from herovii.module.order import Order
 from herovii.libs.error_code import CreateOrderFailure
 from herovii.validator.forms import PagingForm
@@ -16,6 +17,7 @@ __author__ = 'shaolei'
 
 api = ApiBlueprint('pay')
 wx_pay = WeixinPay()
+ali_pay = AliPay()
 
 
 @api.route('/create/pay/<int:oid>/<int:type>', methods=['GET'])
@@ -39,18 +41,33 @@ def create_pay_order(oid, type):
     is_out_of_date = order.is_out_of_date(rebate)
     if is_out_of_date:
         raise RebateExpiredFailure()
-    body = 'heishehui.cn'
-    total_fee = int(data['price']) * 100
-    # total_fee = 1
-    obj = wx_pay.unified_order(out_trade_no=data['order_sn'], body=body, total_fee=total_fee,
-                               trade_type='APP')
-    if obj:
-        app_data = wx_pay.second_sign(prepayid=obj['prepay_id'])
-        app_data.setdefault('pay_status', 0)
-        order.update_order_pay_type(oid, type)
-        return json.dumps(app_data), 200, headers
+    if type > 0:
+        #支付宝支付
+        #构造订单信息
+        # total_fee = int(data['price'])
+        total_fee = 0.01  #这里讲金额设为1分钱，方便测试
+        body = "heishehui.cn"
+        payment_info = ali_pay.make_payment_info(out_trade_no=data['order_sn'], subject='抵扣券', total_fee=total_fee,
+                                                 body=body)
+        res = ali_pay.make_payment_request(payment_info)
+        data = {
+            'data': res
+        }
+        return json.dumps(data), 200, headers
     else:
-        raise CreateOrderFailure()
+        #微信支付
+        body = 'heishehui.cn'
+        total_fee = int(data['price']) * 100
+        # total_fee = 1
+        obj = wx_pay.unified_order(out_trade_no=data['order_sn'], body=body, total_fee=total_fee,
+                                   trade_type='APP')
+        if obj:
+            app_data = wx_pay.second_sign(prepayid=obj['prepay_id'])
+            app_data.setdefault('pay_status', 0)
+            order.update_order_pay_type(oid, type)
+            return json.dumps(app_data), 200, headers
+        else:
+            raise CreateOrderFailure()
 
 
 @api.route('/order/query/<int:oid>', methods=['GET'])

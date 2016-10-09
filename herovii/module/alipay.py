@@ -4,7 +4,14 @@ import base64
 import urllib
 import requests
 import hashlib
-from flask.globals import current_app
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA
+from Crypto.PublicKey import RSA
+from base64 import b64encode
+import struct
+import os
+from flask import current_app
+
 SIGN_TYPE = "SHA-1"
 __author__ = 'shaolei'
 
@@ -17,13 +24,15 @@ class AliPayError(Exception):
 
 class AliPay(object):
     def __init__(self):
-        self.config = {
-            'RSA_ALIPAY_PUBLIC': current_app.config['RSA_ALIPAY_PUBLIC'],
-            'RSA_PRIVATE': current_app.config['RSA_PRIVATE'],
-            'RSA_PUBLIC': current_app.config['RSA_PRIVATE'],
-            'partner_id': current_app.config['partner_id'],
-            'key': current_app.config['key'],
-        }
+        self.app = current_app
+        # self.config = {
+        #     'ALI_PARTNER_ID': current_app.config['ALI_PARTNER_ID'],
+        #     'RSA_ALIPAY_PUBLIC': current_app.config["ALI_ALIPAY_PUBLIC_KEY"],
+        #     'RSA_PRIVATE': current_app.config["ALI_APP_PRIVATE_KEY"],
+        #     'RSA_PUBLIC': current_app.config['ALI_APP_PUBLIC_KEY'],
+        #     'ALI_KEY': current_app.config['ALI_KEY'],
+        #     'ALI_ACCOUNT': current_app.config['ALI_ACCOUNT'],
+        # }
 
     def params_filter(self, params):
         """
@@ -76,15 +85,24 @@ class AliPay(object):
         :param message:
         :return:
         """
-        private_key = rsa.PrivateKey._load_pkcs1_pem(self.config.RSA_PRIVATE)
-        sign = rsa.sign(message, private_key, SIGN_TYPE)
-        b64sing = base64.b64encode(sign)
-        return b64sing
+        with open('./herovii/module/alipay_pem/rsa_private_key_pkcs8.pem', 'rb') as privatefile:
+            keydata = privatefile.read()
+        key = RSA.importKey(keydata)
+        h = SHA.new()
+        h.update(message.encode('utf-8'))
+        signer = PKCS1_v1_5.new(key)
+        signature = signer.sign(h)
+        s = b64encode(signature)
+        # privkey = rsa.PrivateKey.load_pkcs1(keydata, 'PEM')
+        # private_key = rsa.PrivateKey._load_pkcs1_pem(keydata)
+        # sign = rsa.sign(message, private_key, SIGN_TYPE)
+        # b64sing = base64.b64encode(sign)
+        return s
 
     def make_md5_sign(self, message):
         m = hashlib.md5()
         m.update(message)
-        m.update(self.config.key)
+        m.update(self.app.config['ALI_KEY'])
         return m.hexdigest()
 
     def check_sign(self, message, sign):
@@ -95,7 +113,7 @@ class AliPay(object):
         :return:
         """
         sign = base64.b64decode(sign)
-        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(self.config.RSA_PUBLIC)
+        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(self.app.config['RSA_PUBLIC'])
         return rsa.verify(message, sign, pubkey)
 
     def check_ali_sign(self, message, sign):
@@ -106,7 +124,7 @@ class AliPay(object):
         :return:
         """
         sign = base64.b64decode(sign)
-        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(self.config.RSA_ALIPAY_PUBLIC)
+        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(self.app.config['RSA_ALIPAY_PUBLIC'])
         res = False
         try:
             res = rsa.verify(message, sign, pubkey)
@@ -123,8 +141,8 @@ class AliPay(object):
         """
         query_str = self.params_to_query(params_dict, quotes=True) #拼接签名字符串
         sign = self.make_sign(query_str) #生成签名
-        sign = urllib.quote_plus(sign)
-        res = "%s&sign=\"%s\"&sign_type=\"RSA\"" % (query_str, sign)
+        # sign = urllib.quote_plus(sign)
+        res = "%s&sign=\"%s\"&sign_type=\"RSA\"" % (query_str, sign.decode('utf-8'))
         return res
 
     def verify_alipay_request_sign(self, params_dict):
@@ -147,13 +165,37 @@ class AliPay(object):
         """
         ali_gateway_url = "https://mapi.alipay.com/gateway.do?service=notify_verify&partner=%(partner)d&notify_id=%(notify_id)s"
         notify_id = params_dict["notify_id"]
-        partner = self.config.partner_id
+        partner = self.app.config['ALI_PARTNER_ID']
         ali_gateway_url = ali_gateway_url % {"partner": partner, "notify_id": notify_id}
         res = requests.get(ali_gateway_url)
         #    res_dict = encoder.XML2Dict.parse(res.text)
         if res.text == "true":
             return True
         return False
+
+    """
+    构造一个支付请求
+    """
+    def make_payment_info(self, out_trade_no=None, subject=None, total_fee=None, body=None):
+        order_info = {
+            "partner": "%s" % (self.app.config['ALI_PARTNER_ID']),
+            "service": "mobile.securitypay.pay",
+            "_input_charset": "UTF-8",
+            "notify_url": self.app.config['ALI_NOTIFY_URL'],
+            "out_trade_no": None,
+            "paymnet_type": "1",
+            "subject": None,
+            "seller_id": self.app.config['ALI_ACCOUNT'],
+            "total_fee": 0,
+            "body": None
+        }
+        order_info["out_trade_no"] = "%s" % (out_trade_no)
+        order_info["subject"] = "%s" % (subject)
+        if total_fee <= 0.0:
+            total_fee = 0.01
+        order_info["total_fee"] = total_fee
+        order_info["body"] = body
+        return order_info
 
     #test
     def test(self):
@@ -194,7 +236,7 @@ class AliPay(object):
         message = self.params_to_query(params, quotes=False, reverse=False)
         check_res = self.check_ali_sign(message, sign)
         assert check_res == True
-        res = self.verify_from_gateway({"partner": self.config.partner_id, "notify_id": params["notify_id"]})
+        res = self.verify_from_gateway({"partner": self.app.config['ALI_PARTNER_ID'], "notify_id": params["notify_id"]})
         assert res == False
 
     def test_refund(self):
