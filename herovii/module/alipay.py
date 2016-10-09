@@ -85,7 +85,7 @@ class AliPay(object):
         :param message:
         :return:
         """
-        with open('./herovii/module/alipay_pem/rsa_private_key_pkcs8.pem', 'rb') as privatefile:
+        with open(self.app.config['RSA_PRIVATE_PATH'], 'rb') as privatefile:
             keydata = privatefile.read()
         key = RSA.importKey(keydata)
         h = SHA.new()

@@ -126,3 +126,29 @@ def wxpay_notify():
         return wx_pay.reply("OK", True)
 
 
+@api.route("/alipay/notify", methods=['POST'])
+def alipay_notify():
+    """
+    支付宝异步通知
+    """
+    req = request.stream.read()
+    params = ali_pay.query_to_dict(req.decode('utf-8'))
+    sign = params['sign']
+    #sign = sign.decode('utf-8')
+    params = ali_pay.params_filter(params)
+    message = ali_pay.params_to_query(params, quotes=False, reverse=False)
+    check_res = ali_pay.check_ali_sign(message, sign)
+    assert check_res == True
+    res = ali_pay.verify_from_gateway({"partner": ali_pay.app.config['ALI_PARTNER_ID'], "notify_id": params["notify_id"]})
+    assert res == False
+    # 处理业务逻辑
+    order = Order()
+    res = order.check_order_status(params['out_trade_no'])
+    if res:
+        return wx_pay.reply("OK", True)
+    else:
+        order.create_user_rebate(params['out_trade_no'])
+        order.update_order_status(params['out_trade_no'], 1)
+        order.update_order_pay_time(params['out_trade_no'])
+        return wx_pay.reply("OK", True)
+
