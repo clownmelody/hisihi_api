@@ -86,8 +86,9 @@ class AliPay(object):
         :param message:
         :return:
         """
-        cur_path = os.path.abspath('.')
-        logging.info(cur_path)
+        # cur_path = os.path.abspath('.')
+        # current_app.logger.warn(cur_path)
+        # current_app.logger.error(cur_path)
         with open(self.app.config['RSA_PRIVATE_PATH'], 'rb') as privatefile:
             keydata = privatefile.read()
         key = RSA.importKey(keydata)
