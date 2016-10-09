@@ -10,6 +10,7 @@ from Crypto.PublicKey import RSA
 from base64 import b64encode
 import struct
 import os
+import logging
 from flask import current_app
 
 SIGN_TYPE = "SHA-1"
@@ -85,6 +86,8 @@ class AliPay(object):
         :param message:
         :return:
         """
+        cur_path = os.path.abspath('.')
+        logging.info(cur_path)
         with open(self.app.config['RSA_PRIVATE_PATH'], 'rb') as privatefile:
             keydata = privatefile.read()
         key = RSA.importKey(keydata)
