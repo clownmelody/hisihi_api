@@ -3,14 +3,12 @@ from flask import json, request
 from flask.globals import g
 
 from herovii.libs.bpbase import ApiBlueprint
-from herovii.libs.error_code import JSONStyleError, OrderAlreadyPayFailure, RebateExpiredFailure, \
+from herovii.libs.error_code import RebateExpiredFailure, \
     RebateIsDisabledFailure
 from herovii.libs.bpbase import auth
-from herovii.models.org.rebate import Rebate
 from herovii.module.alipay import AliPay
 from herovii.module.order import Order
 from herovii.libs.error_code import CreateOrderFailure
-from herovii.validator.forms import PagingForm
 from herovii.module.wxpay import WeixinPay
 
 __author__ = 'shaolei'

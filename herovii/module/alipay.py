@@ -89,11 +89,15 @@ class AliPay(object):
         # cur_path = os.path.abspath('.')
         # current_app.logger.warn(cur_path)
         # current_app.logger.error(cur_path)
-        with open(self.app.config['RSA_PRIVATE_PATH'], 'rb') as privatefile:
+        with open(self.app.config['RSA_PRIVATE_PATH']) as privatefile:
             keydata = privatefile.read()
         key = RSA.importKey(keydata)
         h = SHA.new()
-        h.update(message.encode('utf-8'))
+        p_str = urllib.parse.quote(message)
+        m_str = p_str.encode('utf-8')
+        h.update(m_str)
+
+        # message = '_input_charset="utf-8"&notify_url="http://notify.msp.hk/notify.htm"&out_trade_no="0819145412-6177"&partner="2088101568338364"&seller_id="xxx@alipay.com"&service="mobile.securitypay.pay"&subject="测试"&payment_type="1"&total_fee="0.01"'
         signer = PKCS1_v1_5.new(key)
         signature = signer.sign(h)
         s = b64encode(signature)
@@ -145,8 +149,8 @@ class AliPay(object):
         """
         query_str = self.params_to_query(params_dict, quotes=True) #拼接签名字符串
         sign = self.make_sign(query_str) #生成签名
-        # sign = urllib.quote_plus(sign)
-        res = "%s&sign=\"%s\"&sign_type=\"RSA\"" % (query_str, sign.decode('utf-8'))
+        sign = urllib.parse.quote_plus(sign)
+        res = "%s&sign=\"%s\"&sign_type=\"RSA\"" % (query_str, sign)
         return res
 
     def verify_alipay_request_sign(self, params_dict):
