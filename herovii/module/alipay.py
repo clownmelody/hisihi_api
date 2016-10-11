@@ -77,7 +77,7 @@ class AliPay(object):
             if quotes == True:
                 query += str(key) + "=\"" + str(value) + "\"&"
             else:
-                query += str(key) + "=" + str(value) + "&"
+                query += str(key) + "=" + urllib.parse.quote_plus(str(value).encode('utf-8')) + "&"
         query = query[0:-1]
         return query
 
@@ -95,7 +95,7 @@ class AliPay(object):
         key = RSA.importKey(keydata)
         h = SHA.new()
         p_str = urllib.parse.quote(message)
-        m_str = p_str.encode('utf-8')
+        m_str = message.encode('utf-8')
         h.update(m_str)
         signer = PKCS1_v1_5.new(key)
         signature = signer.sign(h)
@@ -168,8 +168,8 @@ class AliPay(object):
         :param params_dict:
         :return:
         """
-        # query_str = self.params_to_query(params_dict, quotes=False) #拼接签名字符串]
-        query_str = urllib.parse.urlencode(params_dict)
+        query_str = self.params_to_query(params_dict, quotes=False) #拼接签名字符串]
+        # query_str = urllib.parse.urlencode(params_dict)
         sign = self.make_sign(query_str) #生成签名
         sign = urllib.parse.quote_plus(sign)
         res = "%s&sign=%s" % (query_str, sign)
@@ -237,12 +237,13 @@ class AliPay(object):
             "app_id": "%s" % (self.app.config['ALI_APP_ID']),
             "method": "alipay.trade.app.pay",
             "charset": "utf-8",
-            "notify_url": self.app.config['ALI_NOTIFY_URL'],
+            # "notify_url": self.app.config['ALI_NOTIFY_URL'],
             "sign_type": "RSA",
             "paymnet_type": "1",
-            "timestamp": time_str,
+            "timestamp": '2016-07-29 16:55:53',
             "version": "1.0",
-            "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
+            # "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
+            "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"1010171747-8241\"}"
         }
         return order_info
 
