@@ -45,9 +45,9 @@ def create_pay_order(oid, type):
         # total_fee = int(data['price'])
         total_fee = 0.01  #这里讲金额设为1分钱，方便测试
         body = "heishehui.cn"
-        payment_info = ali_pay.make_payment_info(out_trade_no=data['order_sn'], subject='heishehui.cn', total_fee=total_fee,
-                                                 body=body)
-        res = ali_pay.make_payment_request(payment_info)
+        payment_info = ali_pay.make_payment_info2(out_trade_no=data['order_sn'], subject='heishehui.cn',
+                                                  total_fee=total_fee, body=body)
+        res = ali_pay.make_payment_request2(payment_info)
         data = {
             'data': res
         }

@@ -96,8 +96,6 @@ class AliPay(object):
         p_str = urllib.parse.quote(message)
         m_str = p_str.encode('utf-8')
         h.update(m_str)
-
-        # message = '_input_charset="utf-8"&notify_url="http://notify.msp.hk/notify.htm"&out_trade_no="0819145412-6177"&partner="2088101568338364"&seller_id="xxx@alipay.com"&service="mobile.securitypay.pay"&subject="测试"&payment_type="1"&total_fee="0.01"'
         signer = PKCS1_v1_5.new(key)
         signature = signer.sign(h)
         s = b64encode(signature)
@@ -153,6 +151,19 @@ class AliPay(object):
         res = "%s&sign=\"%s\"&sign_type=\"RSA\"" % (query_str, sign)
         return res
 
+    def make_payment_request2(self, params_dict):
+        """
+        构造一个支付请求的信息，包含最终结果里面包含签名
+        :param params_dict:
+        :return:
+        """
+        # query_str = self.params_to_query(params_dict, quotes=False) #拼接签名字符串]
+        query_str = urllib.parse.urlencode(params_dict)
+        sign = self.make_sign(query_str) #生成签名
+        sign = urllib.parse.quote_plus(sign)
+        res = "%s&sign=%s" % (query_str, sign)
+        return res
+
     def verify_alipay_request_sign(self, params_dict):
         """
         验证阿里支付回调接口签名
@@ -203,6 +214,23 @@ class AliPay(object):
             total_fee = 0.01
         order_info["total_fee"] = total_fee
         order_info["body"] = body
+        return order_info
+
+    """
+    构造一个支付请求
+    """
+    def make_payment_info2(self, out_trade_no=None, subject=None, total_fee=None, body=None):
+        order_info = {
+            "app_id": "%s" % (self.app.config['ALI_APP_ID']),
+            "method": "alipay.trade.app.pay",
+            "charset": "utf-8",
+            "notify_url": self.app.config['ALI_NOTIFY_URL'],
+            "sign_type": "RSA",
+            "paymnet_type": "1",
+            "timestamp": "2016-07-29 16:55:53",
+            "version": "1.0",
+            "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
+        }
         return order_info
 
     #test
