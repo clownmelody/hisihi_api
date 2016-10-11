@@ -7,10 +7,11 @@ import hashlib
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
-from base64 import b64encode
+from base64 import b64encode, b64decode
 import struct
 import os
 import logging
+import datetime
 from flask import current_app
 
 SIGN_TYPE = "SHA-1"
@@ -129,14 +130,24 @@ class AliPay(object):
         :param sign:
         :return:
         """
-        sign = base64.b64decode(sign)
-        pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(self.app.config['RSA_ALIPAY_PUBLIC'])
+        sign = b64decode(sign)
+        # pubkey = rsa.PublicKey.load_pkcs1_openssl_pem(self.app.config['RSA_ALIPAY_PUBLIC'])
         res = False
-        try:
-            res = rsa.verify(message, sign, pubkey)
-        except Exception as e:
-            # print e
-            res = False
+        with open(self.app.config['RSA_ALIPAY_PUBLIC_PATH']) as privatefile:
+                keydata = privatefile.read()
+        key = RSA.importKey(keydata)
+        h = SHA.new(message.encode('utf-8'))
+        verifier = PKCS1_v1_5.new(key)
+        res = verifier.verify(h, sign)
+        # try:
+        #
+        # except Exception as e:
+        #     res = False
+        # try:
+        #     res = rsa.verify(message, sign, pubkey)
+        # except Exception as e:
+        #     # print e
+        #     res = False
         return res
 
     def make_payment_request(self, params_dict):
@@ -220,6 +231,8 @@ class AliPay(object):
     构造一个支付请求
     """
     def make_payment_info2(self, out_trade_no=None, subject=None, total_fee=None, body=None):
+        now = datetime.datetime.now()
+        time_str = now.strftime("%Y-%m-%d %H:%M:%S")
         order_info = {
             "app_id": "%s" % (self.app.config['ALI_APP_ID']),
             "method": "alipay.trade.app.pay",
@@ -227,7 +240,7 @@ class AliPay(object):
             "notify_url": self.app.config['ALI_NOTIFY_URL'],
             "sign_type": "RSA",
             "paymnet_type": "1",
-            "timestamp": "2016-07-29 16:55:53",
+            "timestamp": time_str,
             "version": "1.0",
             "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
         }
