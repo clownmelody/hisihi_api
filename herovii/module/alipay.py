@@ -182,8 +182,10 @@ class AliPay(object):
         :return:
         """
         query_str = self.params_to_query(params_dict, quotes=True) #拼接签名字符串
+        # query_str = 'partner=\"2088321008674225\"&seller_id=\"523453004@qq.com\"&out_trade_no=\"1012115637-9930\"&subject=\"测试的商品\"&body=\"该测试商品的详细描述\"&total_fee=\"0.01\"&notify_url=\"http://notify.msp.hk/notify.htm\"&service=\"mobile.securitypay.pay\"&payment_type=\"1\"&_input_charset=\"utf-8\"&it_b_pay=\"30m\"&return_url=\"m.alipay.com\"'
         sign = self.make_sign(query_str) #生成签名
         sign = str(sign, encoding='utf-8')
+        sign = urllib.parse.quote_plus(sign)
         res = "%s&sign=\"%s\"&sign_type=\"RSA\"" % (query_str, sign)
         return res
 
