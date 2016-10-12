@@ -77,7 +77,7 @@ class AliPay(object):
             if quotes == True:
                 query += str(key) + "=\"" + str(value) + "\"&"
             else:
-                query += str(key) + "=" + urllib.parse.quote_plus(str(value).encode('utf-8')) + "&"
+                query += str(key) + "=" + str(value) + "&"
         query = query[0:-1]
         return query
 
@@ -122,10 +122,11 @@ class AliPay(object):
         """
         with open(self.app.config['RSA_PRIVATE_PATH']) as privatefile:
             keydata = privatefile.read()
-        message = '_input_charset="utf-8"&notify_url="http://notify.msp.hk/notify.htm"&out_trade_no="0819145412-6177"&partner="2088101568338364"&seller_id="xxx@alipay.com"&service="mobile.securitypay.pay"&subject="测试"&payment_type="1"&total_fee="0.01"'
+        # message = 'app_id=2016092001932226&timestamp=2016-07-29+16%3A55%3A53&biz_content=%7B%22timeout_express%22%3A%2230m%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%2C%22total_amount%22%3A%220.01%22%2C%22subject%22%3A%221%22%2C%22body%22%3A%22%E6%88%91%E6%98%AF%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE%22%2C%22out_trade_no%22%3A%221010171747-8241%22%7D&method=alipay.trade.app.pay&charset=utf-8&version=1.0&sign_type=RSA'
         key = RSA.importKey(keydata)
         h = SHA.new()
-        h.update(message.encode('utf-8'))
+        u_str = message.encode('utf-8')
+        h.update(u_str)
         signer = PKCS1_v1_5.new(key)
         signature = signer.sign(h)
         b64sing = b64encode(signature)
@@ -198,9 +199,16 @@ class AliPay(object):
         query_str = self.params_to_query(params_dict, quotes=False) #拼接签名字符串]
         # query_str = urllib.parse.urlencode(params_dict)
         # sign = self.make_sign(query_str) #生成签名
+        # query_str = 'app_id=2016092001932226&biz_content=%7B%22timeout_express%22%3A%2230m%22%2C%22seller_id%22%3A%22%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%2C%22total_amount%22%3A%220.01%22%2C%22subject%22%3A%221%22%2C%22body%22%3A%22%E6%88%91%E6%98%AF%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE%22%2C%22out_trade_no%22%3A%229BII2LS7CAFJMVE%22%7D&charset=utf-8&method=alipay.trade.app.pay&sign_type=RSA&timestamp=2016-10-11%2017%3A18%3A24&version=1.0'
         sign = self.make_sign3(query_str) #生成签名
         sign = str(sign, encoding='utf-8')
-        res = "%s&sign=%s" % (query_str, sign)
+        sign = urllib.parse.quote_plus(sign)
+        query = ""
+        for key in sorted(params_dict.keys(), reverse=False):
+            value = params_dict[key]
+            query += str(key) + "=" + urllib.parse.quote_plus(value.encode('utf-8')) + "&"
+        query = query[0:-1]
+        res = "%s&sign=%s" % (query, sign)
         return res
 
     def verify_alipay_request_sign(self, params_dict):
@@ -265,13 +273,13 @@ class AliPay(object):
             "app_id": "%s" % (self.app.config['ALI_APP_ID']),
             "method": "alipay.trade.app.pay",
             "charset": "utf-8",
-            "notify_url": "%s" % (self.app.config['ALI_NOTIFY_URL']),
+            # "notify_url": "%s" % (self.app.config['ALI_NOTIFY_URL']),
             "sign_type": "RSA",
             "paymnet_type": "1",
             "timestamp": '2016-07-29 16:55:53',
             "version": "1.0",
-            "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
-            # "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"1010171747-8241\"}"
+            # "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
+            "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"1010171747-8241\"}"
         }
         return order_info
 
