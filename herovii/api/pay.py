@@ -52,6 +52,7 @@ def create_pay_order(oid, type):
         data = {
             'data': res
         }
+        current_app.logger.warn(res)
         return json.dumps(data), 200, headers
     else:
         #微信支付
