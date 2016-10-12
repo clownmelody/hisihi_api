@@ -94,17 +94,42 @@ class AliPay(object):
             keydata = privatefile.read()
         key = RSA.importKey(keydata)
         h = SHA.new()
-        p_str = urllib.parse.quote(message)
         m_str = message.encode('utf-8')
         h.update(m_str)
         signer = PKCS1_v1_5.new(key)
         signature = signer.sign(h)
         s = b64encode(signature)
-        # privkey = rsa.PrivateKey.load_pkcs1(keydata, 'PEM')
-        # private_key = rsa.PrivateKey._load_pkcs1_pem(keydata)
-        # sign = rsa.sign(message, private_key, SIGN_TYPE)
-        # b64sing = base64.b64encode(sign)
         return s
+
+    def make_sign2(self, message):
+        """
+        签名
+        :param message:
+        :return:
+        """
+        with open(self.app.config['RSA_PRIVATE_PATH'], 'rb') as privatefile:
+            keydata = privatefile.read()
+        private_key = rsa.PrivateKey._load_pkcs1_pem(current_app.config['RSA_PRIVATE'])
+        sign = rsa.sign(message, private_key, SIGN_TYPE)
+        b64sing = base64.b64encode(sign)
+        return b64sing
+
+    def make_sign3(self, message):
+        """
+        签名
+        :param message:
+        :return:
+        """
+        with open(self.app.config['RSA_PRIVATE_PATH']) as privatefile:
+            keydata = privatefile.read()
+        message = '_input_charset="utf-8"&notify_url="http://notify.msp.hk/notify.htm"&out_trade_no="0819145412-6177"&partner="2088101568338364"&seller_id="xxx@alipay.com"&service="mobile.securitypay.pay"&subject="测试"&payment_type="1"&total_fee="0.01"'
+        key = RSA.importKey(keydata)
+        h = SHA.new()
+        h.update(message.encode('utf-8'))
+        signer = PKCS1_v1_5.new(key)
+        signature = signer.sign(h)
+        b64sing = b64encode(signature)
+        return b64sing
 
     def make_md5_sign(self, message):
         m = hashlib.md5()
@@ -158,7 +183,7 @@ class AliPay(object):
         """
         query_str = self.params_to_query(params_dict, quotes=True) #拼接签名字符串
         sign = self.make_sign(query_str) #生成签名
-        sign = urllib.parse.quote_plus(sign)
+        sign = str(sign, encoding='utf-8')
         res = "%s&sign=\"%s\"&sign_type=\"RSA\"" % (query_str, sign)
         return res
 
@@ -170,8 +195,9 @@ class AliPay(object):
         """
         query_str = self.params_to_query(params_dict, quotes=False) #拼接签名字符串]
         # query_str = urllib.parse.urlencode(params_dict)
-        sign = self.make_sign(query_str) #生成签名
-        sign = urllib.parse.quote_plus(sign)
+        # sign = self.make_sign(query_str) #生成签名
+        sign = self.make_sign3(query_str) #生成签名
+        sign = str(sign, encoding='utf-8')
         res = "%s&sign=%s" % (query_str, sign)
         return res
 
@@ -210,12 +236,12 @@ class AliPay(object):
         order_info = {
             "partner": "%s" % (self.app.config['ALI_PARTNER_ID']),
             "service": "mobile.securitypay.pay",
-            "_input_charset": "UTF-8",
-            "notify_url": self.app.config['ALI_NOTIFY_URL'],
+            "_input_charset": "utf-8",
+            "notify_url": "%s" % (self.app.config['ALI_NOTIFY_URL']),
             "out_trade_no": None,
             "paymnet_type": "1",
             "subject": None,
-            "seller_id": self.app.config['ALI_ACCOUNT'],
+            "seller_id": "%s" % (self.app.config['ALI_ACCOUNT']),
             "total_fee": 0,
             "body": None
         }
@@ -223,8 +249,8 @@ class AliPay(object):
         order_info["subject"] = "%s" % (subject)
         if total_fee <= 0.0:
             total_fee = 0.01
-        order_info["total_fee"] = total_fee
-        order_info["body"] = body
+        order_info["total_fee"] = "%s" % (total_fee)
+        order_info["body"] = "%s" % (body)
         return order_info
 
     """
