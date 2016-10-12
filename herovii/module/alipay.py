@@ -273,13 +273,13 @@ class AliPay(object):
             "app_id": "%s" % (self.app.config['ALI_APP_ID']),
             "method": "alipay.trade.app.pay",
             "charset": "utf-8",
-            # "notify_url": "%s" % (self.app.config['ALI_NOTIFY_URL']),
+            "notify_url": "%s" % (self.app.config['ALI_NOTIFY_URL']),
             "sign_type": "RSA",
             "paymnet_type": "1",
-            "timestamp": '2016-07-29 16:55:53',
+            "timestamp": time_str,
             "version": "1.0",
-            # "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
-            "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"1010171747-8241\"}"
+            "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"" + str(total_fee) + "\",\"subject\":\"" + subject + "\",\"body\":\"" + body + "\",\"out_trade_no\":\"" + out_trade_no + "\"}"
+            # "biz_content": "{\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\",\"total_amount\":\"0.01\",\"subject\":\"1\",\"body\":\"我是测试数据\",\"out_trade_no\":\"1010171747-8241\"}"
         }
         return order_info
 
