@@ -25,14 +25,6 @@ class AliPayError(Exception):
 class AliPay(object):
     def __init__(self):
         self.app = current_app
-        # self.config = {
-        #     'ALI_PARTNER_ID': current_app.config['ALI_PARTNER_ID'],
-        #     'RSA_ALIPAY_PUBLIC': current_app.config["ALI_ALIPAY_PUBLIC_KEY"],
-        #     'RSA_PRIVATE': current_app.config["ALI_APP_PRIVATE_KEY"],
-        #     'RSA_PUBLIC': current_app.config['ALI_APP_PUBLIC_KEY'],
-        #     'ALI_KEY': current_app.config['ALI_KEY'],
-        #     'ALI_ACCOUNT': current_app.config['ALI_ACCOUNT'],
-        # }
 
     def params_filter(self, params):
         """
@@ -163,15 +155,6 @@ class AliPay(object):
         h.update(u_str)
         verifier = PKCS1_v1_5.new(key)
         res = verifier.verify(h, sign)
-        # try:
-        #
-        # except Exception as e:
-        #     res = False
-        # try:
-        #     res = rsa.verify(message, sign, pubkey)
-        # except Exception as e:
-        #     # print e
-        #     res = False
         return res
 
     def make_payment_request(self, params_dict):
@@ -254,6 +237,8 @@ class AliPay(object):
         ali_gateway_url = ali_gateway_url + '?' + res
         res = requests.get(ali_gateway_url)
         res_dict = json.loads(res.text)
+        if res_dict['alipay_trade_query_response']['code'] != '10000':
+            return False
         if res_dict['alipay_trade_query_response']['trade_status'] == 'TRADE_SUCCESS'\
                 or res_dict['alipay_trade_query_response']['trade_status'] == 'TRADE_FINISHED':
             return True
