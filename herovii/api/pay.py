@@ -57,8 +57,8 @@ def create_pay_order(oid, type):
     else:
         #微信支付
         body = 'heishehui.cn'
-        total_fee = int(data['price']) * 100
-        # total_fee = 1
+        # total_fee = int(data['price']) * 100
+        total_fee = 1
         obj = wx_pay.unified_order(out_trade_no=data['order_sn'], body=body, total_fee=total_fee,
                                    trade_type='APP')
         if obj:
@@ -71,11 +71,11 @@ def create_pay_order(oid, type):
 
 
 @api.route('/order/query/<int:oid>', methods=['GET'])
-# @auth.login_required
+@auth.login_required
 def get_order_detail(oid):
     headers = {'Content-Type': 'application/json'}
-    # order = Order(g.user[0])
-    order = Order(72)
+    order = Order(g.user[0])
+    # order = Order(72)
     data = order.get_order_detail(oid)
     if data['order_status'] > 0:
         pay_status = 1
@@ -158,11 +158,14 @@ def alipay_notify():
     params = request.values
     sign = params['sign']
     params = ali_pay.params_filter(params)
+    for key in sorted(params.keys(), reverse=False):
+        value = params[key]
+        params[key] = urllib.parse.unquote_plus(value)
     message = ali_pay.params_to_query(params, quotes=False, reverse=False)
     current_app.logger.warn('message====>' + message)
     check_res = ali_pay.check_ali_sign(message, sign)
-    # if not check_res:
-    #     return 'false'
+    if not check_res:
+        return 'false'
     # 处理业务逻辑
     order = Order()
     res = order.check_order_status(params['out_trade_no'])

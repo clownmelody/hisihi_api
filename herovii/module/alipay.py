@@ -8,9 +8,7 @@ from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from base64 import b64encode, b64decode
-import struct
-import os
-import logging
+import json
 import datetime
 from flask import current_app
 
@@ -255,8 +253,9 @@ class AliPay(object):
         res = "%s&sign=%s" % (query, sign)
         ali_gateway_url = ali_gateway_url + '?' + res
         res = requests.get(ali_gateway_url)
-        #    res_dict = encoder.XML2Dict.parse(res.text)
-        if res.text == "true":
+        res_dict = json.loads(res.text)
+        if res_dict['alipay_trade_query_response']['trade_status'] == 'TRADE_SUCCESS'\
+                or res_dict['alipay_trade_query_response']['trade_status'] == 'TRADE_FINISHED':
             return True
         return False
 
