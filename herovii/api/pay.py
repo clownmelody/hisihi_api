@@ -27,10 +27,9 @@ def create_pay_order(oid, type):
     # order = Order(72)
     data = order.get_order_detail(oid)
     if data['order_status'] > 0:
-        pay_status = 1
         user_rebate_id = order.get_user_rebate_id(oid)
         app_data = {
-            'pay_status': pay_status,
+            'pay_status': 1,
             'user_rebate_id': user_rebate_id
         }
         return json.dumps(app_data), 200, headers
@@ -40,6 +39,15 @@ def create_pay_order(oid, type):
     is_out_of_date = order.is_out_of_date(rebate)
     if is_out_of_date:
         raise RebateExpiredFailure()
+    pay_type = order.get_order_pay_type(oid)
+    pay_status = order.check_trade_pay_status(data['order_sn'], pay_type)
+    if pay_status:
+        user_rebate_id = order.get_user_rebate_id(oid)
+        app_data = {
+            'pay_status': 1,
+            'user_rebate_id': user_rebate_id
+        }
+        return json.dumps(app_data), 200, headers
     if type > 0:
         #支付宝支付
         #构造订单信息
@@ -153,8 +161,8 @@ def alipay_notify():
     """
     支付宝异步通知
     """
-    params_str = urllib.parse.urlencode(request.values)
-    current_app.logger.warn(params_str)
+    # params_str = urllib.parse.urlencode(request.values)
+    # current_app.logger.warn(params_str)
     params = request.values
     sign = params['sign']
     params = ali_pay.params_filter(params)
@@ -162,7 +170,7 @@ def alipay_notify():
         value = params[key]
         params[key] = urllib.parse.unquote_plus(value)
     message = ali_pay.params_to_query(params, quotes=False, reverse=False)
-    current_app.logger.warn('message====>' + message)
+    # current_app.logger.warn('message====>' + message)
     check_res = ali_pay.check_ali_sign(message, sign)
     if not check_res:
         return 'false'

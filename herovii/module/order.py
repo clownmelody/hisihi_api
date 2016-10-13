@@ -12,10 +12,13 @@ from herovii.models.order import RebateOrder
 from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure, RebateExpiredFailure
 from herovii.models.org.rebate import Rebate
 from herovii.models.user.user_rebate import UserRebate
+from herovii.module.alipay import AliPay
 from herovii.module.wxpay import WeixinPay
 
 __author__ = 'shaolei'
 wx_pay = WeixinPay()
+ali_pay = AliPay()
+
 
 class Order(object):
     def __init__(self, uid=0):
@@ -237,12 +240,49 @@ class Order(object):
         order = db.session.query(RebateOrder.order_status, RebateOrder.pay_type, RebateOrder.order_sn)\
             .filter(RebateOrder.id == oid).first()
         if order.order_status < 1 and (order.pay_type == 0 or order.pay_type == 1):
-            obj = wx_pay.order_query(out_trade_no=order.order_sn)
-            if obj['trade_state'] == 'SUCCESS':
-                self.update_order_status(order.order_sn, 1)
+            if order.pay_type == 1:
+                params = ali_pay.make_trade_query_info(out_trade_no=order.order_sn)
+                obj = ali_pay.query_trade_status(params)
+                if obj:
+                    self.update_order_and_rebate(order.order_sn)
+            else:
+                obj = wx_pay.order_query(out_trade_no=order.order_sn)
+                if obj['trade_state'] == 'SUCCESS':
+                    self.update_order_and_rebate(order.order_sn)
 
     def get_order_pay_type(self, oid):
         order = db.session.query(RebateOrder.pay_type)\
             .filter(RebateOrder.id == oid)\
             .first()
         return order.pay_type
+
+    def check_trade_pay_status(self, order_sn, pay_type):
+        if not pay_type:
+            return False
+        if pay_type == 1:
+            params = ali_pay.make_trade_query_info(out_trade_no=order_sn)
+            obj = ali_pay.query_trade_status(params)
+            if obj:
+                self.update_order_and_rebate(order_sn)
+                return True
+        else:
+            obj = wx_pay.order_query(out_trade_no=order_sn)
+            if obj['trade_state'] == 'SUCCESS':
+                self.update_order_and_rebate(order_sn)
+                return True
+        return False
+
+    def update_order_and_rebate(self, order_sn):
+        """
+        订单支付后未更新状态，调用此方法进行更新
+        :param order_sn:
+        :return:
+        """
+        self.update_order_status(order_sn, 1)
+        self.update_order_pay_time(order_sn)
+        order = self.get_order_by_ordersn(order_sn)
+        user_rebate = db.session.query(UserRebate.id)\
+            .filter(UserRebate.order_id == order.id, UserRebate.uid == self.uid)\
+            .first()
+        if not user_rebate:
+            self.create_user_rebate(order_sn)
