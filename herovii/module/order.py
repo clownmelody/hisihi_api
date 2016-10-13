@@ -240,3 +240,9 @@ class Order(object):
             obj = wx_pay.order_query(out_trade_no=order.order_sn)
             if obj['trade_state'] == 'SUCCESS':
                 self.update_order_status(order.order_sn, 1)
+
+    def get_order_pay_type(self, oid):
+        order = db.session.query(RebateOrder.pay_type)\
+            .filter(RebateOrder.id == oid)\
+            .first()
+        return order.pay_type

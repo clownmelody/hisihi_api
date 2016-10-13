@@ -52,6 +52,7 @@ def create_pay_order(oid, type):
         data = {
             'data': res
         }
+        order.update_order_pay_type(oid, type)
         return json.dumps(data), 200, headers
     else:
         #微信支付
@@ -70,11 +71,11 @@ def create_pay_order(oid, type):
 
 
 @api.route('/order/query/<int:oid>', methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def get_order_detail(oid):
     headers = {'Content-Type': 'application/json'}
-    order = Order(g.user[0])
-    # order = Order(72)
+    # order = Order(g.user[0])
+    order = Order(72)
     data = order.get_order_detail(oid)
     if data['order_status'] > 0:
         pay_status = 1
@@ -85,23 +86,45 @@ def get_order_detail(oid):
         }
         return json.dumps(app_data), 200, headers
     else:
-        obj = wx_pay.order_query(out_trade_no=data['order_sn'])
-        if obj['trade_state'] == 'SUCCESS':
-            pay_status = 1
-            user_rebate_id = order.get_user_rebate_id(oid)
+        pay_type = order.get_order_pay_type(oid)
+        if not pay_type:
             app_data = {
-                'pay_status': pay_status,
-                'user_rebate_id': user_rebate_id
-            }
-        elif obj['trade_state'] == 'USERPAYING':
-            app_data = {
-                'pay_status': 2
-            }
+                    'pay_status': 0
+                }
+            return json.dumps(app_data), 200, headers
+        if pay_type == 1:
+            params = ali_pay.make_trade_query_info(out_trade_no=data['order_sn'])
+            obj = ali_pay.query_trade_status(params)
+            if obj:
+                pay_status = 1
+                user_rebate_id = order.get_user_rebate_id(oid)
+                app_data = {
+                    'pay_status': pay_status,
+                    'user_rebate_id': user_rebate_id
+                }
+            else:
+                app_data = {
+                    'pay_status': 0
+                }
+            return json.dumps(app_data), 200, headers
         else:
-            app_data = {
-                'pay_status': 0
-            }
-        return json.dumps(app_data), 200, headers
+            obj = wx_pay.order_query(out_trade_no=data['order_sn'])
+            if obj['trade_state'] == 'SUCCESS':
+                pay_status = 1
+                user_rebate_id = order.get_user_rebate_id(oid)
+                app_data = {
+                    'pay_status': pay_status,
+                    'user_rebate_id': user_rebate_id
+                }
+            elif obj['trade_state'] == 'USERPAYING':
+                app_data = {
+                    'pay_status': 2
+                }
+            else:
+                app_data = {
+                    'pay_status': 0
+                }
+            return json.dumps(app_data), 200, headers
 
 
 @api.route("/wxpay/notify", methods=['POST'])
@@ -132,26 +155,27 @@ def alipay_notify():
     """
     params_str = urllib.parse.urlencode(request.values)
     current_app.logger.warn(params_str)
-    # params = ali_pay.query_to_dict(params_str)
     params = request.values
     sign = params['sign']
-    #sign = sign.decode('utf-8')
     params = ali_pay.params_filter(params)
     message = ali_pay.params_to_query(params, quotes=False, reverse=False)
+    current_app.logger.warn('message====>' + message)
     check_res = ali_pay.check_ali_sign(message, sign)
-    if not check_res:
-        return 'false'
-    # res = ali_pay.verify_from_gateway({"partner": ali_pay.app.config['ALI_PARTNER_ID'],
-    #                                    "notify_id": params["notify_id"]})
-
+    # if not check_res:
+    #     return 'false'
     # 处理业务逻辑
     order = Order()
     res = order.check_order_status(params['out_trade_no'])
     if res:
         return 'success'
     else:
-        order.create_user_rebate(params['out_trade_no'])
-        order.update_order_status(params['out_trade_no'], 1)
-        order.update_order_pay_time(params['out_trade_no'])
-        return 'success'
+        if params['trade_status'] == 'TRADE_SUCCESS' or params['trade_status'] == 'TRADE_FINISHED':
+            cur_order = order.get_order_by_ordersn(params['out_trade_no'])
+            if params['total_amount'] == '0.01'\
+                    and params['seller_id'] == current_app.config['ALI_PARTNER_ID']\
+                    and params['app_id'] == current_app.config['ALI_APP_ID']:
+                order.create_user_rebate(params['out_trade_no'])
+                order.update_order_status(params['out_trade_no'], 1)
+                order.update_order_pay_time(params['out_trade_no'])
+                return 'success'
 
