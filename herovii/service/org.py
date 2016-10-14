@@ -41,6 +41,8 @@ from herovii.models.org.teacher_group_relation import TeacherGroupRelation
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.org.teaching_course_coupon_relation import TeachingCourseCouponRelation
 from herovii.models.org.teaching_course_enroll import TeachingCourseEnroll
+from herovii.models.org.teaching_course_outline import TeachingCourseOutline
+from herovii.models.org.teaching_course_outline_resource import TeachingCourseOutlineResource
 from herovii.models.org.video import Video
 from herovii.models.org.yuyue import Yuyue
 from herovii.models.overseas.organization_to_university import OrganizationToUniversity
@@ -464,6 +466,69 @@ def get_teaching_course_by_id_v3_0_2(user_id, cid):
     }
 
 
+def get_teaching_course_by_id_v3_1(user_id, cid):
+    course = TeachingCourse.query.get(cid)
+    if not course:
+        raise NotFound(error_code=5008, error='培训课程信息不存在')
+    org_info = Info.query.get(course.organization_id)
+    if not org_info:
+        raise NotFound(error='organization not found')
+    server_host_name = current_app.config['SERVER_HOST_NAME']
+    web_url = server_host_name + "/api.php?s=/organization/teaching_course_main_page_v3_02/course_id/" + str(cid)
+    return {
+        'course_id': cid,
+        'organization_id': course.organization_id,
+        'organization_name': org_info.name,
+        'course_name': course.course_name,
+        'cover_pic': course.cover_pic,
+        'start_course_time': course.start_course_time,
+        'end_course_time': course.end_course_time,
+        'lesson_period': course.lesson_period,
+        'student_num': course.student_num,
+        'lecture_name': course.lecture_name,
+        'price': course.price,
+        'web_url': web_url,
+        'is_favorite': is_teaching_course_favorite(user_id, cid),
+        'is_enroll': is_enroll_teaching_course(user_id, cid),
+        'is_listen_preview': is_teaching_course_listen_preview(cid),
+        'is_have_outline': is_teaching_course_has_outline(cid),
+        'outline_first_video_info': get_outline_first_video_info(cid)
+    }
+
+
+def is_teaching_course_has_outline(cid):
+    count = db.session.query(TeachingCourseOutline).filter(TeachingCourseOutline.status == 1,
+                                                           TeachingCourseOutline.teaching_course_id == cid) \
+        .count()
+    if count:
+        return True
+    else:
+        return False
+
+
+def get_outline_first_video_info(cid):
+    outline_list = db.session.query(TeachingCourseOutline).filter(
+        TeachingCourseOutline.status == 1,
+        TeachingCourseOutline.teaching_course_id == cid) \
+        .all()
+    outline_id_list = []
+    for outline in outline_list:
+        outline_id_list.append(outline['id'])
+    first_video_info = db.session.query(TeachingCourseOutlineResource).filter(
+        TeachingCourseOutlineResource.status == 1,
+        TeachingCourseOutlineResource.type == 1,
+        TeachingCourseOutlineResource.outline_id.in_(outline_id_list)) \
+        .order_by(TeachingCourseOutlineResource.create_time.asc()) \
+        .first()
+    video_info = {
+        "outline_id": first_video_info['outline_id'],
+        "name": first_video_info['name'],
+        "video_id": first_video_info['video_id'],
+        "cover_pic": first_video_info['cover_pic']
+    }
+    return video_info
+
+
 def is_teaching_course_favorite(uid, cid):
     is_favorite = db.session.query(Favorite).filter(Favorite.row == cid,
                                                     Favorite.appname == 'OrganizationTeachingCourse',
@@ -584,7 +649,7 @@ def create_org_pics(pics):
                 "author_name": pic.author_name,
                 "description": pic.description,
                 "organization_id": pic.organization_id,
-                "type":  pic.type,
+                "type": pic.type,
                 "url": pic.url,
                 "size": size
             }
@@ -1204,7 +1269,7 @@ def get_org_pics(type_c, page, per_page, oid):
             "author_name": photo.author_name,
             "description": photo.description,
             "organization_id": photo.organization_id,
-            "type":  photo.type,
+            "type": photo.type,
             "url": photo.url,
             "size": size
         }

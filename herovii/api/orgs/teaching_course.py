@@ -10,7 +10,7 @@ from herovii.models.overseas.organization_to_university import OrganizationToUni
 from herovii.service.org import dto_org_teaching_courses_paginate, get_teaching_course_by_id, \
     get_teaching_course_detail_by_id, get_teaching_course_enroll_by_id, get_teaching_course_promotions_by_id, \
     dto_org_teaching_courses_paginate_v2_9, get_teaching_course_by_id_v2_9, get_teaching_course_by_id_v2_9_5, \
-    dto_org_teaching_courses_paginate_v3_02, get_teaching_course_by_id_v3_0_2
+    dto_org_teaching_courses_paginate_v3_02, get_teaching_course_by_id_v3_0_2, get_teaching_course_by_id_v3_1
 from herovii.validator.forms import PagingForm, OrgTeachingCourseForm, UpdateOrgTeachingCourseForm, \
     OrgTeachingCourseEnrollForm
 
@@ -155,6 +155,19 @@ def get_teaching_course_v3_0_2(cid):
     else:
         uid = g.user[0]
     course = get_teaching_course_by_id_v3_0_2(uid, cid)
+    json_data = json.dumps(course)
+    headers = {'Content-Type': 'application/json'}
+    return json_data, 200, headers
+
+
+@api.route('/3.1/teaching_course/<int:cid>')
+@auth.login_required
+def get_teaching_course_v3_1(cid):
+    if not hasattr(g, 'user'):
+        uid = 0
+    else:
+        uid = g.user[0]
+    course = get_teaching_course_by_id_v3_1(uid, cid)
     json_data = json.dumps(course)
     headers = {'Content-Type': 'application/json'}
     return json_data, 200, headers
