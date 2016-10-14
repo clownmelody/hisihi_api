@@ -34,10 +34,16 @@
       "sign": "E7C64668CE5253A000951837B57D86E4",
       "timestamp": 1474861950
     }
+
+    支付宝调用成功返回：
+    {
+      "data": "_input_charset=\"UTF-8\"&body=\"heishehui.cn\"&notify_url=\"http://dev.api.hisihi.com/v1/pay/alipay/notify\"&out_trade_no=\"201609241603186115\"&partner=\"2088321008674225\"&paymnet_type=\"1\"&seller_id=\"523453004@qq.com\"&service=\"mobile.securitypay.pay\"&subject=\"抵扣券\"&total_fee=\"0.01\"&sign=\"C59Sc2C6GmRX6FBjOoSPKI+N4+OGEU35bElXcOiA5m74N88Fwybhkar28WEUlBkdofrLeaz+9eZvzUBYn7lYoKLAvbDYRFBmc+cBB0p/9Zvrj3YOkQVKOKgEyJyCD4Uz4qAUJcKJ/nPca/mOnS74Ya6t4yAHKQezz0EXxWxMCaw=\"&sign_type=\"RSA\""
+    }
 **Error_Code** ::
 * 10001: 创建订单失败
 * 10003: 获取用户抵扣券失败
-
+* 10004: 抵扣券已过期
+* 10006: 抵扣券已失效
 
 
 支付状态查询

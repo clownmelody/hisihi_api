@@ -6,13 +6,18 @@ from flask.globals import current_app
 
 from herovii.libs.helper import make_a_coupon_code, make_an_bizid
 from herovii.models.base import db
+from herovii.models.org.org_teaching_course_rebate_relation import OrgTeachingCourseRebateRelation
 from herovii.models.org.teaching_course import TeachingCourse
 from herovii.models.order import RebateOrder
-from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure
+from herovii.libs.error_code import OrgNotFound, OrderNotFindFailure, UserRebateNotFindFailure, RebateExpiredFailure
 from herovii.models.org.rebate import Rebate
 from herovii.models.user.user_rebate import UserRebate
+from herovii.module.alipay import AliPay
+from herovii.module.wxpay import WeixinPay
 
 __author__ = 'shaolei'
+wx_pay = WeixinPay()
+ali_pay = AliPay()
 
 
 class Order(object):
@@ -59,6 +64,9 @@ class Order(object):
         rebate = db.session.query(Rebate)\
             .filter(Rebate.id == rebate_id)\
             .first()
+        cur_time = int(time.time())
+        if cur_time > rebate.use_end_time:
+            raise RebateExpiredFailure()
         total_price = int(rebate.value) * int(num)
         # now = datetime.datetime.now()
         # time_str = now.strftime("%Y%m%d%H%M%S")
@@ -91,12 +99,29 @@ class Order(object):
             raise OrderNotFindFailure()
 
     def get_order_obj(self, order):
+        is_disabled = 0
         courses = db.session.query(TeachingCourse.course_name, TeachingCourse.cover_pic)\
             .filter(TeachingCourse.id == order.courses_id)\
             .first()
+        if not courses:
+            is_disabled = 1
         rebate = db.session.query(Rebate.name, Rebate.value, Rebate.rebate_value,
                                   Rebate.use_start_time, Rebate.use_end_time)\
             .filter(Rebate.id == order.rebate_id)\
+            .first()
+        if not rebate:
+            is_disabled = 1
+        if rebate.value != order.price:
+            is_disabled = 1
+        tccr = db.session.query(OrgTeachingCourseRebateRelation.rebate_id).filter(
+            OrgTeachingCourseRebateRelation.teaching_course_id == order.courses_id,
+            OrgTeachingCourseRebateRelation.rebate_id == order.rebate_id,
+            OrgTeachingCourseRebateRelation.status == 1) \
+            .first()
+        if not tccr:
+            is_disabled = 1
+        db.session.query(TeachingCourse.course_name, TeachingCourse.cover_pic)\
+            .filter(TeachingCourse.id == order.courses_id)\
             .first()
         rebate_text = str(rebate.value) + '元抵扣券抵' + str(rebate.rebate_value) + '元学费'
         user_rebate = db.session.query(UserRebate.id, UserRebate.status)\
@@ -108,9 +133,10 @@ class Order(object):
         else:
             is_use = 0
             user_rebate_id = 0
-        cur_time = time.time()
+        cur_time = int(time.time())
         if cur_time > rebate.use_end_time:
             is_out_of_date = 1
+            is_disabled = 1
         else:
             is_out_of_date = 0
         order_obj = {
@@ -134,7 +160,9 @@ class Order(object):
                         'courses_pic': courses.cover_pic,
                         'is_use': is_use,
                         'is_out_of_date': is_out_of_date,
-                        'user_rebate_id': user_rebate_id
+                        'user_rebate_id': user_rebate_id,
+                        'organization_id': order.organization_id,
+                        'is_disabled': is_disabled
                     }
         }
         return order_obj
@@ -145,6 +173,11 @@ class Order(object):
 
     def update_order_pay_type(self, oid, type):
         RebateOrder.query.filter_by(id=oid).update({'pay_type': type})
+        db.session.commit()
+
+    def update_order_pay_time(self, order_sn):
+        ctime = int(time.time())
+        RebateOrder.query.filter_by(order_sn=order_sn).update({'pay_time': ctime})
         db.session.commit()
 
     def check_order_status(self, order_sn):
@@ -188,3 +221,68 @@ class Order(object):
         user_rebate.teaching_course_id = user_order.courses_id
         with db.auto_commit():
             db.session.add(user_rebate)
+
+    def is_out_of_date(self, rebate):
+        cur_time = int(time.time())
+        if cur_time > rebate.use_end_time:
+            return True
+        else:
+            return False
+
+    def get_rebate_info(self, rebate_id):
+        rebate = db.session.query(Rebate.name, Rebate.value, Rebate.rebate_value,
+                                  Rebate.use_start_time, Rebate.use_end_time)\
+            .filter(Rebate.id == rebate_id)\
+            .first()
+        return rebate
+
+    def check_order_pay_status(self, oid):
+        order = db.session.query(RebateOrder.order_status, RebateOrder.pay_type, RebateOrder.order_sn)\
+            .filter(RebateOrder.id == oid).first()
+        if order.order_status < 1 and (order.pay_type == 0 or order.pay_type == 1):
+            if order.pay_type == 1:
+                params = ali_pay.make_trade_query_info(out_trade_no=order.order_sn)
+                obj = ali_pay.query_trade_status(params)
+                if obj:
+                    self.update_order_and_rebate(order.order_sn)
+            else:
+                obj = wx_pay.order_query(out_trade_no=order.order_sn)
+                if obj['trade_state'] == 'SUCCESS':
+                    self.update_order_and_rebate(order.order_sn)
+
+    def get_order_pay_type(self, oid):
+        order = db.session.query(RebateOrder.pay_type)\
+            .filter(RebateOrder.id == oid)\
+            .first()
+        return order.pay_type
+
+    def check_trade_pay_status(self, order_sn, pay_type):
+        if not pay_type:
+            return False
+        if pay_type == 1:
+            params = ali_pay.make_trade_query_info(out_trade_no=order_sn)
+            obj = ali_pay.query_trade_status(params)
+            if obj:
+                self.update_order_and_rebate(order_sn)
+                return True
+        else:
+            obj = wx_pay.order_query(out_trade_no=order_sn)
+            if obj['trade_state'] == 'SUCCESS':
+                self.update_order_and_rebate(order_sn)
+                return True
+        return False
+
+    def update_order_and_rebate(self, order_sn):
+        """
+        订单支付后未更新状态，调用此方法进行更新
+        :param order_sn:
+        :return:
+        """
+        self.update_order_status(order_sn, 1)
+        self.update_order_pay_time(order_sn)
+        order = self.get_order_by_ordersn(order_sn)
+        user_rebate = db.session.query(UserRebate.id)\
+            .filter(UserRebate.order_id == order.id, UserRebate.uid == self.uid)\
+            .first()
+        if not user_rebate:
+            self.create_user_rebate(order_sn)

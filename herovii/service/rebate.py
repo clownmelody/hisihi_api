@@ -94,7 +94,7 @@ def get_rebate_info(user_rebate):
         OrgTeachingCourseRebateRelation.rebate_id == user_rebate.rebate_id,
         OrgTeachingCourseRebateRelation.status == 1) \
         .first()
-    if tccr.gift_package_id:
+    if tccr:
         is_bind_gift_package = 1
     else:
         is_bind_gift_package = 0
@@ -155,7 +155,7 @@ def get_rebate_detail_info(id):
         'courses_id': course.id,
         'courses_pic': course.cover_pic,
         'is_out_of_date': is_out_of_date,
-        'is_used': is_used,
+        'is_use': is_used,
         'promo_code': user_rebate.promo_code,
         'promo_code_url': user_rebate.promo_code_url,
         'use_condition': rebate.use_condition,

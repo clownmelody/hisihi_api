@@ -50,7 +50,9 @@
         "rebate_text": "100元抵扣券抵1000元学费",
         "use_end_time": 1475050260,
         "use_start_time": 1474618260,
-        "user_rebate_id": 0
+        "user_rebate_id": 0,
+        "organization_id": 41,
+        "is_disabled": 1
       },
       "uid": 72
     }
@@ -63,6 +65,12 @@
 * num: 抵扣券数量
 * id: 抵扣券id
 * user_rebate_id: 用户抵扣券id，0表示还未生成，用于调用抵扣券详情接口
+* is_disabled: 抵扣券是否失效，0未失效，1已失效
+
+**Error_code**::
+* 5000: 未找到对应机构
+* 10001: 创建订单失败
+* 10004: 抵扣券已过期
 
 
 用户订单列表
@@ -101,7 +109,9 @@
             "rebate_text": "200元抵扣券抵2000元学费",
             "use_end_time": 1475309400,
             "use_start_time": 1474618200,
-            "user_rebate_id": 0
+            "user_rebate_id": 0,
+            "organization_id": 41,
+            "is_disabled": 1
           },
           "uid": 72
         },
@@ -125,7 +135,9 @@
             "rebate_text": "100元抵扣券抵1000元学费",
             "use_end_time": 1475050260,
             "use_start_time": 1474618260,
-            "user_rebate_id": 0
+            "user_rebate_id": 0,
+            "organization_id": 41,
+            "is_disabled": 1
           },
           "uid": 72
         }
@@ -166,7 +178,9 @@
         "rebate_text": "100元抵扣券抵1000元学费",
         "use_end_time": 1475050260,
         "use_start_time": 1474618260,
-        "user_rebate_id": 0
+        "user_rebate_id": 0,
+        "organization_id": 41,
+        "is_disabled": 1
       },
       "uid": 72
     }
@@ -255,7 +269,7 @@
       "value": 500,
       "order_id": 1,
       "id": 5,
-      "is_used": 1,
+      "is_use": 1,
       "customer_service_telephone_number": "4000340033",
       "user_rebate_id": 1,
       "rebate_value": 10000,

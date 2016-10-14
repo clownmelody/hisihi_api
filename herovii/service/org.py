@@ -17,6 +17,7 @@ from herovii.libs.util import get_today_string, convert_paginate
 from herovii.models.InformationFlow.favorite import Favorite
 from herovii.models.base import db
 from herovii.models.issue import Issue
+from herovii.models.order import RebateOrder
 from herovii.models.org.class_mirror import ClassMirror
 from herovii.models.org.classmate import Classmate
 from herovii.models.org.coupon import Coupon
@@ -2096,21 +2097,19 @@ def verify_rebate_code_service(weixin_account, coupon_code):
         .filter(OrgAdminBindWeixin.weixin_account == weixin_account, OrgAdminBindWeixin.status == 1).first()
     if not admin_bind_weixin:
         return data
-    coupon = db.session.query(UserRebate.id, UserRebate.rebate_id, UserRebate.teaching_course_id, UserRebate.status,
-                              Rebate.value, Rebate.rebate_value, Rebate.end_time) \
+    coupon = db.session.query(UserRebate.id, UserRebate.order_id, UserRebate.rebate_id, UserRebate.teaching_course_id,
+                              UserRebate.status,
+                              Rebate.value, Rebate.rebate_value, Rebate.use_end_time) \
         .join(Rebate, UserRebate.rebate_id == Rebate.id) \
         .filter(UserRebate.promo_code == coupon_code, UserRebate.status >= 0, Rebate.status > 0) \
         .first()
     if not coupon:
         data['is_bind'] = True
         return data
-    teaching_course = db.session.query(TeachingCourse.course_name, OrgTeachingCourseRebateRelation.id) \
-        .join(OrgTeachingCourseRebateRelation, OrgTeachingCourseRebateRelation.teaching_course_id == TeachingCourse.id) \
+    teaching_course = db.session.query(TeachingCourse.course_name) \
         .filter(TeachingCourse.id == coupon.teaching_course_id,
                 TeachingCourse.organization_id == admin_bind_weixin.organization_id,
-                TeachingCourse.status > 0,
-                OrgTeachingCourseRebateRelation.rebate_id == coupon.rebate_id,
-                OrgTeachingCourseRebateRelation.status > 0) \
+                TeachingCourse.status > 0) \
         .first()
     if not teaching_course:
         data['is_bind'] = True
@@ -2120,7 +2119,7 @@ def verify_rebate_code_service(weixin_account, coupon_code):
         data['is_bind'] = True
         data['is_verify'] = True
         data['has_teaching_course'] = True
-        if int(coupon.end_time) < int(time.time()):
+        if int(coupon.use_end_time) < int(time.time()):
             data['is_out_of_date'] = True
             return data
         else:
@@ -2130,6 +2129,8 @@ def verify_rebate_code_service(weixin_account, coupon_code):
             else:
                 db.session.query(UserRebate).filter(UserRebate.id == coupon.id) \
                     .update({UserRebate.status: 1, UserRebate.bind_weixin_id: admin_bind_weixin.id})
+                db.session.query(RebateOrder).filter(RebateOrder.id == coupon.order_id) \
+                    .update({RebateOrder.order_status: 2})
                 db.session.commit()
                 data['course_name'] = teaching_course.course_name
                 data['value'] = coupon.value
